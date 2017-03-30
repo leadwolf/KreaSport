@@ -82,8 +82,6 @@ public class BottomSheet extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        ButterKnife.bind(getActivity());
-
     }
 
     @Override

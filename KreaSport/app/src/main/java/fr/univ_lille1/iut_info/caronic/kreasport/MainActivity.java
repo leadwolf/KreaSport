@@ -25,12 +25,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.osmdroid.util.GeoPoint;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheet;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.OnFragmentInteractionListener;
+import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapOptions;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.Constants;
 import fr.univ_lille1.iut_info.caronic.kreasport.volley.VolleySingleton;
 
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     private static final String LOG = MainActivity.class.getSimpleName();
 
     public static final String CALLBACK_KEY = "kreasport.frag_request.reason";
+    private static final java.lang.String KEY_CURRENT_FRAG_INDEX = "kreasport.savedinstancestate.current_frag_index";
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
@@ -48,12 +52,16 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG_HOME = "kreasport.tag.home";
     private static final String TAG_EXPLORE = "kreasport.tag.explore";
+    private static final String TAG_BOTTOM_SHEET = "kreasport.tag.bottom_sheet";
+
+    private int currentFragIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ButterKnife.setDebug(true);
         ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,7 +76,20 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        selectDrawerItem(navigationView.getMenu().getItem(0));
+        restore(savedInstanceState);
+        if (currentFragIndex != -1)
+            selectDrawerItem(navigationView.getMenu().getItem(currentFragIndex));
+        else
+            selectDrawerItem(navigationView.getMenu().getItem(0));
+    }
+
+    private void restore(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            currentFragIndex = savedInstanceState.getInt(KEY_CURRENT_FRAG_INDEX, -1);
+        } else {
+            currentFragIndex = -1;
+        }
+        Log.d(LOG, "onCreate with frag index: " + currentFragIndex);
     }
 
     @Override
@@ -119,6 +140,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
+                currentFragIndex = 0;
                 fragment = restoreFragment(R.id.nav_home);
 
                 getSupportFragmentManager().popBackStack(BACKSTACK_REPLACE_WITH_FRAG_EXPLORE, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -129,13 +151,14 @@ public class MainActivity extends AppCompatActivity
                         .commit();
                 break;
             case R.id.nav_explore:
+                currentFragIndex = 1;
                 fragment = restoreFragment(R.id.nav_explore);
-                BottomSheet bottomSheet = BottomSheet.newInstance("", "");
+                BottomSheet bottomSheet = (BottomSheet) restoreFragment(R.id.ll_bottom_sheet);
 
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_main_frame_layout, fragment, TAG_EXPLORE)
-                        .add(R.id.fragment_explore_root_coordlayout, bottomSheet)
+                        .add(R.id.content_main_frame_layout, bottomSheet, TAG_BOTTOM_SHEET)
                         .addToBackStack(BACKSTACK_REPLACE_WITH_FRAG_EXPLORE)
                         .commit();
                 break;
@@ -179,7 +202,23 @@ public class MainActivity extends AppCompatActivity
                     return fragment;
                 } else {
                     Log.d(LOG, "created new ExploreFragment");
-                    return ExploreFragment.newInstance("", "");
+                    return ExploreFragment.newInstance(
+                            new GeoPoint(50.633621, 3.0651845),
+                            9,
+                            new MapOptions()
+                                    .setEnableLocationOverlay(true)
+                                    .setEnableCompass(true)
+                                    .setEnableMultiTouchControls(true)
+                                    .setEnableScaleOverlay(true));
+                }
+            case R.id.ll_bottom_sheet:
+                fragment = getSupportFragmentManager().findFragmentByTag(TAG_BOTTOM_SHEET);
+                if (fragment != null) {
+                    Log.d(LOG, "found bottomSheet in manager");
+                    return fragment;
+                } else {
+                    Log.d(LOG, "created new BottomFragment");
+                    return BottomSheet.newInstance("", "");
                 }
         }
         return null;
@@ -217,6 +256,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Unpacks the intent, sets up ProgressDialog, creates StringRequest and adds it to {@link VolleySingleton}'s queue.
+     *
      * @param intent
      */
     private void downloadRace(Intent intent) {
@@ -247,8 +287,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
-     * @param url the target url which will give the race
+     * @param url            the target url which will give the race
      * @param requestPrivate is the request is a private race
      * @param progressDialog the ProgressDialog to dismiss on response/error
      * @return creates a request for a string download
@@ -280,8 +319,9 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Creates and show an AlertDialog for no race(s) found and gives the reason (none found/connection error)
+     *
      * @param connectionError if the reason is a connection error
-     * @param requestPrivate if the request was for a private race
+     * @param requestPrivate  if the request was for a private race
      */
     private void showNoRaceFoundDialog(boolean connectionError, boolean requestPrivate) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
@@ -290,7 +330,7 @@ public class MainActivity extends AppCompatActivity
 
         if (!connectionError && requestPrivate) {
             builder.setMessage(R.string.no_race_found_private);
-        } else if (!connectionError && !requestPrivate){
+        } else if (!connectionError && !requestPrivate) {
             builder.setMessage(R.string.no_race_found_public);
         } else {
             builder.setMessage(R.string.download_fail_description);
@@ -299,7 +339,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * @param requestPrivate if the race being downloaded is a private race
      * @return a {@link ProgressDialog} in accordance to which race(s) is being downloaded
      */
