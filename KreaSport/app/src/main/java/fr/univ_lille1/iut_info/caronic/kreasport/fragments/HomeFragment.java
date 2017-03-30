@@ -94,19 +94,38 @@ public class HomeFragment extends Fragment {
 
     private void downloadRace(boolean privateRace) {
         if (mListener != null) {
+
             Intent intent = new Intent();
             intent.putExtra(MainActivity.CALLBACK_KEY, DOWNLOAD_REQUEST);
 
             if (privateRace) {
-                intent.putExtra(DOWNLOAD_PRIVATE_RACE, true);
-                intent.putExtra(DOWNLOAD_PRIVATE_RACE_KEY, etKey.getText().toString());
-            } else {
+                if (validatePrivateKey()) {
+                    etKey.setError(null);
+                    intent.putExtra(DOWNLOAD_PRIVATE_RACE, true);
+                    intent.putExtra(DOWNLOAD_PRIVATE_RACE_KEY, etKey.getText().toString());
+                } else {
+                    return;
+                }
+            } else if (!privateRace) {
                 intent.putExtra(DOWNLOAD_PRIVATE_RACE, false);
             }
 
             mListener.onFragmentInteraction(intent);
         } else {
             Log.d(LOG, "could not send download request as mListener was null");
+        }
+    }
+
+    private boolean validatePrivateKey() {
+
+        // TODO actual validation for key format
+
+        if (etKey.getText().toString().length() != 6) {
+            etKey.setError(getString(R.string.fragment_home_private_key_error));
+            return false;
+        } else {
+            etKey.setError(null);
+            return true;
         }
     }
 

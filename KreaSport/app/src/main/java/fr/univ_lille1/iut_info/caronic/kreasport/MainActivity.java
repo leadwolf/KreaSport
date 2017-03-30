@@ -31,6 +31,7 @@ import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheet;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.OnFragmentInteractionListener;
+import fr.univ_lille1.iut_info.caronic.kreasport.other.Constants;
 import fr.univ_lille1.iut_info.caronic.kreasport.volley.VolleySingleton;
 
 public class MainActivity extends AppCompatActivity
@@ -232,9 +233,9 @@ public class MainActivity extends AppCompatActivity
 
         String url;
         if (requestPrivate)
-            url = getString(R.string.public_races_url);
+            url = Constants.publicRacesURL;
         else
-            url = getString(R.string.private_race_url, key);
+            url = String.format(Constants.privateRaceURL, key);
 
         final ProgressDialog progressDialog = createDownloadProgressDialog(requestPrivate);
         progressDialog.show();
