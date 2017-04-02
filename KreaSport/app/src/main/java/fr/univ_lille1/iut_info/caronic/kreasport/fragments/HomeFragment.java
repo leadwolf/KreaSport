@@ -2,7 +2,6 @@ package fr.univ_lille1.iut_info.caronic.kreasport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +49,7 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private HomeInteractionListener mListener;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -63,7 +61,7 @@ public class HomeFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
+     * @return A new instance of fragment HomeActivity.
      */
     // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
@@ -110,7 +108,7 @@ public class HomeFragment extends Fragment {
                 intent.putExtra(DOWNLOAD_PRIVATE_RACE, false);
             }
 
-            mListener.onFragmentInteraction(intent);
+            mListener.onHomeInteraction(intent);
         } else {
             Log.d(LOG, "could not send download request as mListener was null");
         }
@@ -133,8 +131,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof HomeInteractionListener) {
+            mListener = (HomeInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -145,5 +143,9 @@ public class HomeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public interface HomeInteractionListener {
+        void onHomeInteraction(Intent requestIntent);
     }
 }

@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fr.univ_lille1.iut_info.caronic.kreasport.HomeActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.MainActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.CustomViewPager;
@@ -143,7 +144,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void launchHomeScreen() {
         prefManager.setFirstTimeLaunch(false);
-        startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+        startActivity(new Intent(WelcomeActivity.this, HomeActivity.class));
         finish();
     }
 

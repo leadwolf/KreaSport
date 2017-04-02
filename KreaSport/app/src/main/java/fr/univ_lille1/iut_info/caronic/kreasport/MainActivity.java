@@ -1,16 +1,13 @@
 package fr.univ_lille1.iut_info.caronic.kreasport;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,12 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -32,29 +23,25 @@ import butterknife.ButterKnife;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheet;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;
-import fr.univ_lille1.iut_info.caronic.kreasport.fragments.OnFragmentInteractionListener;
 import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapOptions;
-import fr.univ_lille1.iut_info.caronic.kreasport.other.Constants;
-import fr.univ_lille1.iut_info.caronic.kreasport.volley.VolleySingleton;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String LOG = MainActivity.class.getSimpleName();
+    protected static final String LOG = MainActivity.class.getSimpleName();
 
     public static final String CALLBACK_KEY = "kreasport.frag_request.reason";
-    private static final java.lang.String KEY_CURRENT_FRAG_INDEX = "kreasport.savedinstancestate.current_frag_index";
+    private static final java.lang.String KEY_CURRENT_ACTIVITY_INDEX = "kreasport.savedinstancestate.current_frag_index";
 
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawer;
-
-    private static final String BACKSTACK_REPLACE_WITH_FRAG_EXPLORE = "kreasport.backstack.replace_with_frag_explore";
-
-    private static final String TAG_HOME = "kreasport.tag.home";
-    private static final String TAG_EXPLORE = "kreasport.tag.explore";
+    protected static final String TAG_HOME = "kreasport.tag.home";
+    protected static final String TAG_EXPLORE = "kreasport.tag.explore";
     private static final String TAG_BOTTOM_SHEET = "kreasport.tag.bottom_sheet";
 
-    private int currentFragIndex;
+    @BindView(R.id.drawer_layout)
+    protected DrawerLayout drawer;
+    protected NavigationView navigationView;
+
+    private int currentActivityIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,23 +60,14 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        restore(savedInstanceState);
-        if (currentFragIndex != -1)
-            selectDrawerItem(navigationView.getMenu().getItem(currentFragIndex));
-        else
-            selectDrawerItem(navigationView.getMenu().getItem(0));
+        restoreCurrentActivityIndex();
     }
 
-    private void restore(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            currentFragIndex = savedInstanceState.getInt(KEY_CURRENT_FRAG_INDEX, -1);
-        } else {
-            currentFragIndex = -1;
-        }
-        Log.d(LOG, "onCreate with frag index: " + currentFragIndex);
+    private void restoreCurrentActivityIndex() {
+        currentActivityIndex = getIntent().getIntExtra(KEY_CURRENT_ACTIVITY_INDEX, -1);
     }
 
     @Override
@@ -132,35 +110,29 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void selectDrawerItem(MenuItem menuItem) {
+    protected void selectDrawerItem(MenuItem menuItem) {
 
         hideKeyboard();
 
-        Fragment fragment = null;
+
+        if (currentActivityIndex != -1) {
+            MenuItem currentItem = navigationView.getMenu().getItem(currentActivityIndex);
+            if (currentItem.equals(menuItem)) {
+                // prevent switching when already in selected activity
+                return;
+            }
+        }
+
+        Intent activityIntent = null;
 
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
-                currentFragIndex = 0;
-                fragment = restoreFragment(R.id.nav_home);
-
-                getSupportFragmentManager().popBackStack(BACKSTACK_REPLACE_WITH_FRAG_EXPLORE, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.content_main_frame_layout, fragment, TAG_HOME)
-                        .commit();
+                currentActivityIndex = 0;
+                activityIntent = new Intent(this, HomeActivity.class);
                 break;
             case R.id.nav_explore:
-                currentFragIndex = 1;
-                fragment = restoreFragment(R.id.nav_explore);
-                BottomSheet bottomSheet = (BottomSheet) restoreFragment(R.id.ll_bottom_sheet);
-
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.content_main_frame_layout, fragment, TAG_EXPLORE)
-                        .add(R.id.content_main_frame_layout, bottomSheet, TAG_BOTTOM_SHEET)
-                        .addToBackStack(BACKSTACK_REPLACE_WITH_FRAG_EXPLORE)
-                        .commit();
+                currentActivityIndex = 1;
+                activityIntent = new Intent(this, ExploreActivity.class);
                 break;
             case R.id.nav_share:
                 break;
@@ -170,8 +142,9 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        if (fragment != null) {
-            completeDrawerAction(menuItem);
+        if (activityIntent != null) {
+            activityIntent.putExtra(KEY_CURRENT_ACTIVITY_INDEX, currentActivityIndex);
+            completeDrawerAction(menuItem, activityIntent);
         }
     }
 
@@ -183,7 +156,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private Fragment restoreFragment(int id) {
+    /**
+     * Sets the menuItem to be checked and changes the title
+     *
+     * @param menuItem
+     */
+    private void completeDrawerAction(MenuItem menuItem, Intent activityIntent) {
+        menuItem.setChecked(true);
+
+        setTitle(menuItem.getTitle());
+
+        startActivity(activityIntent);
+    }
+
+    protected Fragment restoreFragment(int id) {
         Fragment fragment;
         switch (id) {
             case R.id.nav_home:
@@ -224,134 +210,5 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    /**
-     * Sets the menuItem to be checked and changes the title
-     *
-     * @param menuItem
-     */
-    private void completeDrawerAction(MenuItem menuItem) {
-        menuItem.setChecked(true);
-
-        setTitle(menuItem.getTitle());
-    }
-
-    @Override
-    public void onFragmentInteraction(Intent requestIntent) {
-        if (requestIntent == null) {
-            throw new NullPointerException("Request intent should not be null");
-        }
-
-        String request = requestIntent.getStringExtra(CALLBACK_KEY);
-        if (request == null) {
-            return;
-        }
-
-        switch (request) {
-            case HomeFragment.DOWNLOAD_REQUEST:
-                downloadRace(requestIntent);
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Unpacks the intent, sets up ProgressDialog, creates StringRequest and adds it to {@link VolleySingleton}'s queue.
-     *
-     * @param intent
-     */
-    private void downloadRace(Intent intent) {
-
-        final boolean requestPrivate = intent.getBooleanExtra(HomeFragment.DOWNLOAD_PRIVATE_RACE, false);
-        String key = intent.getStringExtra(HomeFragment.DOWNLOAD_PRIVATE_RACE_KEY);
-
-        if (requestPrivate && (key == null || key.isEmpty())) {
-            Log.d(LOG, "received private download request but key was empty");
-            return;
-        }
-
-        // TODO validate key format for private race before download
-
-        String url;
-        if (requestPrivate)
-            url = Constants.publicRacesURL;
-        else
-            url = String.format(Constants.privateRaceURL, key);
-
-        final ProgressDialog progressDialog = createDownloadProgressDialog(requestPrivate);
-        progressDialog.show();
-
-        StringRequest stringRequest = createDownloadRequest(url, requestPrivate, progressDialog);
-
-        Log.d(LOG, "sending volley request for " + (requestPrivate ? "private race" : "public races"));
-        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
-    }
-
-    /**
-     * @param url            the target url which will give the race
-     * @param requestPrivate is the request is a private race
-     * @param progressDialog the ProgressDialog to dismiss on response/error
-     * @return creates a request for a string download
-     */
-    private StringRequest createDownloadRequest(final String url, final boolean requestPrivate, final ProgressDialog progressDialog) {
-        return new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
-                if (response != null && !response.equals("")) {
-                    progressDialog.dismiss();
-
-                    // TODO save json and transfer to ExploreFragment
-
-                } else {
-                    progressDialog.dismiss();
-                    showNoRaceFoundDialog(false, requestPrivate);
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                showNoRaceFoundDialog(true, requestPrivate);
-                Log.d(LOG, "download error : " + error.toString());
-            }
-        });
-    }
-
-    /**
-     * Creates and show an AlertDialog for no race(s) found and gives the reason (none found/connection error)
-     *
-     * @param connectionError if the reason is a connection error
-     * @param requestPrivate  if the request was for a private race
-     */
-    private void showNoRaceFoundDialog(boolean connectionError, boolean requestPrivate) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.download_fail_title))
-                .setPositiveButton("OK", null);
-
-        if (!connectionError && requestPrivate) {
-            builder.setMessage(R.string.no_race_found_private);
-        } else if (!connectionError && !requestPrivate) {
-            builder.setMessage(R.string.no_race_found_public);
-        } else {
-            builder.setMessage(R.string.download_fail_description);
-        }
-        builder.show();
-    }
-
-    /**
-     * @param requestPrivate if the race being downloaded is a private race
-     * @return a {@link ProgressDialog} in accordance to which race(s) is being downloaded
-     */
-    private ProgressDialog createDownloadProgressDialog(boolean requestPrivate) {
-        ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        if (requestPrivate) {
-            progressDialog.setMessage(getString(R.string.download_private_race_message));
-        } else {
-            progressDialog.setMessage(getString(R.string.download_public_race_message));
-        }
-        return progressDialog;
-    }
 
 }

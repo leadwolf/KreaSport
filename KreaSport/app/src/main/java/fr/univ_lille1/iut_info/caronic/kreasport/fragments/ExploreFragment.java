@@ -1,6 +1,7 @@
 package fr.univ_lille1.iut_info.caronic.kreasport.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,7 +22,7 @@ import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapOptions;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnFragmentInteractionListener} interface
+ * {@link ExploreInteractionListener} interface
  * to handle interaction events.
  * Use the {@link ExploreFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -45,7 +46,7 @@ public class ExploreFragment extends Fragment {
     private MapOptions mMapOptions;
     private CustomMapView mMapView;
 
-    private OnFragmentInteractionListener mListener;
+    private ExploreInteractionListener mListener;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -117,8 +118,8 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof ExploreInteractionListener) {
+            mListener = (ExploreInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -129,5 +130,9 @@ public class ExploreFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public interface ExploreInteractionListener {
+        void onExploreInteraction(Intent requestIntent);
     }
 }
