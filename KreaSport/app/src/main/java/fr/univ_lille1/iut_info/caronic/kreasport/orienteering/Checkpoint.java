@@ -25,6 +25,10 @@ public class Checkpoint extends BaseItem {
         this.possibleAnswers = possibleAnswers;
     }
 
+    public Checkpoint() {
+
+    }
+
     public int getRaceId() {
         return raceId;
     }

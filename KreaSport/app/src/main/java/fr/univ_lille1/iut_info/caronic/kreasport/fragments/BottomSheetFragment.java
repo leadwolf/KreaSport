@@ -2,6 +2,7 @@ package fr.univ_lille1.iut_info.caronic.kreasport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
+import fr.univ_lille1.iut_info.caronic.kreasport.databinding.FragmentBottomSheetBinding;
 import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Checkpoint;
+import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Race;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +28,9 @@ import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Checkpoint;
  * create an instance of this fragment.
  */
 public class BottomSheetFragment extends Fragment {
+
+    private Checkpoint boundCheckpoint;
+    private Race boundRace;
 
 
     private BottomSheetBehavior mBottomSheetBehaviour;
@@ -87,7 +93,13 @@ public class BottomSheetFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_bottom_sheet, container, false);
+
+        FragmentBottomSheetBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bottom_sheet, container, false);
+        boundCheckpoint = new Checkpoint();
+        binding.setCheckpoint(boundCheckpoint);
+        binding.setRace(boundRace);
+
+        View view = binding.getRoot();
         ButterKnife.bind(this, view);
 
         mBottomSheetBehaviour = BottomSheetBehavior.from(llBottomSheet);
@@ -112,8 +124,9 @@ public class BottomSheetFragment extends Fragment {
         mListener = null;
     }
 
-    public void updateInfo(Checkpoint currentCheckpoint) {
-
+    public void updateInfo(Race currentRace, Checkpoint currentCheckpoint) {
+        boundCheckpoint = currentCheckpoint;
+        boundRace = currentRace;
     }
 
     public interface BottomSheetInteractionListener {

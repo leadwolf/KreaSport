@@ -19,6 +19,9 @@ public class Race extends BaseItem {
         this.checkpoints = checkpoints;
     }
 
+    public Race() {
+    }
+
     public List<Checkpoint> getCheckpoints() {
         return checkpoints;
     }

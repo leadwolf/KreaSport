@@ -95,6 +95,6 @@ public class ExploreActivity extends MainActivity implements ExploreFragment.Exp
     private void updateBottomSheetInfo(int raceIndex, int checkpointIndex) {
         Race currentRace = raceList.get(raceIndex);
         Checkpoint currentCheckpoint = currentRace.getCheckpoint(checkpointIndex);
-        bottomSheetFragment.updateInfo(currentCheckpoint);
+        bottomSheetFragment.updateInfo(currentRace, currentCheckpoint);
     }
 }

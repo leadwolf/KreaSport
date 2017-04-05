@@ -1,10 +1,15 @@
 package fr.univ_lille1.iut_info.caronic.kreasport.orienteering;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
+import fr.univ_lille1.iut_info.caronic.kreasport.BR;
+
 /**
  * Created by Master on 05/04/2017.
  */
 
-public abstract class BaseItem {
+public abstract class BaseItem extends BaseObservable {
 
     int id;
     String title;
@@ -35,11 +40,13 @@ public abstract class BaseItem {
         this.title = title;
     }
 
+    @Bindable
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+        notifyPropertyChanged(BR.description);
     }
 }
