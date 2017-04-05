@@ -1,4 +1,4 @@
-package fr.univ_lille1.iut_info.caronic.kreasport;
+package fr.univ_lille1.iut_info.caronic.kreasport.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.Constants;
 import fr.univ_lille1.iut_info.caronic.kreasport.volley.VolleySingleton;

@@ -1,9 +1,10 @@
-package fr.univ_lille1.iut_info.caronic.kreasport;
+package fr.univ_lille1.iut_info.caronic.kreasport.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheet;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 

@@ -1,4 +1,4 @@
-package fr.univ_lille1.iut_info.caronic.kreasport;
+package fr.univ_lille1.iut_info.caronic.kreasport.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import org.osmdroid.util.GeoPoint;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheet;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;

@@ -13,7 +13,7 @@ import android.widget.EditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import fr.univ_lille1.iut_info.caronic.kreasport.MainActivity;
+import fr.univ_lille1.iut_info.caronic.kreasport.activities.MainActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
 
 public class HomeFragment extends Fragment {

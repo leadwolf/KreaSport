@@ -19,10 +19,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import fr.univ_lille1.iut_info.caronic.kreasport.HomeActivity;
-import fr.univ_lille1.iut_info.caronic.kreasport.MainActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.CustomViewPager;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.PermissionsManager;
