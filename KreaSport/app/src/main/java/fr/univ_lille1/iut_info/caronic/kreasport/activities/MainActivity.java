@@ -21,10 +21,11 @@ import org.osmdroid.util.GeoPoint;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
-import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheet;
+import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheetFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapOptions;
+import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapState;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -170,43 +171,31 @@ public class MainActivity extends AppCompatActivity
         startActivity(activityIntent);
     }
 
-    protected Fragment restoreFragment(int id) {
+    /**
+     * Creates new Fragments with default parameters.
+     *
+     * @param id
+     * @return
+     */
+    protected Fragment getFragment(int id) {
         Fragment fragment;
         switch (id) {
             case R.id.nav_home:
-                fragment = getSupportFragmentManager().findFragmentByTag(TAG_HOME);
-                if (fragment != null) {
-                    Log.d(LOG, "found home in manager");
-                    return fragment;
-                } else {
-                    Log.d(LOG, "created new HomeFragment");
-                    return HomeFragment.newInstance("", "");
-                }
+                Log.d(LOG, "created new HomeFragment");
+                return HomeFragment.newInstance("", "");
             case R.id.nav_explore:
-                fragment = getSupportFragmentManager().findFragmentByTag(TAG_EXPLORE);
-                if (fragment != null) {
-                    Log.d(LOG, "found explore in manager");
-                    return fragment;
-                } else {
-                    Log.d(LOG, "created new ExploreFragment");
-                    return ExploreFragment.newInstance(
-                            new GeoPoint(50.633621, 3.0651845),
-                            9,
-                            new MapOptions()
-                                    .setEnableLocationOverlay(true)
-                                    .setEnableCompass(true)
-                                    .setEnableMultiTouchControls(true)
-                                    .setEnableScaleOverlay(true));
-                }
+                Log.d(LOG, "created new ExploreFragment");
+                return ExploreFragment.newInstance(
+                        new MapState(new GeoPoint(50.633621, 3.0651845),
+                                9),
+                        new MapOptions()
+                                .setEnableLocationOverlay(true)
+                                .setEnableCompass(true)
+                                .setEnableMultiTouchControls(true)
+                                .setEnableScaleOverlay(true));
             case R.id.ll_bottom_sheet:
-                fragment = getSupportFragmentManager().findFragmentByTag(TAG_BOTTOM_SHEET);
-                if (fragment != null) {
-                    Log.d(LOG, "found bottomSheet in manager");
-                    return fragment;
-                } else {
-                    Log.d(LOG, "created new BottomFragment");
-                    return BottomSheet.newInstance("", "");
-                }
+                Log.d(LOG, "created new BottomFragment");
+                return BottomSheetFragment.newInstance("", "");
         }
         return null;
     }

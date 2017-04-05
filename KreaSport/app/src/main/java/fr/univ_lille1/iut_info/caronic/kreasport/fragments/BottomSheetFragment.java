@@ -2,7 +2,6 @@ package fr.univ_lille1.iut_info.caronic.kreasport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
@@ -15,16 +14,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
+import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Checkpoint;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link BottomSheetInteractionListener} interface
  * to handle interaction events.
- * Use the {@link BottomSheet#newInstance} factory method to
+ * Use the {@link BottomSheetFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BottomSheet extends Fragment {
+public class BottomSheetFragment extends Fragment {
 
 
     private BottomSheetBehavior mBottomSheetBehaviour;
@@ -34,6 +34,7 @@ public class BottomSheet extends Fragment {
 
     @OnClick(R.id.ll_bottom_sheet)
     public void bottomSheetOnClick() {
+        mListener.onBottomSheetInteraction(null);
         if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_COLLAPSED)
             mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
         else if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED)
@@ -52,7 +53,7 @@ public class BottomSheet extends Fragment {
 
     private BottomSheetInteractionListener mListener;
 
-    public BottomSheet() {
+    public BottomSheetFragment() {
         // Required empty public constructor
     }
 
@@ -62,11 +63,11 @@ public class BottomSheet extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment BottomSheet.
+     * @return A new instance of fragment BottomSheetFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BottomSheet newInstance(String param1, String param2) {
-        BottomSheet fragment = new BottomSheet();
+    public static BottomSheetFragment newInstance(String param1, String param2) {
+        BottomSheetFragment fragment = new BottomSheetFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -111,8 +112,14 @@ public class BottomSheet extends Fragment {
         mListener = null;
     }
 
+    public void updateInfo(Checkpoint currentCheckpoint) {
+
+    }
+
     public interface BottomSheetInteractionListener {
         void onBottomSheetInteraction(Intent requestIntent);
+
+        // TODO use binding for updating bottom sheet
     }
 
 }

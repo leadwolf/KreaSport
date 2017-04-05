@@ -18,17 +18,21 @@ import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 public class CustomMapView extends MapView {
 
     private Activity activity;
-    private final MapOptions mMapOptions;
 
-    public CustomMapView(Activity activity, MapOptions mMapOptions) {
+    public CustomMapView(Activity activity, MapOptions mMapOptions, MapState mMapState) {
         super(activity);
         this.activity = activity;
-        this.mMapOptions = mMapOptions;
 
-        applyOptions();
+        applyOptions(mMapOptions);
+        applyState(mMapState);
     }
 
-    private void applyOptions() {
+    private void applyState(MapState mMapState) {
+        getController().setZoom(mMapState.getZoom());
+        getController().setCenter(mMapState.getCenter());
+    }
+
+    private void applyOptions(MapOptions mMapOptions) {
         if (mMapOptions != null) {
             if (mMapOptions.isEnableLocationOverlay()) {
 

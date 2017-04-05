@@ -20,7 +20,7 @@ public class HomeFragment extends Fragment {
 
     private static final String LOG = HomeFragment.class.getSimpleName();
 
-    public static final String DOWNLOAD_REQUEST = "kreasport.fragment_home.request.reason";
+    public static final String DOWNLOAD_REQUEST = "kreasport.fragment_home.request_reason.download";
 
     public static final String DOWNLOAD_PRIVATE_RACE = "kreasport.frag_request_code.download_private_race";
     public static final String DOWNLOAD_PRIVATE_RACE_KEY = "kreasport.frag_request_code.download_private_race_key";

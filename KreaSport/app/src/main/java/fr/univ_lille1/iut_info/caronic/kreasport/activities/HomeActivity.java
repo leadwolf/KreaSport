@@ -39,7 +39,7 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
     }
 
     private void setupFragments() {
-        Fragment fragment = restoreFragment(R.id.nav_home);
+        Fragment fragment = getFragment(R.id.nav_home);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -158,12 +158,12 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
             throw new NullPointerException("Request intent should not be null");
         }
 
-        String request = requestIntent.getStringExtra(CALLBACK_KEY);
-        if (request == null) {
+        String requestCode = requestIntent.getStringExtra(CALLBACK_KEY);
+        if (requestCode == null) {
             return;
         }
 
-        switch (request) {
+        switch (requestCode) {
             case HomeFragment.DOWNLOAD_REQUEST:
                 downloadRace(requestIntent);
             default:
