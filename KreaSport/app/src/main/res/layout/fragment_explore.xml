@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_explore_root_coordlayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:activity="fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout
-        android:id="@+id/fragment_explore_frame_layout"
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/fragment_explore_root_coordlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:activity="fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment">
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/fragment_explore_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</android.support.design.widget.CoordinatorLayout>
+        </FrameLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

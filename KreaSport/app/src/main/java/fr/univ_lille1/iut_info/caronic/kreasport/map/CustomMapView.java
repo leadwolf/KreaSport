@@ -1,11 +1,14 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.maps;
+package fr.univ_lille1.iut_info.caronic.kreasport.map;
 
 import android.app.Activity;
-import android.content.Context;
-import android.location.LocationManager;
+import android.support.v4.BuildConfig;
 
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
@@ -23,8 +26,22 @@ public class CustomMapView extends MapView {
         super(activity);
         this.activity = activity;
 
+        applyBasics();
         applyOptions(mMapOptions);
         applyState(mMapState);
+    }
+
+    private void applyBasics() {
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+        setTileSource(TileSourceFactory.MAPNIK);
+        getOverlays().add(new CopyrightOverlay(getContext()));
+
+        TilesOverlay x = getOverlayManager().getTilesOverlay();
+        x.setOvershootTileCache(x.getOvershootTileCache() * 2);
+
+        setTilesScaledToDpi(true);
+
+        setMinZoomLevel(2);
     }
 
     private void applyState(MapState mMapState) {

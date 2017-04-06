@@ -1,6 +1,6 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.maps;
+package fr.univ_lille1.iut_info.caronic.kreasport.map;
 
-import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
 
 /**
  * Created by Master on 05/04/2017.

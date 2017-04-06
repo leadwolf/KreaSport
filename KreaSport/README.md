@@ -18,9 +18,10 @@ KreaSport
 		 - Map
 		 - CustomIconOverlay
 			 - Custom icons
-			 - Proper adding w/o reloading
 		 - Save state
 		 - Callbacks for interaction w/ `BottomSheetFragment`
+		 - Bottom Sheet binding
+			 - Need to initialize the binding in ExploreFragment instead of BottomSheetFragment and pass the value
  - **OfflineAreaActivity**
 	 - Everything:
 		 - Activity Layout
@@ -34,13 +35,23 @@ KreaSport
 ## DONE ##
  - **MainActivity**
 	 - Navigation drawer
-		 - Switch fragments
-		 - Save fragment state
-		 - Backstack
-	 - Callback for downloads from `HomeFragment`
+~~- Switch fragments~~
+		 ~~- Save fragment state~~
+		 ~~- Backstack~~
+	 - Moved to activities
+		 - Proper switching
+		 - Force selected nav item to current activity
+		 - Sub-activites use fragments, recreate each time bc the activity itself is destroyed when switching with the navigation drawer
+	 - Callbacks
+		 - Callback for downloads from `HomeFragment`
+		 - Other callback methods in place
  - **HomeFragment**
 	 - Layout
 		 - Text & buttons
+ - **ExploreFragment**
+	 - CustomIconOverlay
+		 - Proper adding w/o reloading, theory
+	 - Bottom Sheet binding
 
 ----------
 

@@ -1,12 +1,11 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
-            name="checkpoint"
-            type="fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Checkpoint"/>
-        <variable
-            name="race"
-            type="fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Race"/>
+            name="bottomSheetVM"
+            type="fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.BottomSheetVM"/>
     </data>
 
     <LinearLayout
@@ -30,14 +29,15 @@
 
 
         <include
-            android:id="@+id/bottom_sheet_main"
-            layout="@layout/bottom_sheet_main"
-            android:visibility="visible"/>
+            android:id="@+id/bottom_sheet_passive_info"
+            layout="@layout/bottom_sheet_passive"
+            android:visibility="@{bottomSheetVM.passiveInfoVisibility}"
+            bind:bottomSheetVM="@{bottomSheetVM}"/>
 
         <include
-            android:id="@+id/bottom_sheet_active"
+            android:id="@+id/bottom_sheet_active_info"
             layout="@layout/bottom_sheet_active"
-            android:visibility="gone"/>
+            android:visibility="@{bottomSheetVM.activeInfoVisibility}"/>
 
 
         <View
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@{race.description}"
+            android:text="@{bottomSheetVM.description}"
             android:textColor="@android:color/black"/>
 
     </LinearLayout>

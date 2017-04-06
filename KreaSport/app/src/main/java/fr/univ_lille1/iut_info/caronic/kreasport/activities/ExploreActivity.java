@@ -10,8 +10,7 @@ import java.util.List;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheetFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
-import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Checkpoint;
-import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.Constants;
 
 import static fr.univ_lille1.iut_info.caronic.kreasport.other.Constants.savedRaceLisType;
@@ -93,8 +92,6 @@ public class ExploreActivity extends MainActivity implements ExploreFragment.Exp
      * @param checkpointIndex
      */
     private void updateBottomSheetInfo(int raceIndex, int checkpointIndex) {
-        Race currentRace = raceList.get(raceIndex);
-        Checkpoint currentCheckpoint = currentRace.getCheckpoint(checkpointIndex);
-        bottomSheetFragment.updateInfo(currentRace, currentCheckpoint);
+        bottomSheetFragment.updateInfo(raceIndex, checkpointIndex);
     }
 }

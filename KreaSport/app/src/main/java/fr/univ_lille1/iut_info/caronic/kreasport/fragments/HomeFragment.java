@@ -2,6 +2,7 @@ package fr.univ_lille1.iut_info.caronic.kreasport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,11 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import fr.univ_lille1.iut_info.caronic.kreasport.activities.MainActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
+import fr.univ_lille1.iut_info.caronic.kreasport.activities.MainActivity;
+import fr.univ_lille1.iut_info.caronic.kreasport.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
 
@@ -26,18 +25,9 @@ public class HomeFragment extends Fragment {
     public static final String DOWNLOAD_PRIVATE_RACE_KEY = "kreasport.frag_request_code.download_private_race_key";
 
 
-    @BindView(R.id.fragment_home_et_key)
+    private FragmentHomeBinding binding;
+
     EditText etKey;
-
-    @OnClick(R.id.fragment_home_tv_download_public_races)
-    public void downloadPublicRaces() {
-        downloadRace(false);
-    }
-
-    @OnClick(R.id.fragment_home_button_download_from_key)
-    public void downloadPrivateRace() {
-        downloadRace(true);
-    }
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -85,9 +75,29 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        ButterKnife.bind(this, view);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+        View view = binding.getRoot();
+
+        setBindings();
+
         return view;
+    }
+
+    private void setBindings() {
+        etKey = binding.fragmentHomeEtKey;
+
+        binding.fragmentHomeTvDownloadPublicRaces.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadRace(false);
+            }
+        });
+        binding.fragmentHomeButtonDownloadFromKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadRace(true);
+            }
+        });
     }
 
     private void downloadRace(boolean privateRace) {

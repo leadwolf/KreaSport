@@ -2,6 +2,7 @@ package fr.univ_lille1.iut_info.caronic.kreasport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -18,18 +18,16 @@ import com.google.gson.Gson;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
-import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
-import fr.univ_lille1.iut_info.caronic.kreasport.maps.CustomMapView;
-import fr.univ_lille1.iut_info.caronic.kreasport.maps.CustomOverlayItem;
-import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapOptions;
-import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapState;
-import fr.univ_lille1.iut_info.caronic.kreasport.maps.RaceState;
+import fr.univ_lille1.iut_info.caronic.kreasport.databinding.FragmentExploreBinding;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.CustomMapView;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.CustomOverlayItem;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.MapOptions;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.MapState;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.RaceState;
 
 import static fr.univ_lille1.iut_info.caronic.kreasport.activities.MainActivity.CALLBACK_KEY;
 
@@ -49,9 +47,6 @@ public class ExploreFragment extends Fragment {
     public static final String KEY_SELECTED_CHECKPOINT = "kreasport.fragment_explore.keys.selected_checkpoint";
 
 
-    @BindView(R.id.fragment_explore_frame_layout)
-    FrameLayout frameLayout;
-
     /* DEFAULTS */
     private static final String KEY_MAP_OPTIONS = "kreasport.fragment_explore.keys.map_options";
     private MapOptions mMapOptions;
@@ -70,6 +65,8 @@ public class ExploreFragment extends Fragment {
     private ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener;
 
     private ExploreInteractionListener mListener;
+
+    private FragmentExploreBinding binding;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -106,8 +103,8 @@ public class ExploreFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_explore, container, false);
-        ButterKnife.bind(this, rootView);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_explore, container, false);
+        View rootView = binding.getRoot();
 
         mMapView = new CustomMapView(getActivity(), mMapOptions, mMapState);
 
@@ -115,7 +112,7 @@ public class ExploreFragment extends Fragment {
         initRaceListOverlay();
         initOngoingRaceOverlay();
 
-        frameLayout.addView(mMapView);
+        binding.fragmentExploreFrameLayout.addView(mMapView);
 
         return rootView;
     }
@@ -144,10 +141,11 @@ public class ExploreFragment extends Fragment {
      * Creates the overlay for listing all the races
      */
     private void initRaceListOverlay() {
+        Log.d(LOG, "initRaceListOverlay");
+
         raceListOverlay = new ItemizedOverlayWithFocus<>(new ArrayList<CustomOverlayItem>(), itemGestureListener, getActivity());
 
         raceListOverlay.setFocusItemsOnTap(true);
-        raceListOverlay.setFocusedItem(0);
 
         mMapView.getOverlays().add(raceListOverlay);
     }
@@ -159,7 +157,6 @@ public class ExploreFragment extends Fragment {
         ongoingRaceOverlay = new ItemizedOverlayWithFocus<>(new ArrayList<CustomOverlayItem>(), itemGestureListener, getActivity());
 
         ongoingRaceOverlay.setFocusItemsOnTap(true);
-        ongoingRaceOverlay.setFocusedItem(0);
 
         mMapView.getOverlays().add(ongoingRaceOverlay);
     }

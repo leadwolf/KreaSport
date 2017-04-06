@@ -1,4 +1,4 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.orienteering;
+package fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;

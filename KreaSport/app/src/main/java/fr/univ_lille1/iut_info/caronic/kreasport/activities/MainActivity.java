@@ -2,6 +2,7 @@ package fr.univ_lille1.iut_info.caronic.kreasport.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -18,14 +19,13 @@ import android.view.inputmethod.InputMethodManager;
 
 import org.osmdroid.util.GeoPoint;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
+import fr.univ_lille1.iut_info.caronic.kreasport.databinding.ActivityMainBinding;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheetFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;
-import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapOptions;
-import fr.univ_lille1.iut_info.caronic.kreasport.maps.MapState;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.MapOptions;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.MapState;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,9 +37,7 @@ public class MainActivity extends AppCompatActivity
 
     protected static final String TAG_HOME = "kreasport.tag.home";
     protected static final String TAG_EXPLORE = "kreasport.tag.explore";
-    private static final String TAG_BOTTOM_SHEET = "kreasport.tag.bottom_sheet";
 
-    @BindView(R.id.drawer_layout)
     protected DrawerLayout drawer;
     protected NavigationView navigationView;
 
@@ -48,15 +46,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        ButterKnife.setDebug(true);
-        ButterKnife.bind(this);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = binding.drawerLayout;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);

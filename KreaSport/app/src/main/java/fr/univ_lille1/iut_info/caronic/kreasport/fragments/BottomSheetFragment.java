@@ -9,15 +9,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.databinding.FragmentBottomSheetBinding;
-import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Checkpoint;
-import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.BottomSheetVM;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,24 +28,15 @@ import fr.univ_lille1.iut_info.caronic.kreasport.orienteering.Race;
  */
 public class BottomSheetFragment extends Fragment {
 
-    private Checkpoint boundCheckpoint;
-    private Race boundRace;
+    private static final String LOG = BottomSheetFragment.class.getSimpleName();
+
+
+    private FragmentBottomSheetBinding binding;
+
+    private BottomSheetVM bottomSheetVM;
 
 
     private BottomSheetBehavior mBottomSheetBehaviour;
-
-    @BindView(R.id.ll_bottom_sheet)
-    LinearLayout llBottomSheet;
-
-    @OnClick(R.id.ll_bottom_sheet)
-    public void bottomSheetOnClick() {
-        mListener.onBottomSheetInteraction(null);
-        if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_COLLAPSED)
-            mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
-        else if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED)
-            mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-    }
-
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -93,18 +83,39 @@ public class BottomSheetFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bottom_sheet, container, false);
 
-        FragmentBottomSheetBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bottom_sheet, container, false);
-        boundCheckpoint = new Checkpoint();
-        binding.setCheckpoint(boundCheckpoint);
-        binding.setRace(boundRace);
+        setBindings();
 
         View view = binding.getRoot();
-        ButterKnife.bind(this, view);
 
-        mBottomSheetBehaviour = BottomSheetBehavior.from(llBottomSheet);
+        mBottomSheetBehaviour = BottomSheetBehavior.from(binding.llBottomSheet);
 
         return view;
+    }
+
+    private void setBindings() {
+        // TODO pass all races
+
+        List<Race> dummyRaceList = new ArrayList<>();
+        dummyRaceList.add(new Race(-1, "Dummy race title", "Dummy race description", null));
+
+        bottomSheetVM = new BottomSheetVM(dummyRaceList);
+
+        binding.setBottomSheetVM(bottomSheetVM);
+
+        binding.llBottomSheet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onBottomSheetInteraction(null);
+                if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_COLLAPSED)
+                    mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+                else if (mBottomSheetBehaviour.getState() == BottomSheetBehavior.STATE_EXPANDED)
+                    mBottomSheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
+
+        binding.executePendingBindings();
     }
 
     @Override
@@ -114,7 +125,7 @@ public class BottomSheetFragment extends Fragment {
             mListener = (BottomSheetInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement BottomSheetInteractionListener");
         }
     }
 
@@ -124,9 +135,13 @@ public class BottomSheetFragment extends Fragment {
         mListener = null;
     }
 
-    public void updateInfo(Race currentRace, Checkpoint currentCheckpoint) {
-        boundCheckpoint = currentCheckpoint;
-        boundRace = currentRace;
+    /**
+     * Updates which model the VMs are pointing to, updates the view with databinding.
+     * @param raceIndex
+     * @param checkpointIndex
+     */
+    public void updateInfo(int raceIndex, int checkpointIndex) {
+        bottomSheetVM.updateCurrentIndexes(raceIndex, checkpointIndex);
     }
 
     public interface BottomSheetInteractionListener {
