@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,15 +93,16 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mMapState = (MapState) getArguments().getSerializable(KEY_MAP_STATE);
-            mMapOptions = (MapOptions) getArguments().getSerializable(KEY_MAP_OPTIONS);
-        }
 
         raceVM = ((ExploreActivity) getActivity()).getRaceVM();
 
         preferenceManager = new PreferenceManager(getContext(), ExploreFragment.class.getSimpleName());
         restoreState();
+
+        if (getArguments() != null) {
+            mMapState = (MapState) getArguments().getSerializable(KEY_MAP_STATE);
+            mMapOptions = (MapOptions) getArguments().getSerializable(KEY_MAP_OPTIONS);
+        }
     }
 
     @Override

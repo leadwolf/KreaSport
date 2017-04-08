@@ -79,13 +79,15 @@ public class RaceVM extends BaseObservable {
     @Bindable
     public String getTitle() {
         if (raceActive) {
-            if (currentCheckpointIndex < checkpoints.size())
+            if (checkpoints != null && currentCheckpointIndex < checkpoints.size())
                 return checkpoints.get(currentCheckpointIndex).getTitle();
-            return null;
+            else
+                return "No title available";
         } else {
-            if (currentRaceIndex <= races.size())
+            if (races != null && currentRaceIndex <= races.size())
                 return races.get(currentRaceIndex).getTitle();
-            return null;
+            else
+                return "No title available";
         }
     }
 
@@ -95,13 +97,15 @@ public class RaceVM extends BaseObservable {
     @Bindable
     public String getDescription() {
         if (raceActive) {
-            if (currentCheckpointIndex < checkpoints.size())
+            if (checkpoints != null && currentCheckpointIndex < checkpoints.size())
                 return checkpoints.get(currentCheckpointIndex).getDescription();
-            return null;
+            else
+                return "No description available";
         } else {
-            if (currentRaceIndex <= races.size())
+            if (races != null && currentRaceIndex <= races.size())
                 return races.get(currentRaceIndex).getDescription();
-            return null;
+            else
+                return "No description available";
         }
     }
 
