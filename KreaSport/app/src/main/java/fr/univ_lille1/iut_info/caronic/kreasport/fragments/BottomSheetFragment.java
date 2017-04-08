@@ -15,9 +15,9 @@ import java.util.List;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.activities.ExploreActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.databinding.FragmentBottomSheetBinding;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.Race;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.PreferenceManager;
-import fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.RaceVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.RaceVM;
 
 /**
  * A simple {@link Fragment} subclass.

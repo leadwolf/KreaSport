@@ -1,4 +1,4 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering;
+package fr.univ_lille1.iut_info.caronic.kreasport.map.models;
 
 import java.util.List;
 

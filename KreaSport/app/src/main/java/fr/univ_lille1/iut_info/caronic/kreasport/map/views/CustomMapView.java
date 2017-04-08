@@ -1,4 +1,4 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.map;
+package fr.univ_lille1.iut_info.caronic.kreasport.map.views;
 
 import android.app.Activity;
 import android.support.v4.BuildConfig;
@@ -14,6 +14,9 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.MapVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.MapOptions;
+
 /**
  * Created by Master on 30/03/2017.
  */
@@ -22,13 +25,13 @@ public class CustomMapView extends MapView {
 
     private Activity activity;
 
-    public CustomMapView(Activity activity, MapOptions mMapOptions, MapState mMapState) {
+    public CustomMapView(Activity activity, MapOptions mMapOptions, MapVM mMapVM) {
         super(activity);
         this.activity = activity;
 
         applyBasics();
         applyOptions(mMapOptions);
-        applyState(mMapState);
+        applyState(mMapVM);
     }
 
     private void applyBasics() {
@@ -44,9 +47,9 @@ public class CustomMapView extends MapView {
         setMinZoomLevel(2);
     }
 
-    private void applyState(MapState mMapState) {
-        getController().setZoom(mMapState.getZoom());
-        getController().setCenter(mMapState.getCenter());
+    private void applyState(MapVM mMapVM) {
+        getController().setZoom(mMapVM.getZoom());
+        getController().setCenter(mMapVM.getCenter());
     }
 
     private void applyOptions(MapOptions mMapOptions) {

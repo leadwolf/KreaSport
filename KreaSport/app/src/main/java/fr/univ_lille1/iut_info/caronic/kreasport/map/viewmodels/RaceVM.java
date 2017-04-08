@@ -1,4 +1,4 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.viewmodels;
+package fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels;
 
 import android.content.Intent;
 import android.databinding.BaseObservable;
@@ -12,9 +12,9 @@ import java.util.List;
 
 import fr.univ_lille1.iut_info.caronic.kreasport.activities.MainActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.CustomOverlayItem;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Checkpoint;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.views.CustomOverlayItem;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.Checkpoint;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.Race;
 
 import static fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment.KEY_SELECTED_CHECKPOINT;
 import static fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment.KEY_SELECTED_RACE;

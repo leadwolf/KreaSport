@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.Race;
 
 /**
  * Created by Master on 30/03/2017.

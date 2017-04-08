@@ -7,7 +7,7 @@ import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheetFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.PreferenceManager;
-import fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.RaceVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.RaceVM;
 
 /**
  * Created by Master on 02/04/2017.
@@ -55,7 +55,7 @@ public class ExploreActivity extends MainActivity implements ExploreFragment.Exp
     }
 
     /**
-     * Saves MapState and RaceState with {@link PreferenceManager}
+     * Saves MapVM with {@link PreferenceManager}
      */
     private void saveState() {
         if (raceVM == null) {

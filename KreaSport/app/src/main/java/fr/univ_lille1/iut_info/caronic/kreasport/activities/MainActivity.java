@@ -24,8 +24,8 @@ import fr.univ_lille1.iut_info.caronic.kreasport.databinding.ActivityMainBinding
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheetFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
 import fr.univ_lille1.iut_info.caronic.kreasport.fragments.HomeFragment;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.MapOptions;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.MapState;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.MapOptions;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.MapVM;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_explore:
                 Log.d(LOG, "created new ExploreFragment");
                 return ExploreFragment.newInstance(
-                        new MapState(new GeoPoint(50.633621, 3.0651845),
+                        new MapVM(new GeoPoint(50.633621, 3.0651845),
                                 9),
                         new MapOptions()
                                 .setEnableLocationOverlay(true)

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +22,13 @@ import java.util.List;
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
 import fr.univ_lille1.iut_info.caronic.kreasport.activities.ExploreActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.databinding.FragmentExploreBinding;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.CustomMapView;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.CustomOverlayItem;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.MapOptions;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.MapState;
-import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.views.CustomMapView;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.views.CustomOverlayItem;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.MapOptions;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.MapVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.models.Race;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.PreferenceManager;
-import fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.RaceVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.RaceVM;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +57,7 @@ public class ExploreFragment extends Fragment {
 
 
     private CustomMapView mMapView;
-    private MapState mMapState;
+    private MapVM mMapVM;
 
     private ItemizedOverlayWithFocus<CustomOverlayItem> ongoingRaceOverlay;
     private ItemizedOverlayWithFocus<CustomOverlayItem> raceListOverlay;
@@ -79,7 +78,7 @@ public class ExploreFragment extends Fragment {
      * @param mMapOptions  to always be set
      * @return
      */
-    public static ExploreFragment newInstance(MapState defaultState, @NonNull MapOptions mMapOptions) {
+    public static ExploreFragment newInstance(MapVM defaultState, @NonNull MapOptions mMapOptions) {
         ExploreFragment fragment = new ExploreFragment();
 
         Bundle args = new Bundle();
@@ -100,7 +99,7 @@ public class ExploreFragment extends Fragment {
         restoreState();
 
         if (getArguments() != null) {
-            mMapState = (MapState) getArguments().getSerializable(KEY_MAP_STATE);
+            mMapVM = (MapVM) getArguments().getSerializable(KEY_MAP_STATE);
             mMapOptions = (MapOptions) getArguments().getSerializable(KEY_MAP_OPTIONS);
         }
     }
@@ -114,7 +113,7 @@ public class ExploreFragment extends Fragment {
 
         View rootView = binding.getRoot();
 
-        mMapView = new CustomMapView(getActivity(), mMapOptions, mMapState);
+        mMapView = new CustomMapView(getActivity(), mMapOptions, mMapVM);
         initRaceOverlays();
 
         binding.fragmentExploreFrameLayout.addView(mMapView);
@@ -187,21 +186,23 @@ public class ExploreFragment extends Fragment {
     }
 
     /**
-     * Saves MapState and RaceState with {@link PreferenceManager}
+     * Saves MapVM with {@link PreferenceManager}
      */
     private void saveState() {
         if (mMapView == null) {
             return;
+        } else {
+            mMapVM = new MapVM(mMapView);
         }
-        preferenceManager.saveMapState(mMapState);
+        preferenceManager.saveMapState(mMapVM);
 
     }
 
     /**
-     * Restores the {@link MapState} with {@link PreferenceManager}
+     * Restores the {@link MapVM} with {@link PreferenceManager}
      */
     private void restoreState() {
-        mMapState = preferenceManager.getMapState();
+        mMapVM = preferenceManager.getMapState();
     }
 
 

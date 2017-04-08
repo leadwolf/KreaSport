@@ -1,24 +1,26 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.map;
+package fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.io.Serializable;
 
+import fr.univ_lille1.iut_info.caronic.kreasport.map.views.CustomMapView;
+
 /**
  * Created by Master on 05/04/2017.
  */
 
-public class MapState implements Serializable {
+public class MapVM implements Serializable {
 
     GeoPoint center;
     int zoom;
 
-    public MapState(CustomMapView mMapView) {
+    public MapVM(CustomMapView mMapView) {
         center = (GeoPoint) mMapView.getMapCenter();
         zoom = mMapView.getZoomLevel();
     }
 
-    public MapState(GeoPoint center, int zoom) {
+    public MapVM(GeoPoint center, int zoom) {
         this.center = center;
         this.zoom = zoom;
     }

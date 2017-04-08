@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
-import fr.univ_lille1.iut_info.caronic.kreasport.map.MapState;
-import fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.RaceVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.MapVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.RaceVM;
 
 
 public class PreferenceManager {
@@ -61,15 +61,15 @@ public class PreferenceManager {
         }
     }
 
-    public void saveMapState(MapState mapState) {
-        String mapStateJSON = new Gson().toJson(mapState, MapState.class);
+    public void saveMapState(MapVM mapVM) {
+        String mapStateJSON = new Gson().toJson(mapVM, MapVM.class);
         prefs.edit()
                 .putString(KEY_MAP_STATE, mapStateJSON)
                 .apply();
     }
 
-    public MapState getMapState() {
+    public MapVM getMapState() {
         String mapStateVMJson = prefs.getString(KEY_MAP_STATE, "");
-        return new Gson().fromJson(mapStateVMJson, MapState.class);
+        return new Gson().fromJson(mapStateVMJson, MapVM.class);
     }
 }

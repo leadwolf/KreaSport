@@ -1,4 +1,4 @@
-package fr.univ_lille1.iut_info.caronic.kreasport.map;
+package fr.univ_lille1.iut_info.caronic.kreasport.map.views;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.views.overlay.OverlayItem;
