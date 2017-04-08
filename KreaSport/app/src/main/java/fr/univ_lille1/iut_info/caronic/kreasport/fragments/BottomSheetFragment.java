@@ -10,13 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.univ_lille1.iut_info.caronic.kreasport.R;
+import fr.univ_lille1.iut_info.caronic.kreasport.activities.ExploreActivity;
 import fr.univ_lille1.iut_info.caronic.kreasport.databinding.FragmentBottomSheetBinding;
 import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
-import fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.BottomSheetVM;
+import fr.univ_lille1.iut_info.caronic.kreasport.other.PreferenceManager;
+import fr.univ_lille1.iut_info.caronic.kreasport.viewmodels.RaceVM;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +34,7 @@ public class BottomSheetFragment extends Fragment {
 
     private FragmentBottomSheetBinding binding;
 
-    private BottomSheetVM bottomSheetVM;
+    private RaceVM raceVM;
 
 
     private BottomSheetBehavior mBottomSheetBehaviour;
@@ -48,6 +49,8 @@ public class BottomSheetFragment extends Fragment {
     private String mParam2;
 
     private BottomSheetInteractionListener mListener;
+    private List<Race> raceList;
+    private PreferenceManager preferenceManager;
 
     public BottomSheetFragment() {
         // Required empty public constructor
@@ -79,6 +82,9 @@ public class BottomSheetFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        raceVM = ((ExploreActivity) getActivity()).getRaceVM();
+
+        preferenceManager = new PreferenceManager(getContext(), getClass().getSimpleName());
     }
 
     @Override
@@ -95,14 +101,7 @@ public class BottomSheetFragment extends Fragment {
     }
 
     private void setBindings() {
-        // TODO pass all races
-
-        List<Race> dummyRaceList = new ArrayList<>();
-        dummyRaceList.add(new Race(-1, "Dummy race title", "Dummy race description", null));
-
-        bottomSheetVM = new BottomSheetVM(dummyRaceList);
-
-        binding.setBottomSheetVM(bottomSheetVM);
+        binding.setBottomSheetVM(raceVM);
 
         binding.llBottomSheet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,15 +132,6 @@ public class BottomSheetFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    /**
-     * Updates which model the VMs are pointing to, updates the view with databinding.
-     * @param raceIndex
-     * @param checkpointIndex
-     */
-    public void updateInfo(int raceIndex, int checkpointIndex) {
-        bottomSheetVM.updateCurrentIndexes(raceIndex, checkpointIndex);
     }
 
     public interface BottomSheetInteractionListener {

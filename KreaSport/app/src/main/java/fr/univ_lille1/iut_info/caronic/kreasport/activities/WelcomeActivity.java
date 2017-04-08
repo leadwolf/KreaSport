@@ -26,6 +26,9 @@ import fr.univ_lille1.iut_info.caronic.kreasport.other.PermissionsManager;
 import fr.univ_lille1.iut_info.caronic.kreasport.other.PreferenceManager;
 
 public class WelcomeActivity extends AppCompatActivity {
+
+    private final static String PREF_NAME = "intro_slider-welcome";
+
     private CustomViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
@@ -40,7 +43,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Checking for first time launch - before calling setContentView()
-        prefManager = new PreferenceManager(this);
+        prefManager = new PreferenceManager(this, PREF_NAME);
         permissionsManager = new PermissionsManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();

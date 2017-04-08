@@ -1,39 +1,66 @@
 package fr.univ_lille1.iut_info.caronic.kreasport.viewmodels;
 
+import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
 import android.view.View;
 
-import java.util.ArrayList;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+
 import java.util.List;
 
+import fr.univ_lille1.iut_info.caronic.kreasport.activities.MainActivity;
+import fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment;
+import fr.univ_lille1.iut_info.caronic.kreasport.map.CustomOverlayItem;
 import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Checkpoint;
 import fr.univ_lille1.iut_info.caronic.kreasport.map.orienteering.Race;
 
+import static fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment.KEY_SELECTED_CHECKPOINT;
+import static fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment.KEY_SELECTED_RACE;
+
 /**
  * Created by Master on 06/04/2017.
+ * ViewModel for the races. Has a list of {@link Race} as atrtibute and is used by the views to represent that data.
  */
+public class RaceVM extends BaseObservable {
 
-public class BottomSheetVM extends BaseObservable {
+    private transient static final String LOG = RaceVM.class.getSimpleName();
 
-    private static final String LOG = BottomSheetVM.class.getSimpleName();
+    /**
+     * The race model to manipulate
+     * Transient because we just load all the race data into this VM anyways.
+     */
+    private transient List<Race> races;
 
-    private List<Checkpoint> checkpoints;
-    private List<Race> races;
+    /**
+     * The checkpoints from the race model, simplifies chained gets.
+     * Transient because we just load all the race data into this VM anyways.
+     */
+    private transient List<Checkpoint> checkpoints;
+
+    /**
+     * The race selected either from a passive or active viewpoint.
+     */
     private int currentRaceIndex;
+
+    /**
+     * The current TARGET checkpoint for the currentRaceIndex.
+     */
     private int currentCheckpointIndex;
+
+    /**
+     * Whether this VM is currently in an active state
+     */
     private boolean raceActive;
 
-    private int passiveInfoVisibility;
-    private int activeInfoVisbility;
+    private transient int passiveInfoVisibility;
+    private transient int activeInfoVisbility;
 
-    public BottomSheetVM(List<Race> raceList) {
-        this.races = raceList;
-        raceActive = false;
-        currentRaceIndex = 0;
-        currentCheckpointIndex = 0;
-        checkpoints = new ArrayList<>();
+    /**
+     * Empty constructor because either nothing is to be loaded or everything is to be restored from deserializing.
+     */
+    public RaceVM() {
     }
 
     public void setCheckpointVM() {
@@ -47,7 +74,6 @@ public class BottomSheetVM extends BaseObservable {
     }
 
     /**
-     *
      * @return the title for the current race if a race is not active, or the checkpoints description if active
      */
     @Bindable
@@ -64,7 +90,6 @@ public class BottomSheetVM extends BaseObservable {
     }
 
     /**
-     *
      * @return the description for the current race if a race is not active, or the checkpoints description if active
      */
     @Bindable
@@ -82,6 +107,7 @@ public class BottomSheetVM extends BaseObservable {
 
     /**
      * The question for the current checkpoint or null
+     *
      * @return
      */
     @Bindable
@@ -92,7 +118,6 @@ public class BottomSheetVM extends BaseObservable {
     }
 
     /**
-     *
      * @return the possible answers for the current checkpoint or null
      */
     @Bindable
@@ -134,5 +159,34 @@ public class BottomSheetVM extends BaseObservable {
     @Bindable
     public int getActiveInfoVisibility() {
         return activeInfoVisbility;
+    }
+
+
+    /**
+     * Gets the listener for a CustomOverlayItem. Takes a {@link fr.univ_lille1.iut_info.caronic.kreasport.fragments.ExploreFragment.ExploreInteractionListener} which will be
+     * used to send the callback to whatever it's attached to
+     *
+     * @param mListener
+     * @return
+     */
+    public static ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener(final ExploreFragment.ExploreInteractionListener mListener) {
+        return new ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(final int index, final CustomOverlayItem item) {
+                Intent request = new Intent();
+
+                request.putExtra(MainActivity.CALLBACK_KEY, ExploreFragment.OVERLAY_ITEM_SELECTION);
+                request.putExtra(KEY_SELECTED_RACE, item.getRaceId());
+                request.putExtra(KEY_SELECTED_CHECKPOINT, item.getId());
+
+                mListener.onExploreInteraction(request);
+                return true;
+            }
+
+            @Override
+            public boolean onItemLongPress(final int index, final CustomOverlayItem item) {
+                return false;
+            }
+        };
     }
 }
