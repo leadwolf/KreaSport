@@ -1,9 +1,10 @@
 package com.ccaroni.kreasport.dto;
 
-/**
- * Created by Master on 04/04/2017.
- */
-public class UserDTO {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class UserDto {
+    final static Logger logger = LoggerFactory.getLogger(UserDto.class);
     private String name;
     private String alias;
     private int id = 0;
@@ -49,4 +50,5 @@ public class UserDTO {
     public void setAlias(String alias) {
         this.alias = alias;
     }
+
 }
