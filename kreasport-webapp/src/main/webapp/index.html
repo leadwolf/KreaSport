@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Jersey Skeleton</title>
+    <meta charset='utf-8'>
+    <!-- jQuery -->
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+    <!-- Code local -->
+    <script src="all.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Javascript (Single Page Application)</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <h1>Utilisateur :</h1>
+                <input type="text" name="userdb" id="user" placeholder="Nom ?" class="form-control"/>
+                <input type="text" name="user" id="alias" placeholder="Surnom ?" class="form-control"/>
+                <input type="text" name="email" id="email" placeholder="Email ?" class="form-control"/>
+                <input type="password" name="user" id="passwd" placeholder="Mot de passe ?" class="form-control"/>
+            </div>
+            <div class="btn-group" role="group">
+                <button type="button" id="get" class="btn btn-default">Lire</button>
+                <button type="button" id="post" class="btn btn-primary">Sauver</button>
+                <button type="button" id="list" class="btn btn-warning">Lister</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h1>S'identifier :</h1>
+            <div id="login_form">
+                <input type="text" name="user" id="userlogin" placeholder="Login" class="form-control"/>
+                <input type="password" name="password" id="passwdlogin" placeholder="Password" class="form-control"/>
+                <br/>
+                <button id="login" class="btn btn-default">Login</button>
+                <br/>
+            </div>
+            <button id="profile" class="btn btn-default">Profile</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+    </div>
+    <div class="row" style="margin-top: 1em;">
+        <div class="panel panel-info">
+            <div class="panel-heading">Réponse</div>
+            <div class="panel-body" id="reponse">
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+			$(document).ready(function() {
+				$("#get").click(function () {
+				    getUser($('#user').val(), $('#alias').val())
+				    });
+				$("#post").click(function () {
+                    postUser(
+                        $('#user').val(),
+                        $('#alias').val(),
+                        $('#email').val(),
+                        $('#passwd').val())});
+				$("#list").click(function () {
+				    listUsers()
+				    });
+				$("#login").click(function () {
+				    login();
+				    });
+				$("#profile").click(function () {
+				    profile()
+				    });
+			});
+
+    </script>
+</body>
+</html>
