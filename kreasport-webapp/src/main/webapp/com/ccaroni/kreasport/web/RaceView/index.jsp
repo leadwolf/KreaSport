@@ -13,10 +13,12 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6 col-md-offset-3">
-          <h1>List of checkpoints</h1>
-          <ul class="list-group">
+          <h1>List of races</h1>
+          <ul id="raceList" class="list-group">
             <c:forEach var="item" items="${it}">
-            <li class="list-group-item">${item} </li>
+                <li class="list-group-item">
+                    <pre>${item}</pre>
+                </li>
             </c:forEach>
           </ul>
         </div>

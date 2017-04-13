@@ -19,7 +19,6 @@ public class DatastoreFactory {
     public static Datastore getDB(boolean test) {
         if (client == null) {
             String MONGO_URI = System.getenv("MONGO_URI");
-            logger.info("uri = " + MONGO_URI);
             MongoClientURI uri = new MongoClientURI(MONGO_URI);
             client = new MongoClient(uri);
         }

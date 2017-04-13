@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.rest;
+package com.ccaroni.kreasport.rest.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
