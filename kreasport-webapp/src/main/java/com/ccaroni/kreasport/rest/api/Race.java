@@ -5,6 +5,8 @@ import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,24 +16,28 @@ import java.util.List;
 public class Race extends BasePoint {
 
     @Id
-    ObjectId id;
+    private String id;
 
     @Embedded
-    List<Checkpoint> checkpoints;
+    private List<Checkpoint> checkpoints;
+
+    private static int dummyIndex = 0;
 
     public Race() {
+        id = new ObjectId().toString();
     }
 
-    public Race(String title, String description, List<Checkpoint> checkpoints) {
-        super(title, description);
+    public Race(String title, String description, double latitude, double longitude, List<Checkpoint> checkpoints) {
+        super(title, description, latitude, longitude);
+        id = new ObjectId().toString();
         this.checkpoints = checkpoints;
     }
 
-    public ObjectId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -50,4 +56,14 @@ public class Race extends BasePoint {
     public void insertCheckpointAtIndex(Checkpoint checkpoint, int index) {
         checkpoints.add(index, checkpoint);
     }
+
+    public static Race getDummyRace() {
+        List<Checkpoint> dummyCheckpointList = new ArrayList<>();
+        dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 0, 0,
+                Arrays.asList("First Question", "Second Question")));
+        dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 0, 0,
+                Arrays.asList("First Question", "Second Question")));
+        return new Race("Dummy Race Title " + dummyIndex, "Dummy Race Description " + dummyIndex, 0, 0, dummyCheckpointList);
+    }
+
 }

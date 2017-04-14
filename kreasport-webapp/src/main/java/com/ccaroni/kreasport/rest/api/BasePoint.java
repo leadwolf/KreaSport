@@ -1,22 +1,30 @@
 package com.ccaroni.kreasport.rest.api;
 
+import org.mongodb.morphia.annotations.Property;
+
 /**
  * Created by Master on 04/04/2017.
  */
 public class BasePoint {
 
+    @Property
     String title;
+    @Property
     String description;
+    @Property
     double latitude;
+    @Property
     double longitude;
-
-    public BasePoint(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
 
     public BasePoint() {
 
+    }
+
+    public BasePoint(String title, String description, double latitude, double longitude) {
+        this.title = title;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getTitle() {
