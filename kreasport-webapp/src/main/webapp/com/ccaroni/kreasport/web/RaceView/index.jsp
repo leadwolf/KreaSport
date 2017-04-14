@@ -6,9 +6,14 @@
   <head>
     <jsp:include page="/layout/head.jsp"/>
     <meta charset="utf-8">
-    <title>Liste des "User"</title>
+    <title>All races</title>
   </head>
   <body>
+      <script type='text/javascript'>
+        <c:set var="raceListJSTL" value="${it}"/>
+        var raceListString = '<c:out value="${raceListJSTL}"/>';
+        var jsonObject = JSON.parse(jsonData);
+      </script>
     <jsp:include page="/layout/navbar.jsp"/>
     <div class="container">
       <div class="row">

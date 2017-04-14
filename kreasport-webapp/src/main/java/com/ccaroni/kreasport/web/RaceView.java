@@ -27,7 +27,6 @@ public class RaceView {
     private static RaceDAO dao = new RaceDAO(false);
 
     public RaceView() {
-        dao.getCollection().drop();
         if (dao.find().asList().size() == 0) {
             dao.save(Race.getDummyRace());
             dao.save(Race.getDummyRace());
