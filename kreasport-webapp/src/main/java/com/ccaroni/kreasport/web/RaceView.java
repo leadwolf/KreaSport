@@ -1,13 +1,14 @@
 package com.ccaroni.kreasport.web;
 
 import com.ccaroni.kreasport.rest.api.Race;
-import com.ccaroni.kreasport.rest.db.RaceDAO;
+import com.ccaroni.kreasport.rest.db.RaceRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.glassfish.jersey.server.mvc.ErrorTemplate;
 import org.glassfish.jersey.server.mvc.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -24,13 +25,14 @@ public class RaceView {
 
     final static Logger logger = LoggerFactory.getLogger(RaceView.class);
 
-    private static RaceDAO dao = new RaceDAO(false);
+    @Autowired
+    private static RaceRepository raceRepository;
 
     public RaceView() {
-        if (dao.find().asList().size() == 0) {
-            dao.save(Race.getDummyRace());
-            dao.save(Race.getDummyRace());
-
+        if (raceRepository.count() == 0) {
+            for (Race race : Race.getDummyRaces(2)) {
+                raceRepository.save(race);
+            }
             logger.info("No races, added dummy races");
         }
     }
@@ -39,7 +41,7 @@ public class RaceView {
     @Template
     @ErrorTemplate(name = "/error-form")
     public List<String> getAll() {
-        List<Race> raceList = dao.getAllRaces();
+        List<Race> raceList = raceRepository.findAll();
         List<String> jsonList = new ArrayList<>();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         for (Race race : raceList) {
@@ -53,6 +55,6 @@ public class RaceView {
     @Path("/{id}")
     @ErrorTemplate(name = "/error-form")
     public Race specificCheckpoint(@PathParam("id") String id) {
-        return dao.getRacesByQuery("id", id).get(0);
+        return raceRepository.findOne(id);
     }
 }

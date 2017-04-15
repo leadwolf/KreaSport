@@ -1,9 +1,9 @@
 package com.ccaroni.kreasport.rest.api;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Embedded;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,15 +12,14 @@ import java.util.List;
 /**
  * Created by Master on 13/04/2017.
  */
-@Entity
+@Document
 public class Race extends BasePoint {
 
     @Id
     private String id;
-
-    @Embedded
     private List<Checkpoint> checkpoints;
 
+    @Transient
     private static int dummyIndex = 0;
 
     public Race() {
@@ -57,13 +56,18 @@ public class Race extends BasePoint {
         checkpoints.add(index, checkpoint);
     }
 
-    public static Race getDummyRace() {
-        List<Checkpoint> dummyCheckpointList = new ArrayList<>();
-        dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 0, 0,
-                Arrays.asList("First Question", "Second Question")));
-        dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 0, 0,
-                Arrays.asList("First Question", "Second Question")));
-        return new Race("Dummy Race Title " + dummyIndex, "Dummy Race Description " + dummyIndex, 0, 0, dummyCheckpointList);
+    public static ArrayList<Race> getDummyRaces(int count) {
+        ArrayList<Race> dummyRaces = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            List<Checkpoint> dummyCheckpointList = new ArrayList<>();
+            dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 0, 0,
+                    Arrays.asList("First Question", "Second Question")));
+            dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 0, 0,
+                    Arrays.asList("First Question", "Second Question")));
+            dummyRaces.add(new Race("Dummy Race Title " + dummyIndex, "Dummy Race Description " + dummyIndex, 0, 0, dummyCheckpointList));
+            dummyIndex++;
+        }
+        return dummyRaces;
     }
 
 }

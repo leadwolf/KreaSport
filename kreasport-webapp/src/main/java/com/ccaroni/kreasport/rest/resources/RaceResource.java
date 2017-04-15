@@ -1,15 +1,14 @@
 package com.ccaroni.kreasport.rest.resources;
 
-import com.ccaroni.kreasport.rest.api.Checkpoint;
 import com.ccaroni.kreasport.rest.api.Race;
-import com.ccaroni.kreasport.rest.db.RaceDAO;
+import com.ccaroni.kreasport.rest.db.RaceRepository;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,28 +19,28 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class RaceResource {
 
-    private static RaceDAO dao = new RaceDAO(false);
+    @Autowired
+    private static RaceRepository raceRepository;
 
     final static Logger logger = LoggerFactory.getLogger(RaceResource.class);
 
     public RaceResource() {
-        if (dao.find().asList().size() == 0) {
-            List<Checkpoint> dummyCheckpointList = new ArrayList<>();
-            dao.save(Race.getDummyRace());
-            dao.save(Race.getDummyRace());
-
+        if (raceRepository.count() == 0) {
+            for (Race race : Race.getDummyRaces(2)) {
+                raceRepository.save(race);
+            }
             logger.info("No races, added dummy races");
         }
     }
 
     @POST
     public void createRace(Race race) {
-        dao.save(race);
+        raceRepository.save(race);
     }
 
     @GET
     public List<Race> getAllRaces() {
-        return dao.getAllRaces();
+        return raceRepository.findAll();
     }
 
     @GET
@@ -52,18 +51,13 @@ public class RaceResource {
         } catch (IllegalArgumentException e) {
             return null;
         }
-        return dao.getRaceById(new ObjectId(id));
+        return raceRepository.findOne(id);
     }
 
     @DELETE
     @Path("{id}")
     public void deleteRace(@PathParam("id") String id) {
-        try {
-            ObjectId objectId = new ObjectId("id");
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-        dao.remove(dao.getRaceById(new ObjectId(id)));
+        raceRepository.delete(id);
     }
 
 }

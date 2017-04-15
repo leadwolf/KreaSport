@@ -1,9 +1,7 @@
 package com.ccaroni.kreasport.rest.api;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Embedded;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Property;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -14,9 +12,7 @@ public class Checkpoint extends BasePoint {
 
     @Id
     private String id;
-    @Property
     private String question;
-    @Embedded
     private List<String> possiblePossibleAnswers;
 
     public Checkpoint() {

@@ -1,19 +1,14 @@
 package com.ccaroni.kreasport.rest.api;
 
-import org.mongodb.morphia.annotations.Property;
 
 /**
  * Created by Master on 04/04/2017.
  */
 public class BasePoint {
 
-    @Property
     String title;
-    @Property
     String description;
-    @Property
     double latitude;
-    @Property
     double longitude;
 
     public BasePoint() {
@@ -57,6 +52,10 @@ public class BasePoint {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public double[] getLocation() {
+        return new double[]{latitude, longitude};
     }
 
 }
