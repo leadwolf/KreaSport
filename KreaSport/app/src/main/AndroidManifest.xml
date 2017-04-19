@@ -15,28 +15,36 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.ccaroni.kreasport.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
-            android:name="com.ccaroni.kreasport.activities.HomeActivity"
+            android:name=".activities.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
-            android:name="com.ccaroni.kreasport.activities.ExploreActivity"
+            android:name=".activities.ExploreActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
-            android:theme="@style/AppTheme.NoActionBar"
-            android:name="com.ccaroni.kreasport.activities.WelcomeActivity">
+            android:name=".activities.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".activities.SignupActivity">
+        </activity>
+        <activity android:name=".activities.ResetPasswordActivity">
+        </activity>
+        <activity android:name=".activities.LoginActivity">
+        </activity>
+        <activity android:name=".activities.ProfileActivity">
         </activity>
     </application>
 
