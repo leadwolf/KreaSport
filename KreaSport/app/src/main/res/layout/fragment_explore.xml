@@ -5,7 +5,7 @@
 
         <variable
             name="bottomSheetVM"
-            type="fr.univ_lille1.iut_info.caronic.kreasport.map.viewmodels.RaceVM"/>
+            type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
     </data>
 
 
