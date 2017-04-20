@@ -2,6 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <variable
+            name="profileVM"
+            type="com.ccaroni.kreasport.user.ProfileVM"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

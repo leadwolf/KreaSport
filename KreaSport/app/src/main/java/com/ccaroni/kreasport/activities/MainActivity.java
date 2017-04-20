@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
 
     protected static final String LOG = MainActivity.class.getSimpleName();
 
-    public static final String CALLBACK_KEY = "kreasport.frag_request.reason";
+    public static final String CALLBACK_KEY = "kreasport.activity_main.frag_request.reason";
     private static final java.lang.String KEY_CURRENT_ACTIVITY_INDEX = "kreasport.savedinstancestate.current_frag_index";
 
     protected static final String TAG_HOME = "kreasport.tag.home";

@@ -1,15 +1,12 @@
 package com.ccaroni.kreasport.activities;
 
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.ProfileFragment;
 
-import static com.ccaroni.kreasport.R.id.progressBar;
-
-public class ProfileActivity extends MainActivity implements ProfileFragment.ProfileInteractionListener {
+public class ProfileActivity extends MainActivity {
 
     private static final String TAG_PROFILE = "kreasport.tag_profile";
 
@@ -37,8 +34,4 @@ public class ProfileActivity extends MainActivity implements ProfileFragment.Pro
         setCurrentActivityIndex(2);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }
