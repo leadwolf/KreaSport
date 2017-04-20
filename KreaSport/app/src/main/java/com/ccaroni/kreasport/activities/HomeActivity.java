@@ -30,9 +30,14 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        navigationView.getMenu().getItem(0).setChecked(true);
-
         setupFragments();
+    }
+
+    @Override
+    protected void onResume() {
+        resetNavigationDrawer(navigationView.getMenu().getItem(0));
+        setCurrentActivityIndex(0);
+        super.onResume();
     }
 
     private void setupFragments() {

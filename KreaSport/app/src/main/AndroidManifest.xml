@@ -15,6 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activities.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Dark">
@@ -27,16 +36,12 @@
         <activity
             android:name=".activities.ExploreActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+            android:theme="@style/AppTheme.Dark"
+            android:parentActivityName=".activities.HomeActivity" >
+            <!-- The meta-data element is needed for versions lower than 4.1 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.HomeActivity" />>
         </activity>
         <activity android:name=".activities.SignupActivity"
                   android:theme="@style/AppTheme.Dark">
@@ -49,8 +54,13 @@
         </activity>
         <activity
             android:name=".activities.ProfileActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
+            android:theme="@style/AppTheme.Dark"
+            android:parentActivityName=".activities.HomeActivity" >
+            <!-- The meta-data element is needed for versions lower than 4.1 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.HomeActivity" />>
+        </activity>>
     </application>
 
 </manifest>

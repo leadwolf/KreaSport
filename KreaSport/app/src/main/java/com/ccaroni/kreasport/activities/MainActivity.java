@@ -17,8 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import org.osmdroid.util.GeoPoint;
-
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityMainBinding;
 import com.ccaroni.kreasport.fragments.BottomSheetFragment;
@@ -26,6 +24,8 @@ import com.ccaroni.kreasport.fragments.ExploreFragment;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.map.models.MapOptions;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
+
+import org.osmdroid.util.GeoPoint;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -60,11 +60,10 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        restoreCurrentActivityIndex();
     }
 
-    private void restoreCurrentActivityIndex() {
-        currentActivityIndex = getIntent().getIntExtra(KEY_CURRENT_ACTIVITY_INDEX, -1);
+    protected void setCurrentActivityIndex(int index) {
+        currentActivityIndex = index;
     }
 
     @Override
@@ -88,11 +87,13 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_settings:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -124,12 +125,13 @@ public class MainActivity extends AppCompatActivity
 
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
-                currentActivityIndex = 0;
                 activityIntent = new Intent(this, HomeActivity.class);
                 break;
             case R.id.nav_explore:
-                currentActivityIndex = 1;
                 activityIntent = new Intent(this, ExploreActivity.class);
+                break;
+            case R.id.nav_profile:
+                activityIntent = new Intent(this, ProfileActivity.class);
                 break;
             case R.id.nav_share:
                 break;
@@ -140,7 +142,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (activityIntent != null) {
-            activityIntent.putExtra(KEY_CURRENT_ACTIVITY_INDEX, currentActivityIndex);
             completeDrawerAction(menuItem, activityIntent);
         }
     }
@@ -164,6 +165,11 @@ public class MainActivity extends AppCompatActivity
         setTitle(menuItem.getTitle());
 
         startActivity(activityIntent);
+    }
+
+    protected void resetNavigationDrawer(MenuItem item) {
+        item.setChecked(true);
+        setTitle(item.getTitle());
     }
 
     /**

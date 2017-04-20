@@ -2,6 +2,7 @@ package com.ccaroni.kreasport.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.BottomSheetFragment;
@@ -29,9 +30,14 @@ public class ExploreActivity extends MainActivity implements ExploreFragment.Exp
         preferenceManager = new PreferenceManager(this, ExploreActivity.class.getSimpleName());
         restoreRaceVM();
 
-        navigationView.getMenu().getItem(1).setChecked(true);
-
         setupFragments();
+    }
+
+    @Override
+    protected void onResume() {
+        resetNavigationDrawer(navigationView.getMenu().getItem(1));
+        setCurrentActivityIndex(1);
+        super.onResume();
     }
 
 
