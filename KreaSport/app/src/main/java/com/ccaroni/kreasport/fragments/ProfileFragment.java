@@ -90,6 +90,7 @@ public class ProfileFragment extends Fragment {
                 }
             }
         };
+        auth.addAuthStateListener(authListener);
 
         btnChangeEmail = (Button) root.findViewById(R.id.change_email_button);
         btnChangePassword = (Button) root.findViewById(R.id.change_password_button);
