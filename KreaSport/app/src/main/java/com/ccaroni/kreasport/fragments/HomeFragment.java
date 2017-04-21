@@ -145,7 +145,7 @@ public class HomeFragment extends Fragment {
             mListener = (HomeInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement ProfileInteractionListener");
+                    + " must implement HomeInteractionListener");
         }
     }
 

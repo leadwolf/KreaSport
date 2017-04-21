@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.ProfileFragment;
 
-public class ProfileActivity extends MainActivity {
+public class ProfileActivity extends MainActivity implements ProfileFragment.ProfileInteractionListener {
 
     private static final String TAG_PROFILE = "kreasport.tag_profile";
 
@@ -19,7 +19,7 @@ public class ProfileActivity extends MainActivity {
     }
 
     private void setupFragment() {
-        ProfileFragment profileFragment = ProfileFragment.newInstance("", "");
+        ProfileFragment profileFragment = ProfileFragment.newInstance();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -34,4 +34,28 @@ public class ProfileActivity extends MainActivity {
         setCurrentActivityIndex(2);
     }
 
+    @Override
+    public void onExploreInteraction(Intent requestIntent) {
+        if (requestIntent == null) {
+            throw new NullPointerException("Request intent should not be null");
+        }
+
+        String requestCode = requestIntent.getStringExtra(CALLBACK_KEY);
+        if (requestCode == null) {
+            return;
+        }
+
+        switch (requestCode) {
+            case ProfileFragment.LAUNCH_LOGIN:
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                break;
+            case ProfileFragment.PROFILE_DELETED:
+                startActivity(new Intent(this, SignupActivity.class));
+                finish();
+                break;
+            default:
+                break;
+        }
+    }
 }

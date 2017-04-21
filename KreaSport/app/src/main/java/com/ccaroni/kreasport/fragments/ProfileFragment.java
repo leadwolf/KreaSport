@@ -2,8 +2,6 @@ package com.ccaroni.kreasport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -13,10 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.databinding.FragmentProfileBinding;
-import com.ccaroni.kreasport.user.ProfileVM;
+import com.ccaroni.kreasport.activities.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,15 +23,18 @@ import com.google.firebase.auth.FirebaseUser;
 public class ProfileFragment extends Fragment {
 
     public static final String CHANGE_EMAIL = "kreasport.fragment_home.request_reason.change_email";
-    ;
+    public static final String LAUNCH_LOGIN = "kreasport.fragment_profile.request_code.launch_login";
+    public static final String PROFILE_DELETED = "kreasport.fragment_profile.request_code.profile_deleted";
 
 
     private Button btnChangeEmail, btnChangePassword, btnSendResetEmail, btnRemoveUser,
             changeEmail, changePassword, sendEmail, remove, signOut;
-
     private EditText oldEmail, newEmail, password, newPassword;
     private ProgressBar progressBar;
+    private FirebaseAuth.AuthStateListener authListener;
+    private FirebaseAuth auth;
 
+    private ProfileInteractionListener mListener;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -70,9 +71,25 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        FragmentProfileBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false);
-        ProfileVM profileVM = new ProfileVM(getActivity());
-        binding.setProfileVM(profileVM);
+        //get firebase auth instance
+        auth = FirebaseAuth.getInstance();
+
+        //get current user
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    // user auth state is changed - user is null
+                    // launch login activity
+                    Intent intent = new Intent();
+                    intent.putExtra(MainActivity.CALLBACK_KEY, LAUNCH_LOGIN);
+                    mListener.onExploreInteraction(intent);
+                }
+            }
+        };
 
         btnChangeEmail = (Button) root.findViewById(R.id.change_email_button);
         btnChangePassword = (Button) root.findViewById(R.id.change_password_button);
@@ -128,11 +145,11 @@ public class ProfileFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-//                                        Toast.makeText(ProfileActivity.this, "Email address is updated. Please sign in with new email id!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), "Email address is updated. Please sign in with new email id!", Toast.LENGTH_LONG).show();
                                         signOut();
                                         progressBar.setVisibility(View.GONE);
                                     } else {
-//                                        Toast.makeText(ProfileActivity.this, "Failed to update email!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), "Failed to update email!", Toast.LENGTH_LONG).show();
                                         progressBar.setVisibility(View.GONE);
                                     }
                                 }
@@ -172,11 +189,11 @@ public class ProfileFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-//                                            Toast.makeText(ProfileActivity.this, "Password is updated, sign in with new password!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(), "Password is updated, sign in with new password!", Toast.LENGTH_SHORT).show();
                                             signOut();
                                             progressBar.setVisibility(View.GONE);
                                         } else {
-//                                            Toast.makeText(ProfileActivity.this, "Failed to update password!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(), "Failed to update password!", Toast.LENGTH_SHORT).show();
                                             progressBar.setVisibility(View.GONE);
                                         }
                                     }
@@ -213,10 +230,10 @@ public class ProfileFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-//                                        Toast.makeText(ProfileActivity.this, "Reset password email is sent!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Reset password email is sent!", Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
                                     } else {
-//                                        Toast.makeText(ProfileActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Failed to send reset email!", Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
                                     }
                                 }
@@ -238,12 +255,14 @@ public class ProfileFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-//                                        Toast.makeText(ProfileActivity.this, "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show();
-//                                        startActivity(new Intent(ProfileActivity.this, SignupActivity.class));
-//                                        finish();
+                                        Toast.makeText(getContext(), "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
+
+                                        Intent intent = new Intent();
+                                        intent.putExtra(MainActivity.CALLBACK_KEY, PROFILE_DELETED);
+                                        mListener.onExploreInteraction(intent);
                                     } else {
-//                                        Toast.makeText(ProfileActivity.this, "Failed to delete your account!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Failed to delete your account!", Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
                                     }
                                 }
@@ -258,8 +277,6 @@ public class ProfileFragment extends Fragment {
                 signOut();
             }
         });
-
-        progressBar.setVisibility(View.GONE);
 
         return root;
     }
@@ -281,5 +298,26 @@ public class ProfileFragment extends Fragment {
         if (authListener != null) {
             auth.removeAuthStateListener(authListener);
         }
+    }
+
+    public interface ProfileInteractionListener {
+        void onExploreInteraction(Intent requestIntent);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof ProfileInteractionListener) {
+            mListener = (ProfileInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement ProfileInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 }

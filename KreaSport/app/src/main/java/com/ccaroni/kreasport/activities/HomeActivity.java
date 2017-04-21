@@ -17,6 +17,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.other.Constants;
 import com.ccaroni.kreasport.volley.VolleySingleton;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Created by Master on 02/04/2017.
@@ -24,10 +25,19 @@ import com.ccaroni.kreasport.volley.VolleySingleton;
 
 public class HomeActivity extends MainActivity implements HomeFragment.HomeInteractionListener {
 
-
+    private static final String LOG = HomeActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Log.d(LOG, "no user logged in, launching login activity");
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        } else {
+            Log.d(LOG, "user already logged in:" + FirebaseAuth.getInstance().getCurrentUser().toString());
+        }
+
         super.onCreate(savedInstanceState);
 
         setupFragments();
