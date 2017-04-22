@@ -19,9 +19,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.ccaroni.kreasport.activities.MainActivity.LOG;
-import static com.ccaroni.kreasport.fragments.ProfileFragment.LAUNCH_LOGIN;
-
 public class SignupActivity extends AppCompatActivity {
 
     private static final String LOG = SignupActivity.class.getSimpleName();
@@ -71,12 +68,8 @@ public class SignupActivity extends AppCompatActivity {
                     // User is signed in
                     // NOTE: this Activity should get onpen only when the user is not signed in, otherwise
                     // the user will receive another verification email.
-                    sendVerificationEmail();
-                } else {
-                    // User is signed out
-
+                    sendVerificationEmail(user);
                 }
-                // ...
             }
         };
         auth.addAuthStateListener(authListener);
@@ -128,26 +121,23 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private void sendVerificationEmail() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
+    private void sendVerificationEmail(FirebaseUser user) {
         user.sendEmailVerification()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            // email sent
-
+                            Log.d(LOG, "sent verifcation email");
                             Toast.makeText(SignupActivity.this, "Please verify your account before logging in", Toast.LENGTH_SHORT).show();
 
                             // after email is sent just logout the user and finish this activity
                             FirebaseAuth.getInstance().signOut();
+                            auth.removeAuthStateListener(authListener); // finishing activity so remove the listener created in here
                             startActivity(new Intent(SignupActivity.this, LoginActivity.class));
                             finish();
-                            auth.removeAuthStateListener(authListener);
                             return;
                         } else {
-                            // email not sent, so display message and restart the activity or do whatever you wish to do
+                            Log.d(LOG, "error sending verifcation email");
 
                             //restart this activity
                             overridePendingTransition(0, 0);

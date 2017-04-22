@@ -2,11 +2,14 @@ package com.ccaroni.kreasport.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.ProfileFragment;
 
 public class ProfileActivity extends MainActivity implements ProfileFragment.ProfileInteractionListener {
+
+    private static final String LOG = ProfileActivity.class.getSimpleName();
 
     private static final String TAG_PROFILE = "kreasport.tag_profile";
 
@@ -45,13 +48,22 @@ public class ProfileActivity extends MainActivity implements ProfileFragment.Pro
             return;
         }
 
+        Intent intent = null;
         switch (requestCode) {
             case ProfileFragment.LAUNCH_LOGIN:
-                startActivity(new Intent(this, LoginActivity.class));
+                intent = new Intent(this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                Log.d(LOG, "cleared activity stack");
+                Log.d(LOG, "signed out, launching login");
+                startActivity(intent);
                 finish();
                 break;
             case ProfileFragment.PROFILE_DELETED:
-                startActivity(new Intent(this, SignupActivity.class));
+                intent = new Intent(this, SignupActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
                 finish();
                 break;
             default:

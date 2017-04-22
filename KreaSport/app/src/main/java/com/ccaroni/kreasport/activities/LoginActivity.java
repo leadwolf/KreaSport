@@ -1,11 +1,12 @@
 package com.ccaroni.kreasport.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private final static String LOG = LoginActivity.class.getSimpleName();
 
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
@@ -115,18 +117,17 @@ public class LoginActivity extends AppCompatActivity {
 
         if (user != null && user.isEmailVerified())
         {
-            // user is verified, so you can finish this activity or send user to activity which you want.
+            Log.d(LOG, "Successfully logged in");
             Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
             finish();
-            Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
+            return;
         } else if (user != null && !user.isEmailVerified()) {
-            // email is not verified, so just prompt the message to the user and restart this activity.
-            // NOTE: don't forget to log out the user.
             FirebaseAuth.getInstance().signOut();
+            Log.d(LOG, "Email hasn't been verified");
             Toast.makeText(this, "You didn't verify your account", Toast.LENGTH_SHORT).show();
-
-            //restart this activity
 
         }
     }

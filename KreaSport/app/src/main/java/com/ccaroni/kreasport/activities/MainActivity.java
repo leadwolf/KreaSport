@@ -30,7 +30,7 @@ import org.osmdroid.util.GeoPoint;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    protected static final String LOG = MainActivity.class.getSimpleName();
+    private static final String LOG = MainActivity.class.getSimpleName();
 
     public static final String CALLBACK_KEY = "kreasport.activity_main.frag_request.reason";
     private static final java.lang.String KEY_CURRENT_ACTIVITY_INDEX = "kreasport.savedinstancestate.current_frag_index";
@@ -126,6 +126,8 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
                 activityIntent = new Intent(this, HomeActivity.class);
+                activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                activityIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 break;
             case R.id.nav_explore:
                 activityIntent = new Intent(this, ExploreActivity.class);
@@ -165,6 +167,7 @@ public class MainActivity extends AppCompatActivity
         setTitle(menuItem.getTitle());
 
         startActivity(activityIntent);
+        finish();
     }
 
     protected void resetNavigationDrawer(MenuItem item) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.activities.LoginActivity;
 import com.ccaroni.kreasport.activities.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +24,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment {
 
-    public static final String CHANGE_EMAIL = "kreasport.fragment_home.request_reason.change_email";
+    private static final String LOG = ProfileFragment.class.getSimpleName();
+
     public static final String LAUNCH_LOGIN = "kreasport.fragment_profile.request_code.launch_login";
     public static final String PROFILE_DELETED = "kreasport.fragment_profile.request_code.profile_deleted";
 
@@ -31,7 +34,6 @@ public class ProfileFragment extends Fragment {
             changeEmail, changePassword, sendEmail, remove, signOut;
     private EditText oldEmail, newEmail, password, newPassword;
     private ProgressBar progressBar;
-    private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
 
     private ProfileInteractionListener mListener;
@@ -76,21 +78,6 @@ public class ProfileFragment extends Fragment {
 
         //get current user
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        authListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user == null) {
-                    // user auth state is changed - user is null
-                    // launch login activity
-                    Intent intent = new Intent();
-                    intent.putExtra(MainActivity.CALLBACK_KEY, LAUNCH_LOGIN);
-                    mListener.onExploreInteraction(intent);
-                }
-            }
-        };
-        auth.addAuthStateListener(authListener);
 
         btnChangeEmail = (Button) root.findViewById(R.id.change_email_button);
         btnChangePassword = (Button) root.findViewById(R.id.change_password_button);
@@ -285,20 +272,13 @@ public class ProfileFragment extends Fragment {
     //sign out method
     public void signOut() {
         auth.signOut();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        auth.addAuthStateListener(authListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (authListener != null) {
-            auth.removeAuthStateListener(authListener);
-        }
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        Log.d(LOG, "cleared activity stack");
+        Log.d(LOG, "signed out, launching login");
+        startActivity(intent);
+        getActivity().finish();
     }
 
     public interface ProfileInteractionListener {
