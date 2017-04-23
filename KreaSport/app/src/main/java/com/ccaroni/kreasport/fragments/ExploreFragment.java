@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +33,6 @@ import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ExploreInteractionListener} interface
- * to handle interaction events.
  * Use the {@link ExploreFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -61,8 +59,6 @@ public class ExploreFragment extends Fragment {
 
     private ItemizedOverlayWithFocus<CustomOverlayItem> ongoingRaceOverlay;
     private ItemizedOverlayWithFocus<CustomOverlayItem> raceListOverlay;
-
-    private ExploreInteractionListener mListener;
 
     private List<Race> raceList;
     private RaceVM raceVM;
@@ -145,12 +141,16 @@ public class ExploreFragment extends Fragment {
      * Creates the overlays for the current race and all the races
      */
     private void initRaceOverlays() {
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
 
-        // TODO add switch to verify which overlay to add
+        if (raceVM.isRaceActive()) {
+            initOngoingRaceOverlay(itemGestureListener);
+            Log.d(LOG, "race is active, initializing its overlay");
+        } else {
+            initRaceListOverlay(itemGestureListener);
+            Log.d(LOG, "no race active, initializing overlay for all races");
+        }
 
-        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = RaceVM.getIconGestureListener(mListener);
-        initRaceListOverlay(itemGestureListener);
-        initOngoingRaceOverlay(itemGestureListener);
     }
 
     /**
@@ -159,8 +159,13 @@ public class ExploreFragment extends Fragment {
     private void initRaceListOverlay(ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener) {
 
         // TODO get the races from the VM
+        List<CustomOverlayItem> raceAsOverlay = new ArrayList<>();
 
-        raceListOverlay = new ItemizedOverlayWithFocus<>(new ArrayList<CustomOverlayItem>(), itemGestureListener, getActivity());
+        for (Race race : raceVM.getRaces()) {
+            raceAsOverlay.add(race.toCustomOverlayItem());
+        }
+
+        raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, getActivity());
         raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
@@ -203,28 +208,6 @@ public class ExploreFragment extends Fragment {
      */
     private void restoreState() {
         mMapVM = preferenceManager.getMapState();
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ExploreInteractionListener) {
-            mListener = (ExploreInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement ExploreInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface ExploreInteractionListener {
-        void onExploreInteraction(Intent requestIntent);
     }
 
 }

@@ -1,6 +1,8 @@
 package com.ccaroni.domain;
 
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
 /**
@@ -8,13 +10,15 @@ import org.springframework.data.annotation.Transient;
  */
 public class BasePoint {
 
+    @Id
+    String id;
     String title;
     String description;
     double latitude;
     double longitude;
 
     public BasePoint() {
-
+        id = new ObjectId().toString();
     }
 
     public BasePoint(String title, String description, double latitude, double longitude) {
@@ -22,6 +26,14 @@ public class BasePoint {
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {

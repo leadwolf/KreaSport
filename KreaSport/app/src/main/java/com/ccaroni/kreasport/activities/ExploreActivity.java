@@ -15,7 +15,7 @@ import com.ccaroni.kreasport.other.PreferenceManager;
  * Created by Master on 02/04/2017.
  */
 
-public class ExploreActivity extends MainActivity implements ExploreFragment.ExploreInteractionListener, BottomSheetFragment.BottomSheetInteractionListener{
+public class ExploreActivity extends MainActivity implements BottomSheetFragment.BottomSheetInteractionListener{
 
     private ExploreFragment exploreFragemnt;
     private BottomSheetFragment bottomSheetFragment;
@@ -76,29 +76,6 @@ public class ExploreActivity extends MainActivity implements ExploreFragment.Exp
      */
     private void restoreRaceVM() {
         raceVM = preferenceManager.getRaceVM();
-    }
-
-    @Override
-    public void onExploreInteraction(Intent requestIntent) {
-        if (requestIntent == null) {
-            throw new NullPointerException("Request intent should not be null");
-        }
-
-        String requestCode = requestIntent.getStringExtra(CALLBACK_KEY);
-        if (requestCode == null) {
-            return;
-        }
-
-        switch (requestCode) {
-            case ExploreFragment.OVERLAY_ITEM_SELECTION:
-                int raceIndex = requestIntent.getIntExtra(ExploreFragment.KEY_SELECTED_RACE, -1);
-                int checkpointIndex = requestIntent.getIntExtra(ExploreFragment.KEY_SELECTED_CHECKPOINT, -1);
-                if (raceIndex != -1 && checkpointIndex != -1)
-                    raceVM.updateCurrentIndexes(raceIndex, checkpointIndex);
-            default:
-                break;
-        }
-
     }
 
     @Override

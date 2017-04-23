@@ -57,7 +57,7 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
 
         setupFragments();
 
-        raceService = ApiUtils.getRaceService();
+        raceService = ApiUtils.getRaceService(true);
         preferenceManager = new PreferenceManager(this, HomeActivity.class.getSimpleName());
     }
 

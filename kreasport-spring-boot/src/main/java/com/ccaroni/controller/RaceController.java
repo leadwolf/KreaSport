@@ -41,7 +41,7 @@ public class RaceController {
     @RequestMapping(method = GET)
     public List<Race> all() {
         if (raceRepository.count() == 0) {
-            for (Race race : Race.getDummyRaces(2)) {
+            for (Race race : Race.getDummyRaces()) {
                 raceRepository.save(race);
             }
             logger.info("No races, added dummy races");

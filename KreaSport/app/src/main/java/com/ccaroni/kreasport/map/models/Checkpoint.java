@@ -1,8 +1,12 @@
 package com.ccaroni.kreasport.map.models;
 
 import java.util.List;
+
+import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.osmdroid.util.GeoPoint;
 
 public class Checkpoint extends BaseItem {
 
@@ -47,5 +51,9 @@ public class Checkpoint extends BaseItem {
                 ", possibleAnswers=" + possibleAnswers +
                 ", location=" + location +
                 '}';
+    }
+
+    public CustomOverlayItem toCustomOverlayItem() {
+        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId());
     }
 }

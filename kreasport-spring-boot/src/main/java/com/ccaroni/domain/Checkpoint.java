@@ -1,8 +1,5 @@
 package com.ccaroni.domain;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-
 import java.util.List;
 
 /**
@@ -10,20 +7,16 @@ import java.util.List;
  */
 public class Checkpoint extends BasePoint {
 
-    @Id
-    private String id;
     private String question;
     private List<String> possiblePossibleAnswers;
 
-    public Checkpoint() {
-        id = new ObjectId().toString();
+    public Checkpoint(){
     }
 
     public Checkpoint(String title, String description, String question, double latitude, double longitude, List<String> possiblePossibleAnswers) {
         super(title, description, latitude, longitude);
         this.question = question;
         this.possiblePossibleAnswers = possiblePossibleAnswers;
-        id = new ObjectId().toString();
     }
 
     public String getQuestion() {

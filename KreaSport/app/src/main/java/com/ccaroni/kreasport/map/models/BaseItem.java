@@ -36,6 +36,9 @@ public abstract class BaseItem extends BaseObservable {
     }
 
     public String getId() {
+        if (id == null) {
+            return "";
+        }
         return id;
     }
 

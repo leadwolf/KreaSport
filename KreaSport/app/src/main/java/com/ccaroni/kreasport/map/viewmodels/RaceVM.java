@@ -5,12 +5,14 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.activities.MainActivity;
 import com.ccaroni.kreasport.fragments.ExploreFragment;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
@@ -61,12 +63,9 @@ public class RaceVM extends BaseObservable {
      * Empty constructor because either nothing is to be loaded or everything is to be restored from deserializing.
      */
     public RaceVM() {
-    }
-
-    public RaceVM(boolean empty) {
-        this();
         currentRaceIndex = -1;
         currentCheckpointIndex = -1;
+        raceActive = false;
     }
 
     public void setCheckpointVM() {
@@ -90,7 +89,7 @@ public class RaceVM extends BaseObservable {
             else
                 return "No title available";
         } else {
-            if (races != null && currentRaceIndex <= races.size())
+            if (races != null && currentRaceIndex >= 0 && currentRaceIndex <= races.size())
                 return races.get(currentRaceIndex).getTitle();
             else
                 return "No title available";
@@ -102,13 +101,15 @@ public class RaceVM extends BaseObservable {
      */
     @Bindable
     public String getDescription() {
+        Log.d(LOG, "get desc");
         if (raceActive) {
             if (checkpoints != null && currentCheckpointIndex < checkpoints.size())
                 return checkpoints.get(currentCheckpointIndex).getDescription();
             else
                 return "No description available";
         } else {
-            if (races != null && currentRaceIndex <= races.size())
+            Log.d(LOG, "current race index = " + currentRaceIndex);
+            if (races != null && currentRaceIndex >= 0 && currentRaceIndex <= races.size())
                 return races.get(currentRaceIndex).getDescription();
             else
                 return "No description available";
@@ -143,12 +144,37 @@ public class RaceVM extends BaseObservable {
         return "";
     }
 
-    public void updateCurrentIndexes(int raceIndex, int checkpointIndex) {
-        this.currentRaceIndex = raceIndex;
-        this.currentCheckpointIndex = checkpointIndex;
+    private void updateCurrentIndexes(String raceId, String checkpointId) {
+        this.currentRaceIndex = getIndexForRaceId(raceId);
+        this.currentCheckpointIndex = getIndexForCheckpointId(currentRaceIndex, checkpointId);
+
+        Log.d(LOG, "updated currentRaceIndex to " + currentRaceIndex);
 
         Log.d(LOG, "notified change");
         notifyChange();
+        notifyPropertyChanged(BR.description);
+    }
+
+    private int getIndexForRaceId(String raceId) {
+        for (int i = 0; i < races.size(); i++) {
+            if (races.get(i).getId().equals(raceId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getIndexForCheckpointId(int raceIndex, String checkpointId) {
+        if (raceIndex == -1) {
+            return -1;
+        }
+        Race race = races.get(currentRaceIndex);
+        for (int i = 0; i < race.getCheckpoints().size(); i++) {
+            if (race.getCheckpoints().get(i).getId().equals(checkpointId)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public boolean isRaceActive() {
@@ -172,24 +198,16 @@ public class RaceVM extends BaseObservable {
     }
 
 
-    /**
-     * Gets the listener for a CustomOverlayItem. Takes a {@link ExploreFragment.ExploreInteractionListener} which will be
-     * used to send the callback to whatever it's attached to
-     *
-     * @param mListener
-     * @return
-     */
-    public static ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener(final ExploreFragment.ExploreInteractionListener mListener) {
+    public ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener() {
         return new ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(final int index, final CustomOverlayItem item) {
-                Intent request = new Intent();
-
-                request.putExtra(MainActivity.CALLBACK_KEY, ExploreFragment.OVERLAY_ITEM_SELECTION);
-                request.putExtra(KEY_SELECTED_RACE, item.getRaceId());
-                request.putExtra(KEY_SELECTED_CHECKPOINT, item.getId());
-
-                mListener.onExploreInteraction(request);
+                Log.d(LOG, "on tap primary =" + item.isPrimary());
+                if (item.isPrimary()) {
+                    updateCurrentIndexes(item.getId(), "");
+                } else {
+                    updateCurrentIndexes(item.getRaceId(), item.getId());
+                }
                 return true;
             }
 
@@ -230,5 +248,15 @@ public class RaceVM extends BaseObservable {
             }
             Log.d(LOG, "added " + downloadedRaces.size() + " races");
         }
+    }
+
+    public Race getActiveRace() {
+        return races.get(currentRaceIndex);
+    }
+
+    public List<Race> getRaces() {
+        if (races == null)
+            return new ArrayList<Race>();
+        return races;
     }
 }

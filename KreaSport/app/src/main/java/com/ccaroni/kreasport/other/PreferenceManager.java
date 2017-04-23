@@ -62,7 +62,7 @@ public class PreferenceManager {
         SharedPreferences racePrefs = context.getSharedPreferences(FILE_PASS_RACES, Context.MODE_PRIVATE);
         String raceVMJson = racePrefs.getString(KEY_RACE_VM, "");
         if (raceVMJson.equals("")) {
-            return new RaceVM(false);
+            return new RaceVM();
         } else {
             return new Gson().fromJson(raceVMJson, RaceVM.class);
         }
