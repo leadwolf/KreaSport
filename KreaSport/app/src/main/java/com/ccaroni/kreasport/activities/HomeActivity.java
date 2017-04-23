@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,9 +16,17 @@ import com.android.volley.toolbox.StringRequest;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
+import com.ccaroni.kreasport.map.models.Race;
+import com.ccaroni.kreasport.network.ApiUtils;
+import com.ccaroni.kreasport.network.RaceService;
 import com.ccaroni.kreasport.other.Constants;
 import com.ccaroni.kreasport.volley.VolleySingleton;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by Master on 02/04/2017.
@@ -26,6 +35,8 @@ import com.google.firebase.auth.FirebaseAuth;
 public class HomeActivity extends MainActivity implements HomeFragment.HomeInteractionListener {
 
     private static final String LOG = HomeActivity.class.getSimpleName();
+
+    private RaceService raceService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +52,8 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
         super.onCreate(savedInstanceState);
 
         setupFragments();
+
+        raceService = ApiUtils.getRaceService();
     }
 
     @Override
@@ -59,66 +72,39 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
                 .commit();
     }
 
-
-    /**
-     * Unpacks the intent, sets up ProgressDialog, creates StringRequest and adds it to {@link VolleySingleton}'s queue.
-     *
-     * @param intent
-     */
-    private void downloadRace(Intent intent) {
+    private void downloadRaceRetrofit(Intent intent) {
 
         final boolean requestPrivate = intent.getBooleanExtra(HomeFragment.DOWNLOAD_PRIVATE_RACE, false);
         String key = intent.getStringExtra(HomeFragment.DOWNLOAD_PRIVATE_RACE_KEY);
 
-        if (requestPrivate && (key == null || key.isEmpty())) {
+        if (requestPrivate && TextUtils.isEmpty(key)) {
             Log.d(LOG, "received private download request but key was empty");
+            Toast.makeText(this, "Please enter a valid key", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // TODO validate key format for private race before download
-
-        String url;
-        if (requestPrivate)
-            url = Constants.publicRacesURL;
-        else
-            url = String.format(Constants.privateRaceURL, key);
 
         final ProgressDialog progressDialog = createDownloadProgressDialog(requestPrivate);
         progressDialog.show();
 
-        StringRequest stringRequest = createDownloadRequest(url, requestPrivate, progressDialog);
-
-        Log.d(LOG, "sending volley request for " + (requestPrivate ? "private race" : "public races"));
-        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
-    }
-
-    /**
-     * @param url            the target url which will give the race
-     * @param requestPrivate is the request is a private race
-     * @param progressDialog the ProgressDialog to dismiss on response/error
-     * @return creates a request for a string download
-     */
-    private StringRequest createDownloadRequest(final String url, final boolean requestPrivate, final ProgressDialog progressDialog) {
-        return new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        raceService.getPublicRaces().enqueue(new Callback<List<Race>>() {
             @Override
-            public void onResponse(String response) {
-                Toast.makeText(HomeActivity.this, response, Toast.LENGTH_SHORT).show();
-                if (response != null && !response.equals("")) {
-                    progressDialog.dismiss();
-
-                    // TODO save json and transfer to ExploreFragment
-
+            public void onResponse(Call<List<Race>> call, retrofit2.Response<List<Race>> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+                    Log.d(LOG, "downloaded \n " + response.body());
+                    List<Race> downloadedRaces = response.body();
+                    Toast.makeText(HomeActivity.this, "Downloaded " + downloadedRaces.size() + " races", Toast.LENGTH_SHORT).show();
                 } else {
-                    progressDialog.dismiss();
+                    Log.d(LOG, "response unsuccessfull with code " + response.code());
                     showNoRaceFoundDialog(false, requestPrivate);
                 }
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onFailure(Call<List<Race>> call, Throwable t) {
+                Log.d(LOG, "download failed: " + t.toString());
                 progressDialog.dismiss();
                 showNoRaceFoundDialog(true, requestPrivate);
-                Log.d(LOG, "download error : " + error.toString());
             }
         });
     }
@@ -177,7 +163,7 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
 
         switch (requestCode) {
             case HomeFragment.DOWNLOAD_REQUEST:
-                downloadRace(requestIntent);
+                downloadRaceRetrofit(requestIntent);
             default:
                 break;
         }

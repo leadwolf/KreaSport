@@ -1,26 +1,17 @@
 package com.ccaroni.kreasport.map.models;
 
 import java.util.List;
-
-/**
- * Created by Master on 05/04/2017.
- */
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Race extends BaseItem {
 
-    private List<Checkpoint> checkpoints;
-
-    public Race(List<Checkpoint> checkpoints) {
-        this.checkpoints = checkpoints;
-    }
-
-    public Race(int id, String title, String description, List<Checkpoint> checkpoints) {
-        super(id, title, description);
-        this.checkpoints = checkpoints;
-    }
-
-    public Race() {
-    }
+    @SerializedName("checkpoints")
+    @Expose
+    private List<Checkpoint> checkpoints = null;
+    @SerializedName("location")
+    @Expose
+    private List<Double> location = null;
 
     public List<Checkpoint> getCheckpoints() {
         return checkpoints;
@@ -30,10 +21,19 @@ public class Race extends BaseItem {
         this.checkpoints = checkpoints;
     }
 
-    public Checkpoint getCheckpoint(int checkpointIndex) {
-        if (checkpoints == null) {
-            return null;
-        }
-        return checkpoints.get(checkpointIndex);
+    public List<Double> getLocation() {
+        return location;
+    }
+
+    public void setLocation(List<Double> location) {
+        this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "Race{" +
+                "checkpoints=" + checkpoints +
+                ", location=" + location +
+                '}';
     }
 }

@@ -1,9 +1,10 @@
 package com.ccaroni.kreasport.map.models;
 
 import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 
 import com.ccaroni.kreasport.BR;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Master on 05/04/2017.
@@ -11,24 +12,34 @@ import com.ccaroni.kreasport.BR;
 
 public abstract class BaseItem extends BaseObservable {
 
-    int id;
-    String title;
-    String description;
+    String id;
+    @SerializedName("title")
+    @Expose
+    private String title;
+    @SerializedName("description")
+    @Expose
+    private String description;
+    @SerializedName("latitude")
+    @Expose
+    private Double latitude;
+    @SerializedName("longitude")
+    @Expose
+    private Double longitude;
 
     public BaseItem() {
     }
 
-    public BaseItem(int id, String title, String description) {
+    public BaseItem(String id, String title, String description) {
         this.id = id;
         this.title = title;
         this.description = description;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -40,7 +51,6 @@ public abstract class BaseItem extends BaseObservable {
         this.title = title;
     }
 
-    @Bindable
     public String getDescription() {
         return description;
     }
@@ -48,5 +58,32 @@ public abstract class BaseItem extends BaseObservable {
     public void setDescription(String description) {
         this.description = description;
         notifyPropertyChanged(BR.description);
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseItem{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }

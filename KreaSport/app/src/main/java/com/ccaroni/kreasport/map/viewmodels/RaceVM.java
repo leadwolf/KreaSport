@@ -67,10 +67,10 @@ public class RaceVM extends BaseObservable {
         checkpoints = races.get(currentRaceIndex).getCheckpoints();
     }
 
-    public int getCheckpointId() {
+    public String getCheckpointId() {
         if (currentCheckpointIndex < checkpoints.size())
             return checkpoints.get(currentCheckpointIndex).getId();
-        return -1;
+        return "";
     }
 
     /**
@@ -131,10 +131,10 @@ public class RaceVM extends BaseObservable {
         return null;
     }
 
-    public int getRaceId() {
+    public String getRaceId() {
         if (currentRaceIndex <= races.size())
             return races.get(currentRaceIndex).getId();
-        return -1;
+        return "";
     }
 
     public void updateCurrentIndexes(int raceIndex, int checkpointIndex) {

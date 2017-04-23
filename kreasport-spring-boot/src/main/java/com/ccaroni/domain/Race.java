@@ -60,11 +60,11 @@ public class Race extends BasePoint {
         ArrayList<Race> dummyRaces = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             List<Checkpoint> dummyCheckpointList = new ArrayList<>();
-            dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 0, 0,
+            dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 50.613664, 3.136939,
                     Arrays.asList("First Question", "Second Question")));
-            dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 0, 0,
+            dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 50.613278, 3.137973,
                     Arrays.asList("First Question", "Second Question")));
-            dummyRaces.add(new Race("Dummy Race Title " + dummyIndex, "Dummy Race Description " + dummyIndex, 0, 0, dummyCheckpointList));
+            dummyRaces.add(new Race("Dummy Race Title " + dummyIndex, "Dummy Race Description " + dummyIndex, 50.613664, 3.136939, dummyCheckpointList));
             dummyIndex++;
         }
         return dummyRaces;

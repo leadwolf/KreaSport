@@ -1,41 +1,20 @@
 package com.ccaroni.kreasport.map.models;
 
 import java.util.List;
-
-/**
- * Created by Master on 05/04/2017.
- */
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Checkpoint extends BaseItem {
 
-    private int raceId;
+    @SerializedName("question")
+    @Expose
     private String question;
-    private List<String> possibleAnswers;
-
-    public Checkpoint(int raceId, String question, List<String> possibleAnswers) {
-        this.raceId = raceId;
-        this.question = question;
-        this.possibleAnswers = possibleAnswers;
-    }
-
-    public Checkpoint(int id, String title, String description, int raceId, String question, List<String> possibleAnswers) {
-        super(id, title, description);
-        this.raceId = raceId;
-        this.question = question;
-        this.possibleAnswers = possibleAnswers;
-    }
-
-    public Checkpoint() {
-
-    }
-
-    public int getRaceId() {
-        return raceId;
-    }
-
-    public void setRaceId(int raceId) {
-        this.raceId = raceId;
-    }
+    @SerializedName("possibleAnswers")
+    @Expose
+    private List<String> possibleAnswers = null;
+    @SerializedName("location")
+    @Expose
+    private List<Double> location = null;
 
     public String getQuestion() {
         return question;
@@ -51,5 +30,22 @@ public class Checkpoint extends BaseItem {
 
     public void setPossibleAnswers(List<String> possibleAnswers) {
         this.possibleAnswers = possibleAnswers;
+    }
+
+    public List<Double> getLocation() {
+        return location;
+    }
+
+    public void setLocation(List<Double> location) {
+        this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "Checkpoint{" +
+                "question='" + question + '\'' +
+                ", possibleAnswers=" + possibleAnswers +
+                ", location=" + location +
+                '}';
     }
 }

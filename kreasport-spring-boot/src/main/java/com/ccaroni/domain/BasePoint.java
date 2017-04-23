@@ -1,6 +1,8 @@
 package com.ccaroni.domain;
 
 
+import org.springframework.data.annotation.Transient;
+
 /**
  * Created by Master on 04/04/2017.
  */
@@ -54,6 +56,7 @@ public class BasePoint {
         this.longitude = longitude;
     }
 
+    @Transient
     public double[] getLocation() {
         return new double[]{latitude, longitude};
     }
