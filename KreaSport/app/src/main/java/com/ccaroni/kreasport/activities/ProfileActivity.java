@@ -7,7 +7,7 @@ import android.util.Log;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.ProfileFragment;
 
-public class ProfileActivity extends MainActivity implements ProfileFragment.ProfileInteractionListener {
+public class ProfileActivity extends MainActivity {
 
     private static final String LOG = ProfileActivity.class.getSimpleName();
 
@@ -37,37 +37,4 @@ public class ProfileActivity extends MainActivity implements ProfileFragment.Pro
         setCurrentActivityIndex(2);
     }
 
-    @Override
-    public void onExploreInteraction(Intent requestIntent) {
-        if (requestIntent == null) {
-            throw new NullPointerException("Request intent should not be null");
-        }
-
-        String requestCode = requestIntent.getStringExtra(CALLBACK_KEY);
-        if (requestCode == null) {
-            return;
-        }
-
-        Intent intent = null;
-        switch (requestCode) {
-            case ProfileFragment.LAUNCH_LOGIN:
-                intent = new Intent(this, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                Log.d(LOG, "cleared activity stack");
-                Log.d(LOG, "signed out, launching login");
-                startActivity(intent);
-                finish();
-                break;
-            case ProfileFragment.PROFILE_DELETED:
-                intent = new Intent(this, SignupActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(intent);
-                finish();
-                break;
-            default:
-                break;
-        }
-    }
 }

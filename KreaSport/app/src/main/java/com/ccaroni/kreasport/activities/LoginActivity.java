@@ -78,9 +78,12 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (password.length() < 6) {
+                    inputPassword.setError(getString(R.string.minimum_password));
                     return;
                 }
 
@@ -95,15 +98,11 @@ public class LoginActivity extends AppCompatActivity {
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
                                 progressBar.setVisibility(View.GONE);
-                                if (!task.isSuccessful()) {
-                                    // there was an error
-                                    if (password.length() < 6) {
-                                        inputPassword.setError(getString(R.string.minimum_password));
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
-                                    }
-                                } else {
+                                if (task.isSuccessful()) {
                                     checkIfEmailVerified();
+                                } else {
+                                    // there was an error else
+                                    Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
@@ -111,19 +110,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void checkIfEmailVerified()
-    {
+    private void checkIfEmailVerified() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null && user.isEmailVerified())
-        {
+        if (user != null && user.isEmailVerified()) {
             Log.d(LOG, "Successfully logged in");
             Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
             finish();
-            return;
         } else if (user != null && !user.isEmailVerified()) {
             FirebaseAuth.getInstance().signOut();
             Log.d(LOG, "Email hasn't been verified");

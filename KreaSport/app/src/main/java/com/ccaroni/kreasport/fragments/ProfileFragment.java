@@ -17,10 +17,13 @@ import android.widget.Toast;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.activities.LoginActivity;
 import com.ccaroni.kreasport.activities.MainActivity;
+import com.ccaroni.kreasport.activities.SignupActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import static android.graphics.PorterDuff.Mode.CLEAR;
 
 public class ProfileFragment extends Fragment {
 
@@ -35,8 +38,6 @@ public class ProfileFragment extends Fragment {
     private EditText oldEmail, newEmail, password, newPassword;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
-
-    private ProfileInteractionListener mListener;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -246,9 +247,11 @@ public class ProfileFragment extends Fragment {
                                         Toast.makeText(getContext(), "Your profile is deleted:( Create a account now!", Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
 
-                                        Intent intent = new Intent();
-                                        intent.putExtra(MainActivity.CALLBACK_KEY, PROFILE_DELETED);
-                                        mListener.onExploreInteraction(intent);
+                                        Intent intent = new Intent(getContext(), SignupActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        Log.d(LOG, "signed out, cleared activity stack, launching login");
+                                        startActivity(intent);
+                                        getActivity().finish();
                                     } else {
                                         Toast.makeText(getContext(), "Failed to delete your account!", Toast.LENGTH_SHORT).show();
                                         progressBar.setVisibility(View.GONE);
@@ -273,32 +276,9 @@ public class ProfileFragment extends Fragment {
     public void signOut() {
         auth.signOut();
         Intent intent = new Intent(getContext(), LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        Log.d(LOG, "cleared activity stack");
-        Log.d(LOG, "signed out, launching login");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Log.d(LOG, "signed out, cleared activity stack, launching login");
         startActivity(intent);
         getActivity().finish();
-    }
-
-    public interface ProfileInteractionListener {
-        void onExploreInteraction(Intent requestIntent);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ProfileInteractionListener) {
-            mListener = (ProfileInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement ProfileInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 }

@@ -126,8 +126,6 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
                 activityIntent = new Intent(this, HomeActivity.class);
-                activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                activityIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 break;
             case R.id.nav_explore:
                 activityIntent = new Intent(this, ExploreActivity.class);
@@ -144,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (activityIntent != null) {
-            completeDrawerAction(menuItem, activityIntent);
+            completeDrawerAction(menuItem, activityIntent, menuItem.getItemId() == R.id.nav_home);
         }
     }
 
@@ -161,13 +159,16 @@ public class MainActivity extends AppCompatActivity
      *
      * @param menuItem
      */
-    private void completeDrawerAction(MenuItem menuItem, Intent activityIntent) {
+    private void completeDrawerAction(MenuItem menuItem, Intent activityIntent, boolean clearStack) {
         menuItem.setChecked(true);
 
         setTitle(menuItem.getTitle());
 
+        if (clearStack) {
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        }
         startActivity(activityIntent);
-        finish();
     }
 
     protected void resetNavigationDrawer(MenuItem item) {
