@@ -3,10 +3,16 @@ package com.ccaroni.kreasport.other;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.ccaroni.kreasport.map.models.Race;
 import com.google.gson.Gson;
 
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PreferenceManager {
@@ -15,6 +21,7 @@ public class PreferenceManager {
 
     private static final String KEY_RACE_VM = "kreasport.prefrence_manager.keys.race_vm";
     private static final String KEY_MAP_STATE = "kreasport.preference_manager.keys.map_state";
+
     private SharedPreferences prefs;
     private Context context;
 
@@ -55,7 +62,7 @@ public class PreferenceManager {
         SharedPreferences racePrefs = context.getSharedPreferences(FILE_PASS_RACES, Context.MODE_PRIVATE);
         String raceVMJson = racePrefs.getString(KEY_RACE_VM, "");
         if (raceVMJson.equals("")) {
-            return new RaceVM();
+            return new RaceVM(false);
         } else {
             return new Gson().fromJson(raceVMJson, RaceVM.class);
         }

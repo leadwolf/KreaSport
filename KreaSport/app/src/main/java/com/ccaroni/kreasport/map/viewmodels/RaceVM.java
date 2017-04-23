@@ -8,6 +8,7 @@ import android.view.View;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ccaroni.kreasport.activities.MainActivity;
@@ -29,9 +30,8 @@ public class RaceVM extends BaseObservable {
 
     /**
      * The race model to manipulate
-     * Transient because we just load all the race data into this VM anyways.
      */
-    private transient List<Race> races;
+    private List<Race> races;
 
     /**
      * The checkpoints from the race model, simplifies chained gets.
@@ -61,6 +61,12 @@ public class RaceVM extends BaseObservable {
      * Empty constructor because either nothing is to be loaded or everything is to be restored from deserializing.
      */
     public RaceVM() {
+    }
+
+    public RaceVM(boolean empty) {
+        this();
+        currentRaceIndex = -1;
+        currentCheckpointIndex = -1;
     }
 
     public void setCheckpointVM() {
@@ -192,5 +198,37 @@ public class RaceVM extends BaseObservable {
                 return false;
             }
         };
+    }
+
+    public void addDownloadedRaces(List<Race> downloadedRaces) {
+        Log.d(LOG, "adding downloaded races");
+        if (races != null && races.size() != 0) {
+            Log.d(LOG, "comparing against previous races");
+            int totalAdded = 0;
+            for (Race downloadedRace : downloadedRaces) {
+                boolean present = false;
+                for (Race pastRaces : races) {
+                    if (pastRaces.getId().equals(downloadedRace.getId())) {
+                        present = true;
+                    }
+                }
+                if (!present) {
+                    races.add(downloadedRace);
+                    totalAdded++;
+                    Log.d(LOG, "added race " + downloadedRace.getId());
+                } else {
+                    Log.d(LOG, "race already present " + downloadedRace.getId());
+                }
+            }
+            Log.d(LOG, "added " + totalAdded + " races");
+        } else {
+            Log.d(LOG, "no previous races, adding all");
+            races = new ArrayList<>();
+            for (Race downloadedRace : downloadedRaces) {
+                races.add(downloadedRace);
+                Log.d(LOG, "added race " + downloadedRace.getId());
+            }
+            Log.d(LOG, "added " + downloadedRaces.size() + " races");
+        }
     }
 }

@@ -17,9 +17,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.map.models.Race;
+import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;
 import com.ccaroni.kreasport.other.Constants;
+import com.ccaroni.kreasport.other.PreferenceManager;
 import com.ccaroni.kreasport.volley.VolleySingleton;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -35,6 +37,8 @@ import retrofit2.Callback;
 public class HomeActivity extends MainActivity implements HomeFragment.HomeInteractionListener {
 
     private static final String LOG = HomeActivity.class.getSimpleName();
+
+    private PreferenceManager preferenceManager;
 
     private RaceService raceService;
 
@@ -54,6 +58,7 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
         setupFragments();
 
         raceService = ApiUtils.getRaceService();
+        preferenceManager = new PreferenceManager(this, HomeActivity.class.getSimpleName());
     }
 
     @Override
@@ -94,6 +99,8 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
                     Log.d(LOG, "downloaded \n " + response.body());
                     List<Race> downloadedRaces = response.body();
                     Toast.makeText(HomeActivity.this, "Downloaded " + downloadedRaces.size() + " races", Toast.LENGTH_SHORT).show();
+
+                    transferDownloadedRaces(downloadedRaces);
                 } else {
                     Log.d(LOG, "response unsuccessfull with code " + response.code());
                     showNoRaceFoundDialog(false, requestPrivate);
@@ -144,6 +151,12 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
             progressDialog.setMessage(getString(R.string.download_public_race_message));
         }
         return progressDialog;
+    }
+
+    private void transferDownloadedRaces(List<Race> races) {
+        RaceVM savedRaceVM = preferenceManager.getRaceVM();
+        savedRaceVM.addDownloadedRaces(races);
+        preferenceManager.saveRaceVM(savedRaceVM);
     }
 
     /**
