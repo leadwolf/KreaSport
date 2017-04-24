@@ -54,4 +54,7 @@
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
+    <style name="PrimaryActionButton" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 </resources>

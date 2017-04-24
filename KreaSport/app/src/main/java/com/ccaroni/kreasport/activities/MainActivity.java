@@ -19,13 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityMainBinding;
-import com.ccaroni.kreasport.fragments.BottomSheetFragment;
-import com.ccaroni.kreasport.fragments.ExploreFragment;
 import com.ccaroni.kreasport.fragments.HomeFragment;
-import com.ccaroni.kreasport.map.models.MapOptions;
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
-
-import org.osmdroid.util.GeoPoint;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -188,19 +182,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_home:
                 Log.d(LOG, "created new HomeFragment");
                 return HomeFragment.newInstance("", "");
-            case R.id.nav_explore:
-                Log.d(LOG, "created new ExploreFragment");
-                return ExploreFragment.newInstance(
-                        new MapVM(new GeoPoint(50.633621, 3.0651845),
-                                9),
-                        new MapOptions()
-                                .setEnableLocationOverlay(true)
-                                .setEnableCompass(true)
-                                .setEnableMultiTouchControls(true)
-                                .setEnableScaleOverlay(true));
-            case R.id.ll_bottom_sheet:
-                Log.d(LOG, "created new BottomFragment");
-                return BottomSheetFragment.newInstance("", "");
         }
         return null;
     }
