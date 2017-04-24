@@ -38,6 +38,7 @@
             tools:activity="com.ccaroni.kreasport.activities.ExploreActivity">
 
             <include
+                android:id="@+id/layout_explore"
                 layout="@layout/layout_explore"
                 bind:raceVM="@{raceVM}"/>
 

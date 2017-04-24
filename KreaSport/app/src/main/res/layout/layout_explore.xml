@@ -18,7 +18,7 @@
         <!--layout="@layout/layout_map"/>-->
 
         <FrameLayout
-            android:id="@+id/fragment_explore_frame_layout"
+            android:id="@+id/frame_layout_map"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
