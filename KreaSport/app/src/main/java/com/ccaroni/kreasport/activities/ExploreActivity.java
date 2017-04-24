@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.activities;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
@@ -12,26 +14,40 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
+import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.map.models.Checkpoint;
 import com.ccaroni.kreasport.map.models.MapOptions;
+import com.ccaroni.kreasport.map.models.Race;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
+import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.other.Constants;
 import com.ccaroni.kreasport.other.PreferenceManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+import static java.security.AccessController.getContext;
+
+public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback
+        <Status> {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -46,6 +62,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private GoogleApiClient mGoogleApiClient;
     private boolean hasFix;
+    private PendingIntent mGeofencePendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +98,73 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         MapVM mMapVM = new MapVM(new GeoPoint(50.633621, 3.0651845), 9);
 
         mMapView = new CustomMapView(this, mMapOptions, mMapVM);
+        initRaceOverlays();
+
         binding.appBarMain.layoutExplore.frameLayoutMap.addView(mMapView);
+    }
+
+    /**
+     * Creates an overlay of all the races needing to be displayed.
+     * Either creates an overlay for all the races or full overlay of one race.
+     */
+    private void initRaceOverlays() {
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
+        List<CustomOverlayItem> raceAsOverlay = Race.toPrimaryCustomOverlay(raceVM.getRacesForOverlay());
+
+        ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
+        raceListOverlay.setFocusItemsOnTap(true);
+
+        mMapView.getOverlays().add(raceListOverlay);
+        if (raceVM.isRaceActive()) {
+            Log.d(LOG, "adding geofence");
+            addGeofence();
+        }
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    private void addGeofence() {
+        LocationServices.GeofencingApi.addGeofences(
+                mGoogleApiClient,
+                getGeofencingRequest(),
+                getGeofencePendingIntent()
+        ).setResultCallback(this);
+    }
+
+    private GeofencingRequest getGeofencingRequest() {
+        Checkpoint checkpoint = raceVM.getActiveCheckpoint();
+        if (!checkpoint.getId().equals("")) {
+            GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+
+            builder.addGeofence(
+                    new Geofence.Builder()
+                            .setRequestId(checkpoint.getId())
+
+                            .setCircularRegion(
+                                    checkpoint.getLatitude(),
+                                    checkpoint.getLongitude(),
+                                    Constants.GEOFENCE_RADIUS_METERS
+                            )
+                            .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_MILLISECONDS)
+                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
+                            .build()
+            );
+            return builder.build();
+        } else {
+            Log.d(LOG, "checkpoint to trigger does not exist");
+            return null;
+        }
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -211,5 +294,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         overlay.setAccuracy((int) location.getAccuracy());
         overlay.setLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
         mMapView.invalidate();
+    }
+
+    @Override
+    public void onResult(@NonNull Status status) {
+        Toast.makeText(this, "Geofence callback", Toast.LENGTH_SHORT).show();
     }
 }
