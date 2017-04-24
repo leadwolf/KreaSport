@@ -32,6 +32,7 @@ public class ExploreActivity extends MainActivity implements BottomSheetFragment
     private PreferenceManager preferenceManager;
 
     private GoogleApiClient mGoogleApiClient;
+    private ExploreFragment exploreFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +65,12 @@ public class ExploreActivity extends MainActivity implements BottomSheetFragment
      * Creates and adds this activities' fragments to R.id.content_main_frame_layout
      */
     private void setupFragments() {
-        ExploreFragment exploreFragemnt = (ExploreFragment) getFragment(R.id.nav_explore);
+        exploreFragment = (ExploreFragment) getFragment(R.id.nav_explore);
         BottomSheetFragment bottomSheetFragment = (BottomSheetFragment) getFragment(R.id.ll_bottom_sheet);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.content_main_frame_layout, exploreFragemnt, TAG_EXPLORE)
+                .replace(R.id.content_main_frame_layout, exploreFragment, TAG_EXPLORE)
                 .add(R.id.fragment_explore_root_coordlayout, bottomSheetFragment)
                 .commit();
     }
@@ -156,7 +157,7 @@ public class ExploreActivity extends MainActivity implements BottomSheetFragment
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        exploreFragment.startLocationUpdates();
     }
 
     @Override
@@ -170,7 +171,7 @@ public class ExploreActivity extends MainActivity implements BottomSheetFragment
                 + connectionResult.getErrorCode());
     }
 
-    public GoogleApiClient getmGoogleApiClient() {
+    public GoogleApiClient getGoogleApiClient() {
         return mGoogleApiClient;
     }
 }

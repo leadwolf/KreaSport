@@ -20,6 +20,7 @@ import java.util.List;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.activities.ExploreActivity;
 import com.ccaroni.kreasport.databinding.FragmentExploreBinding;
+import com.ccaroni.kreasport.map.views.CustomLocationListener;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.map.models.MapOptions;
@@ -27,6 +28,8 @@ import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.models.Race;
 import com.ccaroni.kreasport.other.PreferenceManager;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +39,8 @@ import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 public class ExploreFragment extends Fragment {
 
     private static final String LOG = ExploreFragment.class.getSimpleName();
-
+    private static final long UPDATE_INTERVAL = 2000;
+    private static final long FASTEST_INTERVAL = 1000;
 
     /* DEFAULTS */
     private static final String KEY_MAP_OPTIONS = "kreasport.fragment_explore.keys.map_options";
@@ -53,6 +57,7 @@ public class ExploreFragment extends Fragment {
     private RaceVM raceVM;
 
     private PreferenceManager preferenceManager;
+    private CustomLocationListener locationListener;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -99,31 +104,13 @@ public class ExploreFragment extends Fragment {
         View rootView = binding.getRoot();
 
         mMapView = new CustomMapView(getActivity(), mMapOptions, mMapVM);
+        locationListener = new CustomLocationListener(getActivity(), mMapView, mMapView.getLocationOverlay());
+
         initRaceOverlays();
 
         binding.fragmentExploreFrameLayout.addView(mMapView);
 
         return rootView;
-    }
-
-    /**
-     * DUMMY, example of how to add items to the overlay
-     */
-    public void onClick() {
-
-        Toast.makeText(getContext(), "adding item at random", Toast.LENGTH_SHORT).show();
-
-        final ArrayList<CustomOverlayItem> items = new ArrayList<>();
-
-        double random_lon = (Math.random() * 360) - 180;
-        double random_lat = (Math.random() * 180) - 90;
-        CustomOverlayItem overlayItem = new CustomOverlayItem("A random point", "SampleDescription", new GeoPoint(random_lat,
-                random_lon));
-        overlayItem.setMarker(ContextCompat.getDrawable(getContext(), R.drawable.ic_beenhere_blue_700_24dp));
-        items.add(overlayItem);
-
-        raceListOverlay.addItems(items);
-        mMapView.invalidate();
     }
 
     /**
@@ -138,6 +125,13 @@ public class ExploreFragment extends Fragment {
         raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
+        if (raceVM.isRaceActive()) {
+            addCheckpointTriggers();
+        }
+    }
+
+    private void addCheckpointTriggers() {
+        // TODO
     }
 
     @Override
@@ -166,4 +160,35 @@ public class ExploreFragment extends Fragment {
         mMapVM = preferenceManager.getMapState();
     }
 
+    /**
+     * DUMMY, example of how to add items to the overlay
+     */
+    public void onClick() {
+
+        Toast.makeText(getContext(), "adding item at random", Toast.LENGTH_SHORT).show();
+
+        final ArrayList<CustomOverlayItem> items = new ArrayList<>();
+
+        double random_lon = (Math.random() * 360) - 180;
+        double random_lat = (Math.random() * 180) - 90;
+        CustomOverlayItem overlayItem = new CustomOverlayItem("A random point", "SampleDescription", new GeoPoint(random_lat,
+                random_lon));
+        overlayItem.setMarker(ContextCompat.getDrawable(getContext(), R.drawable.ic_beenhere_blue_700_24dp));
+        items.add(overlayItem);
+
+        raceListOverlay.addItems(items);
+        mMapView.invalidate();
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    public void startLocationUpdates() {
+        // Create the location request
+        LocationRequest mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
+        // Request location updates
+        LocationServices.FusedLocationApi.requestLocationUpdates(((ExploreActivity) getActivity()).getGoogleApiClient(),
+                mLocationRequest, locationListener);
+    }
 }

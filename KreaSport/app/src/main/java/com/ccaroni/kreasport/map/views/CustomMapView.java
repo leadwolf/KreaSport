@@ -1,6 +1,8 @@
 package com.ccaroni.kreasport.map.views;
 
 import android.app.Activity;
+import android.content.Context;
+import android.location.LocationManager;
 import android.support.v4.BuildConfig;
 
 import org.osmdroid.config.Configuration;
@@ -23,7 +25,11 @@ import com.ccaroni.kreasport.map.models.MapOptions;
 
 public class CustomMapView extends MapView {
 
+    private static final String LOG = CustomMapView.class.getSimpleName();
+
+
     private Activity activity;
+    private DirectedLocationOverlay mLocationOverlay;
 
     public CustomMapView(Activity activity, MapOptions mMapOptions, MapVM mMapVM) {
         super(activity);
@@ -52,14 +58,17 @@ public class CustomMapView extends MapView {
         getController().setCenter(mMapVM.getCenter());
     }
 
+    @SuppressWarnings({"MissingPermission"})
     private void applyOptions(MapOptions mMapOptions) {
         if (mMapOptions != null) {
             if (mMapOptions.isEnableLocationOverlay()) {
 
-                DirectedLocationOverlay mLocationOverlay = new DirectedLocationOverlay(activity);
+                mLocationOverlay = new DirectedLocationOverlay(activity);
                 mLocationOverlay.setShowAccuracy(true);
+                mLocationOverlay.setEnabled(true);
                 getOverlays().add(mLocationOverlay);
             }
+
             if (mMapOptions.isEnableCompass()) {
                 CompassOverlay mCompassOverlay = new CompassOverlay(activity, new InternalCompassOrientationProvider(activity), this);
                 mCompassOverlay.enableCompass();
@@ -83,4 +92,7 @@ public class CustomMapView extends MapView {
         }
     }
 
+    public DirectedLocationOverlay getLocationOverlay() {
+        return mLocationOverlay;
+    }
 }
