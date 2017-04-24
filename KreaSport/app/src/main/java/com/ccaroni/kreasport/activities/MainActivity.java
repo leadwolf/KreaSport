@@ -112,11 +112,11 @@ public class MainActivity extends AppCompatActivity
 
         hideKeyboard();
 
-
         if (currentActivityIndex != -1) {
             MenuItem currentItem = navigationView.getMenu().getItem(currentActivityIndex);
             if (currentItem.equals(menuItem)) {
                 // prevent switching when already in selected activity
+                Log.d(LOG, "DENIED: user requested switch to activity already displayed.");
                 return;
             }
         }
