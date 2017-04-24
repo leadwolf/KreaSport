@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.map.views;
 import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
@@ -35,19 +36,19 @@ public class CustomLocationListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         //after the first fix, schedule the task to change the icon
-        if (!hasFix){
+        if (!hasFix) {
             TimerTask changeIcon = new TimerTask() {
                 @Override
                 public void run() {
                     Activity act = activity;
-                    if (act!=null)
+                    if (act != null)
                         act.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                    BitmapDrawable drawable = (BitmapDrawable) activity.getResources().getDrawable(R.drawable.direction_arrow);
+                                    BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(activity, R.drawable.direction_arrow);
                                     overlay.setDirectionArrow(drawable.getBitmap());
-                                }catch (Throwable t){
+                                } catch (Throwable t) {
                                     //insultates against crashing when the user rapidly switches fragments/activities
                                 }
                             }
@@ -59,9 +60,9 @@ public class CustomLocationListener implements LocationListener {
             timer.schedule(changeIcon, 5000);
 
         }
-        hasFix=true;
+        hasFix = true;
         overlay.setBearing(location.getBearing());
-        overlay.setAccuracy((int)location.getAccuracy());
+        overlay.setAccuracy((int) location.getAccuracy());
         overlay.setLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
         mMapView.invalidate();
     }
