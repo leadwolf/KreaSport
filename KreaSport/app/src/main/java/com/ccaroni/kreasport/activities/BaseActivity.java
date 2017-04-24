@@ -2,8 +2,9 @@ package com.ccaroni.kreasport.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -18,42 +19,57 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.databinding.ActivityMainBinding;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 
-public class MainActivity extends AppCompatActivity
+/**
+ * Created by Master on 24/04/2017.
+ */
+
+/**
+ * Base activity presenting methods common to all the root activities.
+ * Each class must implement its own customCreate();
+ */
+public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String LOG = MainActivity.class.getSimpleName();
+    private static final String LOG = BaseActivity.class.getSimpleName();
 
-    public static final String CALLBACK_KEY = "kreasport.activity_main.frag_request.reason";
+    public static final String CALLBACK_KEY = "kreasport.activity_base.frag_request.reason";
     private static final java.lang.String KEY_CURRENT_ACTIVITY_INDEX = "kreasport.savedinstancestate.current_frag_index";
 
     protected static final String TAG_HOME = "kreasport.tag.home";
     protected static final String TAG_EXPLORE = "kreasport.tag.explore";
 
-    protected DrawerLayout drawer;
+    protected DrawerLayout drawerLayout;
     protected NavigationView navigationView;
 
-    private int currentActivityIndex;
+    protected int currentActivityIndex;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+    /**
+     * Just a call to setContentView to avoid overriding onCreate
+     * @param savedInstanceState
+     * @param layout
+     */
+    protected void customCreate(@Nullable Bundle savedInstanceState, int layout) {
+        setContentView(layout);
+        secondaryCreate();
+    }
 
+    /**
+     * Sets up the toolbar, drawerlayout and navgiationView.
+     */
+    protected void secondaryCreate() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawer = binding.drawerLayout;
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
     protected void setCurrentActivityIndex(int index) {
@@ -62,8 +78,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -93,12 +109,11 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         selectDrawerItem(item);
 
-        drawer.closeDrawer(GravityCompat.START);
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -185,6 +200,5 @@ public class MainActivity extends AppCompatActivity
         }
         return null;
     }
-
 
 }

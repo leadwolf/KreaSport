@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.activities.MainActivity;
+import com.ccaroni.kreasport.activities.BaseActivity;
 import com.ccaroni.kreasport.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
         if (mListener != null) {
 
             Intent intent = new Intent();
-            intent.putExtra(MainActivity.CALLBACK_KEY, DOWNLOAD_REQUEST);
+            intent.putExtra(BaseActivity.CALLBACK_KEY, DOWNLOAD_REQUEST);
 
             if (privateRace) {
                 if (validatePrivateKey()) {

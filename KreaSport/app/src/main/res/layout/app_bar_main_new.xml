@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="raceVM"
+            type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
+    </data>
+
 
     <android.support.design.widget.CoordinatorLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,7 +38,8 @@
             tools:activity="com.ccaroni.kreasport.activities.ExploreActivity">
 
             <include
-                layout="@layout/fragment_explore"/>
+                layout="@layout/layout_explore"
+                bind:raceVM="@{raceVM}"/>
 
         </android.support.design.widget.CoordinatorLayout>
 

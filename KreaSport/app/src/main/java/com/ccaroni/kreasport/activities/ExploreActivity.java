@@ -1,52 +1,50 @@
 package com.ccaroni.kreasport.activities;
 
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.fragments.ExploreFragment;
+import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
+import com.ccaroni.kreasport.map.models.MapOptions;
+import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.viewmodels.RaceVM;
+import com.ccaroni.kreasport.map.views.CustomMapView;
+import com.ccaroni.kreasport.other.PreferenceManager;
 
-import static com.ccaroni.kreasport.activities.MainActivity.TAG_EXPLORE;
+import org.osmdroid.util.GeoPoint;
 
-public class ExploreActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ExploreActivity extends BaseActivity {
 
-    protected DrawerLayout drawer;
-    protected NavigationView navigationView;
+    private ActivityExploreBinding binding;
+
+    private CustomMapView mMapView;
+    private RaceVM raceVM;
+
+    private PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_explore);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_explore);
+        super.secondaryCreate();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        preferenceManager = new PreferenceManager(this, ExploreActivity.class.getSimpleName());
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        raceVM = preferenceManager.getRaceVM();
+        binding.setRaceVM(raceVM);
 
         setupMap();
     }
 
     private void setupMap() {
-        
-    }
+        MapOptions mMapOptions = new MapOptions()
+                .setEnableLocationOverlay(true)
+                .setEnableCompass(true)
+                .setEnableMultiTouchControls(true)
+                .setEnableScaleOverlay(true);
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
-    }
+        MapVM mMapVM = new MapVM(new GeoPoint(50.633621, 3.0651845), 9);
 
+        mMapView = new CustomMapView(this, mMapOptions, mMapVM);
+    }
 }
