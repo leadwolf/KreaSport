@@ -156,6 +156,12 @@ public class ExploreActivity extends MainActivity implements BottomSheetFragment
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        exploreFragment.stopLocationUpdates();
+    }
+
+    @Override
     public void onConnected(@Nullable Bundle bundle) {
         exploreFragment.startLocationUpdates();
     }

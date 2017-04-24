@@ -191,4 +191,9 @@ public class ExploreFragment extends Fragment {
         LocationServices.FusedLocationApi.requestLocationUpdates(((ExploreActivity) getActivity()).getGoogleApiClient(),
                 mLocationRequest, locationListener);
     }
+
+    public void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                ((ExploreActivity) getActivity()).getGoogleApiClient(), locationListener);
+    }
 }
