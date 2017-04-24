@@ -22,4 +22,6 @@ public class Constants {
     public static final String KEY_SAVED_RACES = "kreasport.global.keys.saved_races";
     public static final Type savedRaceLisType = new TypeToken<ArrayList<Race>>(){}.getType();
 
+    public static final float GEOFENCE_RADIUS_METERS = 20;
+    public static final long GEOFENCE_EXPIRATION_MILLISECONDS = 300000; // 5mn;
 }

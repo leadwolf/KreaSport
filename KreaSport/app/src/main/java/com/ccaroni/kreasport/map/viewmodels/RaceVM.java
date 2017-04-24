@@ -259,4 +259,10 @@ public class RaceVM extends BaseObservable {
             return new ArrayList<>(Arrays.asList(getActiveRace()));
         return races;
     }
+
+    public Checkpoint getActiveCheckpoint() {
+        if (getActiveRace() != null && currentCheckpointIndex >= 0 && currentCheckpointIndex <= getActiveRace().getCheckpoints().size())
+            return getActiveRace().getCheckpoints().get(currentCheckpointIndex);
+        return new Checkpoint();
+    }
 }

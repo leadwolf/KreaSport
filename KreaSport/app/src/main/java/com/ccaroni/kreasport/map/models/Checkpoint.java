@@ -20,6 +20,10 @@ public class Checkpoint extends BaseItem {
     @Expose
     private List<Double> location = null;
 
+    public Checkpoint() {
+        super();
+    }
+
     public String getQuestion() {
         return question;
     }
