@@ -1,13 +1,10 @@
 package com.ccaroni.kreasport.fragments;
 
-import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,10 +37,6 @@ public class ExploreFragment extends Fragment {
 
     private static final String LOG = ExploreFragment.class.getSimpleName();
 
-    public static final String OVERLAY_ITEM_SELECTION = "kreasport.fragment_explore.request_reason.overlay_item_selection";
-    public static final String KEY_SELECTED_RACE = "kreasport.fragment_explore.keys.selected_race";
-    public static final String KEY_SELECTED_CHECKPOINT = "kreasport.fragment_explore.keys.selected_checkpoint";
-
 
     /* DEFAULTS */
     private static final String KEY_MAP_OPTIONS = "kreasport.fragment_explore.keys.map_options";
@@ -51,16 +44,12 @@ public class ExploreFragment extends Fragment {
 
     /* KEYS */
     private static final String KEY_MAP_STATE = "kreasport.fragment_explore.keys.map_state";
-    private static final String KEY_RACE_VM = "kreasport.fragment_explore.keys.race_state";
-
 
     private CustomMapView mMapView;
     private MapVM mMapVM;
 
-    private ItemizedOverlayWithFocus<CustomOverlayItem> ongoingRaceOverlay;
     private ItemizedOverlayWithFocus<CustomOverlayItem> raceListOverlay;
 
-    private List<Race> raceList;
     private RaceVM raceVM;
 
     private PreferenceManager preferenceManager;
@@ -133,55 +122,22 @@ public class ExploreFragment extends Fragment {
         overlayItem.setMarker(ContextCompat.getDrawable(getContext(), R.drawable.ic_beenhere_blue_700_24dp));
         items.add(overlayItem);
 
-        ongoingRaceOverlay.addItems(items);
+        raceListOverlay.addItems(items);
         mMapView.invalidate();
     }
 
     /**
-     * Creates the overlays for the current race and all the races
+     * Creates an overlay of all the races needing to be displayed.
+     * Either creates an overlay for all the races or full overlay of one race.
      */
     private void initRaceOverlays() {
         ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
-
-        if (raceVM.isRaceActive()) {
-            initOngoingRaceOverlay(itemGestureListener);
-            Log.d(LOG, "race is active, initializing its overlay");
-        } else {
-            initRaceListOverlay(itemGestureListener);
-            Log.d(LOG, "no race active, initializing overlay for all races");
-        }
-
-    }
-
-    /**
-     * Creates the overlay listing all the races and adds it to mMapView
-     */
-    private void initRaceListOverlay(ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener) {
-
-        // TODO get the races from the VM
-        List<CustomOverlayItem> raceAsOverlay = new ArrayList<>();
-
-        for (Race race : raceVM.getRaces()) {
-            raceAsOverlay.add(race.toCustomOverlayItem());
-        }
+        List<CustomOverlayItem> raceAsOverlay = Race.toPrimaryCustomOverlay(raceVM.getRacesForOverlay());
 
         raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, getActivity());
         raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
-    }
-
-    /**
-     * Creates an overlay with the current race and adds it to mMapView
-     */
-    private void initOngoingRaceOverlay(ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener) {
-
-        // TODO get the races from the VM
-
-        ongoingRaceOverlay = new ItemizedOverlayWithFocus<>(new ArrayList<CustomOverlayItem>(), itemGestureListener, getActivity());
-        ongoingRaceOverlay.setFocusItemsOnTap(true);
-
-        mMapView.getOverlays().add(ongoingRaceOverlay);
     }
 
     @Override

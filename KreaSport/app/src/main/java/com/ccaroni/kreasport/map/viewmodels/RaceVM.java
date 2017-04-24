@@ -1,26 +1,21 @@
 package com.ccaroni.kreasport.map.viewmodels;
 
-import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.activities.MainActivity;
-import com.ccaroni.kreasport.fragments.ExploreFragment;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.map.models.Checkpoint;
 import com.ccaroni.kreasport.map.models.Race;
-
-import static com.ccaroni.kreasport.fragments.ExploreFragment.KEY_SELECTED_CHECKPOINT;
-import static com.ccaroni.kreasport.fragments.ExploreFragment.KEY_SELECTED_RACE;
 
 /**
  * Created by Master on 06/04/2017.
@@ -66,16 +61,6 @@ public class RaceVM extends BaseObservable {
         currentRaceIndex = -1;
         currentCheckpointIndex = -1;
         raceActive = false;
-    }
-
-    public void setCheckpointVM() {
-        checkpoints = races.get(currentRaceIndex).getCheckpoints();
-    }
-
-    public String getCheckpointId() {
-        if (currentCheckpointIndex < checkpoints.size())
-            return checkpoints.get(currentCheckpointIndex).getId();
-        return "";
     }
 
     /**
@@ -220,43 +205,58 @@ public class RaceVM extends BaseObservable {
 
     public void addDownloadedRaces(List<Race> downloadedRaces) {
         Log.d(LOG, "adding downloaded races");
+        int totalAdded = 0;
         if (races != null && races.size() != 0) {
-            Log.d(LOG, "comparing against previous races");
-            int totalAdded = 0;
-            for (Race downloadedRace : downloadedRaces) {
-                boolean present = false;
-                for (Race pastRaces : races) {
-                    if (pastRaces.getId().equals(downloadedRace.getId())) {
-                        present = true;
-                    }
-                }
-                if (!present) {
-                    races.add(downloadedRace);
-                    totalAdded++;
-                    Log.d(LOG, "added race " + downloadedRace.getId());
-                } else {
-                    Log.d(LOG, "race already present " + downloadedRace.getId());
-                }
-            }
-            Log.d(LOG, "added " + totalAdded + " races");
+            totalAdded = addAgainstExistingRaces(downloadedRaces);
         } else {
-            Log.d(LOG, "no previous races, adding all");
-            races = new ArrayList<>();
-            for (Race downloadedRace : downloadedRaces) {
-                races.add(downloadedRace);
-                Log.d(LOG, "added race " + downloadedRace.getId());
-            }
-            Log.d(LOG, "added " + downloadedRaces.size() + " races");
+            totalAdded = addAllRaces(downloadedRaces);
         }
+
+        Log.d(LOG, "added " + totalAdded + " races");
     }
 
-    public Race getActiveRace() {
-        return races.get(currentRaceIndex);
+    private int addAgainstExistingRaces(List<Race> downloadedRaces) {
+        Log.d(LOG, "comparing against previous races");
+        int totalAdded = 0;
+
+        for (Race downloadedRace : downloadedRaces) {
+            for (Race pastRaces : races) {
+                if (pastRaces.getId().equals(downloadedRace.getId())) {
+                    Log.d(LOG, "race already present " + downloadedRace.getId());
+                    continue;
+                }
+                races.add(downloadedRace);
+                totalAdded++;
+            }
+        }
+        return totalAdded;
     }
 
-    public List<Race> getRaces() {
+    private int addAllRaces(List<Race> downloadedRaces) {
+        Log.d(LOG, "no previous races, adding all");
+        races = new ArrayList<>();
+        for (Race downloadedRace : downloadedRaces) {
+            races.add(downloadedRace);
+            Log.d(LOG, "added race " + downloadedRace.getId());
+        }
+        return downloadedRaces.size();
+    }
+
+    private Race getActiveRace() {
+        if (currentRaceIndex >= 0 && currentRaceIndex < races.size())
+            return races.get(currentRaceIndex);
+        return new Race();
+    }
+
+    /**
+     * Use for ExploreFragment. Gives a list of all its races if a race if active or just a list with one race if no race is active.
+     * @return
+     */
+    public List<Race> getRacesForOverlay() {
         if (races == null)
-            return new ArrayList<Race>();
+            return new ArrayList<>();
+        if (raceActive)
+            return new ArrayList<>(Arrays.asList(getActiveRace()));
         return races;
     }
 }

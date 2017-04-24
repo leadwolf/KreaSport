@@ -50,10 +50,21 @@ public class CustomOverlayItem extends OverlayItem {
         this.raceId = raceId;
     }
 
+    /**
+     * Whether this item represents a checkpoint or a Race.
+     * If it is a Race, it does not have a checkpointId
+     * @return
+     */
     public boolean isPrimary() {
         return primary;
     }
 
+    /**
+     * Sets this item as a primary item.
+     * As such it DOES NOT have a checkpointId
+     * @param primary
+     * @return
+     */
     public CustomOverlayItem setPrimary(boolean primary) {
         this.primary = primary;
         return this;

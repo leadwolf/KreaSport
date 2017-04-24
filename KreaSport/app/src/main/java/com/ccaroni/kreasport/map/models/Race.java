@@ -42,10 +42,6 @@ public class Race extends BaseItem {
                 '}';
     }
 
-    public CustomOverlayItem toCustomOverlayItem() {
-        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId()).setPrimary(true);
-    }
-
     public static List<CustomOverlayItem> fullRaceToCustomOverlayItem(Race race) {
         if (race.getCheckpoints() != null && race.getCheckpoints().size() > 0) {
             List<CustomOverlayItem> overlayItems = new ArrayList<>();
@@ -60,4 +56,20 @@ public class Race extends BaseItem {
         }
     }
 
+    public CustomOverlayItem primaryToCustomOverlayItem() {
+        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId()).setPrimary(true);
+    }
+
+    /**
+     * Converts all the primary parts of the races to a {@link CustomOverlayItem} with ({@link CustomOverlayItem#isPrimary()}).
+     * @param racesForOverlay
+     * @return
+     */
+    public static List<CustomOverlayItem> toPrimaryCustomOverlay(List<Race> racesForOverlay) {
+        List<CustomOverlayItem> items = new ArrayList<>();
+        for (Race race :racesForOverlay) {
+            items.add(new CustomOverlayItem(race.getTitle(), race.getDescription(), new GeoPoint(race.getLatitude(), race.getLongitude()), race.getId()).setPrimary(true));
+        }
+        return items;
+    }
 }
