@@ -1,9 +1,12 @@
 package com.ccaroni.kreasport.activities;
 
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,20 +16,27 @@ import com.ccaroni.kreasport.map.models.MapOptions;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
+import com.ccaroni.kreasport.other.Constants;
 import com.ccaroni.kreasport.other.PreferenceManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
-public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    
+
     private ActivityExploreBinding binding;
 
     private CustomMapView mMapView;
@@ -35,6 +45,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private PreferenceManager preferenceManager;
 
     private GoogleApiClient mGoogleApiClient;
+    private boolean hasFix;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,12 +142,12 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onPause() {
         super.onPause();
-//        exploreFragment.stopLocationUpdates();
+        stopLocationUpdates();
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-//        exploreFragment.startLocationUpdates();
+        startLocationUpdates();
     }
 
     @Override
@@ -149,4 +160,56 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 
+
+    @SuppressWarnings({"MissingPermission"})
+    private void startLocationUpdates() {
+        // Create the location request
+        LocationRequest mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(Constants.GEOLOCATION_UPDATE_INTERVAL)
+                .setFastestInterval(Constants.GEOLOCATION_UPDATE_FASTEST_INTERVAL);
+        // Request location updates
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
+    }
+
+    private void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        //after the first fix, schedule the task to change the icon
+
+        final DirectedLocationOverlay overlay = mMapView.getLocationOverlay();
+
+        if (!hasFix) {
+            TimerTask changeIcon = new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.direction_arrow);
+                                overlay.setDirectionArrow(drawable.getBitmap());
+                            } catch (Throwable t) {
+                                //insultates against crashing when the user rapidly switches fragments/activities
+                            }
+                        }
+                    });
+
+                }
+            };
+            Timer timer = new Timer();
+            timer.schedule(changeIcon, 5000);
+
+        }
+        hasFix = true;
+        overlay.setBearing(location.getBearing());
+        overlay.setAccuracy((int) location.getAccuracy());
+        overlay.setLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        mMapView.invalidate();
+    }
 }
