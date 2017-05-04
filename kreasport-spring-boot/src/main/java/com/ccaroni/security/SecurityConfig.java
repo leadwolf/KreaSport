@@ -28,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .configure(http)
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/login").permitAll()
+                .antMatchers(HttpMethod.GET, "/races/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/photos/**").hasAuthority("read:photos")
                 .antMatchers(HttpMethod.POST, "/photos/**").hasAuthority("create:photos")
                 .antMatchers(HttpMethod.PUT, "/photos/**").hasAuthority("update:photos")
