@@ -15,6 +15,7 @@ import com.ccaroni.kreasport.map.models.Race;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;
+import com.ccaroni.kreasport.other.CredentialsManager;
 import com.ccaroni.kreasport.other.PreferenceManager;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -39,19 +40,20 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Log.d(LOG, "no user logged in, launching login activity");
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        } else {
-            Log.d(LOG, "user already logged in:" + FirebaseAuth.getInstance().getCurrentUser().toString());
-        }
+//        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+//            Log.d(LOG, "no user logged in, launching login activity");
+//            startActivity(new Intent(this, LoginActivity.class));
+//            finish();
+//        } else {
+//            Log.d(LOG, "user already logged in:" + FirebaseAuth.getInstance().getCurrentUser().toString());
+//        }
 
         super.customCreate(savedInstanceState, R.layout.activity_base);
 
         setupFragments();
 
-        raceService = ApiUtils.getRaceService(true);
+        String accessToken = CredentialsManager.getCredentials(this).getIdToken();
+        raceService = ApiUtils.getRaceService(true, accessToken);
         preferenceManager = new PreferenceManager(this, HomeActivity.class.getSimpleName());
     }
 
@@ -96,7 +98,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
 
                     transferDownloadedRaces(downloadedRaces);
                 } else {
-                    Log.d(LOG, "response unsuccessfull with code " + response.code());
+                    Log.d(LOG, "response unsuccessful with code " + response.code());
                     showNoRaceFoundDialog(false, requestPrivate);
                 }
             }

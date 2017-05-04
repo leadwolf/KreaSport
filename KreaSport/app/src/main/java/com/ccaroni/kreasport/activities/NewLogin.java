@@ -89,6 +89,7 @@ public class NewLogin extends AppCompatActivity {
         public void onAuthentication(Credentials credentials) {
             Log.d(LOG, "Login - Success");
             CredentialsManager.saveCredentials(NewLogin.this, credentials);
+            Toast.makeText(NewLogin.this, "authenticated with access token: " + credentials.getAccessToken(), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(NewLogin.this, HomeActivity.class));
             finish();
         }
