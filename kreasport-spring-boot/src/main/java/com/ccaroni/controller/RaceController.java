@@ -52,19 +52,19 @@ public class RaceController {
     @RequestMapping(path = "/{id}", method = GET)
     public Race getRaceById(@PathVariable("id") String id) {
         validateRace(id);
-        return raceRepository.findById(id);
+        return raceRepository.findById(id).get();
     }
 
     @RequestMapping(path = "{id}", method = DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteRaceById(@PathVariable("id") String id) {
         validateRace(id);
-        raceRepository.delete(id);
+        raceRepository.deleteById(id);
     }
 
 
     private void validateRace(String id) {
-        if (!raceRepository.findOne(id).isPresent())
+        if (!raceRepository.findById(id).isPresent())
             throw new RaceNotFoundException(id);
 
     }
