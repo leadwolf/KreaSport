@@ -4,7 +4,7 @@
     <data>
 
         <variable
-            name="bottomSheetVM"
+            name="raceVM"
             type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
     </data>
 
@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="@{bottomSheetVM.title}"
+                android:text="@{raceVM.title}"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"/>
 

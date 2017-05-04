@@ -1,15 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-            name="bottomSheetVM"
+            name="raceVM"
             type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
     </data>
 
     <LinearLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/ll_bottom_sheet"
         android:layout_width="match_parent"
@@ -27,17 +28,16 @@
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
         tools:context="fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheetFragment">
 
-
         <include
             android:id="@+id/bottom_sheet_passive_info"
-            layout="@layout/bottom_sheet_passive"
-            android:visibility="@{bottomSheetVM.passiveInfoVisibility}"
-            bind:bottomSheetVM="@{bottomSheetVM}"/>
+            layout="@layout/layout_bottom_sheet_passive"
+            android:visibility="@{raceVM.passiveInfoVisibility}"
+            bind:raceVM="@{raceVM}"/>
 
         <include
             android:id="@+id/bottom_sheet_active_info"
-            layout="@layout/bottom_sheet_active"
-            android:visibility="@{bottomSheetVM.activeInfoVisibility}"/>
+            layout="@layout/layout_bottom_sheet_active"
+            android:visibility="@{raceVM.activeInfoVisibility}"/>
 
 
         <View
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@{bottomSheetVM.description}"
+            android:text="@{raceVM.description}"
             android:textColor="@android:color/black"/>
 
     </LinearLayout>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.ccaroni.kreasport">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
@@ -16,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".map.GeofenceTransitionsIntentService"/>
+
         <activity
             android:name=".activities.WelcomeActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -26,43 +28,72 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
             android:name=".activities.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
-            android:name=".activities.ExploreActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.Dark"
-            android:parentActivityName=".activities.HomeActivity" >
-            <!-- The meta-data element is needed for versions lower than 4.1 -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity" />>
+            android:name=".activities.SignupActivity"
+            android:theme="@style/AppTheme.Dark">
         </activity>
-        <activity android:name=".activities.SignupActivity"
-                  android:theme="@style/AppTheme.Dark">
+        <activity
+            android:name=".activities.ResetPasswordActivity"
+            android:theme="@style/AppTheme.Dark">
         </activity>
-        <activity android:name=".activities.ResetPasswordActivity"
-                  android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity android:name=".activities.LoginActivity"
-                  android:theme="@style/AppTheme.Dark">
+        <activity
+            android:name=".activities.LoginActivity"
+            android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
             android:name=".activities.ProfileActivity"
+            android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme.Dark"
-            android:parentActivityName=".activities.HomeActivity" >
+            tools:targetApi="jelly_bean">
+
             <!-- The meta-data element is needed for versions lower than 4.1 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity" />>
-        </activity>>
+                android:value=".activities.HomeActivity"/>
+        </activity>
+        <activity
+            android:name=".activities.ExploreActivity"
+            android:parentActivityName=".activities.HomeActivity"
+            android:theme="@style/AppTheme.Dark"
+            tools:targetApi="jelly_bean">
+
+            <!-- The meta-data element is needed for versions lower than 4.1 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.HomeActivity"/>
+        </activity>
+        <activity
+            android:name=".activities.NewLogin"
+            android:theme="@style/SplashTheme">
+        </activity>
+
+        <!-- Auth0 Lock -->
+        <activity
+            android:name="com.auth0.android.lock.LockActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Lock.Theme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="ccaroni.eu.auth0.com"
+                    android:pathPrefix="/android/com.ccaroni.kreasport/callback"
+                    android:scheme="https"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.auth0.android.provider.WebAuthActivity"
+            android:theme="@style/Lock.Theme"/>
+        <!-- Auth0 Lock End -->
     </application>
 
 </manifest>

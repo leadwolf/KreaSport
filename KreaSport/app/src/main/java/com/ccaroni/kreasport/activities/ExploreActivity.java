@@ -1,111 +1,178 @@
 package com.ccaroni.kreasport.activities;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.fragments.BottomSheetFragment;
-import com.ccaroni.kreasport.fragments.ExploreFragment;
+import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
+import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.map.models.Checkpoint;
+import com.ccaroni.kreasport.map.models.MapOptions;
+import com.ccaroni.kreasport.map.models.Race;
+import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
+import com.ccaroni.kreasport.map.views.CustomMapView;
+import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.other.Constants;
 import com.ccaroni.kreasport.other.PreferenceManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
-/**
- * Created by Master on 02/04/2017.
- */
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class ExploreActivity extends MainActivity implements BottomSheetFragment.BottomSheetInteractionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient
-        .OnConnectionFailedListener {
+import static java.security.AccessController.getContext;
+
+public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback
+        <Status> {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+
+    private ActivityExploreBinding binding;
+
+    private CustomMapView mMapView;
     private RaceVM raceVM;
+
     private PreferenceManager preferenceManager;
 
     private GoogleApiClient mGoogleApiClient;
-    private ExploreFragment exploreFragment;
+    private boolean hasFix;
+    private PendingIntent mGeofencePendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_explore);
+        super.secondaryCreate();
+
         resetNavigationDrawer(navigationView.getMenu().getItem(1));
         setCurrentActivityIndex(1);
 
         // First we need to check availability of play services
-        if (checkPlayServices()) {
-
+        if (checkPlayServices())
             // Building the GoogleApi client
             buildGoogleApiClient();
-        }
+        else
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
 
         preferenceManager = new PreferenceManager(this, ExploreActivity.class.getSimpleName());
-        restoreRaceVM();
 
-        setupFragments();
+        raceVM = preferenceManager.getRaceVM();
+        binding.setRaceVM(raceVM);
+
+        setupMap();
+    }
+
+    private void setupMap() {
+        MapOptions mMapOptions = new MapOptions()
+                .setEnableLocationOverlay(true)
+                .setEnableCompass(true)
+                .setEnableMultiTouchControls(true)
+                .setEnableScaleOverlay(true);
+
+        MapVM mMapVM = new MapVM(new GeoPoint(50.633621, 3.0651845), 9);
+
+        mMapView = new CustomMapView(this, mMapOptions, mMapVM);
+        initRaceOverlays();
+
+        binding.appBarMain.layoutExplore.frameLayoutMap.addView(mMapView);
+    }
+
+    /**
+     * Creates an overlay of all the races needing to be displayed.
+     * Either creates an overlay for all the races or full overlay of one race.
+     */
+    private void initRaceOverlays() {
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
+        List<CustomOverlayItem> raceAsOverlay = Race.toPrimaryCustomOverlay(raceVM.getRacesForOverlay());
+
+        ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
+        raceListOverlay.setFocusItemsOnTap(true);
+
+        mMapView.getOverlays().add(raceListOverlay);
+        if (raceVM.isRaceActive()) {
+            Log.d(LOG, "adding geofence");
+            addGeofence();
+        }
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    private void addGeofence() {
+        LocationServices.GeofencingApi.addGeofences(
+                mGoogleApiClient,
+                getGeofencingRequest(),
+                getGeofencePendingIntent()
+        ).setResultCallback(this);
+    }
+
+    private GeofencingRequest getGeofencingRequest() {
+        Checkpoint checkpoint = raceVM.getActiveCheckpoint();
+        if (!checkpoint.getId().equals("")) {
+            GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+
+            builder.addGeofence(
+                    new Geofence.Builder()
+                            .setRequestId(checkpoint.getId())
+
+                            .setCircularRegion(
+                                    checkpoint.getLatitude(),
+                                    checkpoint.getLongitude(),
+                                    Constants.GEOFENCE_RADIUS_METERS
+                            )
+                            .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_MILLISECONDS)
+                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
+                            .build()
+            );
+            return builder.build();
+        } else {
+            Log.d(LOG, "checkpoint to trigger does not exist");
+            return null;
+        }
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
         resetNavigationDrawer(navigationView.getMenu().getItem(1));
         setCurrentActivityIndex(1);
-        super.onResume();
     }
-
-
-    /**
-     * Creates and adds this activities' fragments to R.id.content_main_frame_layout
-     */
-    private void setupFragments() {
-        exploreFragment = (ExploreFragment) getFragment(R.id.nav_explore);
-        BottomSheetFragment bottomSheetFragment = (BottomSheetFragment) getFragment(R.id.ll_bottom_sheet);
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_main_frame_layout, exploreFragment, TAG_EXPLORE)
-                .add(R.id.fragment_explore_root_coordlayout, bottomSheetFragment)
-                .commit();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        saveState();
-        super.onSaveInstanceState(outState);
-    }
-
-    /**
-     * Saves MapVM with {@link PreferenceManager}
-     */
-    private void saveState() {
-        if (raceVM == null) {
-            raceVM = new RaceVM();
-        }
-        preferenceManager.saveRaceVM(raceVM);
-    }
-
-    /**
-     * Restores the {@link RaceVM} with {@link PreferenceManager}
-     */
-    private void restoreRaceVM() {
-        raceVM = preferenceManager.getRaceVM();
-    }
-
-    @Override
-    public void onBottomSheetInteraction(Intent requestIntent) {
-    }
-
-    public RaceVM getRaceVM() {
-        return raceVM;
-    }
-
 
     /* GOOGLE API CLIENT */
 
@@ -158,12 +225,12 @@ public class ExploreActivity extends MainActivity implements BottomSheetFragment
     @Override
     protected void onPause() {
         super.onPause();
-        exploreFragment.stopLocationUpdates();
+        stopLocationUpdates();
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        exploreFragment.startLocationUpdates();
+        startLocationUpdates();
     }
 
     @Override
@@ -173,11 +240,64 @@ public class ExploreActivity extends MainActivity implements BottomSheetFragment
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = "
-                + connectionResult.getErrorCode());
+        Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 
-    public GoogleApiClient getGoogleApiClient() {
-        return mGoogleApiClient;
+
+    @SuppressWarnings({"MissingPermission"})
+    private void startLocationUpdates() {
+        // Create the location request
+        LocationRequest mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(Constants.GEOLOCATION_UPDATE_INTERVAL)
+                .setFastestInterval(Constants.GEOLOCATION_UPDATE_FASTEST_INTERVAL);
+        // Request location updates
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
+    }
+
+    private void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        //after the first fix, schedule the task to change the icon
+
+        final DirectedLocationOverlay overlay = mMapView.getLocationOverlay();
+
+        if (!hasFix) {
+            TimerTask changeIcon = new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(getApplicationContext(), R.drawable.direction_arrow);
+                                overlay.setDirectionArrow(drawable.getBitmap());
+                            } catch (Throwable t) {
+                                //insultates against crashing when the user rapidly switches fragments/activities
+                            }
+                        }
+                    });
+
+                }
+            };
+            Timer timer = new Timer();
+            timer.schedule(changeIcon, 5000);
+
+        }
+        hasFix = true;
+        overlay.setBearing(location.getBearing());
+        overlay.setAccuracy((int) location.getAccuracy());
+        overlay.setLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        mMapView.invalidate();
+    }
+
+    @Override
+    public void onResult(@NonNull Status status) {
+        Toast.makeText(this, "Geofence callback", Toast.LENGTH_SHORT).show();
     }
 }

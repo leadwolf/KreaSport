@@ -47,7 +47,7 @@ public class WelcomeActivity extends AppCompatActivity {
         permissionsManager = new PermissionsManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
-            finish();
+            return;
         }
 
         // Making notification bar transparent
@@ -144,7 +144,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void launchHomeScreen() {
         prefManager.setFirstTimeLaunch(false);
-        startActivity(new Intent(WelcomeActivity.this, HomeActivity.class));
+        startActivity(new Intent(WelcomeActivity.this, NewLogin.class));
         finish();
     }
 

@@ -1,13 +1,11 @@
 package com.ccaroni.kreasport.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.ProfileFragment;
 
-public class ProfileActivity extends MainActivity {
+public class ProfileActivity extends BaseActivity {
 
     private static final String LOG = ProfileActivity.class.getSimpleName();
 
@@ -16,6 +14,7 @@ public class ProfileActivity extends MainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.customCreate(savedInstanceState, R.layout.activity_base);
 
         setupFragment();
 

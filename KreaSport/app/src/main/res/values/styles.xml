@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -54,4 +59,7 @@
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
+    <style name="PrimaryActionButton" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 </resources>

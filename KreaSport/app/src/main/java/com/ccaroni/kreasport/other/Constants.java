@@ -24,4 +24,6 @@ public class Constants {
 
     public static final float GEOFENCE_RADIUS_METERS = 20;
     public static final long GEOFENCE_EXPIRATION_MILLISECONDS = 300000; // 5mn;
+    public static final long GEOLOCATION_UPDATE_INTERVAL = 25000;
+    public static final long GEOLOCATION_UPDATE_FASTEST_INTERVAL = 15000;
 }

@@ -9,20 +9,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.map.models.Race;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;
-import com.ccaroni.kreasport.other.Constants;
+import com.ccaroni.kreasport.other.CredentialsManager;
 import com.ccaroni.kreasport.other.PreferenceManager;
-import com.ccaroni.kreasport.volley.VolleySingleton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -34,7 +28,7 @@ import retrofit2.Callback;
  * Created by Master on 02/04/2017.
  */
 
-public class HomeActivity extends MainActivity implements HomeFragment.HomeInteractionListener {
+public class HomeActivity extends BaseActivity implements HomeFragment.HomeInteractionListener {
 
     private static final String LOG = HomeActivity.class.getSimpleName();
 
@@ -44,20 +38,22 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Log.d(LOG, "no user logged in, launching login activity");
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        } else {
-            Log.d(LOG, "user already logged in:" + FirebaseAuth.getInstance().getCurrentUser().toString());
-        }
-
         super.onCreate(savedInstanceState);
+
+//        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+//            Log.d(LOG, "no user logged in, launching login activity");
+//            startActivity(new Intent(this, LoginActivity.class));
+//            finish();
+//        } else {
+//            Log.d(LOG, "user already logged in:" + FirebaseAuth.getInstance().getCurrentUser().toString());
+//        }
+
+        super.customCreate(savedInstanceState, R.layout.activity_base);
 
         setupFragments();
 
-        raceService = ApiUtils.getRaceService(true);
+        String accessToken = CredentialsManager.getCredentials(this).getIdToken();
+        raceService = ApiUtils.getRaceService(true, accessToken);
         preferenceManager = new PreferenceManager(this, HomeActivity.class.getSimpleName());
     }
 
@@ -102,7 +98,7 @@ public class HomeActivity extends MainActivity implements HomeFragment.HomeInter
 
                     transferDownloadedRaces(downloadedRaces);
                 } else {
-                    Log.d(LOG, "response unsuccessfull with code " + response.code());
+                    Log.d(LOG, "response unsuccessful with code " + response.code());
                     showNoRaceFoundDialog(false, requestPrivate);
                 }
             }
