@@ -20,4 +20,5 @@ public interface RaceRepository extends MongoRepository<Race, String> {
 
     List<Race> deleteByTitle(String title);
 
+    Race deleteById(String id);
 }
