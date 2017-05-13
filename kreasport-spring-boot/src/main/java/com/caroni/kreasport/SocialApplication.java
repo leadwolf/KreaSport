@@ -16,10 +16,10 @@
 package com.caroni.kreasport;
 
 import com.caroni.kreasport.domain.Account;
-import com.caroni.kreasport.repository.AccountRepository;
-import com.caroni.kreasport.repository.RaceRepository;
 import com.caroni.kreasport.domain.Checkpoint;
 import com.caroni.kreasport.domain.Race;
+import com.caroni.kreasport.repository.AccountRepository;
+import com.caroni.kreasport.repository.RaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
@@ -70,6 +71,7 @@ import java.util.List;
 @EnableMongoRepositories
 @EnableOAuth2Client
 @EnableAuthorizationServer
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SocialApplication extends WebSecurityConfigurerAdapter {
 
@@ -90,20 +92,23 @@ public class SocialApplication extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 .authorizeRequests()
                     .antMatchers("/", "/login**", "/webjars/**").permitAll()
+//                    .antMatchers(HttpMethod.GET, "/races/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
-                .and().httpBasic()
-                .and().exceptionHandling()
-                    .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
-                .and().logout()
-                .logoutSuccessUrl("/").permitAll().and().csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
-                .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
+                .and()
+                    .httpBasic()
+                .and()
+                    .exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/"))
+                .and()
+                    .logout().logoutSuccessUrl("/").permitAll()
+                .and()
+                    .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
+                    .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
         // @formatter:on
     }
 
     /**
      * /me is secured by the resource server i.e. from oauth token
-     *
      */
     @Configuration
     @EnableResourceServer
@@ -183,8 +188,7 @@ public class SocialApplication extends WebSecurityConfigurerAdapter {
                         "Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization");
                 if ("OPTIONS".equals(method)) {
                     response.setStatus(HttpStatus.OK.value());
-                }
-                else {
+                } else {
                     chain.doFilter(req, res);
                 }
             }
@@ -207,34 +211,36 @@ public class SocialApplication extends WebSecurityConfigurerAdapter {
             public void run(String... strings) throws Exception {
                 accountRepository.save(new Account("chris", "password"));
 
+                if (false) {
 
-                List<Race> deleted = new ArrayList<>();
-                deleted.addAll(raceRepository.deleteByTitle("Dummy Race Title 0"));
-                deleted.addAll(raceRepository.deleteByTitle("Dummy Race Title 1"));
-                deleted.addAll(raceRepository.deleteByTitle("GCU Race"));
-                deleted.addAll(raceRepository.deleteByTitle("IUT Race"));
+                    List<Race> deleted = new ArrayList<>();
+                    deleted.addAll(raceRepository.deleteByTitle("Dummy Race Title 0"));
+                    deleted.addAll(raceRepository.deleteByTitle("Dummy Race Title 1"));
+                    deleted.addAll(raceRepository.deleteByTitle("GCU Race"));
+                    deleted.addAll(raceRepository.deleteByTitle("IUT Race"));
 
-                for (Race race : deleted) {
-                    logger.debug("Deleted " + race.getTitle() + ", " + race.getId());
+                    for (Race race : deleted) {
+                        logger.debug("Deleted " + race.getTitle() + ", " + race.getId());
+                    }
+
+                    ArrayList<Race> dummyRaces = new ArrayList<>();
+                    List<Checkpoint> dummyCheckpointList = new ArrayList<>();
+
+                    // FIRST RACE IUT
+                    dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 50.613664, 3.136939,
+                            Arrays.asList("First Question", "Second Question")));
+                    dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 50.613278, 3.137973,
+                            Arrays.asList("First Question", "Second Question")));
+                    raceRepository.save(new Race("IUT Race", "Dummy Race Description 0", 50.613664, 3.136939, dummyCheckpointList));
+
+                    // SECOND RACE GLASGOW
+                    dummyCheckpointList = new ArrayList<>();
+                    dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 55.866576, -4.251175,
+                            Arrays.asList("First Question", "Second Question")));
+                    dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 55.866035, -4.251379,
+                            Arrays.asList("First Question", "Second Question")));
+                    raceRepository.save(new Race("GCU Race", "Dummy Race Description 1", 55.866576, -4.251175, dummyCheckpointList));
                 }
-
-                ArrayList<Race> dummyRaces = new ArrayList<>();
-                List<Checkpoint> dummyCheckpointList = new ArrayList<>();
-
-                // FIRST RACE IUT
-                dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 50.613664, 3.136939,
-                        Arrays.asList("First Question", "Second Question")));
-                dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 50.613278, 3.137973,
-                        Arrays.asList("First Question", "Second Question")));
-                raceRepository.save(new Race("IUT Race", "Dummy Race Description 0", 50.613664, 3.136939, dummyCheckpointList));
-
-                // SECOND RACE GLASGOW
-                dummyCheckpointList = new ArrayList<>();
-                dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 55.866576, -4.251175,
-                        Arrays.asList("First Question", "Second Question")));
-                dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 55.866035, -4.251379,
-                        Arrays.asList("First Question", "Second Question")));
-                raceRepository.save(new Race("GCU Race", "Dummy Race Description 1", 55.866576, -4.251175, dummyCheckpointList));
             }
         };
     }
