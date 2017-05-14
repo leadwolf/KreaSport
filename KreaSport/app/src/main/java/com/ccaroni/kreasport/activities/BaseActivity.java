@@ -46,7 +46,9 @@ public class BaseActivity extends AppCompatActivity
     protected int currentActivityIndex;
 
     /**
-     * Just a call to setContentView to avoid overriding onCreate
+     * Just a call to setContentView to avoid overriding onCreate. This way, classes can call the orignal onCreate but still keep their own setContentView instead of it being
+     * overriden here
+     *
      * @param savedInstanceState
      * @param layout
      */
@@ -140,7 +142,7 @@ public class BaseActivity extends AppCompatActivity
                 activityIntent = new Intent(this, ExploreActivity.class);
                 break;
             case R.id.nav_profile:
-                activityIntent = new Intent(this, ProfileActivity.class);
+//                activityIntent = new Intent(this, ProfileActivity.class);
                 break;
             case R.id.nav_share:
                 break;

@@ -36,22 +36,8 @@
             android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
-            android:name=".activities.ResetPasswordActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
             android:name=".activities.LoginActivity"
             android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.ProfileActivity"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppTheme.Dark">
-
-            <!-- The meta-data element is needed for versions lower than 4.1 -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity"/>
         </activity>
         <activity
             android:name=".activities.ExploreActivity"
