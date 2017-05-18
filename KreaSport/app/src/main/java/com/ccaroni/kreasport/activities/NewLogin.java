@@ -16,11 +16,7 @@ import com.auth0.android.lock.LockCallback;
 import com.auth0.android.lock.utils.LockException;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
-import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.other.CredentialsManager;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class NewLogin extends AppCompatActivity {
 
@@ -34,46 +30,57 @@ public class NewLogin extends AppCompatActivity {
         Auth0 auth0 = new Auth0("0FlTsCGzAeTXuCOeJmAutqEJyuBKAhzU", "caroni.eu.auth0.com");
         auth0.setOIDCConformant(true);
 
-        //Request a refresh token along with the access token.
         mLock = Lock.newBuilder(auth0, mCallback)
-                .withScope("openid read:races update:races create:races")
+                .withScope("openid offline_access read:races update:races create:races")
                 .withAudience("kreasport-jwt-api")
                 .build(this);
 
-        CredentialsManager.deleteCredentials(this);
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
-        // AccessToken means already logged in
         if (accessToken == null) {
-            startActivity(mLock.newIntent(this));
-            return;
+            Log.d(LOG, "access token is null, showing login");
+            startLockWidget();
+        } else {
+            final AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
+            aClient.userInfo(accessToken)
+                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
+                        @Override
+                        public void onSuccess(final UserProfile payload) {
+                            Log.d(LOG, "access token validation: SUCCESS");
+                            autoLoginRedirect();
+                        }
+
+                        @Override
+                        public void onFailure(AuthenticationException error) {
+                            Log.d(LOG, "access token validation: FAIL");
+                            attemptRefresh(aClient);
+                        }
+                    });
         }
+    }
 
-        // else verify old access token to automatically relogin
-        AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
-        aClient.userInfo(accessToken)
-                .start(new BaseCallback<UserProfile, AuthenticationException>() {
-                    @Override
-                    public void onSuccess(final UserProfile payload) {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                Log.d(LOG, "Login - Automatic login success");
-                            }
-                        });
-                        startActivity(new Intent(NewLogin.this, HomeActivity.class));
-                        finish();
-                    }
+    private void attemptRefresh(AuthenticationAPIClient aClient) {
+        String refreshToken = CredentialsManager.getCredentials(this).getRefreshToken();
+        if (refreshToken == null) {
+            startLockWidget();
+        } else {
+            aClient.renewAuth(refreshToken)
 
-                    @Override
-                    public void onFailure(AuthenticationException error) {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(NewLogin.this, "Session Expired, please Log In", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        CredentialsManager.deleteCredentials(NewLogin.this);
-                        startActivity(mLock.newIntent(NewLogin.this));
-                    }
-                });
+                    .start(new BaseCallback<Credentials, AuthenticationException>() {
+
+                        @Override
+                        public void onSuccess(Credentials credentials) {
+                            Log.d(LOG, "refresh token validation: SUCCESS");
+                            CredentialsManager.saveCredentials(NewLogin.this, credentials);
+                            autoLoginRedirect();
+                        }
+
+                        @Override
+                        public void onFailure(AuthenticationException error) {
+                            Log.d(LOG, "refresh token validation: SUCCESS");
+                            startLockWidget();
+                        }
+                    });
+        }
     }
 
     @Override
@@ -103,5 +110,29 @@ public class NewLogin extends AppCompatActivity {
             Log.d(LOG, "Login - Error:" + error.toString());
         }
     };
+
+    private void startLockWidget() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(NewLogin.this, "Session Expired, please Log In", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        CredentialsManager.deleteCredentials(this);
+        startActivity(mLock.newIntent(this));
+    }
+
+    /**
+     * Finishes this activity and goes to {@link HomeActivity}.
+     */
+    private void autoLoginRedirect() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Log.d(LOG, "Login - Automatic login success");
+            }
+        });
+        startActivity(new Intent(NewLogin.this, HomeActivity.class));
+        finish();
+    }
 
 }

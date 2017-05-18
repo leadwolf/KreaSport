@@ -6,7 +6,7 @@ package com.ccaroni.kreasport.network;
 
 public class ApiUtils {
 
-    public static final String BASE_URL = "http://kreasport.herokuapp.com/races/";
+    public static final String BASE_URL = "http://kreasport.herokuapp.com/";
     public static final String DEBUG_URL = "http://10.0.2.2:8080/";
 
     public static RaceService getRaceService(boolean debug, String accessToken) {

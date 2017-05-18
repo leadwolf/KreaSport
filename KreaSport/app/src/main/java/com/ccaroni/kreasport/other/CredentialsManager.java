@@ -3,7 +3,6 @@ package com.ccaroni.kreasport.other;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.auth0.android.result.Credentials;
 
