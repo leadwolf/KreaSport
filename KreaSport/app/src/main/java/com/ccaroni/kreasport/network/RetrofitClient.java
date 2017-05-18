@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.network;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -15,6 +17,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitClient {
+
+    private static final String LOG = RetrofitClient.class.getSimpleName();
 
     private static Retrofit retrofit = null;
 
@@ -32,6 +36,8 @@ public class RetrofitClient {
     private static OkHttpClient getOkHttpClient(final String accessToken) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        Log.d(LOG, "creating request with access token:" + accessToken);
 
         return new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)

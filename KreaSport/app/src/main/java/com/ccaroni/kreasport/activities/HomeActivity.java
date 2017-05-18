@@ -52,7 +52,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
 
         setupFragments();
 
-        String accessToken = CredentialsManager.getCredentials(this).getIdToken();
+        String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
         raceService = ApiUtils.getRaceService(true, accessToken);
         preferenceManager = new PreferenceManager(this, HomeActivity.class.getSimpleName());
     }

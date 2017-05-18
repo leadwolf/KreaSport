@@ -23,9 +23,6 @@ public class CredentialsManager {
     private final static String KEY_EXPIRES_IN = "expires_in";
 
     public static void saveCredentials(Context context, Credentials credentials) {
-        Toast.makeText(context, "saving access token " + credentials.getAccessToken(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(context, "saving id token " + credentials.getIdToken(), Toast.LENGTH_SHORT).show();
-
         Log.d(LOG, "saving access token " + credentials.getAccessToken());
         Log.d(LOG, "saving id token " + credentials.getIdToken());
 

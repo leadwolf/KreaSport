@@ -36,7 +36,7 @@ public class NewLogin extends AppCompatActivity {
 
         //Request a refresh token along with the access token.
         mLock = Lock.newBuilder(auth0, mCallback)
-                .withScope("openid read:photos update:photos create:photos")
+                .withScope("openid read:races update:races create:races")
                 .withAudience("kreasport-jwt-api")
                 .build(this);
 
@@ -89,11 +89,6 @@ public class NewLogin extends AppCompatActivity {
         public void onAuthentication(Credentials credentials) {
             Log.d(LOG, "Login - Success");
             CredentialsManager.saveCredentials(NewLogin.this, credentials);
-
-            Toast.makeText(NewLogin.this, "authenticated with access token: " + credentials.getAccessToken(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(NewLogin.this, "authenticated with id token: " + credentials.getIdToken(), Toast.LENGTH_SHORT).show();
-
-
             startActivity(new Intent(NewLogin.this, HomeActivity.class));
             finish();
         }

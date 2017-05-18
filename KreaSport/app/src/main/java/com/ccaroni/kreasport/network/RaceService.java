@@ -13,7 +13,7 @@ import retrofit2.http.GET;
 
 public interface RaceService {
 
-    @GET("/login")
+    @GET("/races")
     Call<List<Race>> getPublicRaces();
 
 }
