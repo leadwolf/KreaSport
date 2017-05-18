@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityLoginBinding;
+import com.ccaroni.kreasport.network.ApiUtils;
+import com.ccaroni.kreasport.network.UserService;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -18,6 +20,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
 
     private ActivityLoginBinding binding;
+
+    private UserService userService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_SIGNUP);
             }
         });
+
+        userService = ApiUtils.getUserService(true);
     }
 
     public void login() {
@@ -61,6 +67,9 @@ public class LoginActivity extends AppCompatActivity {
 
         String email = binding.inputEmail.getText().toString();
         String password = binding.inputPassword.getText().toString();
+
+
+
 
         // TODO: Implement your own authentication logic here.
 
@@ -118,8 +127,8 @@ public class LoginActivity extends AppCompatActivity {
             binding.inputEmail.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            binding.inputPassword.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 6) {
+            binding.inputPassword.setError("more than 6 alphanumeric characters");
             valid = false;
         } else {
             binding.inputPassword.setError(null);
