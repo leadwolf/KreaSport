@@ -2,6 +2,8 @@ package com.ccaroni.kreasport.other;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.auth0.android.result.Credentials;
 
@@ -9,6 +11,8 @@ import com.auth0.android.result.Credentials;
  * Manages Auth0 credentials through SharedPreferences using {@link SharedPreferences} saved in {@link CredentialsManager#AUTH_PREFERENCES_NAME} file.
  */
 public class CredentialsManager {
+
+    private static final String LOG = CredentialsManager.class.getSimpleName();
 
     private static final String AUTH_PREFERENCES_NAME = "auth0";
 
@@ -19,6 +23,13 @@ public class CredentialsManager {
     private final static String KEY_EXPIRES_IN = "expires_in";
 
     public static void saveCredentials(Context context, Credentials credentials) {
+        Toast.makeText(context, "saving access token " + credentials.getAccessToken(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "saving id token " + credentials.getIdToken(), Toast.LENGTH_SHORT).show();
+
+        Log.d(LOG, "saving access token " + credentials.getAccessToken());
+        Log.d(LOG, "saving id token " + credentials.getIdToken());
+
+
         SharedPreferences sp = context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 

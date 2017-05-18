@@ -31,16 +31,16 @@ public class NewLogin extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("scope", "openid offline_access");
+        Auth0 auth0 = new Auth0("0FlTsCGzAeTXuCOeJmAutqEJyuBKAhzU", "caroni.eu.auth0.com");
+        auth0.setOIDCConformant(true);
 
         //Request a refresh token along with the access token.
         mLock = Lock.newBuilder(auth0, mCallback)
-                .withScope("openid offline_access")
-                .withAuthenticationParameters(parameters)
+                .withScope("openid read:photos update:photos create:photos")
+                .withAudience("kreasport-jwt-api")
                 .build(this);
 
+        CredentialsManager.deleteCredentials(this);
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
         // AccessToken means already logged in
         if (accessToken == null) {
@@ -89,7 +89,11 @@ public class NewLogin extends AppCompatActivity {
         public void onAuthentication(Credentials credentials) {
             Log.d(LOG, "Login - Success");
             CredentialsManager.saveCredentials(NewLogin.this, credentials);
+
             Toast.makeText(NewLogin.this, "authenticated with access token: " + credentials.getAccessToken(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(NewLogin.this, "authenticated with id token: " + credentials.getIdToken(), Toast.LENGTH_SHORT).show();
+
+
             startActivity(new Intent(NewLogin.this, HomeActivity.class));
             finish();
         }

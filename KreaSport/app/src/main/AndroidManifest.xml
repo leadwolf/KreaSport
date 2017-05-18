@@ -85,7 +85,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
 
                 <data
-                    android:host="ccaroni.eu.auth0.com"
+                    android:host="caroni.eu.auth0.com"
                     android:pathPrefix="/android/com.ccaroni.kreasport/callback"
                     android:scheme="https"/>
             </intent-filter>
