@@ -33,18 +33,6 @@
             android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
-            android:name=".activities.SignupActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.ResetPasswordActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
             android:name=".activities.ProfileActivity"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme.Dark"
@@ -67,7 +55,7 @@
                 android:value=".activities.HomeActivity"/>
         </activity>
         <activity
-            android:name=".activities.NewLogin"
+            android:name=".activities.LoginActivity"
             android:theme="@style/SplashTheme">
         </activity>
 

@@ -1,130 +1,139 @@
 package com.ccaroni.kreasport.activities;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationAPIClient;
+import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.lock.AuthenticationCallback;
+import com.auth0.android.lock.Lock;
+import com.auth0.android.lock.LockCallback;
+import com.auth0.android.lock.utils.LockException;
+import com.auth0.android.result.Credentials;
+import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.ccaroni.kreasport.other.CredentialsManager;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final static String LOG = LoginActivity.class.getSimpleName();
+    private static final String LOG = LoginActivity.class.getSimpleName();
 
-    private EditText inputEmail, inputPassword;
-    private FirebaseAuth auth;
-    private ProgressBar progressBar;
-    private Button btnSignup, btnLogin, btnReset;
+    private Lock mLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
+        auth0.setOIDCConformant(true);
 
-        //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
+        mLock = Lock.newBuilder(auth0, mCallback)
+                .withScope("openid offline_access read:races update:races create:races")
+                .withAudience("kreasport-jwt-api")
+                .build(this);
 
-        checkIfEmailVerified();
+        String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
+        if (accessToken == null) {
+            Log.d(LOG, "access token is null, showing login");
+            startLockWidget();
+        } else {
+            final AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
+            aClient.userInfo(accessToken)
+                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
+                        @Override
+                        public void onSuccess(final UserProfile payload) {
+                            Log.d(LOG, "access token validation: SUCCESS");
+                            autoLoginRedirect();
+                        }
 
-        // set the view now
-        setContentView(R.layout.activity_login);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        btnSignup = (Button) findViewById(R.id.btn_signup);
-        btnLogin = (Button) findViewById(R.id.btn_login);
-        btnReset = (Button) findViewById(R.id.btn_reset_password);
-
-        //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
-
-        btnSignup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, SignupActivity.class));
-            }
-        });
-
-        btnReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
-            }
-        });
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = inputEmail.getText().toString();
-                final String password = inputPassword.getText().toString();
-
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (password.length() < 6) {
-                    inputPassword.setError(getString(R.string.minimum_password));
-                    return;
-                }
-
-                progressBar.setVisibility(View.VISIBLE);
-
-                //authenticate user
-                auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                progressBar.setVisibility(View.GONE);
-                                if (task.isSuccessful()) {
-                                    checkIfEmailVerified();
-                                } else {
-                                    // there was an error else
-                                    Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-            }
-        });
-    }
-
-    private void checkIfEmailVerified() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null && user.isEmailVerified()) {
-            Log.d(LOG, "Successfully logged in");
-            Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            startActivity(intent);
-            finish();
-        } else if (user != null && !user.isEmailVerified()) {
-            FirebaseAuth.getInstance().signOut();
-            Log.d(LOG, "Email hasn't been verified");
-            Toast.makeText(this, "You didn't verify your account", Toast.LENGTH_SHORT).show();
-
+                        @Override
+                        public void onFailure(AuthenticationException error) {
+                            Log.d(LOG, "access token validation: FAIL");
+                            attemptRefresh(aClient);
+                        }
+                    });
         }
     }
+
+    private void attemptRefresh(AuthenticationAPIClient aClient) {
+        String refreshToken = CredentialsManager.getCredentials(this).getRefreshToken();
+        if (refreshToken == null) {
+            startLockWidget();
+        } else {
+            aClient.renewAuth(refreshToken)
+
+                    .start(new BaseCallback<Credentials, AuthenticationException>() {
+
+                        @Override
+                        public void onSuccess(Credentials credentials) {
+                            Log.d(LOG, "refresh token validation: SUCCESS");
+                            CredentialsManager.saveCredentials(LoginActivity.this, credentials);
+                            autoLoginRedirect();
+                        }
+
+                        @Override
+                        public void onFailure(AuthenticationException error) {
+                            Log.d(LOG, "refresh token validation: SUCCESS");
+                            startLockWidget();
+                        }
+                    });
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Your own Activity code
+        mLock.onDestroy(this);
+        mLock = null;
+    }
+
+    private final LockCallback mCallback = new AuthenticationCallback() {
+        @Override
+        public void onAuthentication(Credentials credentials) {
+            Log.d(LOG, "Login - Success");
+            CredentialsManager.saveCredentials(LoginActivity.this, credentials);
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
+        }
+
+        @Override
+        public void onCanceled() {
+            Log.d(LOG, "Login - Cancelled");
+        }
+
+        @Override
+        public void onError(LockException error) {
+            Log.d(LOG, "Login - Error:" + error.toString());
+        }
+    };
+
+    private void startLockWidget() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(LoginActivity.this, "Session Expired, please Log In", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        CredentialsManager.deleteCredentials(this);
+        startActivity(mLock.newIntent(this));
+    }
+
+    /**
+     * Finishes this activity and goes to {@link HomeActivity}.
+     */
+    private void autoLoginRedirect() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Log.d(LOG, "Login - Automatic login success");
+            }
+        });
+        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+        finish();
+    }
+
 }
