@@ -90,11 +90,13 @@ public class CredentialsManager {
 
     /**
      * Uses callingActivity to get the access token from Prefs, then creates an {@link AuthenticationAPIClient} and attemps to call {@link AuthenticationAPIClient#userInfo(String)}.
-     * <br></rb><br>On success, nothing happens.
+     * <br><br>On success, nothing happens.
      * <br>On failure, calls {@link #signOut(Activity)}
      * @param callingActivity
      */
     public static void verifyAccessToken(final Activity callingActivity) {
+        Log.d(LOG, "request from " + callingActivity.getClass().getSimpleName() + " to verify access token");
+
         Auth0 auth0 = new Auth0(callingActivity.getString(R.string.auth0_client_id), callingActivity.getString(R.string.auth0_domain));
         auth0.setOIDCConformant(true);
 

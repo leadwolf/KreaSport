@@ -55,8 +55,6 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
-        CredentialsManager.verifyAccessToken(this);
-
         getUserData();
     }
 

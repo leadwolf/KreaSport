@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -52,7 +53,8 @@ public class BaseActivity extends AppCompatActivity
     protected int currentActivityIndex;
 
     /**
-     * Just a call to setContentView to avoid overriding onCreate
+     * Just a call to setContentView to avoid overriding onCreate.
+     * <br>Calls {@link #secondaryCreate()}
      * @param savedInstanceState
      * @param layout
      */
@@ -61,43 +63,15 @@ public class BaseActivity extends AppCompatActivity
 
         setContentView(layout);
         secondaryCreate();
-        verifyLogin();
-    }
-
-    private void verifyLogin() {
-        Log.d(LOG, "verifying login");
-
-        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
-        auth0.setOIDCConformant(true);
-
-        String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
-        if (accessToken == null) {
-            Log.d(LOG, "access token is null, showing login");
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        } else {
-            final AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
-            aClient.userInfo(accessToken)
-                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
-                        @Override
-                        public void onSuccess(final UserProfile payload) {
-                            Log.d(LOG, "access token validation: SUCCESS");
-                        }
-
-                        @Override
-                        public void onFailure(AuthenticationException error) {
-                            Log.d(LOG, "access token validation: FAIL, showing Login");
-                            startActivity(new Intent(BaseActivity.this, LoginActivity.class));
-                            finish();
-                        }
-                    });
-        }
     }
 
     /**
      * Sets up the toolbar, drawerlayout and navgiationView.
+     * <br>Also verifies the user's access token with {@link CredentialsManager#verifyAccessToken(Activity)}
      */
     protected void secondaryCreate() {
+        CredentialsManager.verifyAccessToken(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
