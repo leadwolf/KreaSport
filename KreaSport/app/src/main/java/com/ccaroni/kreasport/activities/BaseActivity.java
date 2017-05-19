@@ -18,8 +18,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationAPIClient;
+import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.lock.Lock;
+import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
+import com.ccaroni.kreasport.other.CredentialsManager;
 
 /**
  * Created by Master on 24/04/2017.
@@ -51,8 +58,41 @@ public class BaseActivity extends AppCompatActivity
      * @param layout
      */
     protected void customCreate(@Nullable Bundle savedInstanceState, int layout) {
+        Log.d(LOG, "custom create");
+
         setContentView(layout);
         secondaryCreate();
+        verifyLogin();
+    }
+
+    private void verifyLogin() {
+        Log.d(LOG, "verifying login");
+
+        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
+        auth0.setOIDCConformant(true);
+
+        String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
+        if (accessToken == null) {
+            Log.d(LOG, "access token is null, showing login");
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        } else {
+            final AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
+            aClient.userInfo(accessToken)
+                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
+                        @Override
+                        public void onSuccess(final UserProfile payload) {
+                            Log.d(LOG, "access token validation: SUCCESS");
+                        }
+
+                        @Override
+                        public void onFailure(AuthenticationException error) {
+                            Log.d(LOG, "access token validation: FAIL, showing Login");
+                            startActivity(new Intent(BaseActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    });
+        }
     }
 
     /**

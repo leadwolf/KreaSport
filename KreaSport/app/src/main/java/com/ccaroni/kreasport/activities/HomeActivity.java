@@ -17,7 +17,6 @@ import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;
 import com.ccaroni.kreasport.other.CredentialsManager;
 import com.ccaroni.kreasport.other.PreferenceManager;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -39,14 +38,6 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-//            Log.d(LOG, "no user logged in, launching login activity");
-//            startActivity(new Intent(this, LoginActivity.class));
-//            finish();
-//        } else {
-//            Log.d(LOG, "user already logged in:" + FirebaseAuth.getInstance().getCurrentUser().toString());
-//        }
 
         super.customCreate(savedInstanceState, R.layout.activity_base);
 
