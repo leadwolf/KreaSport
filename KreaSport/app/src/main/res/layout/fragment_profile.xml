@@ -27,6 +27,7 @@
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
                 <ImageView
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:id="@+id/profile_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

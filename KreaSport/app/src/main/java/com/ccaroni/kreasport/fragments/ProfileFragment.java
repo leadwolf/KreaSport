@@ -2,15 +2,12 @@ package com.ccaroni.kreasport.fragments;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.auth0.android.Auth0;
@@ -21,13 +18,16 @@ import com.auth0.android.management.ManagementException;
 import com.auth0.android.management.UsersAPIClient;
 import com.auth0.android.result.UserProfile;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
+
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.activities.LoginActivity;
 import com.ccaroni.kreasport.databinding.FragmentProfileBinding;
 import com.ccaroni.kreasport.other.CredentialsManager;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class ProfileFragment extends Fragment {
 
@@ -153,8 +153,10 @@ public class ProfileFragment extends Fragment {
                             .apply(new RequestOptions()
                                     .placeholder(R.drawable.ic_person_outline_white_24dp)
                                     .error(R.drawable.ic_person_outline_white_24dp)
+                                    .bitmapTransform(new CircleCrop())
                                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                             )
+                            .transition(withCrossFade().crossFade(750))
                             .into(binding.profileImage);
                     Toast.makeText(getContext(), "loaded profile image", Toast.LENGTH_SHORT).show();
                 } else {
