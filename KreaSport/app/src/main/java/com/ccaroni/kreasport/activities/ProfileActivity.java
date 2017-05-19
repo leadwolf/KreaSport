@@ -39,7 +39,7 @@ public class ProfileActivity extends BaseActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
         super.secondaryCreate();
 
-        resetNavigationDrawer(navigationView.getMenu().getItem(1));
+        resetNavigationDrawer(navigationView.getMenu().getItem(2));
         setCurrentActivityIndex(2);
 
         setupToolbar();
@@ -57,9 +57,6 @@ public class ProfileActivity extends BaseActivity {
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
