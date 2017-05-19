@@ -35,6 +35,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
@@ -43,8 +44,6 @@ import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static java.security.AccessController.getContext;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback
         <Status> {
@@ -91,11 +90,13 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private void setupMap() {
         MapOptions mMapOptions = new MapOptions()
                 .setEnableLocationOverlay(true)
-                .setEnableCompass(true)
                 .setEnableMultiTouchControls(true)
                 .setEnableScaleOverlay(true);
 
         MapVM mMapVM = new MapVM(new GeoPoint(50.633621, 3.0651845), 9);
+
+        // needs to be called before the MapView is created to enable hw
+        Configuration.getInstance().setMapViewHardwareAccelerated(true);
 
         mMapView = new CustomMapView(this, mMapOptions, mMapVM);
         initRaceOverlays();

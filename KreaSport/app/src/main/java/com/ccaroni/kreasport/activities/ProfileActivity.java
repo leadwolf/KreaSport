@@ -7,7 +7,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +26,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityProfileBinding;
 import com.ccaroni.kreasport.other.CredentialsManager;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
     private static final String LOG = ProfileActivity.class.getSimpleName();
 
@@ -38,6 +37,10 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
+        super.secondaryCreate();
+
+        resetNavigationDrawer(navigationView.getMenu().getItem(1));
+        setCurrentActivityIndex(2);
 
         setupToolbar();
 
@@ -55,14 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
@@ -161,7 +157,7 @@ public class ProfileActivity extends AppCompatActivity {
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                     )
 //                            .transition(Glide.withCrossFade().crossFade(750))
-                    .into(binding.imgProfilePic);
+                    .into(binding.appBarMain.imgProfilePic);
         } else {
             Log.d(LOG, "could not find user profile image");
         }

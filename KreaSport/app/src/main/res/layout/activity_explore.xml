@@ -21,7 +21,7 @@
 
         <include
             android:id="@+id/app_bar_main"
-            layout="@layout/app_bar_main_new"
+            layout="@layout/app_bar_explore"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             bind:raceVM="@{raceVM}"/>
