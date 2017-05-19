@@ -33,6 +33,7 @@ public class ProfileFragment extends Fragment {
 
     private static final String LOG = ProfileFragment.class.getSimpleName();
     private FragmentProfileBinding binding;
+    private UserProfile userProfile;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -69,9 +70,22 @@ public class ProfileFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false);
         View view = binding.getRoot();
 
+        setBindings();
+
         getUserData();
 
         return view;
+    }
+
+    private void setBindings() {
+        binding.contentScrolling.btnSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CredentialsManager.deleteCredentials(getContext());
+                startActivity(new Intent(getContext(), LoginActivity.class));
+                getActivity().finish();
+            }
+        });
     }
 
     private void getUserData() {
@@ -85,53 +99,69 @@ public class ProfileFragment extends Fragment {
         String accessToken = CredentialsManager.getCredentials(getContext()).getAccessToken();
 
         if (accessToken == null) {
-            // TODO return to login
+            startActivity(new Intent(getContext(), LoginActivity.class));
         } else {
+            // gets simple user profile open_id
+            Log.d(LOG, "using access token: " + accessToken);
+
             authClient.userInfo(accessToken)
                     .start(new BaseCallback<UserProfile, AuthenticationException>() {
 
                         @Override
                         public void onSuccess(final UserProfile userInfo) {
+                            Log.d(LOG, "got simple data");
+                            userProfile = userInfo;
                             String userId = userInfo.getId();
+                            Log.d(LOG, "using userId: " + userId);
 
+                            // get the full profile
                             usersClient.getProfile(userId)
                                     .start(new BaseCallback<UserProfile, ManagementException>() {
                                         @Override
                                         public void onSuccess(final UserProfile profile) {
-                                            getActivity().runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    setUserData(profile);
-                                                }
-                                            });
+                                            userProfile = profile;
+                                            Log.d(LOG, "got user profile");
+                                            setUserData();
                                         }
 
                                         @Override
                                         public void onFailure(ManagementException error) {
-                                            //show error
+                                            Log.d(LOG, "error getting complete user profile");
+                                            Log.d(LOG, error.toString());
+                                            setUserData();
                                         }
                                     });
                         }
 
                         @Override
                         public void onFailure(AuthenticationException error) {
-                            //show error
+                            Log.d(LOG, "error getting simple user profile");
+                            Log.d(LOG, error.toString());
+                            setUserData();
                         }
                     });
         }
     }
 
-    private void setUserData(UserProfile profile) {
-        Glide.with(this)
-                .load(profile.getPictureURL())
-                .apply(
-                        new RequestOptions()
-                        .placeholder(R.drawable.ic_person_outline_white_24dp)
-                        .error(R.drawable.ic_person_outline_white_24dp)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                )
-                .into(binding.profileImage);
-        Toast.makeText(getContext(), "loaded profile image", Toast.LENGTH_SHORT).show();
+    private void setUserData() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (userProfile.getPictureURL() != null) {
+                    Glide.with(ProfileFragment.this)
+                            .load(userProfile.getPictureURL())
+                            .apply(new RequestOptions()
+                                    .placeholder(R.drawable.ic_person_outline_white_24dp)
+                                    .error(R.drawable.ic_person_outline_white_24dp)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            )
+                            .into(binding.profileImage);
+                    Toast.makeText(getContext(), "loaded profile image", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d(LOG, "could not find user profile image");
+                }
+            }
+        });
     }
 
     //sign out method
