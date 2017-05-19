@@ -22,7 +22,6 @@ import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.lock.Lock;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
@@ -180,7 +179,7 @@ public class BaseActivity extends AppCompatActivity
                 activityIntent = new Intent(this, ExploreActivity.class);
                 break;
             case R.id.nav_profile:
-                activityIntent = new Intent(this, ScrollingActivity.class);
+                activityIntent = new Intent(this, ProfileActivity.class);
                 break;
             case R.id.nav_share:
                 break;
