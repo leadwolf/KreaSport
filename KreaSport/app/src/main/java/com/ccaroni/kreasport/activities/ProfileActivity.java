@@ -39,6 +39,21 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
 
+        setupToolbar();
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        getUserData();
+    }
+
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,23 +78,12 @@ public class ProfileActivity extends AppCompatActivity {
                 if (scrollRange + verticalOffset == 0) {
                     collapsingToolbarLayout.setTitle("Christopher Caroni");
                     isShow = true;
-                } else if(isShow) {
+                } else if (isShow) {
                     collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
                     isShow = false;
                 }
             }
         });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        getUserData();
     }
 
     private void getUserData() {
@@ -141,22 +145,26 @@ public class ProfileActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (userProfile != null && userProfile.getPictureURL() != null) {
-                    Glide.with(ProfileActivity.this)
-                            .load(userProfile.getPictureURL())
-                            .apply(new RequestOptions()
-                                    .placeholder(R.drawable.ic_person_outline_white_24dp)
-                                    .error(R.drawable.ic_person_outline_white_24dp)
-                                    .bitmapTransform(new CircleCrop())
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            )
-//                            .transition(Glide.withCrossFade().crossFade(750))
-                            .into(binding.imgProfilePic);
-                } else {
-                    Log.d(LOG, "could not find user profile image");
-                }
+                setProfilePicture();
             }
         });
+    }
+
+    private void setProfilePicture() {
+        if (userProfile != null && userProfile.getPictureURL() != null) {
+            Glide.with(ProfileActivity.this)
+                    .load(userProfile.getPictureURL())
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_person_outline_white_24dp)
+                            .error(R.drawable.ic_person_outline_white_24dp)
+                            .bitmapTransform(new CircleCrop())
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    )
+//                            .transition(Glide.withCrossFade().crossFade(750))
+                    .into(binding.imgProfilePic);
+        } else {
+            Log.d(LOG, "could not find user profile image");
+        }
     }
 
 }
