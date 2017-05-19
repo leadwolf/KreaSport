@@ -180,7 +180,7 @@ public class BaseActivity extends AppCompatActivity
                 activityIntent = new Intent(this, ExploreActivity.class);
                 break;
             case R.id.nav_profile:
-                activityIntent = new Intent(this, ProfileActivity.class);
+                activityIntent = new Intent(this, ScrollingActivity.class);
                 break;
             case R.id.nav_share:
                 break;

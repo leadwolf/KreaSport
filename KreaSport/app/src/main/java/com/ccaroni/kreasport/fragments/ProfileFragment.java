@@ -81,9 +81,7 @@ public class ProfileFragment extends Fragment {
         binding.contentScrolling.btnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CredentialsManager.deleteCredentials(getContext());
-                startActivity(new Intent(getContext(), LoginActivity.class));
-                getActivity().finish();
+                signOut();
             }
         });
     }
@@ -147,7 +145,7 @@ public class ProfileFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (userProfile.getPictureURL() != null) {
+                if (userProfile != null && userProfile.getPictureURL() != null) {
                     Glide.with(ProfileFragment.this)
                             .load(userProfile.getPictureURL())
                             .apply(new RequestOptions()
@@ -158,7 +156,6 @@ public class ProfileFragment extends Fragment {
                             )
                             .transition(withCrossFade().crossFade(750))
                             .into(binding.profileImage);
-                    Toast.makeText(getContext(), "loaded profile image", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(LOG, "could not find user profile image");
                 }

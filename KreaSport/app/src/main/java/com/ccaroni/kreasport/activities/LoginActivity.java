@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(AuthenticationException error) {
-                            Log.d(LOG, "refresh token validation: SUCCESS");
+                            Log.d(LOG, "refresh token validation: FAIL");
                             startLockWidget();
                         }
                     });

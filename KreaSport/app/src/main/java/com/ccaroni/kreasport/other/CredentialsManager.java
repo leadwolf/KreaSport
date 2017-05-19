@@ -51,6 +51,8 @@ public class CredentialsManager {
     }
 
     public static void deleteCredentials(Context context) {
+        Log.d(LOG, "deleted credentials");
+
         SharedPreferences sp = context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
