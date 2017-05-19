@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -7,7 +8,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -25,6 +25,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityProfileBinding;
 import com.ccaroni.kreasport.other.CredentialsManager;
+
+import static java.security.AccessController.getContext;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -52,6 +54,8 @@ public class ProfileActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        CredentialsManager.verifyAccessToken(this);
 
         getUserData();
     }
@@ -84,53 +88,19 @@ public class ProfileActivity extends BaseActivity {
         auth0.setOIDCConformant(true);
 
         String idToken = CredentialsManager.getCredentials(this).getIdToken();
-        final UsersAPIClient usersClient = new UsersAPIClient(auth0, idToken);
-        AuthenticationAPIClient authClient = new AuthenticationAPIClient(auth0);
-
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
 
+        AuthenticationAPIClient authClient = new AuthenticationAPIClient(auth0); // gets simple auth profile
+        final UsersAPIClient usersClient = new UsersAPIClient(auth0, idToken); // gets complete profile
+
         if (accessToken == null) {
-            startActivity(new Intent(this, LoginActivity.class));
+            CredentialsManager.signOut(this);
         } else {
             // gets simple user profile open_id
             Log.d(LOG, "using access token: " + accessToken);
 
             authClient.userInfo(accessToken)
-                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
-
-                        @Override
-                        public void onSuccess(final UserProfile userInfo) {
-                            Log.d(LOG, "got simple data");
-                            userProfile = userInfo;
-                            String userId = userInfo.getId();
-                            Log.d(LOG, "using userId: " + userId);
-
-                            // get the full profile
-                            usersClient.getProfile(userId)
-                                    .start(new BaseCallback<UserProfile, ManagementException>() {
-                                        @Override
-                                        public void onSuccess(final UserProfile profile) {
-                                            userProfile = profile;
-                                            Log.d(LOG, "got user profile");
-                                            setUserData();
-                                        }
-
-                                        @Override
-                                        public void onFailure(ManagementException error) {
-                                            Log.d(LOG, "error getting complete user profile");
-                                            Log.d(LOG, error.toString());
-                                            setUserData();
-                                        }
-                                    });
-                        }
-
-                        @Override
-                        public void onFailure(AuthenticationException error) {
-                            Log.d(LOG, "error getting simple user profile");
-                            Log.d(LOG, error.toString());
-                            setUserData();
-                        }
-                    });
+                    .start(new OpenIDCallback(usersClient));
         }
     }
 
@@ -157,6 +127,50 @@ public class ProfileActivity extends BaseActivity {
                     .into(binding.appBarMain.imgProfilePic);
         } else {
             Log.d(LOG, "could not find user profile image");
+        }
+    }
+
+    private class OpenIDCallback implements BaseCallback<UserProfile, AuthenticationException> {
+
+        private UsersAPIClient usersClient;
+
+        private OpenIDCallback(UsersAPIClient usersClient) {
+            this.usersClient = usersClient;
+        }
+
+        @Override
+        public void onSuccess(final UserProfile userInfo) {
+            Log.d(LOG, "got simple data");
+            userProfile = userInfo;
+            String userId = userInfo.getId();
+            Log.d(LOG, "using userId: " + userId);
+
+            // get the full profile
+            usersClient.getProfile(userId)
+                    .start(new ProfileCallback());
+        }
+
+        @Override
+        public void onFailure(AuthenticationException error) {
+            Log.d(LOG, "error getting simple user profile");
+            Log.d(LOG, error.toString());
+            setUserData();
+        }
+    }
+
+    private class ProfileCallback implements BaseCallback<UserProfile, ManagementException> {
+        @Override
+        public void onSuccess(final UserProfile profile) {
+            userProfile = profile;
+            Log.d(LOG, "got user profile");
+            setUserData();
+        }
+
+        @Override
+        public void onFailure(ManagementException error) {
+            Log.d(LOG, "error getting complete user profile");
+            Log.d(LOG, error.toString());
+            setUserData();
         }
     }
 
