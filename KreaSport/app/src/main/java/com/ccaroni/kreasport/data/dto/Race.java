@@ -70,7 +70,7 @@ public class Race extends BaseItem {
      */
     public static List<CustomOverlayItem> toPrimaryCustomOverlay(List<Race> racesForOverlay) {
         List<CustomOverlayItem> items = new ArrayList<>();
-        for (Race race :racesForOverlay) {
+        for (Race race : racesForOverlay) {
             items.add(new CustomOverlayItem(race.getTitle(), race.getDescription(), new GeoPoint(race.getLatitude(), race.getLongitude()), race.getId()).setPrimary(true));
         }
         return items;

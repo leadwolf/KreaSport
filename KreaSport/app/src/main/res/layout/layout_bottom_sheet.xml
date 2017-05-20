@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="OLDRaceHolder"
-            type="com.ccaroni.kreasport.map.viewmodels.OLDRaceHolder"/>
+            name="raceVM"
+            type="com.ccaroni.kreasport.map.viewmodels.RaceVM" />
     </data>
 
     <LinearLayout
@@ -31,13 +31,13 @@
         <include
             android:id="@+id/bottom_sheet_passive_info"
             layout="@layout/layout_bottom_sheet_passive"
-            android:visibility="@{OLDRaceHolder.passiveInfoVisibility}"
-            bind:OLDRaceHolder="@{OLDRaceHolder}"/>
+            android:visibility="@{raceVM.passiveInfoVisibility}"
+            bind:raceVM="@{raceVM}"/>
 
         <include
             android:id="@+id/bottom_sheet_active_info"
             layout="@layout/layout_bottom_sheet_active"
-            android:visibility="@{OLDRaceHolder.activeInfoVisibility}"/>
+            android:visibility="@{raceVM.activeInfoVisibility}"/>
 
 
         <View
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@{OLDRaceHolder.description}"
+            android:text="@{raceVM.description}"
             android:textColor="@android:color/black"/>
 
     </LinearLayout>

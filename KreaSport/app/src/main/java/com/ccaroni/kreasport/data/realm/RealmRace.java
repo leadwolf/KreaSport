@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.data.realm;
 
+import android.util.Log;
+
 import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
@@ -14,6 +16,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class RealmRace extends RealmObject {
 
+    private static final String LOG = RealmRace.class.getSimpleName();
     @PrimaryKey
     String id;
     private String title;
@@ -32,6 +35,9 @@ public class RealmRace extends RealmObject {
 
     private RealmList<RealmCheckpoint> realmCheckpoints;
 
+    public RealmRace() {
+        realmCheckpoints = new RealmList<>();
+    }
 
     public String getId() {
         return id;
@@ -129,20 +135,62 @@ public class RealmRace extends RealmObject {
         }
     }
 
-    public CustomOverlayItem primaryToCustomOverlayItem() {
-        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId()).setPrimary(true);
+    public CustomOverlayItem toCustomOverlayItemAsSingle() {
+        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId(), getId()).setPrimary(true);
+    }
+
+    public List<CustomOverlayItem> toCustomOverlayWithCheckpoints() {
+        List<CustomOverlayItem> items = new ArrayList<>();
+        items.add(toCustomOverlayItemAsSingle());
+
+        for (RealmCheckpoint realmCheckpoint : realmCheckpoints) {
+            items.add(realmCheckpoint.toCustomOverlayItem());
+        }
+
+        return items;
     }
 
     /**
-     * Converts all the primary parts of the races to a {@link CustomOverlayItem} with ({@link CustomOverlayItem#isPrimary()}).
+     * @param raceActive      <b>true: </b>Converts all the primary parts of the races to a {@link List} of {@link CustomOverlayItem} with ({@link CustomOverlayItem#isPrimary()}).
+     *                        <br>
+     *                        <b>false: </b>    Converts the race (as marker) and all its checkpoints to a {@link List} of {@link CustomOverlayItem}
      * @param racesForOverlay
      * @return
      */
-    public static List<CustomOverlayItem> toPrimaryCustomOverlay(List<RealmRace> racesForOverlay) {
+    public static List<CustomOverlayItem> racesToOverlay(boolean raceActive, List<RealmRace> racesForOverlay) {
         List<CustomOverlayItem> items = new ArrayList<>();
-        for (RealmRace realmRace :racesForOverlay) {
-            items.add(new CustomOverlayItem(realmRace.getTitle(), realmRace.getDescription(), new GeoPoint(realmRace.getLatitude(), realmRace.getLongitude()), realmRace.getId()).setPrimary(true));
+        if (!raceActive) {
+            for (RealmRace realmRace : racesForOverlay) {
+                CustomOverlayItem customOverlayItem = realmRace.toCustomOverlayItemAsSingle();
+
+                Log.d(LOG, "converted race to single overlay item");
+                Log.d(LOG, "from " + realmRace.getId() + " to " + customOverlayItem.getId());
+
+                items.add(realmRace.toCustomOverlayItemAsSingle());
+            }
+        } else {
+            // race is active, so show the checkpoints too.
+            if (racesForOverlay.size() != 1) {
+                throw new RuntimeException("Parameter said race was active, but list of races held multiple instead of one");
+            }
+            RealmRace toConvert = racesForOverlay.get(0);
+            items.addAll(toConvert.toCustomOverlayWithCheckpoints());
         }
         return items;
+    }
+
+    /**
+     * Searches its checkpoints for one that has the same id
+     *
+     * @param id
+     * @return
+     */
+    public RealmCheckpoint getCheckpointById(String id) {
+        for (RealmCheckpoint realmCheckpoint : realmCheckpoints) {
+            if (realmCheckpoint.getId().equals(id)) {
+                return realmCheckpoint;
+            }
+        }
+        return null;
     }
 }

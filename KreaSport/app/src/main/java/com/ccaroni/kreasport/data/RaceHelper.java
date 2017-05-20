@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.data;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmRace;
@@ -9,8 +10,6 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 /**
@@ -19,11 +18,12 @@ import io.realm.RealmResults;
 
 public class RaceHelper {
 
-    private final static String KEY_ALL_RACES = "com.ccaroni.kreasport." + RaceHelper.class.getSimpleName().toLowerCase() + ".keys." + "all_races";
+    private static final String LOG = RaceHelper.class.getSimpleName();
 
     private static RaceHelper instance;
 
     private Realm realm;
+    private List<Race> racesForOverlay;
 
 
     private RaceHelper() {
@@ -72,17 +72,41 @@ public class RaceHelper {
         return realmRaceList;
     }
 
+    public RealmResults<RealmRace> getAllRaces(boolean debug) {
+        Log.d(LOG, "getting all reaces");
+
+        RealmResults<RealmRace> results = realm.where(RealmRace.class)
+                .findAll();
+
+        if (debug) {
+            for (RealmRace realmRace : results) {
+                Log.d(LOG, "found race: " + realmRace.getId());
+            }
+        }
+
+        return results;
+    }
+
     public RealmRace findRaceById(String id) {
+        Log.d(LOG, "attempting to find race:" + id);
+
         return realm.where(RealmRace.class)
                 .equalTo("id", id)
                 .findFirst();
     }
 
-    public RealmRace findCurrentRace() {
+    public RealmResults<RealmRace> findCurrentRace() {
         return realm.where(RealmRace.class)
-                .equalTo("inProgress", "true")
-                .findFirst();
+                .equalTo("inProgress", true)
+                .findAll();
     }
 
-
+    public RealmResults<RealmRace> getAllOrCurrentRace() {
+        RealmResults<RealmRace> currentRealmResults = findCurrentRace();
+        if (currentRealmResults.size() == 0) {
+            return getAllRaces(false);
+        } else {
+            return currentRealmResults;
+        }
+    }
 }

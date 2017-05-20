@@ -13,13 +13,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RaceHelper;
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.models.MapOptions;
-import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
-import com.ccaroni.kreasport.map.viewmodels.OLDRaceHolder;
+import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.other.Constants;
@@ -45,6 +46,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.realm.RealmResults;
+
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback
         <Status> {
 
@@ -55,7 +58,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private ActivityExploreBinding binding;
 
     private CustomMapView mMapView;
-    private OLDRaceHolder OLDRaceHolder;
+    private RaceVM raceVM;
 
     private PreferenceManager preferenceManager;
 
@@ -81,8 +84,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
         preferenceManager = new PreferenceManager(this, ExploreActivity.class.getSimpleName());
 
-        OLDRaceHolder = preferenceManager.getRaceVM();
-        binding.setOLDRaceHolder(OLDRaceHolder);
+        raceVM = new RaceVM(this);
+        binding.setRaceVM(raceVM);
 
         setupMap();
     }
@@ -109,14 +112,16 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      * Either creates an overlay for all the races or full overlay of one race.
      */
     private void initRaceOverlays() {
-        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = OLDRaceHolder.getIconGestureListener();
-        List<CustomOverlayItem> raceAsOverlay = Race.toPrimaryCustomOverlay(OLDRaceHolder.getRacesForOverlay());
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
+//        List<CustomOverlayItem> raceAsOverlay = Race.racesToOverlay(RaceHelper.getInstance(this).getAllOrCurrentRace());
+        RealmResults<RealmRace> realmResults = RaceHelper.getInstance(this).getAllOrCurrentRace();
+        List<CustomOverlayItem> raceAsOverlay = RealmRace.racesToOverlay(raceVM.isRaceActive(), realmResults);
 
         ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
         raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
-        if (OLDRaceHolder.isRaceActive()) {
+        if (raceVM.isRaceActive()) {
             Log.d(LOG, "adding geofence");
             addGeofence();
         }
@@ -132,7 +137,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     private GeofencingRequest getGeofencingRequest() {
-        Checkpoint checkpoint = OLDRaceHolder.getActiveCheckpoint();
+        RealmCheckpoint checkpoint = raceVM.getActiveCheckpoint();
         if (!checkpoint.getId().equals("")) {
             GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
             builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);

@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="OLDRaceHolder"
-            type="com.ccaroni.kreasport.map.viewmodels.OLDRaceHolder"/>
+            name="raceVM"
+            type="com.ccaroni.kreasport.map.viewmodels.RaceVM" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -24,10 +24,10 @@
         <include
             android:id="@+id/bottom_sheet"
             layout="@layout/layout_bottom_sheet"
-            bind:OLDRaceHolder="@{OLDRaceHolder}"/>
+            bind:raceVM="@{raceVM}"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:onClick="@{() -> OLDRaceHolder.onStartClicked()}"
+            android:onClick="@{() -> raceVM.onStartClicked()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_vertical_margin"

@@ -17,6 +17,18 @@ public class CustomOverlayItem extends OverlayItem {
         super(aTitle, aSnippet, aGeoPoint);
     }
 
+
+    /**
+     * TODO to remove!!! we need to always specify raceId
+     *
+     * @deprecated
+     *
+     * @param aTitle
+     * @param aSnippet
+     * @param aGeoPoint
+     * @param id
+     */
+    @Deprecated
     public CustomOverlayItem(String aTitle, String aSnippet, IGeoPoint aGeoPoint, String id) {
         super(aTitle, aSnippet, aGeoPoint);
         this.id = id;
