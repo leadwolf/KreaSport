@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RaceHelper;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.map.viewmodels.RaceHolder;
@@ -78,6 +79,14 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
         final ProgressDialog progressDialog = createDownloadProgressDialog(requestPrivate);
         progressDialog.show();
 
+        if (requestPrivate) {
+            downloadPrivateRace(progressDialog);
+        } else {
+            downloadPublicRaces(progressDialog);
+        }
+    }
+
+    private void downloadPublicRaces(final ProgressDialog progressDialog) {
         raceService.getPublicRaces().enqueue(new Callback<List<Race>>() {
             @Override
             public void onResponse(Call<List<Race>> call, retrofit2.Response<List<Race>> response) {
@@ -87,10 +96,10 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
                     List<Race> downloadedRaces = response.body();
                     Toast.makeText(HomeActivity.this, "Downloaded " + downloadedRaces.size() + " races", Toast.LENGTH_SHORT).show();
 
-                    transferDownloadedRaces(downloadedRaces);
+                    RaceHelper.getInstance(HomeActivity.this).saveRaceList(downloadedRaces);
                 } else {
                     Log.d(LOG, "response unsuccessful with code " + response.code());
-                    showNoRaceFoundDialog(false, requestPrivate);
+                    showNoRaceFoundDialog(false, false);
                 }
             }
 
@@ -98,9 +107,13 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
             public void onFailure(Call<List<Race>> call, Throwable t) {
                 Log.d(LOG, "download failed: " + t.toString());
                 progressDialog.dismiss();
-                showNoRaceFoundDialog(true, requestPrivate);
+                showNoRaceFoundDialog(true, false);
             }
         });
+    }
+
+    private void downloadPrivateRace(final ProgressDialog progressDialog) {
+
     }
 
     /**
@@ -138,12 +151,6 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
             progressDialog.setMessage(getString(R.string.download_public_race_message));
         }
         return progressDialog;
-    }
-
-    private void transferDownloadedRaces(List<Race> races) {
-        RaceHolder savedRaceHolder = preferenceManager.getRaceVM();
-        savedRaceHolder.addDownloadedRaces(races);
-        preferenceManager.saveRaceVM(savedRaceHolder);
     }
 
     /**
