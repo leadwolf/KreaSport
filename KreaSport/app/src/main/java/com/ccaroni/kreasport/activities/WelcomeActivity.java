@@ -21,9 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.other.CustomViewPager;
-import com.ccaroni.kreasport.other.PermissionsManager;
-import com.ccaroni.kreasport.other.PreferenceManager;
+import com.ccaroni.kreasport.utils.CustomViewPager;
+import com.ccaroni.kreasport.utils.PermissionsManager;
+import com.ccaroni.kreasport.utils.PreferenceManager;
 
 public class WelcomeActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.other;
+package com.ccaroni.kreasport.utils;
 
 import android.Manifest;
 import android.app.Activity;

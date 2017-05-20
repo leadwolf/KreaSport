@@ -15,8 +15,8 @@ import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;
-import com.ccaroni.kreasport.other.CredentialsManager;
-import com.ccaroni.kreasport.other.PreferenceManager;
+import com.ccaroni.kreasport.utils.CredentialsManager;
+import com.ccaroni.kreasport.utils.PreferenceManager;
 
 import java.util.List;
 

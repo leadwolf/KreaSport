@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.other;
+package com.ccaroni.kreasport.utils;
 
 import com.google.gson.reflect.TypeToken;
 

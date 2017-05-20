@@ -5,10 +5,10 @@
                 tools:activity="com.ccaroni.kreasport.activities.WelcomeActivity">
 
 
-    <com.ccaroni.kreasport.other.CustomViewPager
+    <com.ccaroni.kreasport.utils.CustomViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.ccaroni.kreasport.other.CustomViewPager>
+        android:layout_height="match_parent"></com.ccaroni.kreasport.utils.CustomViewPager>
 
     <LinearLayout
         android:id="@+id/layoutDots"

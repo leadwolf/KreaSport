@@ -1,7 +1,5 @@
 package com.ccaroni.kreasport.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -24,9 +22,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityProfileBinding;
-import com.ccaroni.kreasport.other.CredentialsManager;
-
-import static java.security.AccessController.getContext;
+import com.ccaroni.kreasport.utils.CredentialsManager;
 
 public class ProfileActivity extends BaseActivity {
 

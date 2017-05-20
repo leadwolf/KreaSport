@@ -19,14 +19,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.auth0.android.Auth0;
-import com.auth0.android.authentication.AuthenticationAPIClient;
-import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
-import com.ccaroni.kreasport.other.CredentialsManager;
+import com.ccaroni.kreasport.utils.CredentialsManager;
 
 /**
  * Created by Master on 24/04/2017.
