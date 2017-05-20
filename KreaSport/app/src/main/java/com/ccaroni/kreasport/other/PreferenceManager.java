@@ -3,7 +3,6 @@ package com.ccaroni.kreasport.other;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.ccaroni.kreasport.map.viewmodels.OLDRaceHolder;
 import com.google.gson.Gson;
 
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
@@ -34,32 +33,6 @@ public class PreferenceManager {
 
     public boolean isFirstTimeLaunch() {
         return prefs.getBoolean(IS_FIRST_TIME_LAUNCH, true);
-    }
-
-    /**
-     * Saves OLDRaceHolder to {@link SharedPreferences} using the file {@link #FILE_PASS_RACES}.
-     * @param OLDRaceHolder
-     */
-    public void saveRaceVM(OLDRaceHolder OLDRaceHolder) {
-        SharedPreferences racePrefs = context.getSharedPreferences(FILE_PASS_RACES, Context.MODE_PRIVATE);
-        String raceVMJSON = new Gson().toJson(OLDRaceHolder, OLDRaceHolder.class);
-        racePrefs.edit()
-                .putString(KEY_RACE_VM, raceVMJSON)
-                .apply();
-    }
-
-    /**
-     * Gets the raceVM stored in {@link SharedPreferences} from the file {@link #FILE_PASS_RACES}.
-     * @return
-     */
-    public OLDRaceHolder getRaceVM() {
-        SharedPreferences racePrefs = context.getSharedPreferences(FILE_PASS_RACES, Context.MODE_PRIVATE);
-        String raceVMJson = racePrefs.getString(KEY_RACE_VM, "");
-        if (raceVMJson.equals("")) {
-            return new OLDRaceHolder();
-        } else {
-            return new Gson().fromJson(raceVMJson, OLDRaceHolder.class);
-        }
     }
 
     public void saveMapState(MapVM mapVM) {
