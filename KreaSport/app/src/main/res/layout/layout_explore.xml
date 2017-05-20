@@ -27,6 +27,7 @@
             bind:raceVM="@{raceVM}"/>
 
         <android.support.design.widget.FloatingActionButton
+            android:visibility="@{raceVM.fabVisibility}"
             android:onClick="@{() -> raceVM.onStartClicked()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

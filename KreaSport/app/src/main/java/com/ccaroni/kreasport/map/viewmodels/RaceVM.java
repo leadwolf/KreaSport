@@ -33,23 +33,24 @@ public class RaceVM extends BaseObservable {
     private String title;
     private String description;
 
-
     /**
      * Whether this VM is currently in an active state
      */
     private boolean raceActive;
-    private LocationUtilContract mLocationUtils;
-
     private transient int passiveInfoVisibility;
     private transient int activeInfoVisbility;
+    private int fabVisibility;
+
+
     private Activity activity;
+    private LocationUtilContract mLocationUtils;
 
     public RaceVM(Activity activity, LocationUtilContract mLocationUtils) {
         this.activity = activity;
         this.mLocationUtils = mLocationUtils;
 
         // set this at the start because normally it has to be triggered by a change
-        raceActive = RaceHelper.getInstance(activity).findCurrentRace().size() != 0;
+        setRaceActive(RaceHelper.getInstance(activity).findCurrentRace().size() != 0);
     }
 
     public boolean isRaceActive() {
@@ -58,8 +59,18 @@ public class RaceVM extends BaseObservable {
 
     public void setRaceActive(boolean raceActive) {
         this.raceActive = raceActive;
-        passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
-        activeInfoVisbility = raceActive ? View.INVISIBLE : View.GONE;
+        if (raceActive) {
+            Log.d(LOG, "set race active");
+            passiveInfoVisibility = View.GONE;
+            fabVisibility = View.GONE;
+            activeInfoVisbility = View.VISIBLE;
+        } else {
+            Log.d(LOG, "set race INactive");
+            passiveInfoVisibility = View.VISIBLE;
+            fabVisibility = View.VISIBLE;
+            activeInfoVisbility = View.GONE;
+        }
+        notifyChange();
     }
 
     @Bindable
@@ -70,6 +81,11 @@ public class RaceVM extends BaseObservable {
     @Bindable
     public int getActiveInfoVisibility() {
         return activeInfoVisbility;
+    }
+
+    @Bindable
+    public int getFabVisibility() {
+        return fabVisibility;
     }
 
     public ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener() {
@@ -167,6 +183,11 @@ public class RaceVM extends BaseObservable {
         notifyPropertyChanged(BR.description);
     }
 
+    @Bindable
+    public String getProgression() {
+        return "1/n";
+    }
+
     public void onStartClicked() {
         Log.d(LOG, "start clicked");
 
@@ -192,8 +213,21 @@ public class RaceVM extends BaseObservable {
         } else {
             Log.d(LOG, "User was " + distance + "m away from start. Inside by " + (Constants.MINIMUM_DISTANCE_TO_START_RACE - distance) + "m");
             Toast.makeText(activity, "Started!", Toast.LENGTH_SHORT).show();
+
+            setRaceActive(true);
         }
 
+    }
+
+    public void onStopClicked() {
+        Log.d(LOG, "stop clicked");
+
+        if (!raceActive) {
+            // TODO not supposed to be here
+            return;
+        }
+
+        setRaceActive(false);
     }
 
     public RealmCheckpoint getActiveCheckpoint() {

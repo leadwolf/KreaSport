@@ -37,7 +37,8 @@
         <include
             android:id="@+id/bottom_sheet_active_info"
             layout="@layout/layout_bottom_sheet_active"
-            android:visibility="@{raceVM.activeInfoVisibility}"/>
+            android:visibility="@{raceVM.activeInfoVisibility}"
+            bind:raceVM="@{raceVM}"/>
 
 
         <View
