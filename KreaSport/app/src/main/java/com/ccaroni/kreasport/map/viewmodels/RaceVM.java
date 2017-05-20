@@ -19,6 +19,8 @@ import com.ccaroni.kreasport.utils.LocationUtilContract;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
+import io.realm.RealmResults;
+
 /**
  * Created by Master on 19/05/2017.
  */
@@ -50,27 +52,44 @@ public class RaceVM extends BaseObservable {
         this.mLocationUtils = mLocationUtils;
 
         // set this at the start because normally it has to be triggered by a change
-        setRaceActive(RaceHelper.getInstance(activity).findCurrentRace().size() != 0);
+        RealmResults<RealmRace> currentRaceResults = RaceHelper.getInstance(activity).findCurrentRace();
+        if (currentRaceResults.size() != 0) {
+            currentRace = currentRaceResults.get(0);
+            currentCheckpoint = currentRace.getCurrentCheckpoint();
+            setRaceActive(true);
+        } else {
+            setRaceActive(false);
+        }
     }
 
     public boolean isRaceActive() {
         return raceActive;
     }
 
-    public void setRaceActive(boolean raceActive) {
-        this.raceActive = raceActive;
-        if (raceActive) {
-            Log.d(LOG, "set race active");
-            passiveInfoVisibility = View.GONE;
-            fabVisibility = View.GONE;
-            activeInfoVisbility = View.VISIBLE;
-        } else {
-            Log.d(LOG, "set race INactive");
-            passiveInfoVisibility = View.VISIBLE;
-            fabVisibility = View.VISIBLE;
-            activeInfoVisbility = View.GONE;
+
+    /**
+     * Then entry point for modifying anything related to the event of starting/stopping the race.
+     * <br>Includes visibility and race attribute itself (to be saved with Realm).
+     * @param newRaceState
+     */
+    public void setRaceActive(boolean newRaceState) {
+        Log.d(LOG, newRaceState ? "set race active" : "set race INactive");
+
+
+        changeVisibilitiesOnRaceState(newRaceState);
+
+        if (this.raceActive) {
+            currentRace.setInProgress(newRaceState);
         }
+
         notifyChange();
+        this.raceActive = newRaceState;
+    }
+
+    private void changeVisibilitiesOnRaceState(boolean raceActive) {
+        passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
+        fabVisibility = raceActive ? View.GONE : View.VISIBLE;
+        activeInfoVisbility = raceActive ? View.VISIBLE : View.GONE;
     }
 
     @Bindable
@@ -107,7 +126,7 @@ public class RaceVM extends BaseObservable {
     }
 
     /**
-     * Switch to update call appropriate method for updating title & description according to the selectedItem.
+     * Switch to update on a {@link CustomOverlayItem} selection. Calls the appropriate method for updating title & description according to the selectedItem.
      * @param selectedItem
      */
     private void updateCurrent(CustomOverlayItem selectedItem) {
@@ -185,21 +204,22 @@ public class RaceVM extends BaseObservable {
 
     @Bindable
     public String getProgression() {
-        return "1/n";
+        if (currentRace == null) {
+            Log.d(LOG, "No race active to get progression from");
+            return null;
+        }
+        return currentRace.getProgressionAsString();
     }
 
+    /**
+     * Call to stop the current race. Used by passiveBottomSheet.
+     */
     public void onStartClicked() {
         Log.d(LOG, "start clicked");
-
-
         if (raceActive) {
-            // TODO not supposed to be here
-            return;
-        }
-
-        if (currentRace == null) {
-            // TODO not supposed to be here
-            return;
+            throw new IllegalStateException("A race is already active");
+        } else if (currentRace == null) {
+            throw new IllegalStateException("No race is currently selected");
         }
 
         Location lastLocation = mLocationUtils.getLastKnownLocation();
@@ -219,12 +239,13 @@ public class RaceVM extends BaseObservable {
 
     }
 
+    /**
+     * Call to stop the current race. Used by activeBottomSheet.
+     */
     public void onStopClicked() {
         Log.d(LOG, "stop clicked");
-
         if (!raceActive) {
-            // TODO not supposed to be here
-            return;
+            throw new IllegalStateException("A race is already active");
         }
 
         setRaceActive(false);

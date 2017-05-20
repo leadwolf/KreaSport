@@ -123,10 +123,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
-        if (raceVM.isRaceActive()) {
-            Log.d(LOG, "adding geofence");
-            addGeofence();
-        }
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -155,6 +151,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                             )
                             .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_MILLISECONDS)
                             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
+                            .setLoiteringDelay(Constants.LOITERING_DELAY)
                             .build()
             );
             return builder.build();
@@ -308,6 +305,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     public void onConnected(@Nullable Bundle bundle) {
         if (mLocationUtils != null) {
             mLocationUtils.startLocationUpdates();
+        }
+        if (raceVM.isRaceActive()) {
+            Log.d(LOG, "adding geofence");
+            addGeofence();
         }
     }
 

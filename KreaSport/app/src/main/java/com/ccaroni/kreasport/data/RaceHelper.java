@@ -47,8 +47,11 @@ public class RaceHelper {
 
         realm = Realm.getInstance(new RealmConfiguration.Builder()
                 .name("kreasport-db")
+                .deleteRealmIfMigrationNeeded()
                 .build()
         );
+
+        // TODO DONT delete if migration
     }
 
 
@@ -109,5 +112,17 @@ public class RaceHelper {
         } else {
             return currentRealmResults;
         }
+    }
+
+    public void deleteAllRaces() {
+        realm.delete(RealmRace.class);
+    }
+
+    public void beginTransaction() {
+        realm.beginTransaction();
+    }
+
+    public void commitTransaction() {
+        realm.commitTransaction();
     }
 }

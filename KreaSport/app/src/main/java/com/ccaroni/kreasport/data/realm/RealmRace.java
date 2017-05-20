@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.data.realm;
 import android.location.Location;
 import android.util.Log;
 
+import com.ccaroni.kreasport.data.RaceHelper;
 import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
@@ -18,6 +19,8 @@ import io.realm.annotations.PrimaryKey;
 public class RealmRace extends RealmObject {
 
     private static final String LOG = RealmRace.class.getSimpleName();
+
+
     @PrimaryKey
     String id;
     private String title;
@@ -33,6 +36,8 @@ public class RealmRace extends RealmObject {
      * Whether this is the last race the user was doing. Use to restore after app close.
      */
     private boolean inProgress;
+
+    private int progression;
 
     private RealmList<RealmCheckpoint> realmCheckpoints;
 
@@ -119,7 +124,21 @@ public class RealmRace extends RealmObject {
     }
 
     public void setInProgress(boolean inProgress) {
+        RaceHelper.getInstance(null).beginTransaction();
         this.inProgress = inProgress;
+        RaceHelper.getInstance(null).commitTransaction();
+    }
+
+    public void setProgression(int progression) {
+        this.progression = progression;
+    }
+
+    public int getProgression() {
+        return progression;
+    }
+
+    public String getProgressionAsString() {
+        return "" + progression + "/" + realmCheckpoints.size();
     }
 
     public static List<CustomOverlayItem> fullRaceToCustomOverlayItem(RealmRace realmRace) {
@@ -201,5 +220,9 @@ public class RealmRace extends RealmObject {
         raceStart.setLongitude(longitude);
 
         return raceStart;
+    }
+
+    public RealmCheckpoint getCurrentCheckpoint() {
+        return realmCheckpoints.get(progression);
     }
 }
