@@ -1,9 +1,7 @@
 package com.ccaroni.kreasport;
 
-import android.util.Log;
-
-import com.ccaroni.kreasport.data.pojo.RealmCheckpoint;
-import com.ccaroni.kreasport.map.models.Checkpoint;
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
 
 import org.junit.Test;
 

@@ -1,10 +1,7 @@
-package com.ccaroni.kreasport.data.pojo;
+package com.ccaroni.kreasport.data.realm;
 
-import com.ccaroni.kreasport.map.models.BaseItem;
-import com.ccaroni.kreasport.map.models.Checkpoint;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -12,11 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
-import io.realm.RealmModel;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class RealmRace extends RealmObject {
 
+    @PrimaryKey
     String id;
     private String title;
     private String description;

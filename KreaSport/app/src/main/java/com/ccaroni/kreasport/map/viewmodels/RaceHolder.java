@@ -13,8 +13,8 @@ import java.util.List;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.map.models.Checkpoint;
-import com.ccaroni.kreasport.map.models.Race;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.dto.Race;
 
 /**
  * Created by Master on 06/04/2017.

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.map.models;
+package com.ccaroni.kreasport.data.dto;
 
 import android.databinding.BaseObservable;
 

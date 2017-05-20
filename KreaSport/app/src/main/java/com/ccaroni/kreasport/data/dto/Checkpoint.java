@@ -1,10 +1,10 @@
-package com.ccaroni.kreasport.map.models;
+package com.ccaroni.kreasport.data.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.data.pojo.RealmCheckpoint;
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

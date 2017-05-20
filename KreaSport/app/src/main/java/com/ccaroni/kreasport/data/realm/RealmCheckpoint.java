@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.pojo;
+package com.ccaroni.kreasport.data.realm;
 
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
@@ -9,9 +9,11 @@ import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class RealmCheckpoint extends RealmObject {
 
+    @PrimaryKey
     String id;
     private String title;
     private String description;

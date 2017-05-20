@@ -1,14 +1,16 @@
-package com.ccaroni.kreasport.map.models;
+package com.ccaroni.kreasport.data.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ccaroni.kreasport.data.pojo.RealmRace;
+import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.osmdroid.util.GeoPoint;
+
+import io.realm.RealmList;
 
 public class Race extends BaseItem {
 
@@ -83,5 +85,13 @@ public class Race extends BaseItem {
                 .setLongitude(getLongitude());
         realmRace.setRealmCheckpointsFromNormal(getCheckpoints());
         return realmRace;
+    }
+
+    public static RealmList<RealmRace> toRealmList(List<Race> raceList) {
+        RealmList<RealmRace> realmRaceList = new RealmList<>();
+        for (Race race : raceList) {
+            realmRaceList.add(race.toRealmRace());
+        }
+        return realmRaceList;
     }
 }

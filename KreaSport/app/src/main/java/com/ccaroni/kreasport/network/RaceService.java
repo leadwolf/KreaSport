@@ -1,6 +1,6 @@
 package com.ccaroni.kreasport.network;
 
-import com.ccaroni.kreasport.map.models.Race;
+import com.ccaroni.kreasport.data.dto.Race;
 
 import java.util.List;
 

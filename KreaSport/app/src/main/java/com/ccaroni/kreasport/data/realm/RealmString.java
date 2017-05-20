@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.pojo;
+package com.ccaroni.kreasport.data.realm;
 
 import io.realm.RealmObject;
 
