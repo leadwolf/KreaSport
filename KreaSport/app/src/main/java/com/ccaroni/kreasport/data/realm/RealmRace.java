@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.data.realm;
 
+import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.dto.Checkpoint;
@@ -192,5 +193,13 @@ public class RealmRace extends RealmObject {
             }
         }
         return null;
+    }
+
+    public Location getLocation() {
+        Location raceStart = new Location("race_start");
+        raceStart.setLatitude(latitude);
+        raceStart.setLongitude(longitude);
+
+        return raceStart;
     }
 }

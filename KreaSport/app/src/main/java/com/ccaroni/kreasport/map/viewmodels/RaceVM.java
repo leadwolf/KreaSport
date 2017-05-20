@@ -3,8 +3,10 @@ package com.ccaroni.kreasport.map.viewmodels;
 import android.app.Activity;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.location.Location;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RaceHelper;
@@ -12,6 +14,8 @@ import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.utils.LocationUtilContract;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
@@ -34,13 +38,17 @@ public class RaceVM extends BaseObservable {
      * Whether this VM is currently in an active state
      */
     private boolean raceActive;
+    private LocationUtilContract mLocationUtils;
 
     private transient int passiveInfoVisibility;
     private transient int activeInfoVisbility;
     private Activity activity;
 
-    public RaceVM(Activity activity) {
+    public RaceVM(Activity activity, LocationUtilContract mLocationUtils) {
         this.activity = activity;
+        this.mLocationUtils = mLocationUtils;
+
+        // set this at the start because normally it has to be triggered by a change
         raceActive = RaceHelper.getInstance(activity).findCurrentRace().size() != 0;
     }
 
@@ -131,7 +139,7 @@ public class RaceVM extends BaseObservable {
         } else {
             Log.d(LOG, "selected different race");
 
-            RaceHelper.getInstance(activity).getAllRaces(true);
+            RaceHelper.getInstance(activity).getAllRaces(false);
 
             currentRace = RaceHelper.getInstance(activity).findRaceById(selectedItem.getRaceId());
             setTitle(currentRace.getTitle());
@@ -161,6 +169,31 @@ public class RaceVM extends BaseObservable {
 
     public void onStartClicked() {
         Log.d(LOG, "start clicked");
+
+
+        if (raceActive) {
+            // TODO not supposed to be here
+            return;
+        }
+
+        if (currentRace == null) {
+            // TODO not supposed to be here
+            return;
+        }
+
+        Location lastLocation = mLocationUtils.getLastKnownLocation();
+        Location raceLocation = currentRace.getLocation();
+
+        float distance = lastLocation.distanceTo(raceLocation);
+
+        if (distance > Constants.MINIMUM_DISTANCE_TO_START_RACE) {
+            Log.d(LOG, "User was " + distance + "m away from start. Too far by " + (distance - Constants.MINIMUM_DISTANCE_TO_START_RACE) + "m");
+            Toast.makeText(activity, "You are too far to start this race", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d(LOG, "User was " + distance + "m away from start. Inside by " + (Constants.MINIMUM_DISTANCE_TO_START_RACE - distance) + "m");
+            Toast.makeText(activity, "Started!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     public RealmCheckpoint getActiveCheckpoint() {

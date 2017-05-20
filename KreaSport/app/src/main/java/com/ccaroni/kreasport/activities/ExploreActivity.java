@@ -24,7 +24,7 @@ import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.LocationUtils;
+import com.ccaroni.kreasport.utils.impl.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -86,7 +86,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
 
-        raceVM = new RaceVM(this);
+        raceVM = new RaceVM(this, mLocationUtils);
         binding.setRaceVM(raceVM);
 
         setupMap();

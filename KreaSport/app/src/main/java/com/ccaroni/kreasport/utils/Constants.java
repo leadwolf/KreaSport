@@ -20,7 +20,8 @@ public class Constants {
 
 
     public static final String KEY_SAVED_RACES = "kreasport.global.keys.saved_races";
-    public static final Type savedRaceLisType = new TypeToken<ArrayList<Race>>(){}.getType();
+    public static final Type savedRaceLisType = new TypeToken<ArrayList<Race>>() {
+    }.getType();
 
     public static final float GEOFENCE_RADIUS_METERS = 20;
     public static final long GEOFENCE_EXPIRATION_MILLISECONDS = 300000; // 5mn;
@@ -34,4 +35,9 @@ public class Constants {
      * The smallest amount of time we force between updates in ms.
      */
     public static final long GEOLOCATION_UPDATE_FASTEST_INTERVAL = 1500; // in ms
+
+    /**
+     * Minimum distance that the user needs to be from the start of a race in m (meters).
+     */
+    public static final float MINIMUM_DISTANCE_TO_START_RACE = 15; // in m
 }

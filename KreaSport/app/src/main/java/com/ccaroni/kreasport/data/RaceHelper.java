@@ -73,7 +73,8 @@ public class RaceHelper {
     }
 
     public RealmResults<RealmRace> getAllRaces(boolean debug) {
-        Log.d(LOG, "getting all reaces");
+        if (debug)
+            Log.d(LOG, "getting all races");
 
         RealmResults<RealmRace> results = realm.where(RealmRace.class)
                 .findAll();

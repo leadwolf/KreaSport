@@ -1,26 +1,14 @@
-package com.ccaroni.kreasport.utils;
+package com.ccaroni.kreasport.utils.impl;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.ccaroni.kreasport.R;
-import com.google.android.gms.common.ConnectionResult;
+import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.utils.LocationUtilContract;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Master on 20/05/2017.
@@ -30,7 +18,7 @@ import java.util.TimerTask;
  * This class will handle all location request including registering and render the results available through getters.
  * It is initialized from an activity for a Context but on instantiation everything is handled internally.
  */
-public class LocationUtils implements LocationListener {
+public class LocationUtils extends LocationUtilContract {
 
     private static final String LOG = LocationUtils.class.getSimpleName();
 
@@ -80,6 +68,12 @@ public class LocationUtils implements LocationListener {
         Log.d(LOG, "passing on to " + mLocationReceiver);
 
         mLocationReceiver.onLocationChanged(location);
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    @Override
+    public Location getLastKnownLocation() {
+        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
     public interface LocationCommunicationInterface {
