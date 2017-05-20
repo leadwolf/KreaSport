@@ -21,6 +21,15 @@ public class RealmRace extends RealmObject {
     private Double latitude;
     private Double longitude;
 
+    /**
+     * If this race has been posted to the server since it was modified.
+     */
+    private boolean synced;
+    /**
+     * Whether this is the last race the user was doing. Use to restore after app close.
+     */
+    private boolean inProgress;
+
     private RealmList<RealmCheckpoint> realmCheckpoints;
 
 
@@ -88,6 +97,22 @@ public class RealmRace extends RealmObject {
         return "RealmRace{" +
                 "realmCheckpoints=" + realmCheckpoints +
                 '}';
+    }
+
+    public boolean isSynced() {
+        return synced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.synced = synced;
+    }
+
+    public boolean isInProgress() {
+        return inProgress;
+    }
+
+    public void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
     }
 
     public static List<CustomOverlayItem> fullRaceToCustomOverlayItem(RealmRace realmRace) {

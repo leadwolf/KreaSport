@@ -73,13 +73,15 @@ public class RaceHelper {
     }
 
     public RealmRace findRaceById(String id) {
-        RealmResults<RealmRace> realmResults = realm.where(RealmRace.class)
+        return realm.where(RealmRace.class)
                 .equalTo("id", id)
-                .findAll();
-        if (realmResults.size() == 0) {
-            return null;
-        }
-        return realmResults.get(0);
+                .findFirst();
+    }
+
+    public RealmRace findCurrentRace() {
+        return realm.where(RealmRace.class)
+                .equalTo("inProgress", "true")
+                .findFirst();
     }
 
 
