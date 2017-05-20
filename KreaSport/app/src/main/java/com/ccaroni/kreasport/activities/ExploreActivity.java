@@ -24,7 +24,7 @@ import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.PreferenceManager;
+import com.ccaroni.kreasport.utils.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,8 +32,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.osmdroid.config.Configuration;
@@ -48,8 +46,8 @@ import java.util.TimerTask;
 
 import io.realm.RealmResults;
 
-public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ResultCallback
-        <Status> {
+public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
+        <Status>, LocationUtils.LocationCommunicationInterface {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -60,7 +58,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private CustomMapView mMapView;
     private RaceVM raceVM;
 
-    private PreferenceManager preferenceManager;
+    private LocationUtils mLocationUtils;
 
     private GoogleApiClient mGoogleApiClient;
     private boolean hasFix;
@@ -76,13 +74,17 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         setCurrentActivityIndex(1);
 
         // First we need to check availability of play services
-        if (checkPlayServices())
+        if (checkPlayServices()) {
+
             // Building the GoogleApi client
             buildGoogleApiClient();
-        else
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
 
-        preferenceManager = new PreferenceManager(this, ExploreActivity.class.getSimpleName());
+            // LocationUtils will be our listener and manager
+            mLocationUtils = new LocationUtils(this, mGoogleApiClient);
+        } else {
+            // Force to go back to Home
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+        }
 
         raceVM = new RaceVM(this);
         binding.setRaceVM(raceVM);
@@ -216,59 +218,24 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         return true;
     }
 
+    /**
+     * Geofence callback
+     *
+     * @param status
+     */
     @Override
-    protected void onStart() {
-        mGoogleApiClient.connect();
-        super.onStart();
+    public void onResult(@NonNull Status status) {
+        Toast.makeText(this, "Geofence callback", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopLocationUpdates();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        startLocationUpdates();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
-    }
-
-
-    @SuppressWarnings({"MissingPermission"})
-    private void startLocationUpdates() {
-        // Create the location request
-        LocationRequest mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(Constants.GEOLOCATION_UPDATE_INTERVAL)
-                .setFastestInterval(Constants.GEOLOCATION_UPDATE_FASTEST_INTERVAL);
-        // Request location updates
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                mLocationRequest, this);
-    }
-
-    private void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-    }
-
+    /**
+     * Any location update in {@link LocationUtils} calls this method.
+     *
+     * @param location
+     */
     @Override
     public void onLocationChanged(Location location) {
-
+        Log.d(LOG, "got callback from location listener, updating icon");
         //after the first fix, schedule the task to change the icon
 
         final DirectedLocationOverlay overlay = mMapView.getLocationOverlay();
@@ -302,8 +269,65 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         mMapView.invalidate();
     }
 
+
+    /**
+     * The single point where we connect to the google client api to make sure we only use resources when this activity is in use.
+     */
     @Override
-    public void onResult(@NonNull Status status) {
-        Toast.makeText(this, "Geofence callback", Toast.LENGTH_SHORT).show();
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    /**
+     * Disconnects the google client api for battery considerations.
+     */
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    /**
+     * Stops location updates when this activity is paused for battery considerations.
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mLocationUtils != null) {
+            mLocationUtils.stopLocationUpdates();
+        }
+    }
+
+    /**
+     * On connection to the google api client
+     *
+     * @param bundle
+     */
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (mLocationUtils != null) {
+            mLocationUtils.startLocationUpdates();
+        }
+    }
+
+    /**
+     * On connection suspended to the google api client
+     *
+     * @param i
+     */
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    /**
+     * On connection failed to the google api client
+     *
+     * @param connectionResult
+     */
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 }
