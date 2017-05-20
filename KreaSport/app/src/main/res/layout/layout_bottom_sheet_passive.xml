@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="raceVM"
-            type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
+            name="raceHolder"
+            type="com.ccaroni.kreasport.map.viewmodels.RaceHolder"/>
     </data>
 
     <LinearLayout
@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="@{raceVM.title}"
+                android:text="@{raceHolder.title}"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"/>
 

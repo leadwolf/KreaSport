@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.map.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ccaroni.kreasport.data.pojo.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -36,7 +37,7 @@ public class Race extends BaseItem {
 
     @Override
     public String toString() {
-        return "Race{" +
+        return "RealmRace{" +
                 "checkpoints=" + checkpoints +
                 ", location=" + location +
                 '}';
@@ -71,5 +72,16 @@ public class Race extends BaseItem {
             items.add(new CustomOverlayItem(race.getTitle(), race.getDescription(), new GeoPoint(race.getLatitude(), race.getLongitude()), race.getId()).setPrimary(true));
         }
         return items;
+    }
+
+    public RealmRace toRealmRace() {
+        RealmRace realmRace = (RealmRace) new RealmRace()
+                .setId(getId())
+                .setTitle(getTitle())
+                .setDescription(getDescription())
+                .setLatitude(getLatitude())
+                .setLongitude(getLongitude());
+        realmRace.setRealmCheckpointsFromNormal(getCheckpoints());
+        return realmRace;
     }
 }

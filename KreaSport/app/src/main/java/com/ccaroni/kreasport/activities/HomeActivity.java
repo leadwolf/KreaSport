@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.map.models.Race;
-import com.ccaroni.kreasport.map.viewmodels.RaceVM;
+import com.ccaroni.kreasport.map.viewmodels.RaceHolder;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;
 import com.ccaroni.kreasport.other.CredentialsManager;
@@ -141,9 +141,9 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
     }
 
     private void transferDownloadedRaces(List<Race> races) {
-        RaceVM savedRaceVM = preferenceManager.getRaceVM();
-        savedRaceVM.addDownloadedRaces(races);
-        preferenceManager.saveRaceVM(savedRaceVM);
+        RaceHolder savedRaceHolder = preferenceManager.getRaceVM();
+        savedRaceHolder.addDownloadedRaces(races);
+        preferenceManager.saveRaceVM(savedRaceHolder);
     }
 
     /**

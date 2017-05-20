@@ -51,8 +51,8 @@ public class CustomOverlayItem extends OverlayItem {
     }
 
     /**
-     * Whether this item represents a checkpoint or a Race.
-     * If it is a Race, it does not have a checkpointId
+     * Whether this item represents a checkpoint or a RealmRace.
+     * If it is a RealmRace, it does not have a checkpointId
      * @return
      */
     public boolean isPrimary() {

@@ -3,16 +3,10 @@ package com.ccaroni.kreasport.other;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.ccaroni.kreasport.map.models.Race;
+import com.ccaroni.kreasport.map.viewmodels.RaceHolder;
 import com.google.gson.Gson;
 
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
-import com.ccaroni.kreasport.map.viewmodels.RaceVM;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class PreferenceManager {
@@ -43,12 +37,12 @@ public class PreferenceManager {
     }
 
     /**
-     * Saves raceVM to {@link SharedPreferences} using the file {@link #FILE_PASS_RACES}.
-     * @param raceVM
+     * Saves raceHolder to {@link SharedPreferences} using the file {@link #FILE_PASS_RACES}.
+     * @param raceHolder
      */
-    public void saveRaceVM(RaceVM raceVM) {
+    public void saveRaceVM(RaceHolder raceHolder) {
         SharedPreferences racePrefs = context.getSharedPreferences(FILE_PASS_RACES, Context.MODE_PRIVATE);
-        String raceVMJSON = new Gson().toJson(raceVM, RaceVM.class);
+        String raceVMJSON = new Gson().toJson(raceHolder, RaceHolder.class);
         racePrefs.edit()
                 .putString(KEY_RACE_VM, raceVMJSON)
                 .apply();
@@ -58,13 +52,13 @@ public class PreferenceManager {
      * Gets the raceVM stored in {@link SharedPreferences} from the file {@link #FILE_PASS_RACES}.
      * @return
      */
-    public RaceVM getRaceVM() {
+    public RaceHolder getRaceVM() {
         SharedPreferences racePrefs = context.getSharedPreferences(FILE_PASS_RACES, Context.MODE_PRIVATE);
         String raceVMJson = racePrefs.getString(KEY_RACE_VM, "");
         if (raceVMJson.equals("")) {
-            return new RaceVM();
+            return new RaceHolder();
         } else {
-            return new Gson().fromJson(raceVMJson, RaceVM.class);
+            return new Gson().fromJson(raceVMJson, RaceHolder.class);
         }
     }
 

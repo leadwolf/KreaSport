@@ -42,41 +42,46 @@ public abstract class BaseItem extends BaseObservable {
         return id;
     }
 
-    public void setId(String id) {
+    public BaseItem setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public BaseItem setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public BaseItem setDescription(String description) {
         this.description = description;
         notifyPropertyChanged(BR.description);
+        return this;
     }
 
     public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public BaseItem setLatitude(Double latitude) {
         this.latitude = latitude;
+        return this;
     }
 
     public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public BaseItem setLongitude(Double longitude) {
         this.longitude = longitude;
+        return this;
     }
 
     @Override
@@ -89,4 +94,5 @@ public abstract class BaseItem extends BaseObservable {
                 ", longitude=" + longitude +
                 '}';
     }
+
 }
