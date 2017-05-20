@@ -19,7 +19,7 @@ import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.models.MapOptions;
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
-import com.ccaroni.kreasport.map.viewmodels.RaceHolder;
+import com.ccaroni.kreasport.map.viewmodels.OLDRaceHolder;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.other.Constants;
@@ -55,7 +55,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private ActivityExploreBinding binding;
 
     private CustomMapView mMapView;
-    private RaceHolder raceHolder;
+    private OLDRaceHolder OLDRaceHolder;
 
     private PreferenceManager preferenceManager;
 
@@ -81,8 +81,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
         preferenceManager = new PreferenceManager(this, ExploreActivity.class.getSimpleName());
 
-        raceHolder = preferenceManager.getRaceVM();
-        binding.setRaceHolder(raceHolder);
+        OLDRaceHolder = preferenceManager.getRaceVM();
+        binding.setOLDRaceHolder(OLDRaceHolder);
 
         setupMap();
     }
@@ -109,14 +109,14 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      * Either creates an overlay for all the races or full overlay of one race.
      */
     private void initRaceOverlays() {
-        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceHolder.getIconGestureListener();
-        List<CustomOverlayItem> raceAsOverlay = Race.toPrimaryCustomOverlay(raceHolder.getRacesForOverlay());
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = OLDRaceHolder.getIconGestureListener();
+        List<CustomOverlayItem> raceAsOverlay = Race.toPrimaryCustomOverlay(OLDRaceHolder.getRacesForOverlay());
 
         ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
         raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
-        if (raceHolder.isRaceActive()) {
+        if (OLDRaceHolder.isRaceActive()) {
             Log.d(LOG, "adding geofence");
             addGeofence();
         }
@@ -132,7 +132,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     private GeofencingRequest getGeofencingRequest() {
-        Checkpoint checkpoint = raceHolder.getActiveCheckpoint();
+        Checkpoint checkpoint = OLDRaceHolder.getActiveCheckpoint();
         if (!checkpoint.getId().equals("")) {
             GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
             builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);

@@ -13,7 +13,6 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RaceHelper;
 import com.ccaroni.kreasport.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.dto.Race;
-import com.ccaroni.kreasport.map.viewmodels.RaceHolder;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;
 import com.ccaroni.kreasport.other.CredentialsManager;

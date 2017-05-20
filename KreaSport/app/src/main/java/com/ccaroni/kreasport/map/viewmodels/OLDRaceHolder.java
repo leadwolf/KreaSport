@@ -20,9 +20,9 @@ import com.ccaroni.kreasport.data.dto.Race;
  * Created by Master on 06/04/2017.
  * ViewModel for the races. Has a list of {@link Race} as atrtibute and is used by the views to represent that data.
  */
-public class RaceHolder extends BaseObservable {
+public class OLDRaceHolder extends BaseObservable {
 
-    private transient static final String LOG = RaceHolder.class.getSimpleName();
+    private transient static final String LOG = OLDRaceHolder.class.getSimpleName();
 
     /**
      * The race model to manipulate
@@ -56,7 +56,7 @@ public class RaceHolder extends BaseObservable {
     /**
      * Empty constructor because either nothing is to be loaded or everything is to be restored from deserializing.
      */
-    public RaceHolder() {
+    public OLDRaceHolder() {
         currentRaceIndex = -1;
         currentCheckpointIndex = -1;
         raceActive = false;
