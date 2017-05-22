@@ -134,13 +134,7 @@ public class RaceHelper {
     }
 
     public <E extends RealmObject> E createObject(Class<E> clazz) {
-        realm.beginTransaction();
-
-        E newObject = realm.createObject(clazz);
-
-        realm.commitTransaction();
-
-        return newObject;
+        return realm.createObject(clazz);
     }
 
     public void deleteAllRaceRecords() {

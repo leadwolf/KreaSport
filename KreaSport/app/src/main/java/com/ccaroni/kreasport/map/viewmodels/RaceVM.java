@@ -11,6 +11,7 @@ import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.utils.LocationUtils;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -45,10 +46,12 @@ public abstract class RaceVM extends BaseObservable {
 
     protected RaceCommunication raceCommunication;
     protected LocationUtils mLocationUtils;
-    private RealmRace ra;
+
+    private String userId;
 
     public RaceVM(Activity activity, LocationUtils mLocationUtils) {
         RaceHelper.getInstance(activity).init(activity);
+        this.userId = CredentialsManager.getUserId(activity);
         if (activity instanceof RaceCommunication) {
             this.raceCommunication = (RaceCommunication) activity;
         } else {
@@ -59,7 +62,12 @@ public abstract class RaceVM extends BaseObservable {
     }
 
     protected void initRaceRecord() {
+        RaceHelper.getInstance(null).beginTransaction();
+
         raceRecord = RaceHelper.getInstance(null).createObject(RealmRaceRecord.class);
+        raceRecord.setUserId(userId);
+
+        RaceHelper.getInstance(null).commitTransaction();
     }
 
     public boolean isRaceActive() {
@@ -144,6 +152,7 @@ public abstract class RaceVM extends BaseObservable {
 
     /**
      * Updates the current info for the bottom sheet through the bindings.
+     *
      * @param selectedItem
      */
     protected abstract void updateCurrent(CustomOverlayItem selectedItem);

@@ -10,12 +10,11 @@ import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.management.UsersAPIClient;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.view.activities.LoginActivity;
-
-import static android.R.attr.id;
 
 /**
  * Manages Auth0 credentials through SharedPreferences using {@link SharedPreferences} saved in {@link CredentialsManager#AUTH_PREFERENCES_NAME} file.
@@ -154,5 +153,41 @@ public class CredentialsManager {
                         }
                     });
         }
+    }
+
+
+    public static void downloadUserId(final Activity activity) {
+        Auth0 auth0 = new Auth0(activity.getString(R.string.auth0_client_id), activity.getString(R.string.auth0_domain));
+        auth0.setOIDCConformant(true);
+
+        String idToken = CredentialsManager.getCredentials(activity).getIdToken();
+        String accessToken = CredentialsManager.getCredentials(activity).getAccessToken();
+
+        AuthenticationAPIClient authClient = new AuthenticationAPIClient(auth0); // gets simple auth profile
+        final UsersAPIClient usersClient = new UsersAPIClient(auth0, idToken); // gets complete profile
+
+        if (accessToken == null) {
+            CredentialsManager.signOut(activity);
+        } else {
+            // gets simple user profile open_id
+            Log.d(LOG, "using access token: " + accessToken);
+
+            authClient.userInfo(accessToken)
+                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
+                        @Override
+                        public void onSuccess(UserProfile payload) {
+                            Log.d(LOG, "got userId: " + payload.getId());
+
+                            saveUserId(activity, payload.getId());
+                        }
+
+                        @Override
+                        public void onFailure(AuthenticationException error) {
+                            Log.d(LOG, "error getting simple user profile");
+                            Log.d(LOG, error.toString());
+                        }
+                    });
+        }
+
     }
 }

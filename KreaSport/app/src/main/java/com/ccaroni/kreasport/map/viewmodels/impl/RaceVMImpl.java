@@ -14,6 +14,8 @@ import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.LocationUtils;
 
+import org.threeten.bp.OffsetDateTime;
+
 import io.realm.RealmResults;
 
 /**
@@ -70,7 +72,11 @@ public class RaceVMImpl extends RaceVM {
     }
 
     private void beginRecording() {
-        // TODO get the current race
+        RaceHelper.getInstance(null).beginTransaction();
+
+        raceRecord.setRaceId(currentRace.getId());
+
+        RaceHelper.getInstance(null).commitTransaction();
     }
 
     private void stopRace() {
@@ -98,6 +104,7 @@ public class RaceVMImpl extends RaceVM {
 
         raceRecord.setInProgress(false, false);
         raceRecord.setTimeExpired(timeDifference, false);
+        raceRecord.setDateTime(OffsetDateTime.now().toString());
 
         RaceHelper.getInstance(null).commitTransaction();
 
@@ -164,7 +171,7 @@ public class RaceVMImpl extends RaceVM {
         if (currentRace != null && currentRace.getId().equals(selectedItem.getRaceId())) {
             Log.d(LOG, "selected same race");
         } else {
-            Log.d(LOG, "selected different race");
+            Log.d(LOG, "selected different race: " + selectedItem.getRaceId());
 
             RaceHelper.getInstance(null).getAllRaces(false);
 

@@ -14,8 +14,6 @@ import com.auth0.android.lock.AuthenticationCallback;
 import com.auth0.android.lock.Lock;
 import com.auth0.android.lock.LockCallback;
 import com.auth0.android.lock.utils.LockException;
-import com.auth0.android.management.ManagementException;
-import com.auth0.android.management.UsersAPIClient;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
@@ -104,6 +102,9 @@ public class LoginActivity extends AppCompatActivity {
         public void onAuthentication(Credentials credentials) {
             Log.d(LOG, "Login - Success");
             CredentialsManager.saveCredentials(LoginActivity.this, credentials);
+
+            CredentialsManager.downloadUserId(LoginActivity.this);
+
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
         }
@@ -136,24 +137,11 @@ public class LoginActivity extends AppCompatActivity {
     private void autoLoginRedirect() {
         Log.d(LOG, "Login - Automatic login success");
 
-        UsersAPIClient usersClient = new UsersAPIClient(auth0, idToken);
-
-        usersClient.getProfile(idToken)
-                .start(new BaseCallback<UserProfile, ManagementException>() {
-                    @Override
-                    public void onSuccess(UserProfile payload) {
-                        Log.d(LOG, "got user profile");
-                        CredentialsManager.saveUserId(LoginActivity.this, payload.getId());
-                    }
-
-                    @Override
-                    public void onFailure(ManagementException error) {
-                        Log.d(LOG, "error getting complete user profile");
-                    }
-                });
+        CredentialsManager.downloadUserId(this);
 
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
     }
+
 
 }
