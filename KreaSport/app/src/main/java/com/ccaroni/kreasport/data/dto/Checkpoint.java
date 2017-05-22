@@ -95,10 +95,6 @@ public class Checkpoint extends BaseItem {
                 '}';
     }
 
-    public CustomOverlayItem toCustomOverlayItem() {
-        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId());
-    }
-
     public RealmCheckpoint toRealmCheckpoint() {
         RealmCheckpoint realmCheckpoint = (RealmCheckpoint) new RealmCheckpoint()
                 .setId(getId())

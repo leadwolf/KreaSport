@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         auth0.setOIDCConformant(true);
 
         mLock = Lock.newBuilder(auth0, mCallback)
-                .withScope("openid offline_access read:races update:races create:races")
+                .withScope("openid offline_access create:races read:races update:races delete:races")
                 .withAudience("kreasport-jwt-api")
                 .build(this);
 

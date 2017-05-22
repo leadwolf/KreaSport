@@ -21,6 +21,11 @@ public class Race extends BaseItem {
     @Expose
     private List<Double> location = null;
 
+    public Race() {
+        super();
+        checkpoints = new ArrayList<>();
+    }
+
     public List<Checkpoint> getCheckpoints() {
         return checkpoints;
     }
@@ -43,37 +48,6 @@ public class Race extends BaseItem {
                 "checkpoints=" + checkpoints +
                 ", location=" + location +
                 '}';
-    }
-
-    public static List<CustomOverlayItem> fullRaceToCustomOverlayItem(Race race) {
-        if (race.getCheckpoints() != null && race.getCheckpoints().size() > 0) {
-            List<CustomOverlayItem> overlayItems = new ArrayList<>();
-            for (Checkpoint checkpoint : race.getCheckpoints()) {
-                CustomOverlayItem item = checkpoint.toCustomOverlayItem();
-                item.setRaceId(race.getId());
-                overlayItems.add(item);
-            }
-            return overlayItems;
-        } else {
-            return null;
-        }
-    }
-
-    public CustomOverlayItem primaryToCustomOverlayItem() {
-        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId()).setPrimary(true);
-    }
-
-    /**
-     * Converts all the primary parts of the races to a {@link CustomOverlayItem} with ({@link CustomOverlayItem#isPrimary()}).
-     * @param racesForOverlay
-     * @return
-     */
-    public static List<CustomOverlayItem> toPrimaryCustomOverlay(List<Race> racesForOverlay) {
-        List<CustomOverlayItem> items = new ArrayList<>();
-        for (Race race : racesForOverlay) {
-            items.add(new CustomOverlayItem(race.getTitle(), race.getDescription(), new GeoPoint(race.getLatitude(), race.getLongitude()), race.getId()).setPrimary(true));
-        }
-        return items;
     }
 
     public RealmRace toRealmRace() {

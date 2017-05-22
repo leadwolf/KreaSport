@@ -51,7 +51,18 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
+        setBindings();
+
         getUserData();
+    }
+
+    private void setBindings() {
+        binding.appBarMain.contentProfile.btnSignOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CredentialsManager.signOut(ProfileActivity.this);
+            }
+        });
     }
 
     private void setupToolbar() {
@@ -98,32 +109,6 @@ public class ProfileActivity extends BaseActivity {
         }
     }
 
-    private void setUserData() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                setProfilePicture();
-            }
-        });
-    }
-
-    private void setProfilePicture() {
-        if (userProfile != null && userProfile.getPictureURL() != null) {
-            Glide.with(ProfileActivity.this)
-                    .load(userProfile.getPictureURL())
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_person_outline_white_24dp)
-                            .error(R.drawable.ic_person_outline_white_24dp)
-                            .bitmapTransform(new CircleCrop())
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    )
-//                            .transition(Glide.withCrossFade().crossFade(750))
-                    .into(binding.appBarMain.imgProfilePic);
-        } else {
-            Log.d(LOG, "could not find user profile image");
-        }
-    }
-
     private class OpenIDCallback implements BaseCallback<UserProfile, AuthenticationException> {
 
         private UsersAPIClient usersClient;
@@ -152,6 +137,32 @@ public class ProfileActivity extends BaseActivity {
         }
     }
 
+    private void setUserData() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setProfilePicture();
+            }
+        });
+    }
+
+    private void setProfilePicture() {
+        if (userProfile != null && userProfile.getPictureURL() != null) {
+            Glide.with(ProfileActivity.this)
+                    .load(userProfile.getPictureURL())
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_person_outline_white_24dp)
+                            .error(R.drawable.ic_person_outline_white_24dp)
+                            .bitmapTransform(new CircleCrop())
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    )
+//                            .transition(Glide.withCrossFade().crossFade(750))
+                    .into(binding.appBarMain.imgProfilePic);
+        } else {
+            Log.d(LOG, "could not find user profile image");
+        }
+    }
+
     private class ProfileCallback implements BaseCallback<UserProfile, ManagementException> {
         @Override
         public void onSuccess(final UserProfile profile) {
@@ -164,7 +175,7 @@ public class ProfileActivity extends BaseActivity {
         public void onFailure(ManagementException error) {
             Log.d(LOG, "error getting complete user profile");
             Log.d(LOG, error.toString());
-            setUserData();
+//            setUserData(); TODO verify what we want this method to do. Don't call since there is nothing to set?
         }
     }
 

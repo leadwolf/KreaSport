@@ -7,10 +7,12 @@ import java.util.List;
  */
 public class Checkpoint extends BasePoint {
 
+    private CheckpointKey checkpointKey;
     private String question;
     private List<String> possiblePossibleAnswers;
 
     public Checkpoint(){
+        super();
     }
 
     public Checkpoint(String title, String description, String question, double latitude, double longitude, List<String> possiblePossibleAnswers) {
@@ -37,6 +39,14 @@ public class Checkpoint extends BasePoint {
 
     public void addPossibleAnswer(String possibleAnswer) {
         possiblePossibleAnswers.add(possibleAnswer);
+    }
+
+    public CheckpointKey getCheckpointKey() {
+        return checkpointKey;
+    }
+
+    public void setCheckpointKey(CheckpointKey checkpointKey) {
+        this.checkpointKey = checkpointKey;
     }
 
 }

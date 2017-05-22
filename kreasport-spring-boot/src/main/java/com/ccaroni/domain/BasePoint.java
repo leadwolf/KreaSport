@@ -22,6 +22,7 @@ public class BasePoint {
     }
 
     public BasePoint(String title, String description, double latitude, double longitude) {
+        this();
         this.title = title;
         this.description = description;
         this.latitude = latitude;

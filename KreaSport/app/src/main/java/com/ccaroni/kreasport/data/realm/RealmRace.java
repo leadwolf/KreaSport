@@ -22,7 +22,7 @@ public class RealmRace extends RealmObject {
 
 
     @PrimaryKey
-    String id;
+    private String id;
     private String title;
     private String description;
     private Double latitude;
