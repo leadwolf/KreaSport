@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.activities;
+package com.ccaroni.kreasport.view.activities;
 
 import android.app.PendingIntent;
 import android.content.Intent;

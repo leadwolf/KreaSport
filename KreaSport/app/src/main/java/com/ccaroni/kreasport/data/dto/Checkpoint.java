@@ -1,7 +1,7 @@
 package com.ccaroni.kreasport.data.dto;
 
 import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.data.CheckpointKey;
+import com.ccaroni.kreasport.data.realm.CheckpointKey;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

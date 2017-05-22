@@ -13,7 +13,7 @@ import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.activities.LoginActivity;
+import com.ccaroni.kreasport.view.activities.LoginActivity;
 
 /**
  * Manages Auth0 credentials through SharedPreferences using {@link SharedPreferences} saved in {@link CredentialsManager#AUTH_PREFERENCES_NAME} file.

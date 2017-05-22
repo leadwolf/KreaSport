@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.activities;
+package com.ccaroni.kreasport.view.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RaceHelper;
-import com.ccaroni.kreasport.fragments.HomeFragment;
+import com.ccaroni.kreasport.view.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceService;

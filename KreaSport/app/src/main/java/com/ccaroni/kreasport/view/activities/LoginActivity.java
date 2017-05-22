@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.activities;
+package com.ccaroni.kreasport.view.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

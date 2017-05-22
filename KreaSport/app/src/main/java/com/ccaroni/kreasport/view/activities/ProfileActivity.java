@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.activities;
+package com.ccaroni.kreasport.view.activities;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -8,6 +8,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
@@ -21,8 +25,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RaceHelper;
+import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.databinding.ActivityProfileBinding;
 import com.ccaroni.kreasport.utils.CredentialsManager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.RealmResults;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -63,6 +74,17 @@ public class ProfileActivity extends BaseActivity {
                 CredentialsManager.signOut(ProfileActivity.this);
             }
         });
+
+        RealmResults<RealmRace> allRaces = RaceHelper.getInstance(this).getAllRaces(true);
+        List<String> raceIds = new ArrayList<>();
+        for (RealmRace realmRace : allRaces) {
+            raceIds.add("raceId: " + realmRace.getId());
+            Log.d(LOG, "listing raceId: " + realmRace.getId());
+        }
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, raceIds);
+        binding.appBarMain.contentProfile.listViewRaces.setAdapter(arrayAdapter);
+        ProfileActivity.setListViewHeightBasedOnChildren(binding.appBarMain.contentProfile.listViewRaces);
+        binding.appBarMain.contentProfile.tvNbRaces.setText("" + raceIds.size());
     }
 
     private void setupToolbar() {
@@ -177,6 +199,30 @@ public class ProfileActivity extends BaseActivity {
             Log.d(LOG, error.toString());
 //            setUserData(); TODO verify what we want this method to do. Don't call since there is nothing to set?
         }
+    }
+
+    /**** Method for Setting the Height of the ListView dynamically.
+     **** Hack to fix the issue of not showing all the items of the ListView
+     **** when placed inside a ScrollView  ****/
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
 
 }

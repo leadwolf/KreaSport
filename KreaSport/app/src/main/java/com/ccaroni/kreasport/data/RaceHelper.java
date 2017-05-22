@@ -88,6 +88,8 @@ public class RaceHelper {
             }
         }
 
+        Log.d(LOG, "found " + results.size() + " races");
+
         return results;
     }
 

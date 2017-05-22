@@ -1,10 +1,12 @@
-package com.ccaroni.kreasport.data;
+package com.ccaroni.kreasport.data.realm;
+
+import io.realm.RealmObject;
 
 /**
  * Created by Master on 22/05/2017.
  */
 
-public class CheckpointKey {
+public class CheckpointKey extends RealmObject {
 
     private String raceId;
     private int order;

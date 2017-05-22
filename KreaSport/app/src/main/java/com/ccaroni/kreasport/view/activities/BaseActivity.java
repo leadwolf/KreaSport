@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.activities;
+package com.ccaroni.kreasport.view.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,7 +20,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.fragments.HomeFragment;
+import com.ccaroni.kreasport.view.fragments.HomeFragment;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 
 /**

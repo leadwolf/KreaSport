@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.ccaroni.kreasport.activities.ProfileActivity"
+        tools:context=".view.activities.ProfileActivity"
         tools:showIn="@layout/app_bar_profile">
 
         <LinearLayout
@@ -70,6 +70,38 @@
                     android:padding="6dp"
                     android:textOff=""
                     android:textOn=""/>
+
+            </RelativeLayout>
+
+            <include layout="@layout/item_divider"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Public races: "/>
+
+                    <TextView
+                        android:id="@+id/tv_nb_races"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="n"/>
+
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/list_view_races"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
 
             </RelativeLayout>
 

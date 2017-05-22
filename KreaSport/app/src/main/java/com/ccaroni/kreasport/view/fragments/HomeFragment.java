@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.fragments;
+package com.ccaroni.kreasport.view.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.activities.BaseActivity;
+import com.ccaroni.kreasport.view.activities.BaseActivity;
 import com.ccaroni.kreasport.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
