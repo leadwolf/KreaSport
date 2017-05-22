@@ -7,13 +7,13 @@ import android.location.Location;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RaceHelper;
-import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.map.viewmodels.RaceCommunication;
+import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.LocationUtils;
@@ -26,47 +26,20 @@ import io.realm.RealmResults;
  * Created by Master on 19/05/2017.
  */
 
-public class RaceVMImpl extends BaseObservable {
+public class RaceVMImpl extends RaceVM {
 
     private static final String LOG = RaceVMImpl.class.getSimpleName();
-
-    private RealmRace currentRace;
-    private RealmCheckpoint currentCheckpoint;
-
-    /*
-     * Separate attrs because we can't just grab from currentRace or currentCheckpoint depending on raceActive?, progression and even if the user deliberately selects another
-     * marker that is not related to his progression.
-     */
-    private String title;
-    private String description;
 
     /**
      * The system time at {@link #onStartClicked()}
      */
     private long baseAtStart;
 
-    /**
-     * Whether this VM (not necessarily the race) is currently in an active state
-     */
-    private boolean raceActive;
-    private int passiveInfoVisibility;
-    private int activeInfoVisibility;
-    private int fabVisibility;
-
-
-    private RaceCommunication raceCommunication;
-    private LocationUtils mLocationUtils;
-
     public RaceVMImpl(Activity activity, LocationUtils mLocationUtils) {
-        RaceHelper.getInstance(activity).init(activity);
-        if (activity instanceof RaceCommunication) {
-            this.raceCommunication = (RaceCommunication) activity;
-        } else {
-            throw new RuntimeException(activity + " must implment " + RaceCommunication.class.getSimpleName());
-        }
-        this.mLocationUtils = mLocationUtils;
+        super(activity, mLocationUtils);
     }
 
+    @Override
     public void onStart() {
         Log.d(LOG, "onStart, UI is ready to be manipulated");
 
@@ -83,12 +56,6 @@ public class RaceVMImpl extends BaseObservable {
             changeVisibilitiesOnRaceState(false);
         }
     }
-
-    public boolean isRaceActive() {
-        return raceActive;
-    }
-
-
 
     private void startRace() {
         if (currentRace == null) {
@@ -133,45 +100,13 @@ public class RaceVMImpl extends BaseObservable {
         notifyChange();
     }
 
-    @Bindable
-    public int getPassiveInfoVisibility() {
-        return passiveInfoVisibility;
-    }
-
-    @Bindable
-    public int getActiveInfoVisibility() {
-        return activeInfoVisibility;
-    }
-
-    @Bindable
-    public int getFabVisibility() {
-        return fabVisibility;
-    }
-
-    public ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener() {
-        return new ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(final int index, final CustomOverlayItem item) {
-                Log.d(LOG, "on tap, is primary: " + item.isPrimary());
-
-                updateCurrent(item);
-
-                return true;
-            }
-
-            @Override
-            public boolean onItemLongPress(final int index, final CustomOverlayItem item) {
-                return false;
-            }
-        };
-    }
-
     /**
      * Switch to update on a {@link CustomOverlayItem} selection. Calls the appropriate method for updating title & description according to the selectedItem.
      *
      * @param selectedItem
      */
-    private void updateCurrent(CustomOverlayItem selectedItem) {
+    @Override
+    protected void updateCurrent(CustomOverlayItem selectedItem) {
         if (raceActive) {
             updateFromActiveState(selectedItem);
         } else {
@@ -226,38 +161,10 @@ public class RaceVMImpl extends BaseObservable {
         }
     }
 
-    @Bindable
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-        notifyPropertyChanged(BR.title);
-    }
-
-    @Bindable
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-        notifyPropertyChanged(BR.description);
-    }
-
-    @Bindable
-    public String getProgression() {
-        if (currentRace == null) {
-            Log.d(LOG, "No race active to get progression from");
-            return null;
-        }
-        return currentRace.getProgressionAsString();
-    }
-
     /**
      * Call to stop the current race. Used by passiveBottomSheet.
      */
+    @Override
     public void onStartClicked() {
         Log.d(LOG, "start clicked");
         if (raceActive) {
@@ -295,6 +202,7 @@ public class RaceVMImpl extends BaseObservable {
     /**
      * Call to stop the current race. Used by activeBottomSheet.
      */
+    @Override
     public void onStopClicked() {
         Log.d(LOG, "stop clicked");
         if (!raceActive) {
@@ -302,10 +210,6 @@ public class RaceVMImpl extends BaseObservable {
         }
 
         stopRace();
-    }
-
-    public RealmCheckpoint getActiveCheckpoint() {
-        return currentCheckpoint;
     }
 
     /**
@@ -321,32 +225,8 @@ public class RaceVMImpl extends BaseObservable {
     /**
      * Call when the user quits the activity but doesnt stop the activity
      */
+    @Override
     public void saveOngoingBaseTime() {
         // TODO, save the base time in RealmRace to be persisted
-    }
-
-    /**
-     * This interface permits communication to the Model in the MVVM.
-     */
-    public interface RaceCommunication {
-
-        /**
-         * Notification to start counting the time from newBase.
-         *
-         * @param newBase
-         */
-        void startChronometer(final long newBase);
-
-        /**
-         * Notificaiton to stop whatever is tracking the time.
-         */
-        void stopChronometer();
-
-        /**
-         * Display a message to the user, preferably through a {@link Toast}.
-         *
-         * @param message
-         */
-        void toast(String message);
     }
 }

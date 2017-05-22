@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="raceVMImpl"
-            type="com.ccaroni.kreasport.map.viewmodels.impl.RaceVMImpl" />
+            name="raceVM"
+            type="com.ccaroni.kreasport.map.viewmodels.RaceVM" />
     </data>
 
     <LinearLayout
@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
                 android:text="╳"
-                android:onClick="@{() -> raceVMImpl.onStopClicked()}"
+                android:onClick="@{() -> raceVM.onStopClicked()}"
                 android:textColor="@color/black"
                 android:textSize="30sp"/>
 
@@ -49,7 +49,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:hint="1/n"
-                android:text="@{raceVMImpl.progression}"
+                android:text="@{raceVM.progression}"
                 android:textColor="@color/black"
                 android:textSize="15sp"/>
 

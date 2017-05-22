@@ -21,6 +21,8 @@ import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.models.MapOptions;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.viewmodels.RaceCommunication;
+import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.viewmodels.impl.RaceVMImpl;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
@@ -49,7 +51,7 @@ import java.util.TimerTask;
 import io.realm.RealmResults;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
-        <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceVMImpl.RaceCommunication {
+        <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceCommunication {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -59,7 +61,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private CustomMapView mMapView;
     private Chronometer chronometer;
-    private RaceVMImpl raceVMImpl;
+    private RaceVM raceVM;
 
     private LocationUtils mLocationUtilsImpl;
 
@@ -89,8 +91,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
 
-        raceVMImpl = new RaceVMImpl(this, mLocationUtilsImpl);
-        binding.setRaceVMImpl(raceVMImpl);
+        raceVM = new RaceVMImpl(this, mLocationUtilsImpl);
+        binding.setRaceVM(raceVM);
 
         setBindings();
 
@@ -123,10 +125,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      * Either creates an overlay for all the races or full overlay of one race.
      */
     private void initRaceOverlays() {
-        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVMImpl.getIconGestureListener();
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
 //        List<CustomOverlayItem> raceAsOverlay = Race.racesToOverlay(RaceHelper.getInstance(this).getAllOrCurrentRace());
         RealmResults<RealmRace> realmResults = RaceHelper.getInstance(this).getAllOrCurrentRace();
-        List<CustomOverlayItem> raceAsOverlay = RealmRace.racesToOverlay(raceVMImpl.isRaceActive(), realmResults);
+        List<CustomOverlayItem> raceAsOverlay = RealmRace.racesToOverlay(raceVM.isRaceActive(), realmResults);
 
         ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
         raceListOverlay.setFocusItemsOnTap(true);
@@ -144,7 +146,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     private GeofencingRequest getGeofencingRequest() {
-        RealmCheckpoint checkpoint = raceVMImpl.getActiveCheckpoint();
+        RealmCheckpoint checkpoint = raceVM.getActiveCheckpoint();
         if (!checkpoint.getId().equals("")) {
             GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
             builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
@@ -282,7 +284,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
-        raceVMImpl.onStart();
+        raceVM.onStart();
         super.onStart();
     }
 
@@ -301,7 +303,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onPause() {
         super.onPause();
-        raceVMImpl.saveOngoingBaseTime();
+        raceVM.saveOngoingBaseTime();
         if (mLocationUtilsImpl != null) {
             mLocationUtilsImpl.stopLocationUpdates();
         }
@@ -317,7 +319,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         if (mLocationUtilsImpl != null) {
             mLocationUtilsImpl.startLocationUpdates();
         }
-        if (raceVMImpl.isRaceActive()) {
+        if (raceVM.isRaceActive()) {
             Log.d(LOG, "adding geofence");
             addGeofence();
         }
