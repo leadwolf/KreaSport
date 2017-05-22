@@ -42,7 +42,7 @@ public class RaceHelper {
         return instance;
     }
 
-    private void init(Activity activity) {
+    public void init(Activity activity) {
         Realm.init(activity);
 
         realm = Realm.getInstance(new RealmConfiguration.Builder()

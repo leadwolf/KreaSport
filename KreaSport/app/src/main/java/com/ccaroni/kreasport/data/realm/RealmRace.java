@@ -136,6 +136,13 @@ public class RealmRace extends RealmObject {
         return inProgress;
     }
 
+    /**
+     * Sets the field inProgress accordingly.
+     * <b>AND</b> either increments the number of attempts or resets the time.
+     *
+     * @param inProgress <b>true:</b> increment the number of attemps<br>
+     *                   <b>false:</b> reset the time
+     */
     public void setInProgress(boolean inProgress) {
         RaceHelper.getInstance(null).beginTransaction();
         this.inProgress = inProgress;
@@ -173,15 +180,27 @@ public class RealmRace extends RealmObject {
     }
 
     public void setTimeExpired(long timeExpired) {
+        RaceHelper.getInstance(null).beginTransaction();
+        Log.d(LOG, "saved time expired");
         this.timeExpired = timeExpired;
+        RaceHelper.getInstance(null).commitTransaction();
+    }
+
+    public void resetTimeExpired() {
+        RaceHelper.getInstance(null).beginTransaction();
+        Log.d(LOG, "reset time expired");
+        timeExpired = 0;
+        RaceHelper.getInstance(null).commitTransaction();
     }
 
     public int getAttempts() {
         return attempts;
     }
 
-    public void setAttempts(int attempts) {
-        this.attempts = attempts;
+    public void incrementAttempts() {
+        RaceHelper.getInstance(null).beginTransaction();
+        attempts++;
+        RaceHelper.getInstance(null).commitTransaction();
     }
 
     public CustomOverlayItem toCustomOverlayItemAsSingle() {
@@ -200,8 +219,8 @@ public class RealmRace extends RealmObject {
     }
 
     /**
-     * @param raceActive      <b>true: </b>Converts all the primary parts of the races to a {@link List} of {@link CustomOverlayItem} with ({@link CustomOverlayItem#isPrimary()}).
-     *                        <br>
+     * @param raceActive      <b>true: </b>Converts all the primary parts of the races to a {@link List} of {@link CustomOverlayItem} with
+     *                        ({@link CustomOverlayItem#isPrimary()}).<br>
      *                        <b>false: </b>    Converts the race (as marker) and all its checkpoints to a {@link List} of {@link CustomOverlayItem}
      * @param racesForOverlay
      * @return
