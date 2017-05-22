@@ -24,7 +24,8 @@ import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.impl.LocationUtils;
+import com.ccaroni.kreasport.utils.LocationUtils;
+import com.ccaroni.kreasport.utils.impl.LocationUtilsImpl;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -47,7 +48,7 @@ import java.util.TimerTask;
 import io.realm.RealmResults;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
-        <Status>, LocationUtils.LocationCommunicationInterface {
+        <Status>, LocationUtilsImpl.LocationCommunicationInterface {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -58,7 +59,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private CustomMapView mMapView;
     private RaceVM raceVM;
 
-    private LocationUtils mLocationUtils;
+    private LocationUtils mLocationUtilsImpl;
 
     private GoogleApiClient mGoogleApiClient;
     private boolean hasFix;
@@ -79,14 +80,14 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             // Building the GoogleApi client
             buildGoogleApiClient();
 
-            // LocationUtils will be our listener and manager
-            mLocationUtils = new LocationUtils(this, mGoogleApiClient);
+            // LocationUtilsImpl will be our listener and manager
+            mLocationUtilsImpl = new LocationUtilsImpl(this, mGoogleApiClient);
         } else {
             // Force to go back to Home
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
 
-        raceVM = new RaceVM(this, mLocationUtils);
+        raceVM = new RaceVM(this, mLocationUtilsImpl);
         binding.setRaceVM(raceVM);
 
         setupMap();
@@ -226,7 +227,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     * Any location update in {@link LocationUtils} calls this method.
+     * Any location update in {@link LocationUtilsImpl} calls this method.
      *
      * @param location
      */
@@ -291,8 +292,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onPause() {
         super.onPause();
-        if (mLocationUtils != null) {
-            mLocationUtils.stopLocationUpdates();
+        if (mLocationUtilsImpl != null) {
+            mLocationUtilsImpl.stopLocationUpdates();
         }
     }
 
@@ -303,8 +304,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (mLocationUtils != null) {
-            mLocationUtils.startLocationUpdates();
+        if (mLocationUtilsImpl != null) {
+            mLocationUtilsImpl.startLocationUpdates();
         }
         if (raceVM.isRaceActive()) {
             Log.d(LOG, "adding geofence");

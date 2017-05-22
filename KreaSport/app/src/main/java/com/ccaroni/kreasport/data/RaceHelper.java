@@ -93,6 +93,11 @@ public class RaceHelper {
         return results;
     }
 
+    /**
+     * Finds the race matching the id.
+     * @param id the id to lookup
+     * @return the race found or null
+     */
     public RealmRace findRaceById(String id) {
         Log.d(LOG, "attempting to find race:" + id);
 

@@ -5,7 +5,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.LocationUtilContract;
+import com.ccaroni.kreasport.utils.LocationUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -18,14 +18,14 @@ import com.google.android.gms.location.LocationServices;
  * This class will handle all location request including registering and render the results available through getters.
  * It is initialized from an activity for a Context but on instantiation everything is handled internally.
  */
-public class LocationUtils extends LocationUtilContract {
+public class LocationUtilsImpl extends LocationUtils {
 
-    private static final String LOG = LocationUtils.class.getSimpleName();
+    private static final String LOG = LocationUtilsImpl.class.getSimpleName();
 
     private LocationCommunicationInterface mLocationReceiver;
     private GoogleApiClient mGoogleApiClient;
 
-    public LocationUtils(Context context, GoogleApiClient mGoogleApiClient) {
+    public LocationUtilsImpl(Context context, GoogleApiClient mGoogleApiClient) {
         this.mGoogleApiClient = mGoogleApiClient;
 
         if (context instanceof LocationCommunicationInterface) {
@@ -36,6 +36,7 @@ public class LocationUtils extends LocationUtilContract {
     }
 
     @SuppressWarnings({"MissingPermission"})
+    @Override
     public void startLocationUpdates() {
         Log.d(LOG, "starting location update request");
 
@@ -50,6 +51,7 @@ public class LocationUtils extends LocationUtilContract {
                 mLocationRequest, this);
     }
 
+    @Override
     public void stopLocationUpdates() {
         Log.d(LOG, "stopping location updates");
 
@@ -79,7 +81,7 @@ public class LocationUtils extends LocationUtilContract {
     public interface LocationCommunicationInterface {
 
         /**
-         * Any location update in {@link LocationUtils} calls this method.
+         * Any location update in {@link LocationUtilsImpl} calls this method.
          *
          * @param location
          */
