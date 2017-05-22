@@ -152,7 +152,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                             )
                             .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_MILLISECONDS)
                             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
-                            .setLoiteringDelay(Constants.LOITERING_DELAY)
+                            .setLoiteringDelay(Constants.GEOFENCE_LOITERING_DELAY)
                             .build()
             );
             return builder.build();

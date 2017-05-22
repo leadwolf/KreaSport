@@ -13,17 +13,14 @@ import com.ccaroni.kreasport.data.dto.Race;
 
 public class Constants {
 
-    private static final String baseIP = "http://51.255.131.189/";
-
-    public static final String publicRacesURL = baseIP + "v1/parcours";
-    public static final String privateRaceURL = publicRacesURL + "%s";
-
-
-    public static final String KEY_SAVED_RACES = "kreasport.global.keys.saved_races";
-    public static final Type savedRaceLisType = new TypeToken<ArrayList<Race>>() {
-    }.getType();
-
+    /**
+     * Minimum distance that the user needs to be from a checkpoint to trigger the geofence.
+     */
     public static final float GEOFENCE_RADIUS_METERS = 20;
+    /**
+     * Minimum amount of time the user has to be in GEOFENCE_RADIUS_METERS to trigger the geofence.
+     */
+    public static final int GEOFENCE_LOITERING_DELAY = 2000; // in ms
     public static final long GEOFENCE_EXPIRATION_MILLISECONDS = 300000; // 5mn;
 
     /**
@@ -36,9 +33,10 @@ public class Constants {
      */
     public static final long GEOLOCATION_UPDATE_FASTEST_INTERVAL = 1500; // in ms
 
+
+
     /**
      * Minimum distance that the user needs to be from the start of a race in m (meters).
      */
     public static final float MINIMUM_DISTANCE_TO_START_RACE = 15; // in m
-    public static final int LOITERING_DELAY = 2000; // in ms
 }

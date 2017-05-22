@@ -61,7 +61,8 @@ public class RaceVM extends BaseObservable {
             currentCheckpoint = currentRace.getCurrentCheckpoint();
             setRaceActive(true);
         } else {
-            setRaceActive(false);
+//            setRaceActive(false);
+            changeVisibilitiesOnRaceState(false);
         }
     }
 
@@ -77,16 +78,17 @@ public class RaceVM extends BaseObservable {
      * @param newRaceState
      */
     public void setRaceActive(boolean newRaceState) {
+        if (currentRace == null) {
+            throw new IllegalStateException("Cannot change race state when no race is in use");
+        }
+
         Log.d(LOG, newRaceState ? "set race active" : "set race INactive");
 
 
         changeVisibilitiesOnRaceState(newRaceState);
 
-        if (this.raceActive) {
-            currentRace.setInProgress(newRaceState);
-        }
+        currentRace.setInProgress(newRaceState);
 
-        notifyChange();
         this.raceActive = newRaceState;
     }
 
@@ -94,6 +96,7 @@ public class RaceVM extends BaseObservable {
         passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
         fabVisibility = raceActive ? View.GONE : View.VISIBLE;
         activeInfoVisibility = raceActive ? View.VISIBLE : View.GONE;
+        notifyChange();
     }
 
     @Bindable
@@ -229,6 +232,15 @@ public class RaceVM extends BaseObservable {
             throw new IllegalStateException("No race is currently selected");
         }
 
+        if (validateProximityToStart()) {
+            setRaceActive(true);
+        }
+
+    }
+
+    private boolean validateProximityToStart() {
+        boolean validStart = false;
+
         Location lastLocation = mLocationUtils.getLastKnownLocation();
         Location raceLocation = currentRace.getLocation();
 
@@ -240,10 +252,10 @@ public class RaceVM extends BaseObservable {
         } else {
             Log.d(LOG, "User was " + distance + "m away from start. Inside by " + (Constants.MINIMUM_DISTANCE_TO_START_RACE - distance) + "m");
             Toast.makeText(activity, "Started!", Toast.LENGTH_SHORT).show();
-
-            setRaceActive(true);
+            validStart = true;
         }
 
+        return validStart;
     }
 
     /**

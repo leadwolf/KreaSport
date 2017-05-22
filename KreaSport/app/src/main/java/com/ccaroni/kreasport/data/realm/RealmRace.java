@@ -37,7 +37,20 @@ public class RealmRace extends RealmObject {
      */
     private boolean inProgress;
 
+    /**
+     * The current checkpoint the user has to reach.
+     */
     private int progression;
+
+    /**
+     * The time expired since the user started the race.
+     */
+    private long timeExpired;
+
+    /**
+     * The number of times the user has started the race.
+     */
+    private int attempts;
 
     private RealmList<RealmCheckpoint> realmCheckpoints;
 
@@ -153,6 +166,22 @@ public class RealmRace extends RealmObject {
         } else {
             return null;
         }
+    }
+
+    public long getTimeExpired() {
+        return timeExpired;
+    }
+
+    public void setTimeExpired(long timeExpired) {
+        this.timeExpired = timeExpired;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
     }
 
     public CustomOverlayItem toCustomOverlayItemAsSingle() {
