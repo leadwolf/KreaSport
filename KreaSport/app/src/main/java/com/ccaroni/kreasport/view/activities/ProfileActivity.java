@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.view.activities;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -75,16 +76,13 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
-        RealmResults<RealmRace> allRaces = RaceHelper.getInstance(this).getAllRaces(true);
-        List<String> raceIds = new ArrayList<>();
-        for (RealmRace realmRace : allRaces) {
-            raceIds.add("raceId: " + realmRace.getId());
-            Log.d(LOG, "listing raceId: " + realmRace.getId());
-        }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, raceIds);
-        binding.appBarMain.contentProfile.listViewRaces.setAdapter(arrayAdapter);
-        ProfileActivity.setListViewHeightBasedOnChildren(binding.appBarMain.contentProfile.listViewRaces);
-        binding.appBarMain.contentProfile.tvNbRaces.setText("" + raceIds.size());
+        binding.appBarMain.contentProfile.btnListRaces.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, DownloadedRacesActivity.class));
+            }
+        });
+
     }
 
     private void setupToolbar() {

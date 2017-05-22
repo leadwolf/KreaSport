@@ -71,17 +71,25 @@
             android:name=".view.activities.LoginActivity"
             android:theme="@style/SplashTheme">
         </activity>
-
         <activity
             android:name=".view.activities.ProfileActivity"
             android:label="@string/title_activity_scrolling"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".view.activities.HomeActivity" >
+            android:parentActivityName=".view.activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.HomeActivity" />
+                android:value=".view.activities.HomeActivity"/>
+        </activity>
+        <activity
+            android:name=".view.activities.DownloadedRacesActivity"
+            android:label="@string/title_activity_downloaded_races"
+            android:parentActivityName=".view.activities.ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
         </activity>
     </application>
 

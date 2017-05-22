@@ -75,38 +75,6 @@
 
             <include layout="@layout/item_divider"/>
 
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Public races: "/>
-
-                    <TextView
-                        android:id="@+id/tv_nb_races"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="n"/>
-
-                </LinearLayout>
-
-                <ListView
-                    android:id="@+id/list_view_races"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-            </RelativeLayout>
-
-            <include layout="@layout/item_divider"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,6 +88,14 @@
                     android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:text="Sign Out"/>
+
+                <Button
+                    android:id="@+id/btn_list_races"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:text="Sse my races"/>
 
             </LinearLayout>
         </LinearLayout>
