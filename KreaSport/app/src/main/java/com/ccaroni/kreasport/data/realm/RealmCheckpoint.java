@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.data.realm;
 
+import com.ccaroni.kreasport.data.CheckpointKey;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.GeoPoint;
@@ -20,6 +21,7 @@ public class RealmCheckpoint extends RealmObject {
     private Double latitude;
     private Double longitude;
 
+    private CheckpointKey checkpointKey;
     private String question;
     private RealmList<RealmString> possibleAnswers;
 
@@ -98,16 +100,31 @@ public class RealmCheckpoint extends RealmObject {
         return this;
     }
 
+    public CheckpointKey getCheckpointKey() {
+        return checkpointKey;
+    }
+
+    public RealmCheckpoint setCheckpointKey(CheckpointKey checkpointKey) {
+        this.checkpointKey = checkpointKey;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "RealmCheckpoint{" +
-                "question='" + question + '\'' +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", checkpointKey=" + checkpointKey +
+                ", question='" + question + '\'' +
                 ", possibleAnswers=" + possibleAnswers +
                 '}';
     }
 
     public CustomOverlayItem toCustomOverlayItem() {
-        return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId());
+        return new CustomOverlayItem(getTitle(), getDescription(), extrackGeoPoint(), getId(), checkpointKey.getRaceId());
     }
 
     public List<String> getPossibleAnswersAsStrings() {
@@ -116,5 +133,9 @@ public class RealmCheckpoint extends RealmObject {
             possibleAnswersAsStrings.add(realmString.getString());
         }
         return possibleAnswersAsStrings;
+    }
+
+    public GeoPoint extrackGeoPoint() {
+        return new GeoPoint(latitude, longitude);
     }
 }

@@ -1,21 +1,22 @@
 package com.ccaroni.kreasport.data.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ccaroni.kreasport.BR;
+import com.ccaroni.kreasport.data.CheckpointKey;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
-import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import org.osmdroid.util.GeoPoint;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Checkpoint extends BaseItem {
 
     @SerializedName("question")
     @Expose
     private String question;
+    @SerializedName("checkpointKey")
+    @Expose
+    private CheckpointKey checkpointKey;
     @SerializedName("possibleAnswers")
     @Expose
     private List<String> possibleAnswers;
@@ -86,10 +87,19 @@ public class Checkpoint extends BaseItem {
         this.location = location;
     }
 
+    public CheckpointKey getCheckpointKey() {
+        return checkpointKey;
+    }
+
+    public void setCheckpointKey(CheckpointKey checkpointKey) {
+        this.checkpointKey = checkpointKey;
+    }
+
     @Override
     public String toString() {
-        return "RealmCheckpoint{" +
+        return "Checkpoint{" +
                 "question='" + question + '\'' +
+                ", checkpointKey=" + checkpointKey +
                 ", possibleAnswers=" + possibleAnswers +
                 ", location=" + location +
                 '}';
@@ -103,6 +113,7 @@ public class Checkpoint extends BaseItem {
                 .setLatitude(getLatitude())
                 .setLongitude(getLongitude());
         realmCheckpoint
+                .setCheckpointKey(checkpointKey)
                 .setQuestion(getQuestion())
                 .setPossibleAnswersFromStrings(getPossibleAnswers());
         return realmCheckpoint;
