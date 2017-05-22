@@ -14,6 +14,8 @@ import com.auth0.android.lock.AuthenticationCallback;
 import com.auth0.android.lock.Lock;
 import com.auth0.android.lock.LockCallback;
 import com.auth0.android.lock.utils.LockException;
+import com.auth0.android.management.ManagementException;
+import com.auth0.android.management.UsersAPIClient;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
@@ -23,12 +25,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String LOG = LoginActivity.class.getSimpleName();
 
+    private Auth0 auth0;
+    private String idToken;
+
     private Lock mLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
+        auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         auth0.setOIDCConformant(true);
 
         mLock = Lock.newBuilder(auth0, mCallback)
@@ -36,7 +41,9 @@ public class LoginActivity extends AppCompatActivity {
                 .withAudience("kreasport-jwt-api")
                 .build(this);
 
-        String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
+        Credentials credentials = CredentialsManager.getCredentials(this);
+        String accessToken = credentials.getAccessToken();
+        idToken = credentials.getIdToken();
         if (accessToken == null) {
             Log.d(LOG, "access token is null, showing login");
             startLockWidget();
@@ -124,14 +131,27 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Finishes this activity and goes to {@link HomeActivity}.
+     * Saves the userId with {@link CredentialsManager}, finishes this activity and goes to {@link HomeActivity}.
      */
     private void autoLoginRedirect() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Log.d(LOG, "Login - Automatic login success");
-            }
-        });
+        Log.d(LOG, "Login - Automatic login success");
+
+        UsersAPIClient usersClient = new UsersAPIClient(auth0, idToken);
+
+        usersClient.getProfile(idToken)
+                .start(new BaseCallback<UserProfile, ManagementException>() {
+                    @Override
+                    public void onSuccess(UserProfile payload) {
+                        Log.d(LOG, "got user profile");
+                        CredentialsManager.saveUserId(LoginActivity.this, payload.getId());
+                    }
+
+                    @Override
+                    public void onFailure(ManagementException error) {
+                        Log.d(LOG, "error getting complete user profile");
+                    }
+                });
+
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
     }

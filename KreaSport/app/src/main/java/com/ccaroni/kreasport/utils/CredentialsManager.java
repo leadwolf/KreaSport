@@ -15,6 +15,8 @@ import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.view.activities.LoginActivity;
 
+import static android.R.attr.id;
+
 /**
  * Manages Auth0 credentials through SharedPreferences using {@link SharedPreferences} saved in {@link CredentialsManager#AUTH_PREFERENCES_NAME} file.
  */
@@ -29,6 +31,7 @@ public class CredentialsManager {
     private final static String KEY_ID_TOKEN = "id_token";
     private final static String KEY_TOKEN_TYPE = "token_type";
     private final static String KEY_EXPIRES_IN = "expires_in";
+    private static final String KEY_USER_ID = "user_id";
 
     public static void saveCredentials(Context context, Credentials credentials) {
         Log.d(LOG, "saving access token " + credentials.getAccessToken());
@@ -72,6 +75,38 @@ public class CredentialsManager {
                 .putString(KEY_TOKEN_TYPE, null)
                 .putLong(KEY_EXPIRES_IN, 0)
                 .apply();
+
+        deleteUserId(context);
+    }
+
+    public static void saveUserId(Context context, String id) {
+        Log.d(LOG, "saving userId: " + id);
+
+        SharedPreferences sp = context.getSharedPreferences(
+                AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        sp.edit()
+                .putString(KEY_USER_ID, id)
+                .apply();
+
+    }
+
+    public static String getUserId(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(
+                AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        return sp.getString(KEY_USER_ID, null);
+    }
+
+    public static void deleteUserId(Context context) {
+
+        SharedPreferences sp = context.getSharedPreferences(
+                AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        sp.edit()
+                .putString(KEY_USER_ID, null)
+                .apply();
+
     }
 
     /**

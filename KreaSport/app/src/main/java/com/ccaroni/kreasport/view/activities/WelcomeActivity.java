@@ -24,6 +24,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.utils.CustomViewPager;
 import com.ccaroni.kreasport.utils.PermissionsManager;
 import com.ccaroni.kreasport.utils.PreferenceManager;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -41,6 +42,8 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AndroidThreeTen.init(this);
 
         // Checking for first time launch - before calling setContentView()
         prefManager = new PreferenceManager(this, PREF_NAME);
