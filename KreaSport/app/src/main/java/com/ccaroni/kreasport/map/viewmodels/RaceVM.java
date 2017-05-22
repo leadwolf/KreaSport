@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RaceHelper;
+import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
@@ -40,8 +41,11 @@ public abstract class RaceVM extends BaseObservable {
     protected RealmRace currentRace;
     protected RealmCheckpoint currentCheckpoint;
 
+    protected RealmRaceRecord raceRecord;
+
     protected RaceCommunication raceCommunication;
     protected LocationUtils mLocationUtils;
+    private RealmRace ra;
 
     public RaceVM(Activity activity, LocationUtils mLocationUtils) {
         RaceHelper.getInstance(activity).init(activity);
@@ -51,6 +55,11 @@ public abstract class RaceVM extends BaseObservable {
             throw new RuntimeException(activity + " must implment " + RaceCommunication.class.getSimpleName());
         }
         this.mLocationUtils = mLocationUtils;
+        initRaceRecord();
+    }
+
+    protected void initRaceRecord() {
+        raceRecord = RaceHelper.getInstance(null).createObject(RealmRaceRecord.class);
     }
 
     public boolean isRaceActive() {
@@ -94,11 +103,15 @@ public abstract class RaceVM extends BaseObservable {
 
     @Bindable
     public String getProgression() {
-        if (currentRace == null) {
+        if (!raceActive) {
             Log.d(LOG, "No race active to get progression from");
             return null;
         }
-        return currentRace.getProgressionAsString();
+
+        int progression = raceRecord.getProgression();
+        int total = currentRace.getNbCheckpoints();
+
+        return "" + progression + "/" + total;
     }
 
     public RealmCheckpoint getActiveCheckpoint() {
@@ -150,4 +163,7 @@ public abstract class RaceVM extends BaseObservable {
      */
     public abstract void saveOngoingBaseTime();
 
+    public RealmRace getActiveRace() {
+        return currentRace;
+    }
 }

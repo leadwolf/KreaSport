@@ -5,11 +5,13 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 /**
@@ -106,19 +108,17 @@ public class RaceHelper {
                 .findFirst();
     }
 
-    public RealmResults<RealmRace> findCurrentRace() {
+    public RealmRace findSingleCurrentRace() {
+        RealmRaceRecord currentRaceRecord = findCurrentRaceRecord();
         return realm.where(RealmRace.class)
-                .equalTo("inProgress", true)
-                .findAll();
+                .equalTo("id", currentRaceRecord.getRaceId())
+                .findFirst();
     }
 
-    public RealmResults<RealmRace> getAllOrCurrentRace() {
-        RealmResults<RealmRace> currentRealmResults = findCurrentRace();
-        if (currentRealmResults.size() == 0) {
-            return getAllRaces(false);
-        } else {
-            return currentRealmResults;
-        }
+    public RealmRaceRecord findCurrentRaceRecord() {
+        return realm.where(RealmRaceRecord.class)
+                .equalTo("inProgress", true)
+                .findFirst();
     }
 
     public void deleteAllRaces() {
@@ -131,5 +131,19 @@ public class RaceHelper {
 
     public void commitTransaction() {
         realm.commitTransaction();
+    }
+
+    public <E extends RealmObject> E createObject(Class<E> clazz) {
+        realm.beginTransaction();
+
+        E newObject = realm.createObject(clazz);
+
+        realm.commitTransaction();
+
+        return newObject;
+    }
+
+    public void deleteAllRaceRecords() {
+        realm.delete(RealmRaceRecord.class);
     }
 }

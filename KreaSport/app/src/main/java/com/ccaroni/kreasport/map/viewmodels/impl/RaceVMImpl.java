@@ -1,24 +1,18 @@
 package com.ccaroni.kreasport.map.viewmodels.impl;
 
 import android.app.Activity;
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.location.Location;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
-import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RaceHelper;
-import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
-import com.ccaroni.kreasport.map.viewmodels.RaceCommunication;
+import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.LocationUtils;
-
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
 import io.realm.RealmResults;
 
@@ -31,7 +25,7 @@ public class RaceVMImpl extends RaceVM {
     private static final String LOG = RaceVMImpl.class.getSimpleName();
 
     /**
-     * The system time at {@link #onStartClicked()}
+     * The system time as of {@link #onStartClicked()} minus the offset for any restored time
      */
     private long baseAtStart;
 
@@ -44,12 +38,12 @@ public class RaceVMImpl extends RaceVM {
         Log.d(LOG, "onStart, UI is ready to be manipulated");
 
         // set this at the start because normally it has to be triggered by a change
-        RealmResults<RealmRace> currentRaceResults = RaceHelper.getInstance(null).findCurrentRace();
-        if (currentRaceResults.size() != 0) {
-            Log.d(LOG, "found an ongoing race in db");
+        RealmRaceRecord raceRecordResult = RaceHelper.getInstance(null).findCurrentRaceRecord();
+        if (raceRecordResult != null) {
+            Log.d(LOG, "found an ongoing race in db: " + raceRecordResult);
 
-            currentRace = currentRaceResults.get(0);
-            currentCheckpoint = currentRace.getCurrentCheckpoint();
+            currentRace = RaceHelper.getInstance(null).findRaceById(raceRecord.getRaceId());
+            currentCheckpoint = raceRecord.getCurrentCheckpoint(currentRace);
             startRace();
         } else {
             Log.d(LOG, "no previous ongoing race, hiding bottom sheet");
@@ -67,12 +61,16 @@ public class RaceVMImpl extends RaceVM {
 
         changeVisibilitiesOnRaceState(true);
 
-        currentRace.incrementAttempts();
-        currentRace.setInProgress(true);
+//        currentRace.incrementAttempts(); TODO do we even want to count this in the app?
+        beginRecording();
 
         // if the user quit the app without stopping the race, we need to keep the old time elapsed.
-        this.baseAtStart = SystemClock.elapsedRealtime() - currentRace.getTimeExpired();
+        this.baseAtStart = SystemClock.elapsedRealtime() - raceRecord.getTimeExpired();
         raceCommunication.startChronometer(baseAtStart);
+    }
+
+    private void beginRecording() {
+        // TODO get the current race
     }
 
     private void stopRace() {
@@ -85,12 +83,27 @@ public class RaceVMImpl extends RaceVM {
 
         changeVisibilitiesOnRaceState(false);
 
-        // TODO archive time if user wants to save
-
-        currentRace.setInProgress(false);
-        currentRace.resetTimeExpired();
+        archiveRaceRecord();
 
         raceCommunication.stopChronometer();
+    }
+
+    /**
+     * Stops the recording in raceRecord (saved with Realm), creates a new one for next time the user starts.
+     */
+    private void archiveRaceRecord() {
+        final long timeDifference = SystemClock.currentThreadTimeMillis() - baseAtStart;
+
+        RaceHelper.getInstance(null).beginTransaction();
+
+        raceRecord.setInProgress(false, false);
+        raceRecord.setTimeExpired(timeDifference, false);
+
+        RaceHelper.getInstance(null).commitTransaction();
+
+        Log.d(LOG, "old raceRecord: " + raceRecord);
+        initRaceRecord();
+        Log.d(LOG, "new raceRecord: " + raceRecord);
     }
 
     private void changeVisibilitiesOnRaceState(boolean raceActive) {
@@ -212,15 +225,6 @@ public class RaceVMImpl extends RaceVM {
         stopRace();
     }
 
-    /**
-     * Saves the time expired from {@link #baseAtStart} to the {@link RealmRace} (persisted with Realm).
-     * // TODO archive istead of modifying one field
-     */
-    private void saveTimeToRace() {
-        final long timeExpired = SystemClock.elapsedRealtime() - this.baseAtStart;
-        Log.d(LOG, "saving time " + timeExpired);
-        currentRace.setTimeExpired(timeExpired);
-    }
 
     /**
      * Call when the user quits the activity but doesnt stop the activity

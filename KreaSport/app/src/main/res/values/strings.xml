@@ -46,7 +46,7 @@
     <string name="slide_5_title">Grant location access</string>
     <string name="slide_5_desc">We need to access your location to verify you have reached a control point</string>
     <string name="slide_6_title">Ready to go!</string>
-    <string name="slide_6_desc">The setup is finished. Go smash those leaderboards!</string>
+    <string name="slide_6_desc">The setup is inProgress. Go smash those leaderboards!</string>
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
     <string name="grant">GRANT</string>

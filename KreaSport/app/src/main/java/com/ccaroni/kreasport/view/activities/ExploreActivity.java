@@ -126,14 +126,25 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     private void initRaceOverlays() {
         ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
-//        List<CustomOverlayItem> raceAsOverlay = Race.racesToOverlay(RaceHelper.getInstance(this).getAllOrCurrentRace());
-        RealmResults<RealmRace> realmResults = RaceHelper.getInstance(this).getAllOrCurrentRace();
-        List<CustomOverlayItem> raceAsOverlay = RealmRace.racesToOverlay(raceVM.isRaceActive(), realmResults);
 
-        ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
-        raceListOverlay.setFocusItemsOnTap(true);
+        if (raceVM.isRaceActive()) {
+            RealmRace realmRace = raceVM.getActiveRace();
 
-        mMapView.getOverlays().add(raceListOverlay);
+            List<CustomOverlayItem> raceAsOverlay = realmRace.toCustomOverlayWithCheckpoints();
+
+            ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
+            raceListOverlay.setFocusItemsOnTap(true);
+
+            mMapView.getOverlays().add(raceListOverlay);
+        } else {
+            RealmResults<RealmRace> realmResults = RaceHelper.getInstance(this).getAllRaces(false);
+            List<CustomOverlayItem> raceAsOverlay = RealmRace.racesToOverlay(raceVM.isRaceActive(), realmResults);
+
+            ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
+            raceListOverlay.setFocusItemsOnTap(true);
+
+            mMapView.getOverlays().add(raceListOverlay);
+        }
     }
 
     @SuppressWarnings({"MissingPermission"})

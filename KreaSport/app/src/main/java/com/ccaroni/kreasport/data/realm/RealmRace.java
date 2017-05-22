@@ -28,29 +28,6 @@ public class RealmRace extends RealmObject {
     private Double latitude;
     private Double longitude;
 
-    /**
-     * If this race has been posted to the server since it was modified.
-     */
-    private boolean synced;
-    /**
-     * Whether this is the last race the user was doing. Use to restore after app close.
-     */
-    private boolean inProgress;
-
-    /**
-     * The current checkpoint the user has to reach.
-     */
-    private int progression;
-
-    /**
-     * The time expired since the user started the race.
-     */
-    private long timeExpired;
-
-    /**
-     * The number of times the user has started the race.
-     */
-    private int attempts;
 
     private RealmList<RealmCheckpoint> realmCheckpoints;
 
@@ -124,43 +101,6 @@ public class RealmRace extends RealmObject {
                 '}';
     }
 
-    public boolean isSynced() {
-        return synced;
-    }
-
-    public void setSynced(boolean synced) {
-        this.synced = synced;
-    }
-
-    public boolean isInProgress() {
-        return inProgress;
-    }
-
-    /**
-     * Sets the field inProgress accordingly.
-     * <b>AND</b> either increments the number of attempts or resets the time.
-     *
-     * @param inProgress <b>true:</b> increment the number of attemps<br>
-     *                   <b>false:</b> reset the time
-     */
-    public void setInProgress(boolean inProgress) {
-        RaceHelper.getInstance(null).beginTransaction();
-        this.inProgress = inProgress;
-        RaceHelper.getInstance(null).commitTransaction();
-    }
-
-    public void setProgression(int progression) {
-        this.progression = progression;
-    }
-
-    public int getProgression() {
-        return progression;
-    }
-
-    public String getProgressionAsString() {
-        return "" + progression + "/" + realmCheckpoints.size();
-    }
-
     public static List<CustomOverlayItem> fullRaceToCustomOverlayItem(RealmRace realmRace) {
         if (realmRace.getRealmCheckpoints() != null && realmRace.getRealmCheckpoints().size() > 0) {
             List<CustomOverlayItem> overlayItems = new ArrayList<>();
@@ -173,34 +113,6 @@ public class RealmRace extends RealmObject {
         } else {
             return null;
         }
-    }
-
-    public long getTimeExpired() {
-        return timeExpired;
-    }
-
-    public void setTimeExpired(long timeExpired) {
-        RaceHelper.getInstance(null).beginTransaction();
-        Log.d(LOG, "saved time expired");
-        this.timeExpired = timeExpired;
-        RaceHelper.getInstance(null).commitTransaction();
-    }
-
-    public void resetTimeExpired() {
-        RaceHelper.getInstance(null).beginTransaction();
-        Log.d(LOG, "reset time expired");
-        timeExpired = 0;
-        RaceHelper.getInstance(null).commitTransaction();
-    }
-
-    public int getAttempts() {
-        return attempts;
-    }
-
-    public void incrementAttempts() {
-        RaceHelper.getInstance(null).beginTransaction();
-        attempts++;
-        RaceHelper.getInstance(null).commitTransaction();
     }
 
     public CustomOverlayItem toCustomOverlayItemAsSingle() {
@@ -270,7 +182,7 @@ public class RealmRace extends RealmObject {
         return raceStart;
     }
 
-    public RealmCheckpoint getCurrentCheckpoint() {
-        return realmCheckpoints.get(progression);
+    public int getNbCheckpoints() {
+        return realmCheckpoints.size();
     }
 }
