@@ -16,6 +16,11 @@ import com.ccaroni.kreasport.utils.LocationUtils;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.RealmResults;
+
 /**
  * Created by Master on 22/05/2017.
  */
@@ -68,10 +73,6 @@ public abstract class RaceVM extends BaseObservable {
         raceRecord.setUserId(userId);
 
         RaceHelper.getInstance(null).commitTransaction();
-    }
-
-    public boolean isRaceActive() {
-        return raceActive;
     }
 
     @Bindable
@@ -145,6 +146,22 @@ public abstract class RaceVM extends BaseObservable {
     }
 
     /**
+     * @return A List of {@link CustomOverlayItem} representing the current race (and its progression with this VM) or a list of all the races.
+     */
+    public List<CustomOverlayItem> getOverlayItems() {
+        List<CustomOverlayItem> items = new ArrayList<>();
+
+        if (raceActive) {
+            items.addAll(currentRace.toCustomOverlayWithCheckpoints());
+        } else {
+            RealmResults<RealmRace> allRaces = RaceHelper.getInstance(null).getAllRaces(false);
+            items.addAll(RealmRace.racesToOverlay(allRaces));
+        }
+
+        return items;
+    }
+
+    /**
      * Call this once your layout is initialized.
      * Loads the appropriate config (raceActive?) and with applies to the layout with databinding.
      */
@@ -174,5 +191,9 @@ public abstract class RaceVM extends BaseObservable {
 
     public RealmRace getActiveRace() {
         return currentRace;
+    }
+
+    public boolean isRaceActive() {
+        return raceActive;
     }
 }

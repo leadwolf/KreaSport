@@ -121,30 +121,18 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     * Creates an overlay of all the races needing to be displayed.
+     * Creates an overlay of all the race(s) needing to be displayed with help from the {@link RaceVM}.
      * Either creates an overlay for all the races or full overlay of one race.
+     * The {@link RaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
      */
     private void initRaceOverlays() {
         ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
+        List<CustomOverlayItem> items = raceVM.getOverlayItems();
 
-        if (raceVM.isRaceActive()) {
-            RealmRace realmRace = raceVM.getActiveRace();
+        ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(items, itemGestureListener, this);
+        raceListOverlay.setFocusItemsOnTap(true);
 
-            List<CustomOverlayItem> raceAsOverlay = realmRace.toCustomOverlayWithCheckpoints();
-
-            ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
-            raceListOverlay.setFocusItemsOnTap(true);
-
-            mMapView.getOverlays().add(raceListOverlay);
-        } else {
-            RealmResults<RealmRace> realmResults = RaceHelper.getInstance(this).getAllRaces(false);
-            List<CustomOverlayItem> raceAsOverlay = RealmRace.racesToOverlay(raceVM.isRaceActive(), realmResults);
-
-            ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(raceAsOverlay, itemGestureListener, this);
-            raceListOverlay.setFocusItemsOnTap(true);
-
-            mMapView.getOverlays().add(raceListOverlay);
-        }
+        mMapView.getOverlays().add(raceListOverlay);
     }
 
     @SuppressWarnings({"MissingPermission"})

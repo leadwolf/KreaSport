@@ -14,10 +14,12 @@ import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class RealmRace extends RealmObject {
 
+    @Ignore
     private static final String LOG = RealmRace.class.getSimpleName();
 
 
@@ -101,20 +103,6 @@ public class RealmRace extends RealmObject {
                 '}';
     }
 
-    public static List<CustomOverlayItem> fullRaceToCustomOverlayItem(RealmRace realmRace) {
-        if (realmRace.getRealmCheckpoints() != null && realmRace.getRealmCheckpoints().size() > 0) {
-            List<CustomOverlayItem> overlayItems = new ArrayList<>();
-            for (RealmCheckpoint realmCheckpoint : realmRace.getRealmCheckpoints()) {
-                CustomOverlayItem item = realmCheckpoint.toCustomOverlayItem();
-                item.setRaceId(realmRace.getId());
-                overlayItems.add(item);
-            }
-            return overlayItems;
-        } else {
-            return null;
-        }
-    }
-
     public CustomOverlayItem toCustomOverlayItemAsSingle() {
         return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId(), getId()).setPrimary(true);
     }
@@ -137,25 +125,18 @@ public class RealmRace extends RealmObject {
      * @param racesForOverlay
      * @return
      */
-    public static List<CustomOverlayItem> racesToOverlay(boolean raceActive, List<RealmRace> racesForOverlay) {
+    public static List<CustomOverlayItem> racesToOverlay(List<RealmRace> racesForOverlay) {
         List<CustomOverlayItem> items = new ArrayList<>();
-        if (!raceActive) {
-            for (RealmRace realmRace : racesForOverlay) {
-                CustomOverlayItem customOverlayItem = realmRace.toCustomOverlayItemAsSingle();
 
-                Log.d(LOG, "converted race to single overlay item");
-                Log.d(LOG, "from " + realmRace.getId() + " to " + customOverlayItem.getId());
+        for (RealmRace realmRace : racesForOverlay) {
+            CustomOverlayItem customOverlayItem = realmRace.toCustomOverlayItemAsSingle();
 
-                items.add(realmRace.toCustomOverlayItemAsSingle());
-            }
-        } else {
-            // race is active, so show the checkpoints too.
-            if (racesForOverlay.size() != 1) {
-                throw new RuntimeException("Parameter said race was active, but list of races held multiple instead of one");
-            }
-            RealmRace toConvert = racesForOverlay.get(0);
-            items.addAll(toConvert.toCustomOverlayWithCheckpoints());
+            Log.d(LOG, "converted race to single overlay item");
+            Log.d(LOG, "from " + realmRace.getId() + " to " + customOverlayItem.getId());
+
+            items.add(realmRace.toCustomOverlayItemAsSingle());
         }
+
         return items;
     }
 

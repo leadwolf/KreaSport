@@ -7,6 +7,7 @@ import com.ccaroni.kreasport.data.RaceHelper;
 import org.threeten.bp.OffsetDateTime;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 
 /**
  * Created by Master on 22/05/2017.
@@ -14,6 +15,7 @@ import io.realm.RealmObject;
 
 public class RealmRaceRecord extends RealmObject {
 
+    @Ignore
     private static final String LOG = RealmRaceRecord.class.getSimpleName();
 
 
