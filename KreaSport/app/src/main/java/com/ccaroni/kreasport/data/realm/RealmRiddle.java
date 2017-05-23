@@ -1,5 +1,10 @@
 package com.ccaroni.kreasport.data.realm;
 
+import com.ccaroni.kreasport.data.dto.Riddle;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -42,5 +47,23 @@ public class RealmRiddle extends RealmObject {
     public RealmRiddle setAnswerIndex(int answerIndex) {
         this.answerIndex = answerIndex;
         return this;
+    }
+
+    public Riddle toDTO() {
+        return new Riddle()
+                .setQuestion(getQuestion())
+                .setAnswers(answersToStringList(getAnswers()))
+                .setAnswerIndex(getAnswerIndex());
+
+    }
+
+    private static List<String> answersToStringList(RealmList<RealmString> realmAnswers) {
+        List<String> answers = new ArrayList<>();
+
+        for (RealmString realmString : realmAnswers) {
+            answers.add(realmString.getString());
+        }
+
+        return answers;
     }
 }

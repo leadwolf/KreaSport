@@ -5,6 +5,7 @@ import com.ccaroni.kreasport.data.realm.RealmString;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import io.realm.RealmList;
  * Created by Master on 23/05/2017.
  */
 
-public class Riddle {
+public class Riddle implements Serializable {
 
     @SerializedName("question")
     @Expose
@@ -52,8 +53,9 @@ public class Riddle {
         return answerIndex;
     }
 
-    public void setAnswerIndex(int answerIndex) {
+    public Riddle setAnswerIndex(int answerIndex) {
         this.answerIndex = answerIndex;
+        return this;
     }
 
     public RealmRiddle toRealmRiddle() {

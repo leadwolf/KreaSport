@@ -172,4 +172,5 @@
     </string>
     <string name="title_activity_scrolling_again">ScrollingActivityAgain</string>
     <string name="title_activity_downloaded_races">DownloadedRacesActivity</string>
+    <string name="title_activity_riddle">RiddleActivity</string>
 </resources>

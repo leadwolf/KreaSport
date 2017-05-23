@@ -7,10 +7,9 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.Race;
-import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.utils.LocationUtils;
@@ -197,7 +196,18 @@ public abstract class RaceVM extends BaseObservable {
         }
 
         RealmCheckpoint targetingCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getGeofenceProgression());
-        raceCommunication.askRiddle(targetingCheckpoint.getQuestion(), targetingCheckpoint.getPossibleAnswersAsStrings(), targetingCheckpoint.getAnswerIndex());
+        raceCommunication.askRiddle(targetingCheckpoint.getRiddle().toDTO());
+    }
+
+    public void onQuestionAnswered(int index) {
+        RealmCheckpoint targetingCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getGeofenceProgression());
+        if (index != targetingCheckpoint.getAnswerIndex()) {
+            throw new IllegalStateException("Expected correct answer index");
+        }
+
+        Log.d(LOG, "the user chose the correct answer");
+
+        incrementProgression();
     }
 
     /**
@@ -209,9 +219,11 @@ public abstract class RaceVM extends BaseObservable {
      * Stops the race & notifies the end of the race through {@link RaceCommunication}
      */
     private void incrementProgression() {
+        if (currentRace.isOnLastCheckpoint(raceRecord.getProgression())) {
+            Log.d(LOG, "last checkpoint's answer has just been validated");
 
-
-            /*
+            // TODO end race
+        } else {
             Log.d(LOG, "inc progression, revealing next w/ geofence");
 
             RealmHelper.getInstance(null).beginTransaction();
@@ -221,12 +233,7 @@ public abstract class RaceVM extends BaseObservable {
             currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
 
             raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
-            raceCommunication.addGeoFence(currentCheckpoint);
-            */
-    }
-
-    public void onQuestionAnswered(int index) {
-        // TODO
+        }
     }
 
     /**

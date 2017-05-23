@@ -2,10 +2,9 @@ package com.ccaroni.kreasport.map.viewmodels;
 
 import android.widget.Toast;
 
+import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-
-import java.util.List;
 
 /**
  * Created by Master on 22/05/2017.
@@ -47,9 +46,7 @@ public interface RaceCommunication {
     /**
      * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
      * This needs to be called from the RaceVM to prevent any tampering.
-     * @param question
-     * @param possibleAnswersAsStrings
-     * @param answerIndex
+     * @param riddle
      */
-    void askRiddle(String question, List<String> possibleAnswersAsStrings, int answerIndex);
+    void askRiddle(Riddle riddle);
 }

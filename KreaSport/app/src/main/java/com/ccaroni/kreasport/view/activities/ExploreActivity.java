@@ -18,7 +18,9 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.models.MapOptions;
@@ -39,6 +41,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
@@ -55,6 +58,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final int REQUEST_CODE_RIDDLE_ANSWER = 100;
+    public static final String KEY_RIDDLE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + "key.riddle";
 
 
     private ActivityExploreBinding binding;
@@ -403,13 +408,14 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     /**
      * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
      *
-     * @param question
-     * @param possibleAnswersAsStrings
-     * @param answerIndex
+     * @param riddle
      */
     @Override
-    public void askRiddle(String question, List<String> possibleAnswersAsStrings, int answerIndex) {
-        // TODO present user with params.
+    public void askRiddle(Riddle riddle) {
+        Intent intent = new Intent(this, RiddleActivity.class);
+        String riddleJson = new Gson().toJson(riddle, Riddle.class);
+        intent.putExtra(KEY_RIDDLE, riddleJson);
+        startActivityForResult(intent, REQUEST_CODE_RIDDLE_ANSWER);
     }
 
     /* END RACE COMMS */
@@ -428,17 +434,30 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_RIDDLE_ANSWER) {
+            if (resultCode == RESULT_OK) {
+                int answerIndex = data.getIntExtra(RiddleActivity.KEY_USER_ANSWER, -1);
+
+                if (answerIndex == -1) {
+                    throw new IllegalStateException("Received answer index -1 but requestCode was RESULT_OK");
+                }
+
+                onQuestionAnswered(answerIndex);
+            }
+        }
+    }
+
     /**
      * Internal callback for when question is answered.<br>
      * Calls {@link RaceVM#onQuestionAnswered(int)}
      *
-     * @param answer
+     * @param answerIndex
      */
-    private void onQuestionAnswered(String answer) {
-
-        // TODO either get direct index or convert from string
-
-        int correspondingIndex = 0;
-        raceVM.onQuestionAnswered(correspondingIndex);
+    private void onQuestionAnswered(int answerIndex) {
+        raceVM.onQuestionAnswered(answerIndex);
     }
 }
