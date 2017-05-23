@@ -237,7 +237,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     * Geofence callback
+     * Geofence creation callback
      *
      * @param status
      */
@@ -247,13 +247,23 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     * Any location update in {@link LocationUtilsImpl} calls this method.
+     * This method decides what to do when we receive a location update.
+     * Any location update in {@link LocationUtilsImpl} should call this method.
      *
-     * @param location
+     * @param location the new location
      */
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(LOG, "got callback from location listener, updating icon");
+        Log.d(LOG, "got callback from location listener");
+
+        updateLocationIcon(location);
+    }
+
+    /**
+     * Updates the location icon
+     * @param location where the new location is
+     */
+    private void updateLocationIcon(Location location) {
         //after the first fix, schedule the task to change the icon
 
         final DirectedLocationOverlay overlay = mMapView.getLocationOverlay();

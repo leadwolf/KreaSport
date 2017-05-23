@@ -54,6 +54,12 @@ public abstract class RaceVM extends BaseObservable {
 
     private String userId;
 
+    /**
+     * Default constructor to use. Initializes Realm with activity and calls {@link #initRaceRecord()}.
+     *
+     * @param activity       the activity linked to this RaceVM. It must implement {@link RaceCommunication}.
+     * @param mLocationUtils the instance of the location utility used by the activity.
+     */
     public RaceVM(Activity activity, LocationUtils mLocationUtils) {
         RaceHelper.getInstance(activity).init(activity);
         this.userId = CredentialsManager.getUserId(activity);
@@ -66,6 +72,9 @@ public abstract class RaceVM extends BaseObservable {
         initRaceRecord();
     }
 
+    /**
+     * Creates a new {@link RealmRaceRecord} managed by Realm for the next recording. Sets the userId right away.
+     */
     protected void initRaceRecord() {
         RaceHelper.getInstance(null).beginTransaction();
 

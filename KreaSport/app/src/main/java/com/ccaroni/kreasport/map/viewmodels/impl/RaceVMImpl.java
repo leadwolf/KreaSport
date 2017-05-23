@@ -81,6 +81,9 @@ public class RaceVMImpl extends RaceVM {
         RaceHelper.getInstance(null).commitTransaction();
     }
 
+    /**
+     * Stops the race recording, archives it and notifies the {@link android.content.Context} that whatever implementation of a chronometer should be stopped.
+     */
     private void stopRace() {
         if (currentRace == null) {
             throw new IllegalStateException("Cannot stop race when no race is in use");
@@ -228,7 +231,7 @@ public class RaceVMImpl extends RaceVM {
     public void onStopClicked() {
         Log.d(LOG, "stop clicked");
         if (!raceActive) {
-            throw new IllegalStateException("A race is already active");
+            throw new IllegalStateException("No race is active");
         }
 
         stopRace();
@@ -240,6 +243,6 @@ public class RaceVMImpl extends RaceVM {
      */
     @Override
     public void saveOngoingBaseTime() {
-        // TODO, save the base time in RealmRace to be persisted
+        // TODO, save the base time in RealmRaceRecord to be persisted
     }
 }
