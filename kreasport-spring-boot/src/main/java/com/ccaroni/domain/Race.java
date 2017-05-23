@@ -37,6 +37,7 @@ public class Race extends BasePoint {
 
     /**
      * Replaces the current list of checkpoints with checkpointsToAdd. Sets their {@link CheckpointKey}s.
+     *
      * @param checkpointsToAdd
      */
     public void setCheckpoints(List<Checkpoint> checkpointsToAdd) {
@@ -50,6 +51,7 @@ public class Race extends BasePoint {
 
     /**
      * Adds a list of checkpoints to the current list, and their {@link CheckpointKey}s.
+     *
      * @param checkpointsToAdd
      */
     public void addCheckpoints(List<Checkpoint> checkpointsToAdd) {
@@ -76,10 +78,22 @@ public class Race extends BasePoint {
         // FIRST RACE IUT
         Race race = new Race("Dummy Race Title 0", "Dummy Race Description 0", 50.613664, 3.136939);
 
-        dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 50.613144, 3.138257,
-                Arrays.asList("First Question", "Second Question")));
-        dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 50.612489, 3.139485,
-                Arrays.asList("First Question", "Second Question")));
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 0", "Dummy Checkpoint Description 0", 50.613144, 3.138257,
+                        new Riddle()
+                                .setQuestion("What answer? (0)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(0)
+                )
+        );
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 1", "Dummy Checkpoint Description 1", 50.612489, 3.139485,
+                        new Riddle()
+                                .setQuestion("What answer? (1)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(1)
+                )
+        );
         race.setCheckpoints(dummyCheckpointList);
         dummyRaces.add(race);
 
@@ -87,10 +101,22 @@ public class Race extends BasePoint {
         race = new Race("Dummy Race Title 1", "Dummy Race Description 1", 55.866576, -4.251175);
 
         dummyCheckpointList = new ArrayList<>();
-        dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 55.866363, -4.253852,
-                Arrays.asList("First Question", "Second Question")));
-        dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 55.866823, -4.256497,
-                Arrays.asList("First Question", "Second Question")));
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 0", "Dummy Checkpoint Description 0", 55.866363, -4.253852,
+                        new Riddle()
+                                .setQuestion("What answer? (0)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(0)
+                )
+        );
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 1", "Dummy Checkpoint Description 1", 55.866823, -4.256497,
+                        new Riddle()
+                                .setQuestion("What answer? (1)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(1)
+                )
+        );
         race.setCheckpoints(dummyCheckpointList);
         dummyRaces.add(race);
 

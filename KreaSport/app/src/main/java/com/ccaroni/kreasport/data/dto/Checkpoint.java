@@ -6,27 +6,23 @@ import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Checkpoint extends BaseItem {
 
-    @SerializedName("question")
-    @Expose
-    private String question;
     @SerializedName("checkpointKey")
     @Expose
     private CheckpointKey checkpointKey;
-    @SerializedName("possibleAnswers")
+    @SerializedName("riddle")
     @Expose
-    private List<String> possibleAnswers;
+    private Riddle riddle;
     @SerializedName("location")
     @Expose
     private List<Double> location = null;
 
     public Checkpoint() {
         super();
-        possibleAnswers = new ArrayList<>();
+        riddle = new Riddle();
     }
 
     @Override
@@ -48,6 +44,14 @@ public class Checkpoint extends BaseItem {
         return this;
     }
 
+    public Riddle getRiddle() {
+        return riddle;
+    }
+
+    public void setRiddle(Riddle riddle) {
+        this.riddle = riddle;
+    }
+
     @Override
     public Checkpoint setLatitude(Double latitude) {
         super.setLatitude(latitude);
@@ -61,23 +65,6 @@ public class Checkpoint extends BaseItem {
         return this;
     }
 
-    public String getQuestion() {
-        return question;
-    }
-
-    public Checkpoint setQuestion(String question) {
-        this.question = question;
-        return this;
-    }
-
-    public List<String> getPossibleAnswers() {
-        return possibleAnswers;
-    }
-
-    public Checkpoint setPossibleAnswers(List<String> possibleAnswers) {
-        this.possibleAnswers = possibleAnswers;
-        return this;
-    }
 
     public List<Double> getLocation() {
         return location;
@@ -98,9 +85,8 @@ public class Checkpoint extends BaseItem {
     @Override
     public String toString() {
         return "Checkpoint{" +
-                "question='" + question + '\'' +
-                ", checkpointKey=" + checkpointKey +
-                ", possibleAnswers=" + possibleAnswers +
+                "checkpointKey=" + checkpointKey +
+                ", riddle=" + riddle +
                 ", location=" + location +
                 '}';
     }
@@ -114,8 +100,7 @@ public class Checkpoint extends BaseItem {
                 .setLongitude(getLongitude());
         realmCheckpoint
                 .setCheckpointKey(checkpointKey)
-                .setQuestion(getQuestion())
-                .setPossibleAnswersFromStrings(getPossibleAnswers());
+                .setRealmRiddle(riddle.toRealmRiddle());
         return realmCheckpoint;
 
     }

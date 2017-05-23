@@ -18,6 +18,8 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;

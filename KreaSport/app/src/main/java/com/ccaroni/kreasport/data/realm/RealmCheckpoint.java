@@ -21,13 +21,8 @@ public class RealmCheckpoint extends RealmObject {
     private Double longitude;
 
     private CheckpointKey checkpointKey;
-    private String question;
-    private RealmList<RealmString> possibleAnswers;
 
-    public RealmCheckpoint() {
-        possibleAnswers = new RealmList<>();
-    }
-
+    private RealmRiddle riddle;
 
     public String getId() {
         return id;
@@ -75,29 +70,14 @@ public class RealmCheckpoint extends RealmObject {
     }
 
     public String getQuestion() {
-        return question;
+        return riddle.getQuestion();
     }
 
-    public RealmCheckpoint setQuestion(String question) {
-        this.question = question;
-        return this;
-    }
 
     public RealmList<RealmString> getPossibleAnswers() {
-        return possibleAnswers;
+        return riddle.getAnswers();
     }
 
-    public RealmCheckpoint setPossibleAnswers(RealmList<RealmString> possibleAnswers) {
-        this.possibleAnswers = possibleAnswers;
-        return this;
-    }
-
-    public RealmCheckpoint setPossibleAnswersFromStrings(List<String> possibleAnswers) {
-        for (String answer : possibleAnswers) {
-            this.possibleAnswers.add(new RealmString(answer));
-        }
-        return this;
-    }
 
     public CheckpointKey getCheckpointKey() {
         return checkpointKey;
@@ -105,6 +85,15 @@ public class RealmCheckpoint extends RealmObject {
 
     public RealmCheckpoint setCheckpointKey(CheckpointKey checkpointKey) {
         this.checkpointKey = checkpointKey;
+        return this;
+    }
+
+    public RealmRiddle getRiddle() {
+        return riddle;
+    }
+
+    public RealmCheckpoint setRealmRiddle(RealmRiddle riddle) {
+        this.riddle = riddle;
         return this;
     }
 
@@ -117,8 +106,7 @@ public class RealmCheckpoint extends RealmObject {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", checkpointKey=" + checkpointKey +
-                ", question='" + question + '\'' +
-                ", possibleAnswers=" + possibleAnswers +
+                ", riddle=" + riddle +
                 '}';
     }
 
@@ -128,7 +116,7 @@ public class RealmCheckpoint extends RealmObject {
 
     public List<String> getPossibleAnswersAsStrings() {
         List<String> possibleAnswersAsStrings = new ArrayList<>();
-        for (RealmString realmString : possibleAnswers) {
+        for (RealmString realmString : riddle.getAnswers()) {
             possibleAnswersAsStrings.add(realmString.getString());
         }
         return possibleAnswersAsStrings;
