@@ -153,14 +153,10 @@ public class RaceVMImpl extends RaceVM {
             setTitle(currentRace.getTitle());
             setDescription(currentRace.getDescription());
         } else {
-            if (currentCheckpoint.getId().equals(selectedItem.getId())) {
-                Log.d(LOG, "selected same race, same checkpoint");
-            } else {
-                Log.d(LOG, "selected same race, difference checkpoint");
-                currentCheckpoint = currentRace.getCheckpointById(selectedItem.getId());
-                setTitle(currentCheckpoint.getTitle());
-                setDescription(currentCheckpoint.getDescription());
-            }
+            Log.d(LOG, "selected checkpoint of same race");
+            currentCheckpoint = currentRace.getCheckpointById(selectedItem.getId());
+            setTitle(currentCheckpoint.getTitle());
+            setDescription(currentCheckpoint.getDescription());
         }
     }
 
@@ -177,8 +173,6 @@ public class RaceVMImpl extends RaceVM {
             Log.d(LOG, "selected same race");
         } else {
             Log.d(LOG, "selected different race: " + selectedItem.getRaceId());
-
-            RealmHelper.getInstance(null).getAllRaces(false);
 
             currentRace = RealmHelper.getInstance(null).findRaceById(selectedItem.getRaceId());
             setTitle(currentRace.getTitle());
