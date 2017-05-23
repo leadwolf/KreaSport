@@ -152,7 +152,7 @@ public abstract class RaceVM extends BaseObservable {
         List<CustomOverlayItem> items = new ArrayList<>();
 
         if (raceActive) {
-            items.addAll(currentRace.toCustomOverlayWithCheckpoints());
+            items.addAll(currentRace.toCustomOverlayWithCheckpoints(raceRecord.getProgression()));
         } else {
             RealmResults<RealmRace> allRaces = RaceHelper.getInstance(null).getAllRaces(false);
             items.addAll(RealmRace.racesToOverlay(allRaces));

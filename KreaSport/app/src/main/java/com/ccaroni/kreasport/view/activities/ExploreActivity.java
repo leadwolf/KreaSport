@@ -61,6 +61,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private CustomMapView mMapView;
     private Chronometer chronometer;
+    private ItemizedOverlayWithFocus raceListOverlay;
+
     private RaceVM raceVM;
 
     private LocationUtils mLocationUtilsImpl;
@@ -129,7 +131,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
         List<CustomOverlayItem> items = raceVM.getOverlayItems();
 
-        ItemizedOverlayWithFocus raceListOverlay = new ItemizedOverlayWithFocus<>(items, itemGestureListener, this);
+        raceListOverlay = new ItemizedOverlayWithFocus<>(items, itemGestureListener, this);
         raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
@@ -142,13 +144,16 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                 getGeofencingRequest(),
                 getGeofencePendingIntent()
         ).setResultCallback(this);
+        Log.d(LOG, "added geofence");
     }
 
     private GeofencingRequest getGeofencingRequest() {
         RealmCheckpoint checkpoint = raceVM.getActiveCheckpoint();
+        Log.d(LOG, "got geofence request for checkpoint: " + checkpoint.getId() + " " + checkpoint.getTitle());
+
         if (!checkpoint.getId().equals("")) {
             GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER); // should be triggered if user already inside
 
             builder.addGeofence(
                     new Geofence.Builder()
@@ -233,6 +238,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     public void onResult(@NonNull Status status) {
         Toast.makeText(this, "Geofence callback", Toast.LENGTH_SHORT).show();
+        Log.d(LOG, "direct geofence callback with status " + status);
     }
 
     /**
@@ -358,5 +364,23 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     public void toast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void addGeoFence(RealmCheckpoint checkpoint) {
+        Log.d(LOG, "raceVM called to add geofence");
+        addGeofence();
+    }
+
+    @Override
+    public void revealNextCheckpoint() {
+        Log.d(LOG, "reveal next checkpoint");
+
+        raceListOverlay.removeAllItems();
+
+        List<CustomOverlayItem> items = raceVM.getOverlayItems();
+        raceListOverlay.addItems(items);
+
+        mMapView.invalidate();
     }
 }

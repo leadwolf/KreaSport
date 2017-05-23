@@ -61,10 +61,16 @@ public class RaceVMImpl extends RaceVM {
 
         this.raceActive = true;
 
+        this.currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
+
         changeVisibilitiesOnRaceState(true);
 
 //        currentRace.incrementAttempts(); TODO do we even want to count this in the app?
         beginRecording();
+
+        Log.d(LOG, "asking for geofence for checkpoint: " + currentCheckpoint.getId() + " " + currentCheckpoint.getTitle());
+        raceCommunication.addGeoFence(currentCheckpoint);
+        raceCommunication.revealNextCheckpoint();
 
         // if the user quit the app without stopping the race, we need to keep the old time elapsed.
         this.baseAtStart = SystemClock.elapsedRealtime() - raceRecord.getTimeExpired();

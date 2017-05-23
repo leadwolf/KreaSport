@@ -2,6 +2,8 @@ package com.ccaroni.kreasport.map.viewmodels;
 
 import android.widget.Toast;
 
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+
 /**
  * Created by Master on 22/05/2017.
  * This interface permits communication to the Model in the MVVM.
@@ -26,4 +28,8 @@ public interface RaceCommunication {
      * @param message
      */
     void toast(String message);
+
+    void addGeoFence(RealmCheckpoint checkpoint);
+
+    void revealNextCheckpoint();
 }

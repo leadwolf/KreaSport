@@ -20,11 +20,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
 
     public GeofenceTransitionsIntentService() {
-        super("GeofenceTransitionsIntentService");
+        super(GeofenceTransitionsIntentService.class.getSimpleName());
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        Log.d(LOG, "got intent");
+
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent == null)
             return;
