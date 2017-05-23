@@ -3,7 +3,6 @@ package com.ccaroni.kreasport.data.realm;
 import android.location.Location;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.RaceHelper;
 import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 

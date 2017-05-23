@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RaceHelper;
+import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.databinding.ActivityDownloadedRacesBinding;
 import com.ccaroni.kreasport.view.adapter.DownloadedRaceAdapter;
@@ -43,7 +43,7 @@ public class DownloadedRacesActivity extends AppCompatActivity {
     }
 
     private void setBindings() {
-        RealmResults<RealmRace> allRaces = RaceHelper.getInstance(this).getAllRaces(false);
+        RealmResults<RealmRace> allRaces = RealmHelper.getInstance(this).getAllRaces(false);
 
         DownloadedRaceAdapter adapter = new DownloadedRaceAdapter(this, allRaces);
 

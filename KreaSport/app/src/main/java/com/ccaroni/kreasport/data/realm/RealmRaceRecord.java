@@ -2,9 +2,7 @@ package com.ccaroni.kreasport.data.realm;
 
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.RaceHelper;
-
-import org.threeten.bp.OffsetDateTime;
+import com.ccaroni.kreasport.data.RealmHelper;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
@@ -120,9 +118,9 @@ public class RealmRaceRecord extends RealmObject {
      */
     public void setInProgress(boolean inProgress, boolean directSave) {
         if (directSave) {
-            RaceHelper.getInstance(null).beginTransaction();
+            RealmHelper.getInstance(null).beginTransaction();
             this.inProgress = inProgress;
-            RaceHelper.getInstance(null).commitTransaction();
+            RealmHelper.getInstance(null).commitTransaction();
         } else {
             this.inProgress = inProgress;
         }
@@ -130,9 +128,9 @@ public class RealmRaceRecord extends RealmObject {
 
     public void setTimeExpired(long timeDifference, boolean directSave) {
         if (directSave) {
-            RaceHelper.getInstance(null).beginTransaction();
+            RealmHelper.getInstance(null).beginTransaction();
             this.timeExpired = timeDifference;
-            RaceHelper.getInstance(null).commitTransaction();
+            RealmHelper.getInstance(null).commitTransaction();
         } else {
             this.timeExpired = timeDifference;
         }

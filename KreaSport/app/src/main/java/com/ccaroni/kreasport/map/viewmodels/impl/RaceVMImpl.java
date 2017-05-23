@@ -6,7 +6,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
-import com.ccaroni.kreasport.data.RaceHelper;
+import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
@@ -37,11 +37,11 @@ public class RaceVMImpl extends RaceVM {
         Log.d(LOG, "onStart, UI is ready to be manipulated");
 
         // set this at the start because normally it has to be triggered by a change
-        RealmRaceRecord raceRecordResult = RaceHelper.getInstance(null).findCurrentRaceRecord();
+        RealmRaceRecord raceRecordResult = RealmHelper.getInstance(null).findCurrentRaceRecord();
         if (raceRecordResult != null) {
             Log.d(LOG, "found an ongoing race in db: " + raceRecordResult);
 
-            currentRace = RaceHelper.getInstance(null).findRaceById(raceRecord.getRaceId());
+            currentRace = RealmHelper.getInstance(null).findRaceById(raceRecord.getRaceId());
             currentCheckpoint = raceRecord.getCurrentCheckpoint(currentRace);
             startRace();
         } else {
@@ -74,11 +74,11 @@ public class RaceVMImpl extends RaceVM {
     }
 
     private void beginRecording() {
-        RaceHelper.getInstance(null).beginTransaction();
+        RealmHelper.getInstance(null).beginTransaction();
 
         raceRecord.setRaceId(currentRace.getId());
 
-        RaceHelper.getInstance(null).commitTransaction();
+        RealmHelper.getInstance(null).commitTransaction();
     }
 
     /**
@@ -105,13 +105,13 @@ public class RaceVMImpl extends RaceVM {
     private void archiveRaceRecord() {
         final long timeDifference = SystemClock.currentThreadTimeMillis() - baseAtStart;
 
-        RaceHelper.getInstance(null).beginTransaction();
+        RealmHelper.getInstance(null).beginTransaction();
 
         raceRecord.setInProgress(false, false);
         raceRecord.setTimeExpired(timeDifference, false);
         raceRecord.setDateTime(OffsetDateTime.now().toString());
 
-        RaceHelper.getInstance(null).commitTransaction();
+        RealmHelper.getInstance(null).commitTransaction();
 
         Log.d(LOG, "old raceRecord: " + raceRecord);
         initRaceRecord();
@@ -178,9 +178,9 @@ public class RaceVMImpl extends RaceVM {
         } else {
             Log.d(LOG, "selected different race: " + selectedItem.getRaceId());
 
-            RaceHelper.getInstance(null).getAllRaces(false);
+            RealmHelper.getInstance(null).getAllRaces(false);
 
-            currentRace = RaceHelper.getInstance(null).findRaceById(selectedItem.getRaceId());
+            currentRace = RealmHelper.getInstance(null).findRaceById(selectedItem.getRaceId());
             setTitle(currentRace.getTitle());
             setDescription(currentRace.getDescription());
         }

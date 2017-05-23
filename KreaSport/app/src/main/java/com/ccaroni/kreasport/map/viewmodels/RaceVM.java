@@ -6,7 +6,7 @@ import android.databinding.Bindable;
 import android.util.Log;
 
 import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.data.RaceHelper;
+import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
@@ -61,7 +61,7 @@ public abstract class RaceVM extends BaseObservable {
      * @param mLocationUtils the instance of the location utility used by the activity.
      */
     public RaceVM(Activity activity, LocationUtils mLocationUtils) {
-        RaceHelper.getInstance(activity).init(activity);
+        RealmHelper.getInstance(activity).init(activity);
         this.userId = CredentialsManager.getUserId(activity);
         if (activity instanceof RaceCommunication) {
             this.raceCommunication = (RaceCommunication) activity;
@@ -76,12 +76,12 @@ public abstract class RaceVM extends BaseObservable {
      * Creates a new {@link RealmRaceRecord} managed by Realm for the next recording. Sets the userId right away.
      */
     protected void initRaceRecord() {
-        RaceHelper.getInstance(null).beginTransaction();
+        RealmHelper.getInstance(null).beginTransaction();
 
-        raceRecord = RaceHelper.getInstance(null).createObject(RealmRaceRecord.class);
+        raceRecord = RealmHelper.getInstance(null).createRealmRaceRecord();
         raceRecord.setUserId(userId);
 
-        RaceHelper.getInstance(null).commitTransaction();
+        RealmHelper.getInstance(null).commitTransaction();
     }
 
     @Bindable
@@ -163,7 +163,7 @@ public abstract class RaceVM extends BaseObservable {
         if (raceActive) {
             items.addAll(currentRace.toCustomOverlayWithCheckpoints(raceRecord.getProgression()));
         } else {
-            RealmResults<RealmRace> allRaces = RaceHelper.getInstance(null).getAllRaces(false);
+            RealmResults<RealmRace> allRaces = RealmHelper.getInstance(null).getAllRaces(false);
             items.addAll(RealmRace.racesToOverlay(allRaces));
         }
 
@@ -196,9 +196,9 @@ public abstract class RaceVM extends BaseObservable {
         } else {
             Log.d(LOG, "checkpoint validated, inc progression, revealing next w/ geofence");
 
-            RaceHelper.getInstance(null).beginTransaction();
+            RealmHelper.getInstance(null).beginTransaction();
             raceRecord.incrementProgression();
-            RaceHelper.getInstance(null).commitTransaction();
+            RealmHelper.getInstance(null).commitTransaction();
 
             currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
 

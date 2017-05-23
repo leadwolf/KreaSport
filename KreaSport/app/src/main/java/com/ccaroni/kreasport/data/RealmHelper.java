@@ -18,25 +18,25 @@ import io.realm.RealmResults;
  * Created by Master on 19/05/2017.
  */
 
-public class RaceHelper {
+public class RealmHelper {
 
-    private static final String LOG = RaceHelper.class.getSimpleName();
+    private static final String LOG = RealmHelper.class.getSimpleName();
 
-    private static RaceHelper instance;
+    private static RealmHelper instance;
 
     private Realm realm;
     private List<Race> racesForOverlay;
 
 
-    private RaceHelper() {
+    private RealmHelper() {
 
     }
 
-    public static synchronized RaceHelper getInstance(Activity activity) {
+    public static synchronized RealmHelper getInstance(Activity activity) {
         if (instance == null) {
-            synchronized (RaceHelper.class) {
+            synchronized (RealmHelper.class) {
                 if (instance == null) {
-                    instance = new RaceHelper();
+                    instance = new RealmHelper();
                     instance.init(activity);
                 }
             }
@@ -133,8 +133,8 @@ public class RaceHelper {
         realm.commitTransaction();
     }
 
-    public <E extends RealmObject> E createObject(Class<E> clazz) {
-        return realm.createObject(clazz);
+    public RealmRaceRecord createRealmRaceRecord() {
+        return realm.createObject(RealmRaceRecord.class);
     }
 
     public void deleteAllRaceRecords() {

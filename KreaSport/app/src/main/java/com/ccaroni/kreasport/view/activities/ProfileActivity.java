@@ -10,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -26,15 +25,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RaceHelper;
-import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.databinding.ActivityProfileBinding;
 import com.ccaroni.kreasport.utils.CredentialsManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.realm.RealmResults;
 
 public class ProfileActivity extends BaseActivity {
 

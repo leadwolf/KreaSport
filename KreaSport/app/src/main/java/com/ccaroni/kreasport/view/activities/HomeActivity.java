@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RaceHelper;
+import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.view.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.network.ApiUtils;
@@ -95,7 +95,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
                     List<Race> downloadedRaces = response.body();
                     Toast.makeText(HomeActivity.this, "Downloaded " + downloadedRaces.size() + " races", Toast.LENGTH_SHORT).show();
 
-                    RaceHelper.getInstance(HomeActivity.this).saveRaceList(downloadedRaces);
+                    RealmHelper.getInstance(HomeActivity.this).saveRaceList(downloadedRaces);
                 } else {
                     Log.d(LOG, "response unsuccessful with code " + response.code());
                     showNoRaceFoundDialog(false, false);
