@@ -15,24 +15,22 @@ import com.google.android.gms.location.LocationServices;
  */
 
 /**
- * This class will handle all location request including registering and render the results available through getters.
- * It is initialized from an activity for a Context but on instantiation everything is handled internally.
+ * Implementation of {@link LocationUtils}. Uses {@link GoogleApiClient} to access the location.
  */
 public class LocationUtilsImpl extends LocationUtils {
 
     private static final String LOG = LocationUtilsImpl.class.getSimpleName();
 
-    private LocationCommunicationInterface mLocationReceiver;
     private GoogleApiClient mGoogleApiClient;
 
+    /**
+     *
+     * @param context
+     * @param mGoogleApiClient the implementation this class uses for its location updates.
+     */
     public LocationUtilsImpl(Context context, GoogleApiClient mGoogleApiClient) {
+        super(context);
         this.mGoogleApiClient = mGoogleApiClient;
-
-        if (context instanceof LocationCommunicationInterface) {
-            this.mLocationReceiver = (LocationCommunicationInterface) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement " + LocationCommunicationInterface.class.getSimpleName());
-        }
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -58,33 +56,9 @@ public class LocationUtilsImpl extends LocationUtils {
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
-    /**
-     * General method invoked on location changed when creating requests with "this" as location listener.
-     * <br>Just a simple call to {@link LocationCommunicationInterface#onLocationChanged(Location)} to notify the class that this is attached to.
-     *
-     * @param location
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(LOG, "received location update" + location);
-        Log.d(LOG, "passing on to " + mLocationReceiver);
-
-        mLocationReceiver.onLocationChanged(location);
-    }
-
     @SuppressWarnings({"MissingPermission"})
     @Override
     public Location getLastKnownLocation() {
         return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-    }
-
-    public interface LocationCommunicationInterface {
-
-        /**
-         * Any location update in {@link LocationUtilsImpl} calls this method.
-         *
-         * @param location
-         */
-        public void onLocationChanged(Location location);
     }
 }
