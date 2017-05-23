@@ -150,7 +150,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                 getGeofencingRequest(),
                 getGeofencePendingIntent()
         ).setResultCallback(this);
-        Log.d(LOG, "added geofence");
+        Log.d(LOG, "called api to add geofence");
     }
 
     private GeofencingRequest getGeofencingRequest() {
@@ -243,8 +243,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     public void onResult(@NonNull Status status) {
-        Toast.makeText(this, "Geofence callback", Toast.LENGTH_SHORT).show();
-        Log.d(LOG, "direct geofence callback with status " + status);
+        Log.d(LOG, "geofence creation callback with status " + status);
     }
 
     /**
@@ -376,19 +375,18 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void addGeoFence(RealmCheckpoint checkpoint) {
-        Log.d(LOG, "raceVM called to add geofence");
         addGeofence();
     }
 
-    @Override
-    public void revealNextCheckpoint() {
-        Log.d(LOG, "revealing next checkpoint");
-        raceListOverlay.removeAllItems();
 
-        List<CustomOverlayItem> items = raceVM.getOverlayItems();
-        raceListOverlay.addItems(items);
+    @Override
+    public void revealNextCheckpoint(CustomOverlayItem nextCheckpoint) {
+        Log.d(LOG, "revealing next checkpoint: " + nextCheckpoint.getId() + " " + nextCheckpoint.getTitle());
+
+        raceListOverlay.addItem(nextCheckpoint);
 
         mMapView.invalidate();
+
     }
 
     /* END RACE COMMS */

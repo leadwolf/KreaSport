@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.ccaroni.kreasport.data.RaceHelper;
-import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
@@ -15,8 +14,6 @@ import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.LocationUtils;
 
 import org.threeten.bp.OffsetDateTime;
-
-import io.realm.RealmResults;
 
 /**
  * Created by Master on 19/05/2017.
@@ -65,10 +62,9 @@ public class RaceVMImpl extends RaceVM {
 
         changeVisibilitiesOnRaceState(true);
 
-//        currentRace.incrementAttempts(); TODO do we even want to count this in the app?
         beginRecording();
 
-        raceCommunication.revealNextCheckpoint();
+        raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
         Log.d(LOG, "asking for geofence for checkpoint: " + currentCheckpoint.getId() + " " + currentCheckpoint.getTitle());
         raceCommunication.addGeoFence(currentCheckpoint);
 

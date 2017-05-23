@@ -172,16 +172,17 @@ public abstract class RaceVM extends BaseObservable {
 
     /**
      * If the end of the race is not finished:<br>
-     * Increments the progression in {@link #raceRecord}, updates {@link #currentCheckpoint}, calls to {@link RaceCommunication#revealNextCheckpoint()} and
+     * Increments the progression in {@link #raceRecord}, updates {@link #currentCheckpoint}, calls to {@link RaceCommunication#revealNextCheckpoint(CustomOverlayItem)} and
      * {@link RaceCommunication#addGeoFence(RealmCheckpoint)}.<br>
      * <br>
      * If the race is finished:<br>
-     * Notifies the end of the race through {@link RaceCommunication}
+     * Stops the race & notifies the end of the race through {@link RaceCommunication}
      */
     private void incrementProgression() {
 
         if (currentRace.isOnLastCheckpoint(raceRecord.getProgression())) {
             Log.d(LOG, "last checkpoint has just been validated");
+            // TODO stop and save
             // TODO notify end
         } else {
             Log.d(LOG, "checkpoint validated, inc progression, revealing next w/ geofence");
@@ -192,7 +193,7 @@ public abstract class RaceVM extends BaseObservable {
 
             currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
 
-            raceCommunication.revealNextCheckpoint();
+            raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
             raceCommunication.addGeoFence(currentCheckpoint);
         }
     }

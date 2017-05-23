@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.map.viewmodels;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 /**
  * Created by Master on 22/05/2017.
@@ -36,7 +37,8 @@ public interface RaceCommunication {
     void addGeoFence(RealmCheckpoint checkpoint);
 
     /**
-     * Notifies the view that the next checkpoint should be revealed
+     * Notifies the {@link android.content.Context} that the next checkpoint should be revealed.
+     * @param nextCheckpoint the checkpoint as a {@link CustomOverlayItem}
      */
-    void revealNextCheckpoint();
+    void revealNextCheckpoint(CustomOverlayItem nextCheckpoint);
 }
