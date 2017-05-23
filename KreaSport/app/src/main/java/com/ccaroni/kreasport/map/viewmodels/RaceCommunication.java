@@ -29,7 +29,14 @@ public interface RaceCommunication {
      */
     void toast(String message);
 
+    /**
+     *
+     * @param checkpoint the checkpoint to add a geofence for
+     */
     void addGeoFence(RealmCheckpoint checkpoint);
 
+    /**
+     * Notifies the view that the next checkpoint should be revealed
+     */
     void revealNextCheckpoint();
 }

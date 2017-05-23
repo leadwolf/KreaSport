@@ -13,6 +13,8 @@ import com.ccaroni.kreasport.data.dto.Race;
 
 public class Constants {
 
+    public static final String GEOFENCE_RECEIVER_ID = "com.ccaroni.kreasport.geofence_receiver";
+
     /**
      * Minimum distance that the user needs to be from a checkpoint to trigger the geofence.
      */

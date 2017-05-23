@@ -3,9 +3,13 @@ package com.ccaroni.kreasport.map;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.view.activities.ExploreActivity;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.List;
@@ -17,6 +21,8 @@ import java.util.List;
 public class GeofenceTransitionsIntentService extends IntentService {
 
     private static final String LOG = GeofenceTransitionsIntentService.class.getSimpleName();
+
+    public static final String KEY_GEOFENCE_ID = "com.ccaroni.kreasport." + GeofenceTransitionsIntentService.class.getSimpleName() + ".key.geofence_id";
 
 
     public GeofenceTransitionsIntentService() {
@@ -30,8 +36,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent == null)
             return;
-        if (geofencingEvent.hasError())
-            Log.d(LOG, "error in geofence: " + geofencingEvent.getErrorCode());
+        if (geofencingEvent.hasError()) {
+            String errorMsg = getErrorString(geofencingEvent.getErrorCode());
+            Log.e(LOG, errorMsg);
+            return;
+        }
 
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
@@ -45,11 +54,29 @@ public class GeofenceTransitionsIntentService extends IntentService {
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
             for (Geofence geofence : triggeringGeofences) {
-                Log.d(LOG, "trigger for geofence " + geofence);
+                Log.d(LOG, "sending geofence to " + ExploreActivity.class.getSimpleName() + " : " + geofence.getRequestId());
+
+                Intent resendIntent = new Intent(Constants.GEOFENCE_RECEIVER_ID); //Send to the receiver listening for this in ExploreActivity
+                resendIntent.putExtra(KEY_GEOFENCE_ID, geofence.getRequestId());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(resendIntent);
             }
 
         } else {
             Log.d(LOG, "invalid transition type");
+        }
+    }
+
+    // Handle errors
+    private static String getErrorString(int errorCode) {
+        switch (errorCode) {
+            case GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE:
+                return "GeoFence not available";
+            case GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES:
+                return "Too many GeoFences";
+            case GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS:
+                return "Too many pending intents";
+            default:
+                return "Unknown error.";
         }
     }
 }

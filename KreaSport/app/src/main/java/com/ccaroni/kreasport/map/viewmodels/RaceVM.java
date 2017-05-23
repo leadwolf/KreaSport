@@ -162,8 +162,44 @@ public abstract class RaceVM extends BaseObservable {
     }
 
     /**
-     * Call this once your layout is initialized.
-     * Loads the appropriate config (raceActive?) and with applies to the layout with databinding.
+     * The manager of the geofences calls this to notify that a geofence has been triggered
+     *
+     * @param checkpointId the id of the triggered checkpoint
+     */
+    public void onGeofenceTriggered(String checkpointId) {
+        incrementProgression();
+    }
+
+    /**
+     * If the end of the race is not finished:<br>
+     * Increments the progression in {@link #raceRecord}, updates {@link #currentCheckpoint}, calls to {@link RaceCommunication#revealNextCheckpoint()} and
+     * {@link RaceCommunication#addGeoFence(RealmCheckpoint)}.<br>
+     * <br>
+     * If the race is finished:<br>
+     * Notifies the end of the race through {@link RaceCommunication}
+     */
+    private void incrementProgression() {
+
+        if (currentRace.isOnLastCheckpoint(raceRecord.getProgression())) {
+            Log.d(LOG, "last checkpoint has just been validated");
+            // TODO notify end
+        } else {
+            Log.d(LOG, "checkpoint validated, inc progression, revealing next w/ geofence");
+
+            RaceHelper.getInstance(null).beginTransaction();
+            raceRecord.incrementProgression();
+            RaceHelper.getInstance(null).commitTransaction();
+
+            currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
+
+            raceCommunication.revealNextCheckpoint();
+            raceCommunication.addGeoFence(currentCheckpoint);
+        }
+    }
+
+    /**
+     * {@link android.content.Context} calls this once the layout is initialized.
+     * Loads the appropriate config (w/ raceActive?) and with applies to according the layout with databinding.
      */
     public abstract void onStart();
 
@@ -196,4 +232,5 @@ public abstract class RaceVM extends BaseObservable {
     public boolean isRaceActive() {
         return raceActive;
     }
+
 }

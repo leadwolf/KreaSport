@@ -1,7 +1,10 @@
 package com.ccaroni.kreasport.view.activities;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
@@ -9,14 +12,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RaceHelper;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
-import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.models.MapOptions;
@@ -48,8 +50,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.realm.RealmResults;
-
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
         <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceCommunication {
 
@@ -66,6 +66,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private RaceVM raceVM;
 
     private LocationUtils mLocationUtilsImpl;
+    private GeofenceReceiver receiver;
 
     private GoogleApiClient mGoogleApiClient;
     private boolean hasFix;
@@ -88,6 +89,11 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
             // LocationUtilsImpl will be our listener and manager
             mLocationUtilsImpl = new LocationUtilsImpl(this, mGoogleApiClient);
+
+            // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
+            LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
+            receiver = new GeofenceReceiver();
+            lbc.registerReceiver(receiver, new IntentFilter(Constants.GEOFENCE_RECEIVER_ID));
         } else {
             // Force to go back to Home
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
@@ -350,6 +356,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 
+    /* RACE COMMUNICATION */
+
     @Override
     public void startChronometer(long newBase) {
         chronometer.setBase(newBase);
@@ -374,13 +382,28 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void revealNextCheckpoint() {
-        Log.d(LOG, "reveal next checkpoint");
-
+        Log.d(LOG, "revealing next checkpoint");
         raceListOverlay.removeAllItems();
 
         List<CustomOverlayItem> items = raceVM.getOverlayItems();
         raceListOverlay.addItems(items);
 
         mMapView.invalidate();
+    }
+
+    /* END RACE COMMS */
+
+    class GeofenceReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
+            if (checkpointId == null) {
+                throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
+            }
+
+            raceVM.onGeofenceTriggered(checkpointId);
+
+        }
     }
 }

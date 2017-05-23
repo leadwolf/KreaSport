@@ -138,4 +138,8 @@ public class RealmRaceRecord extends RealmObject {
         }
 
     }
+
+    public void incrementProgression() {
+        progression++;
+    }
 }
