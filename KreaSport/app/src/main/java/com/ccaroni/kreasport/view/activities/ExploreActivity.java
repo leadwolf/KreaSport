@@ -18,8 +18,6 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
@@ -263,6 +261,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     /**
      * Updates the location icon
+     *
      * @param location where the new location is
      */
     private void updateLocationIcon(Location location) {
@@ -401,6 +400,18 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     }
 
+    /**
+     * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
+     *
+     * @param question
+     * @param possibleAnswersAsStrings
+     * @param answerIndex
+     */
+    @Override
+    public void askRiddle(String question, List<String> possibleAnswersAsStrings, int answerIndex) {
+        // TODO present user with params.
+    }
+
     /* END RACE COMMS */
 
     class GeofenceReceiver extends BroadcastReceiver {
@@ -415,5 +426,19 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             raceVM.onGeofenceTriggered(checkpointId);
 
         }
+    }
+
+    /**
+     * Internal callback for when question is answered.<br>
+     * Calls {@link RaceVM#onQuestionAnswered(int)}
+     *
+     * @param answer
+     */
+    private void onQuestionAnswered(String answer) {
+
+        // TODO either get direct index or convert from string
+
+        int correspondingIndex = 0;
+        raceVM.onQuestionAnswered(correspondingIndex);
     }
 }

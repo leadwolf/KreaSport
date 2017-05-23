@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
@@ -126,7 +127,7 @@ public abstract class RaceVM extends BaseObservable {
             return null;
         }
 
-        int progression = raceRecord.getProgression();
+        int progression = raceRecord.getGeofenceProgression();
         int total = currentRace.getNbCheckpoints();
 
         return "" + progression + "/" + total;
@@ -161,7 +162,7 @@ public abstract class RaceVM extends BaseObservable {
         List<CustomOverlayItem> items = new ArrayList<>();
 
         if (raceActive) {
-            items.addAll(currentRace.toCustomOverlayWithCheckpoints(raceRecord.getProgression()));
+            items.addAll(currentRace.toCustomOverlayWithCheckpoints(raceRecord.getGeofenceProgression()));
         } else {
             RealmResults<RealmRace> allRaces = RealmHelper.getInstance(null).getAllRaces(false);
             items.addAll(RealmRace.racesToOverlay(allRaces));
@@ -171,12 +172,32 @@ public abstract class RaceVM extends BaseObservable {
     }
 
     /**
-     * The manager of the geofences calls this to notify that a geofence has been triggered
+     * The manager of the geofences calls this to notify that a geofence has been triggered.<br>
+     * Increments the {@link RealmRaceRecord#geofenceProgression}
      *
      * @param checkpointId the id of the triggered checkpoint
      */
     public void onGeofenceTriggered(String checkpointId) {
-        incrementProgression();
+
+        if (raceRecord.getProgression() != raceRecord.getGeofenceProgression()) {
+            Log.d(LOG, "Geofence was triggered but saved progression and geofence progression are already synced");
+            Log.d(LOG, "progression should always be one step behind geofence progression at geofence trigger moment because normal progression is only validated on question " +
+                    "answer");
+            throw new IllegalStateException("Geofence was triggered but saved progression and geofence progression are already synced");
+        }
+
+        if (currentRace.isOnLastCheckpoint(raceRecord.getGeofenceProgression())) {
+            Log.d(LOG, "last checkpoint has just been geofence validated");
+
+        } else {
+            Log.d(LOG, "checkpoint has just been geofence validated");
+            RealmHelper.getInstance(null).beginTransaction();
+            raceRecord.incrementGeofenceProgression();
+            RealmHelper.getInstance(null).commitTransaction();
+        }
+
+        RealmCheckpoint targetingCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getGeofenceProgression());
+        raceCommunication.askRiddle(targetingCheckpoint.getQuestion(), targetingCheckpoint.getPossibleAnswersAsStrings(), targetingCheckpoint.getAnswerIndex());
     }
 
     /**
@@ -189,12 +210,9 @@ public abstract class RaceVM extends BaseObservable {
      */
     private void incrementProgression() {
 
-        if (currentRace.isOnLastCheckpoint(raceRecord.getProgression())) {
-            Log.d(LOG, "last checkpoint has just been validated");
-            // TODO stop and save
-            // TODO notify end
-        } else {
-            Log.d(LOG, "checkpoint validated, inc progression, revealing next w/ geofence");
+
+            /*
+            Log.d(LOG, "inc progression, revealing next w/ geofence");
 
             RealmHelper.getInstance(null).beginTransaction();
             raceRecord.incrementProgression();
@@ -204,7 +222,11 @@ public abstract class RaceVM extends BaseObservable {
 
             raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
             raceCommunication.addGeoFence(currentCheckpoint);
-        }
+            */
+    }
+
+    public void onQuestionAnswered(int index) {
+        // TODO
     }
 
     /**

@@ -125,4 +125,8 @@ public class RealmCheckpoint extends RealmObject {
     public GeoPoint extrackGeoPoint() {
         return new GeoPoint(latitude, longitude);
     }
+
+    public int getAnswerIndex() {
+        return riddle.getAnswerIndex();
+    }
 }

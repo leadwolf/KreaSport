@@ -58,7 +58,7 @@ public class RaceVMImpl extends RaceVM {
 
         this.raceActive = true;
 
-        this.currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
+        this.currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getGeofenceProgression());
 
         changeVisibilitiesOnRaceState(true);
 

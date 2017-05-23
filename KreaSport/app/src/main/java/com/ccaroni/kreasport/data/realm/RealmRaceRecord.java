@@ -24,6 +24,8 @@ public class RealmRaceRecord extends RealmObject {
     private long timeExpired;
     private int progression;
 
+    private int geofenceProgression;
+
     private boolean synced;
 
 
@@ -74,6 +76,14 @@ public class RealmRaceRecord extends RealmObject {
         this.progression = progression;
     }
 
+    public int getGeofenceProgression() {
+        return geofenceProgression;
+    }
+
+    public void setGeofenceProgression(int geofenceProgression) {
+        this.geofenceProgression = geofenceProgression;
+    }
+
     public boolean isSynced() {
         return synced;
     }
@@ -106,8 +116,9 @@ public class RealmRaceRecord extends RealmObject {
                 ", inProgress=" + inProgress +
                 ", timeExpired=" + timeExpired +
                 ", progression=" + progression +
+                ", geofenceProgression=" + geofenceProgression +
                 ", synced=" + synced +
-                ", dateTime=" + dateTime +
+                ", dateTime='" + dateTime + '\'' +
                 '}';
     }
 
@@ -139,5 +150,9 @@ public class RealmRaceRecord extends RealmObject {
 
     public void incrementProgression() {
         progression++;
+    }
+
+    public void incrementGeofenceProgression() {
+        geofenceProgression++;
     }
 }
