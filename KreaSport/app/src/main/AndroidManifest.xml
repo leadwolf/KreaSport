@@ -59,7 +59,7 @@
         <activity
             android:name=".view.activities.ExploreActivity"
             android:parentActivityName=".view.activities.HomeActivity"
-            android:theme="@style/AppTheme.Dark"
+            android:theme="@style/AppTheme.Dark">
             tools:targetApi="jelly_bean">
 
             <!-- The meta-data element is needed for versions lower than 4.1 -->
@@ -75,7 +75,7 @@
             android:name=".view.activities.ProfileActivity"
             android:label="@string/title_activity_scrolling"
             android:parentActivityName=".view.activities.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.Dark">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -86,7 +86,7 @@
             android:name=".view.activities.DownloadedRacesActivity"
             android:label="@string/title_activity_downloaded_races"
             android:parentActivityName=".view.activities.ProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
@@ -95,7 +95,7 @@
             android:name=".view.activities.RiddleActivity"
             android:label="@string/title_activity_riddle"
             android:parentActivityName=".view.activities.ExploreActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ccaroni.kreasport.view.activities.ExploreActivity"/>

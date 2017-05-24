@@ -65,7 +65,7 @@ public class BaseActivity extends AppCompatActivity
      * <br>Also verifies the user's access token with {@link CredentialsManager#verifyAccessToken(Activity)}
      */
     protected void secondaryCreate() {
-        CredentialsManager.verifyAccessToken(this);
+//        CredentialsManager.verifyAccessToken(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
