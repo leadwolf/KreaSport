@@ -41,4 +41,7 @@ public class Constants {
      * Minimum distance that the user needs to be from the start of a race in m (meters).
      */
     public static final float MINIMUM_DISTANCE_TO_START_RACE = 20; // in m
+
+
+    public static final int AUTO_ZOOM_LEVEL = 15;
 }

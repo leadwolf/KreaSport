@@ -2,6 +2,7 @@ package com.ccaroni.kreasport.map.viewmodels.impl;
 
 import android.app.Activity;
 import android.location.Location;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -63,6 +64,8 @@ public class RaceVMImpl extends RaceVM {
         changeVisibilitiesOnRaceState(true);
 
         beginRecording();
+
+        raceCommunication.toast("Started!");
 
         raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
         Log.d(LOG, "asking for geofence for checkpoint: " + currentCheckpoint.getId() + " " + currentCheckpoint.getTitle());
@@ -181,11 +184,13 @@ public class RaceVMImpl extends RaceVM {
     }
 
     /**
-     * Call to stop the current race. Used by passiveBottomSheet.
+     * Call to stop the current race. Used by passiveBottomSheet.<br>
+     * Also calls {@link #onMyLocationClicked()}.
      */
     @Override
     public void onStartClicked() {
         Log.d(LOG, "start clicked");
+
         if (raceActive) {
             throw new IllegalStateException("A race is already active");
         } else if (currentRace == null) {
@@ -193,8 +198,17 @@ public class RaceVMImpl extends RaceVM {
         }
 
         if (validateProximityToStart()) {
-            startRace();
+
+            onMyLocationClicked();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startRace();
+                }
+            }, 1500);
         }
+
 
     }
 
@@ -211,7 +225,6 @@ public class RaceVMImpl extends RaceVM {
             raceCommunication.toast("You are too far to start this race");
         } else {
             Log.d(LOG, "User was " + distance + "m away from start. Inside by " + (Constants.MINIMUM_DISTANCE_TO_START_RACE - distance) + "m");
-            raceCommunication.toast("Started!");
             validStart = true;
         }
 

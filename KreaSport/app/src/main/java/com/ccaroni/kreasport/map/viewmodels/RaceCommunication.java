@@ -32,13 +32,13 @@ public interface RaceCommunication {
     void toast(String message);
 
     /**
-     *
      * @param checkpoint the checkpoint to add a geofence for
      */
     void addGeoFence(RealmCheckpoint checkpoint);
 
     /**
      * Notifies the {@link android.content.Context} that the next checkpoint should be revealed.
+     *
      * @param nextCheckpoint the checkpoint as a {@link CustomOverlayItem}
      */
     void revealNextCheckpoint(CustomOverlayItem nextCheckpoint);
@@ -46,7 +46,13 @@ public interface RaceCommunication {
     /**
      * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
      * This needs to be called from the RaceVM to prevent any tampering.
+     *
      * @param riddle
      */
     void askRiddle(Riddle riddle);
+
+    /**
+     * Notifies the {@link android.content.Context} that the user is requesting his location to be centered on.
+     */
+    void onMyLocationClicked();
 }

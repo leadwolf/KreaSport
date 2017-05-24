@@ -236,6 +236,10 @@ public abstract class RaceVM extends BaseObservable {
         }
     }
 
+    public void onMyLocationClicked() {
+        raceCommunication.onMyLocationClicked();
+    }
+
     /**
      * {@link android.content.Context} calls this once the layout is initialized.
      * Loads the appropriate config (w/ raceActive?) and with applies to according the layout with databinding.

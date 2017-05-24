@@ -60,6 +60,10 @@
     </style>
 
     <style name="PrimaryActionButton" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="SecondaryActionButton" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
     </style>
 </resources>

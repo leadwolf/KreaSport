@@ -7,7 +7,7 @@
 
         <variable
             name="raceVM"
-            type="com.ccaroni.kreasport.map.viewmodels.RaceVM" />
+            type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -26,16 +26,49 @@
             layout="@layout/layout_bottom_sheet"
             bind:raceVM="@{raceVM}"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:visibility="@{raceVM.fabVisibility}"
-            android:onClick="@{() -> raceVM.onStartClicked()}"
+        <RelativeLayout
+            android:id="@+id/rl_fab_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:src="@drawable/ic_play_circle_filled_black_24dp"
-            android:theme="@style/PrimaryActionButton"
             app:layout_anchor="@+id/bottom_sheet"
-            app:layout_anchorGravity="top|end"/>
+            app:layout_anchorGravity="top|end">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:onClick="@{() -> raceVM.onStartClicked()}"
+                android:src="@drawable/ic_play_circle_filled_white_24dp"
+                android:theme="@style/SecondaryActionButton"
+                android:visibility="@{raceVM.fabVisibility}"
+                app:borderWidth="0dp"
+                app:elevation="6dp"
+                app:fabSize="normal"
+                app:pressedTranslationZ="12dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            app:layout_anchor="@+id/rl_fab_start"
+            app:layout_anchorGravity="top|center_horizontal">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/btn_my_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:onClick="@{() -> raceVM.onMyLocationClicked()}"
+                android:src="@drawable/ic_my_location_black_24dp"
+                android:theme="@style/PrimaryActionButton"
+                app:borderWidth="0dp"
+                app:elevation="6dp"
+                app:fabSize="normal"
+                app:pressedTranslationZ="12dp"/>
+        </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

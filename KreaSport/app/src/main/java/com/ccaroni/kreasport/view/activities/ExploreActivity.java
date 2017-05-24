@@ -9,6 +9,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -20,7 +21,6 @@ import android.widget.Toast;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
-import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.models.MapOptions;
@@ -45,6 +45,7 @@ import com.google.gson.Gson;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
@@ -416,6 +417,24 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         String riddleJson = new Gson().toJson(riddle, Riddle.class);
         intent.putExtra(KEY_RIDDLE, riddleJson);
         startActivityForResult(intent, REQUEST_CODE_RIDDLE_ANSWER);
+    }
+
+    @Override
+    public void onMyLocationClicked() {
+        final Location lastKnownLocation = mLocationUtilsImpl.getLastKnownLocation();
+        updateLocationIcon(lastKnownLocation);
+
+        final MapController mapController = (MapController) mMapView.getController();
+        mapController.animateTo(new GeoPoint(lastKnownLocation));
+
+        // delay this otherwise it interrupts the animateTo animation
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mapController.zoomTo(Constants.AUTO_ZOOM_LEVEL);
+            }
+        }, 500);
+
     }
 
     /* END RACE COMMS */
