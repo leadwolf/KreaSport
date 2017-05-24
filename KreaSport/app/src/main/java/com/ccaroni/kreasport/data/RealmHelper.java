@@ -140,4 +140,10 @@ public class RealmHelper {
     public void deleteAllRaceRecords() {
         realm.delete(RealmRaceRecord.class);
     }
+
+    public RealmResults<RealmRaceRecord> getMyRecords(String userId) {
+        return realm.where(RealmRaceRecord.class)
+                .equalTo("userId", userId)
+                .findAll();
+    }
 }

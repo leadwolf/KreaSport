@@ -75,6 +75,13 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
+        binding.appBarMain.contentProfile.btnListRecords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, MyRecordsActivity.class));
+            }
+        });
+
     }
 
     private void setupToolbar() {

@@ -100,6 +100,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ccaroni.kreasport.view.activities.ExploreActivity"/>
         </activity>
+        <activity
+            android:name=".view.activities.MyRecordsActivity"
+            android:label="@string/title_activity_my_records"
+            android:parentActivityName=".view.activities.ProfileActivity"
+            android:theme="@style/AppTheme.Dark">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
+        </activity>
     </application>
 
 </manifest>
