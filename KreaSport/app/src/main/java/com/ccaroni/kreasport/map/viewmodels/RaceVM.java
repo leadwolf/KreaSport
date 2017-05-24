@@ -128,7 +128,7 @@ public abstract class RaceVM extends BaseObservable {
 
     @Bindable
     public String getProgression() {
-        if (!raceActive) {
+        if (currentRace == null) {
             Log.d(LOG, "No race active to get progression from");
             return null;
         }
@@ -276,9 +276,10 @@ public abstract class RaceVM extends BaseObservable {
 
         fabVisibility = raceActive || currentRace == null ? View.GONE : View.VISIBLE;
         bottomSheetVisibility = currentRace == null ? View.GONE : View.VISIBLE;
-        raceCommunication.toggleMyLocationFabPosition(bottomSheetVisibility == View.VISIBLE);
 
         notifyChange();
+
+        raceCommunication.toggleMyLocationFabPosition(bottomSheetVisibility == View.VISIBLE, fabVisibility == View.VISIBLE);
     }
 
     /**
@@ -286,8 +287,11 @@ public abstract class RaceVM extends BaseObservable {
      * Therefore we must hide the bottom sheet and anything associated by called {@link #changeVisibilitiesOnRaceState(boolean)}.
      */
     public void onMapBackgroundTouch() {
-        currentRace = null;
-        changeVisibilitiesOnRaceState(false);
+        if (!raceActive) {
+            currentRace = null;
+            changeVisibilitiesOnRaceState(false);
+            raceCommunication.unsetFocusedItem();
+        }
     }
 
     /**

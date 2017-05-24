@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -442,32 +443,50 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     @Override
-    public void toggleMyLocationFabPosition(boolean isBottomSheetVisible) {
+    public void toggleMyLocationFabPosition(boolean isBottomSheetVisible, boolean isStartFabVisible) {
         Log.d(LOG, "toggle myLocation fab, isBottomSheetVisible: " + isBottomSheetVisible);
 
         RelativeLayout rl = binding.appBarMain.layoutExplore.rlFabMyLocation;
         CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) rl.getLayoutParams();
 
+        FloatingActionButton fab = binding.appBarMain.layoutExplore.fabMyLocation;
+        RelativeLayout.LayoutParams fabLP = (RelativeLayout.LayoutParams) fab.getLayoutParams();
 
-        if (isBottomSheetVisible) {
+        int dp = 16;
+        boolean modifyFab = false;
+
+        if (isBottomSheetVisible && isStartFabVisible) {
             lp.setAnchorId(R.id.rl_fab_start);
             lp.anchorGravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
-            lp.setMargins(px, px, px, px);
+            dp = 5;
+        } else if (isBottomSheetVisible) { // i.e. && !isStartFabVisible
+            lp.setAnchorId(R.id.bottom_sheet);
+            lp.anchorGravity = Gravity.TOP | Gravity.END;
+            dp = 16;
+            modifyFab = true;
         } else {
             lp.setAnchorId(R.id.frame_layout_map);
             lp.anchorGravity = Gravity.BOTTOM | Gravity.END;
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-            lp.setMargins(px, px, px, px);
+            dp = 16;
         }
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+        if (modifyFab) {
+            fabLP.setMargins(px, px, px, px);
+        } else {
+            fabLP.setMargins(0, 0, 0, 0);
+        }
+        lp.setMargins(px, px, px, px);
+    }
+
+    public void unsetFocusedItem() {
+        raceListOverlay.unSetFocusedItem();
+        mMapView.invalidate();
     }
 
     /* END RACE COMMS */
 
     @Override
     public void onMapBackgroundTouch() {
-        raceListOverlay.unSetFocusedItem();
-        mMapView.invalidate();
         raceVM.onMapBackgroundTouch();
     }
 
@@ -483,6 +502,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             raceVM.onGeofenceTriggered(checkpointId);
 
         }
+
     }
 
     @Override
@@ -508,6 +528,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      *
      * @param answerIndex
      */
+
     private void onQuestionAnswered(int answerIndex) {
         raceVM.onQuestionAnswered(answerIndex);
     }
