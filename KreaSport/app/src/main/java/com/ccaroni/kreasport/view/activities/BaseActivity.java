@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -65,7 +66,12 @@ public class BaseActivity extends AppCompatActivity
      * <br>Also verifies the user's access token with {@link CredentialsManager#verifyAccessToken(Activity)}
      */
     protected void secondaryCreate() {
-//        CredentialsManager.verifyAccessToken(this);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                CredentialsManager.verifyAccessToken(BaseActivity.this);
+            }
+        }, 500);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

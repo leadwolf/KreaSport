@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.auth0.android.Auth0;
@@ -15,6 +16,8 @@ import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.view.activities.LoginActivity;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Manages Auth0 credentials through SharedPreferences using {@link SharedPreferences} saved in {@link CredentialsManager#AUTH_PREFERENCES_NAME} file.
@@ -31,6 +34,8 @@ public class CredentialsManager {
     private final static String KEY_TOKEN_TYPE = "token_type";
     private final static String KEY_EXPIRES_IN = "expires_in";
     private static final String KEY_USER_ID = "user_id";
+
+    private static long lastCheckTime;
 
     public static void saveCredentials(Context context, Credentials credentials) {
         Log.d(LOG, "saving access token " + credentials.getAccessToken());
@@ -110,6 +115,7 @@ public class CredentialsManager {
 
     /**
      * Deletes the credentials stored with callingActivity and then uses it to start {@link LoginActivity}.
+     *
      * @param callingAcitivity
      */
     public static void signOut(Activity callingAcitivity) {
@@ -123,13 +129,22 @@ public class CredentialsManager {
     }
 
     /**
-     * Uses callingActivity to get the access token from Prefs, then creates an {@link AuthenticationAPIClient} and attemps to call {@link AuthenticationAPIClient#userInfo(String)}.
+     * Uses callingActivity to get the access token from Prefs, then creates an {@link AuthenticationAPIClient} and attemps to call
+     * {@link AuthenticationAPIClient#userInfo(String)}.
      * <br><br>On success, nothing happens.
      * <br>On failure, calls {@link #signOut(Activity)}
+     *
      * @param callingActivity
      */
     public static void verifyAccessToken(final Activity callingActivity) {
         Log.d(LOG, "request from " + callingActivity.getClass().getSimpleName() + " to verify access token");
+
+        final long timeDifference = SystemClock.elapsedRealtime() - lastCheckTime;
+        final int acceptableTime = 5; // in minutes
+        if (timeDifference <= TimeUnit.MINUTES.toMillis(acceptableTime)) {
+            Log.d(LOG, "last check was " + TimeUnit.MILLISECONDS.toMinutes(timeDifference) + "mn ago, within the acceptable time");
+            return;
+        }
 
         Auth0 auth0 = new Auth0(callingActivity.getString(R.string.auth0_client_id), callingActivity.getString(R.string.auth0_domain));
         auth0.setOIDCConformant(true);
@@ -144,12 +159,20 @@ public class CredentialsManager {
                         @Override
                         public void onSuccess(final UserProfile payload) {
                             Log.d(LOG, "access token validation: SUCCESS");
+                            lastCheckTime = SystemClock.elapsedRealtime();
                         }
 
                         @Override
                         public void onFailure(AuthenticationException error) {
                             Log.d(LOG, "access token validation: FAIL");
-                            signOut(callingActivity);
+                            Log.d(LOG, "Error: " + error);
+                            Log.d(LOG, "Error description: " + error.getDescription());
+                            callingActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    signOut(callingActivity);
+                                }
+                            });
                         }
                     });
         }
