@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
+import android.view.View;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;
@@ -33,6 +34,7 @@ public abstract class RaceVM extends BaseObservable {
      * Whether this VM (not necessarily the race) is currently in an active state
      */
     protected boolean raceActive;
+    private int bottomSheetVisibility;
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
     protected int fabVisibility;
@@ -97,6 +99,11 @@ public abstract class RaceVM extends BaseObservable {
     @Bindable
     public int getFabVisibility() {
         return fabVisibility;
+    }
+
+    @Bindable
+    public int getBottomSheetVisibility() {
+        return bottomSheetVisibility;
     }
 
     @Bindable
@@ -244,7 +251,44 @@ public abstract class RaceVM extends BaseObservable {
      * {@link android.content.Context} calls this once the layout is initialized.
      * Loads the appropriate config (w/ raceActive?) and with applies to according the layout with databinding.
      */
-    public abstract void onStart();
+    public void onStart() {
+        Log.d(LOG, "onStart, UI is ready to be manipulated");
+
+        // set this at the start because normally it has to be triggered by a change
+        RealmRaceRecord raceRecordResult = RealmHelper.getInstance(null).findCurrentRaceRecord();
+        if (raceRecordResult != null) {
+            Log.d(LOG, "found an ongoing race in db: " + raceRecordResult);
+
+            currentRace = RealmHelper.getInstance(null).findRaceById(raceRecord.getRaceId());
+            currentCheckpoint = raceRecord.getCurrentCheckpoint(currentRace);
+            startRace();
+        } else {
+            Log.d(LOG, "no previous ongoing race, hiding bottom sheet");
+            changeVisibilitiesOnRaceState(false);
+        }
+    }
+
+    ;
+
+    protected void changeVisibilitiesOnRaceState(boolean raceActive) {
+        passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
+        activeInfoVisibility = raceActive ? View.VISIBLE : View.GONE;
+
+        fabVisibility = raceActive || currentRace == null ? View.GONE : View.VISIBLE;
+        bottomSheetVisibility = currentRace == null ? View.GONE : View.VISIBLE;
+        raceCommunication.toggleMyLocationFabPosition(bottomSheetVisibility == View.VISIBLE);
+
+        notifyChange();
+    }
+
+    /**
+     * The {@link android.content.Context} calls this when the background of the map has been touched, to unselect the current marker.<br>
+     * Therefore we must hide the bottom sheet and anything associated by called {@link #changeVisibilitiesOnRaceState(boolean)}.
+     */
+    public void onMapBackgroundTouch() {
+        currentRace = null;
+        changeVisibilitiesOnRaceState(false);
+    }
 
     /**
      * Updates the current info for the bottom sheet through the bindings.
@@ -257,6 +301,11 @@ public abstract class RaceVM extends BaseObservable {
      * Call to stop the current race. Used by passiveBottomSheet.
      */
     public abstract void onStartClicked();
+
+    /**
+     * The real method that starts the race.
+     */
+    protected abstract void startRace();
 
     /**
      * Call to stop the current race. Used by activeBottomSheet.
@@ -275,5 +324,4 @@ public abstract class RaceVM extends BaseObservable {
     public boolean isRaceActive() {
         return raceActive;
     }
-
 }

@@ -55,4 +55,6 @@ public interface RaceCommunication {
      * Notifies the {@link android.content.Context} that the user is requesting his location to be centered on.
      */
     void onMyLocationClicked();
+
+    void toggleMyLocationFabPosition(boolean isBottomSheetVisible);
 }

@@ -34,24 +34,7 @@ public class RaceVMImpl extends RaceVM {
     }
 
     @Override
-    public void onStart() {
-        Log.d(LOG, "onStart, UI is ready to be manipulated");
-
-        // set this at the start because normally it has to be triggered by a change
-        RealmRaceRecord raceRecordResult = RealmHelper.getInstance(null).findCurrentRaceRecord();
-        if (raceRecordResult != null) {
-            Log.d(LOG, "found an ongoing race in db: " + raceRecordResult);
-
-            currentRace = RealmHelper.getInstance(null).findRaceById(raceRecord.getRaceId());
-            currentCheckpoint = raceRecord.getCurrentCheckpoint(currentRace);
-            startRace();
-        } else {
-            Log.d(LOG, "no previous ongoing race, hiding bottom sheet");
-            changeVisibilitiesOnRaceState(false);
-        }
-    }
-
-    private void startRace() {
+    protected void startRace() {
         if (currentRace == null) {
             throw new IllegalStateException("Cannot start race when no race is in use");
         }
@@ -121,13 +104,6 @@ public class RaceVMImpl extends RaceVM {
         Log.d(LOG, "new raceRecord: " + raceRecord);
     }
 
-    private void changeVisibilitiesOnRaceState(boolean raceActive) {
-        passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
-        fabVisibility = raceActive ? View.GONE : View.VISIBLE;
-        activeInfoVisibility = raceActive ? View.VISIBLE : View.GONE;
-        notifyChange();
-    }
-
     /**
      * Switch to update on a {@link CustomOverlayItem} selection. Calls the appropriate method for updating title & description according to the selectedItem.
      *
@@ -180,6 +156,7 @@ public class RaceVMImpl extends RaceVM {
             currentRace = RealmHelper.getInstance(null).findRaceById(selectedItem.getRaceId());
             setTitle(currentRace.getTitle());
             setDescription(currentRace.getDescription());
+            changeVisibilitiesOnRaceState(false); // call this to restore the fab and bottom sheet if no item was previously selected
         }
     }
 

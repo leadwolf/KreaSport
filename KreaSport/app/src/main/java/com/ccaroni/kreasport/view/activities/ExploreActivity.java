@@ -12,10 +12,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.widget.Chronometer;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
@@ -55,7 +59,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
-        <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceCommunication {
+        <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceCommunication, CustomMapView.MapViewCommunication {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -437,7 +441,35 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     }
 
+    @Override
+    public void toggleMyLocationFabPosition(boolean isBottomSheetVisible) {
+        Log.d(LOG, "toggle myLocation fab, isBottomSheetVisible: " + isBottomSheetVisible);
+
+        RelativeLayout rl = binding.appBarMain.layoutExplore.rlFabMyLocation;
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) rl.getLayoutParams();
+
+
+        if (isBottomSheetVisible) {
+            lp.setAnchorId(R.id.rl_fab_start);
+            lp.anchorGravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+            lp.setMargins(px, px, px, px);
+        } else {
+            lp.setAnchorId(R.id.frame_layout_map);
+            lp.anchorGravity = Gravity.BOTTOM | Gravity.END;
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+            lp.setMargins(px, px, px, px);
+        }
+    }
+
     /* END RACE COMMS */
+
+    @Override
+    public void onMapBackgroundTouch() {
+        raceListOverlay.unSetFocusedItem();
+        mMapView.invalidate();
+        raceVM.onMapBackgroundTouch();
+    }
 
     class GeofenceReceiver extends BroadcastReceiver {
 

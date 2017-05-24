@@ -1,14 +1,15 @@
 package com.ccaroni.kreasport.map.views;
 
 import android.app.Activity;
-import android.content.Context;
-import android.location.LocationManager;
 import android.support.v4.BuildConfig;
 
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.CopyrightOverlay;
+import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
@@ -29,10 +30,18 @@ public class CustomMapView extends MapView {
 
 
     private Activity activity;
+    private MapViewCommunication mapViewCommunication;
     private DirectedLocationOverlay mLocationOverlay;
 
     public CustomMapView(Activity activity, MapOptions mMapOptions, MapVM mMapVM) {
         super(activity);
+
+        if (activity instanceof MapViewCommunication) {
+            this.mapViewCommunication = (MapViewCommunication) activity;
+        } else {
+            throw new RuntimeException(activity + " must implement " + MapViewCommunication.class.getSimpleName());
+        }
+
         this.activity = activity;
 
         applyBasics();
@@ -51,6 +60,25 @@ public class CustomMapView extends MapView {
         setTilesScaledToDpi(true);
 
         setMinZoomLevel(2);
+
+        addBackgroundTouchListener();
+    }
+
+    private void addBackgroundTouchListener() {
+        MapEventsOverlay mMapEventOverlay = new MapEventsOverlay(new MapEventsReceiver() {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
+                mapViewCommunication.onMapBackgroundTouch();
+                return false;
+            }
+
+            @Override
+            public boolean longPressHelper(GeoPoint p) {
+                return false;
+            }
+        });
+
+        getOverlays().add(0, mMapEventOverlay);
     }
 
     private void applyState(MapVM mMapVM) {
@@ -94,5 +122,9 @@ public class CustomMapView extends MapView {
 
     public DirectedLocationOverlay getLocationOverlay() {
         return mLocationOverlay;
+    }
+
+    public interface MapViewCommunication {
+        public void onMapBackgroundTouch();
     }
 }
