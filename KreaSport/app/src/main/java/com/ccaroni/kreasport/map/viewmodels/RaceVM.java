@@ -243,6 +243,9 @@ public abstract class RaceVM extends BaseObservable {
         }
     }
 
+    /**
+     * Call from the View (or manual use) to ask the Model to animate to the current location.
+     */
     public void onMyLocationClicked() {
         raceCommunication.onMyLocationClicked();
     }

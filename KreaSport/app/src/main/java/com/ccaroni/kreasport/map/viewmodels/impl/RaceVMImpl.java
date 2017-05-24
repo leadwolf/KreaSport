@@ -5,15 +5,14 @@ import android.location.Location;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
 
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.LocationUtils;
 
+import org.osmdroid.util.GeoPoint;
 import org.threeten.bp.OffsetDateTime;
 
 /**
@@ -176,14 +175,21 @@ public class RaceVMImpl extends RaceVM {
 
         if (validateProximityToStart()) {
 
-            onMyLocationClicked();
+            GeoPoint startPoint = new GeoPoint(currentRace.getLatitude(), currentRace.getLongitude());
+            if (raceCommunication.needToAnimateToStart(startPoint)) {
+                Log.d(LOG, "waiting for animation to end to start race");
+                onMyLocationClicked();
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startRace();
-                }
-            }, 1500);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startRace();
+                    }
+                }, 1500);
+            } else {
+                Log.d(LOG, "no animation, starting race");
+                startRace();
+            }
         }
 
 

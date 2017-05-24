@@ -6,6 +6,8 @@ import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
+import org.osmdroid.util.GeoPoint;
+
 /**
  * Created by Master on 22/05/2017.
  * This interface permits communication to the Model in the MVVM.
@@ -59,4 +61,14 @@ public interface RaceCommunication {
     void toggleMyLocationFabPosition(boolean isBottomSheetVisible, boolean isStartFabVisible);
 
     void unsetFocusedItem();
+
+    /**
+     * The {@link RaceVM} calls this to ask if we need to animate to the start.<br>
+     * It's used because if we do, we need to postpone the start while waiting for the animation to end.
+     * Otherwise, if this returns false, we can start right away.
+     *
+     * @param startPoint the point we need to theoretically animate to
+     * @return if an animation will be needed
+     */
+    boolean needToAnimateToStart(GeoPoint startPoint);
 }

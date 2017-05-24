@@ -49,6 +49,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 
 import org.osmdroid.config.Configuration;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -444,10 +445,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void toggleMyLocationFabPosition(boolean isBottomSheetVisible, boolean isStartFabVisible) {
-        Log.d(LOG, "toggle myLocation fab, isBottomSheetVisible: " + isBottomSheetVisible);
-
         RelativeLayout rl = binding.appBarMain.layoutExplore.rlFabMyLocation;
-        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) rl.getLayoutParams();
+        CoordinatorLayout.LayoutParams rlFabLP = (CoordinatorLayout.LayoutParams) rl.getLayoutParams();
 
         FloatingActionButton fab = binding.appBarMain.layoutExplore.fabMyLocation;
         RelativeLayout.LayoutParams fabLP = (RelativeLayout.LayoutParams) fab.getLayoutParams();
@@ -456,17 +455,17 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         boolean modifyFab = false;
 
         if (isBottomSheetVisible && isStartFabVisible) {
-            lp.setAnchorId(R.id.rl_fab_start);
-            lp.anchorGravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            rlFabLP.setAnchorId(R.id.rl_fab_start);
+            rlFabLP.anchorGravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
             dp = 5;
         } else if (isBottomSheetVisible) { // i.e. && !isStartFabVisible
-            lp.setAnchorId(R.id.bottom_sheet);
-            lp.anchorGravity = Gravity.TOP | Gravity.END;
+            rlFabLP.setAnchorId(R.id.bottom_sheet);
+            rlFabLP.anchorGravity = Gravity.TOP | Gravity.END;
             dp = 16;
             modifyFab = true;
         } else {
-            lp.setAnchorId(R.id.frame_layout_map);
-            lp.anchorGravity = Gravity.BOTTOM | Gravity.END;
+            rlFabLP.setAnchorId(R.id.frame_layout_map);
+            rlFabLP.anchorGravity = Gravity.BOTTOM | Gravity.END;
             dp = 16;
         }
         int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
@@ -475,12 +474,27 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         } else {
             fabLP.setMargins(0, 0, 0, 0);
         }
-        lp.setMargins(px, px, px, px);
+        // TODO, the first time user reached condition "else if (isBottomSheetVisible)", only a quarter of the fab is visible for a second and then reappears.
+        rlFabLP.setMargins(px, px, px, px);
     }
 
     public void unsetFocusedItem() {
         raceListOverlay.unSetFocusedItem();
         mMapView.invalidate();
+    }
+
+    /**
+     *
+     * @param startPoint the point we need to theoretically animate to
+     * @return if the current {@link BoundingBox} scaled by a factor of 0.5 contains the startPoint
+     */
+    public boolean needToAnimateToStart(GeoPoint startPoint) {
+
+        BoundingBox currentBb = mMapView.getBoundingBox();
+        BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
+
+        return !reducedBB.contains(startPoint);
+
     }
 
     /* END RACE COMMS */
