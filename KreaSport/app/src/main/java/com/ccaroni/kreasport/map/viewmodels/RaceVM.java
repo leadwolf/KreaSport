@@ -1,175 +1,87 @@
 package com.ccaroni.kreasport.map.viewmodels;
 
+import android.app.Activity;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
-import android.view.View;
+
+import com.ccaroni.kreasport.BR;
+import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.utils.CredentialsManager;
+import com.ccaroni.kreasport.utils.LocationUtils;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.map.models.Checkpoint;
-import com.ccaroni.kreasport.map.models.Race;
+import io.realm.RealmResults;
 
 /**
- * Created by Master on 06/04/2017.
- * ViewModel for the races. Has a list of {@link Race} as atrtibute and is used by the views to represent that data.
+ * Created by Master on 22/05/2017.
  */
-public class RaceVM extends BaseObservable {
 
-    private transient static final String LOG = RaceVM.class.getSimpleName();
+public abstract class RaceVM extends BaseObservable {
+
+    private static final String LOG = RaceVM.class.getSimpleName();
 
     /**
-     * The race model to manipulate
+     * Whether this VM (not necessarily the race) is currently in an active state
      */
-    private List<Race> races;
+    protected boolean raceActive;
+    protected int passiveInfoVisibility;
+    protected int activeInfoVisibility;
+    protected int fabVisibility;
 
-    /**
-     * The checkpoints from the race model, simplifies chained gets.
-     * Transient because we just load all the race data into this VM anyways.
+    /*
+     * Separate attrs because we can't just grab from currentRace or currentCheckpoint depending on raceActive?, progression and even if the user deliberately selects another
+     * marker that is not related to his progression.
      */
-    private transient List<Checkpoint> checkpoints;
+    private String title;
+    private String description;
+
+    protected RealmRace currentRace;
+    protected RealmCheckpoint currentCheckpoint;
+
+    protected RealmRaceRecord raceRecord;
+
+    protected RaceCommunication raceCommunication;
+    protected LocationUtils mLocationUtils;
+
+    private String userId;
 
     /**
-     * The race selected either from a passive or active viewpoint.
-     */
-    private int currentRaceIndex;
-
-    /**
-     * The current TARGET checkpoint for the currentRaceIndex.
-     */
-    private int currentCheckpointIndex;
-
-    /**
-     * Whether this VM is currently in an active state
-     */
-    private boolean raceActive;
-
-    private transient int passiveInfoVisibility;
-    private transient int activeInfoVisbility;
-
-    /**
-     * Empty constructor because either nothing is to be loaded or everything is to be restored from deserializing.
-     */
-    public RaceVM() {
-        currentRaceIndex = -1;
-        currentCheckpointIndex = -1;
-        raceActive = false;
-    }
-
-    /**
-     * @return the title for the current race if a race is not active, or the checkpoints description if active
-     */
-    @Bindable
-    public String getTitle() {
-        if (raceActive) {
-            if (checkpoints != null && currentCheckpointIndex < checkpoints.size())
-                return checkpoints.get(currentCheckpointIndex).getTitle();
-            else
-                return "No title available";
-        } else {
-            if (races != null && currentRaceIndex >= 0 && currentRaceIndex <= races.size())
-                return races.get(currentRaceIndex).getTitle();
-            else
-                return "No title available";
-        }
-    }
-
-    /**
-     * @return the description for the current race if a race is not active, or the checkpoints description if active
-     */
-    @Bindable
-    public String getDescription() {
-        Log.d(LOG, "get desc");
-        if (raceActive) {
-            if (checkpoints != null && currentCheckpointIndex < checkpoints.size())
-                return checkpoints.get(currentCheckpointIndex).getDescription();
-            else
-                return "No description available";
-        } else {
-            Log.d(LOG, "current race index = " + currentRaceIndex);
-            if (races != null && currentRaceIndex >= 0 && currentRaceIndex <= races.size())
-                return races.get(currentRaceIndex).getDescription();
-            else
-                return "No description available";
-        }
-    }
-
-    /**
-     * The question for the current checkpoint or null
+     * Default constructor to use. Initializes Realm with activity and calls {@link #initRaceRecord()}.
      *
-     * @return
+     * @param activity       the activity linked to this RaceVM. It must implement {@link RaceCommunication}.
+     * @param mLocationUtils the instance of the location utility used by the activity.
      */
-    @Bindable
-    public String getQuestionForCurrentCheckpoint() {
-        if (currentCheckpointIndex < checkpoints.size())
-            return ((Checkpoint) checkpoints.get(currentCheckpointIndex)).getQuestion();
-        return null;
+    public RaceVM(Activity activity, LocationUtils mLocationUtils) {
+        RealmHelper.getInstance(activity).init(activity);
+        this.userId = CredentialsManager.getUserId(activity);
+        if (activity instanceof RaceCommunication) {
+            this.raceCommunication = (RaceCommunication) activity;
+        } else {
+            throw new RuntimeException(activity + " must implment " + RaceCommunication.class.getSimpleName());
+        }
+        this.mLocationUtils = mLocationUtils;
+        initRaceRecord();
     }
 
     /**
-     * @return the possible answers for the current checkpoint or null
+     * Creates a new {@link RealmRaceRecord} managed by Realm for the next recording. Sets the userId right away.
      */
-    @Bindable
-    public List<String> getPossibleAnswers() {
-        if (currentCheckpointIndex < checkpoints.size())
-            return ((Checkpoint) checkpoints.get(currentCheckpointIndex)).getPossibleAnswers();
-        return null;
-    }
+    protected void initRaceRecord() {
+        RealmHelper.getInstance(null).beginTransaction();
 
-    public String getRaceId() {
-        if (currentRaceIndex <= races.size())
-            return races.get(currentRaceIndex).getId();
-        return "";
-    }
+        raceRecord = RealmHelper.getInstance(null).createRealmRaceRecord();
+        raceRecord.setUserId(userId);
 
-    private void updateCurrentIndexes(String raceId, String checkpointId) {
-        this.currentRaceIndex = getIndexForRaceId(raceId);
-        this.currentCheckpointIndex = getIndexForCheckpointId(currentRaceIndex, checkpointId);
-
-        Log.d(LOG, "updated currentRaceIndex to " + currentRaceIndex);
-
-        Log.d(LOG, "notified change");
-        notifyChange();
-        notifyPropertyChanged(BR.description);
-    }
-
-    private int getIndexForRaceId(String raceId) {
-        for (int i = 0; i < races.size(); i++) {
-            if (races.get(i).getId().equals(raceId)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private int getIndexForCheckpointId(int raceIndex, String checkpointId) {
-        if (raceIndex == -1) {
-            return -1;
-        }
-        Race race = races.get(currentRaceIndex);
-        for (int i = 0; i < race.getCheckpoints().size(); i++) {
-            if (race.getCheckpoints().get(i).getId().equals(checkpointId)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public boolean isRaceActive() {
-        return raceActive;
-    }
-
-    public void setRaceActive(boolean raceActive) {
-        this.raceActive = raceActive;
-        passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
-        activeInfoVisbility = raceActive ? View.INVISIBLE : View.GONE;
+        RealmHelper.getInstance(null).commitTransaction();
     }
 
     @Bindable
@@ -179,20 +91,59 @@ public class RaceVM extends BaseObservable {
 
     @Bindable
     public int getActiveInfoVisibility() {
-        return activeInfoVisbility;
+        return activeInfoVisibility;
     }
 
+    @Bindable
+    public int getFabVisibility() {
+        return fabVisibility;
+    }
+
+    @Bindable
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        notifyPropertyChanged(BR.title);
+    }
+
+    @Bindable
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+        notifyPropertyChanged(BR.description);
+    }
+
+    @Bindable
+    public String getProgression() {
+        if (!raceActive) {
+            Log.d(LOG, "No race active to get progression from");
+            return null;
+        }
+
+        int progression = raceRecord.getProgression();
+        int total = currentRace.getNbCheckpoints();
+
+        return "" + progression + "/" + total;
+    }
+
+    public RealmCheckpoint getActiveCheckpoint() {
+        return currentCheckpoint;
+    }
 
     public ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener() {
         return new ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(final int index, final CustomOverlayItem item) {
-                Log.d(LOG, "on tap primary =" + item.isPrimary());
-                if (item.isPrimary()) {
-                    updateCurrentIndexes(item.getId(), "");
-                } else {
-                    updateCurrentIndexes(item.getRaceId(), item.getId());
-                }
+                Log.d(LOG, "on tap, is primary: " + item.isPrimary());
+
+                updateCurrent(item);
+
                 return true;
             }
 
@@ -203,66 +154,93 @@ public class RaceVM extends BaseObservable {
         };
     }
 
-    public void addDownloadedRaces(List<Race> downloadedRaces) {
-        Log.d(LOG, "adding downloaded races");
-        int totalAdded = 0;
-        if (races != null && races.size() != 0) {
-            totalAdded = addAgainstExistingRaces(downloadedRaces);
+    /**
+     * @return A List of {@link CustomOverlayItem} representing the current race (and its progression with this VM) or a list of all the races.
+     */
+    public List<CustomOverlayItem> getOverlayItems() {
+        List<CustomOverlayItem> items = new ArrayList<>();
+
+        if (raceActive) {
+            items.addAll(currentRace.toCustomOverlayWithCheckpoints(raceRecord.getProgression()));
         } else {
-            totalAdded = addAllRaces(downloadedRaces);
+            RealmResults<RealmRace> allRaces = RealmHelper.getInstance(null).getAllRaces(false);
+            items.addAll(RealmRace.racesToOverlay(allRaces));
         }
 
-        Log.d(LOG, "added " + totalAdded + " races");
-    }
-
-    private int addAgainstExistingRaces(List<Race> downloadedRaces) {
-        Log.d(LOG, "comparing against previous races");
-        int totalAdded = 0;
-
-        for (Race downloadedRace : downloadedRaces) {
-            for (Race pastRaces : races) {
-                if (pastRaces.getId().equals(downloadedRace.getId())) {
-                    Log.d(LOG, "race already present " + downloadedRace.getId());
-                    continue;
-                }
-                races.add(downloadedRace);
-                totalAdded++;
-            }
-        }
-        return totalAdded;
-    }
-
-    private int addAllRaces(List<Race> downloadedRaces) {
-        Log.d(LOG, "no previous races, adding all");
-        races = new ArrayList<>();
-        for (Race downloadedRace : downloadedRaces) {
-            races.add(downloadedRace);
-            Log.d(LOG, "added race " + downloadedRace.getId());
-        }
-        return downloadedRaces.size();
-    }
-
-    private Race getActiveRace() {
-        if (currentRaceIndex >= 0 && currentRaceIndex < races.size())
-            return races.get(currentRaceIndex);
-        return new Race();
+        return items;
     }
 
     /**
-     * Use for ExploreFragment. Gives a list of all its races if a race if active or just a list with one race if no race is active.
-     * @return
+     * The manager of the geofences calls this to notify that a geofence has been triggered
+     *
+     * @param checkpointId the id of the triggered checkpoint
      */
-    public List<Race> getRacesForOverlay() {
-        if (races == null)
-            return new ArrayList<>();
-        if (raceActive)
-            return new ArrayList<>(Arrays.asList(getActiveRace()));
-        return races;
+    public void onGeofenceTriggered(String checkpointId) {
+        incrementProgression();
     }
 
-    public Checkpoint getActiveCheckpoint() {
-        if (getActiveRace() != null && currentCheckpointIndex >= 0 && currentCheckpointIndex <= getActiveRace().getCheckpoints().size())
-            return getActiveRace().getCheckpoints().get(currentCheckpointIndex);
-        return new Checkpoint();
+    /**
+     * If the end of the race is not finished:<br>
+     * Increments the progression in {@link #raceRecord}, updates {@link #currentCheckpoint}, calls to {@link RaceCommunication#revealNextCheckpoint(CustomOverlayItem)} and
+     * {@link RaceCommunication#addGeoFence(RealmCheckpoint)}.<br>
+     * <br>
+     * If the race is finished:<br>
+     * Stops the race & notifies the end of the race through {@link RaceCommunication}
+     */
+    private void incrementProgression() {
+
+        if (currentRace.isOnLastCheckpoint(raceRecord.getProgression())) {
+            Log.d(LOG, "last checkpoint has just been validated");
+            // TODO stop and save
+            // TODO notify end
+        } else {
+            Log.d(LOG, "checkpoint validated, inc progression, revealing next w/ geofence");
+
+            RealmHelper.getInstance(null).beginTransaction();
+            raceRecord.incrementProgression();
+            RealmHelper.getInstance(null).commitTransaction();
+
+            currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
+
+            raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
+            raceCommunication.addGeoFence(currentCheckpoint);
+        }
     }
+
+    /**
+     * {@link android.content.Context} calls this once the layout is initialized.
+     * Loads the appropriate config (w/ raceActive?) and with applies to according the layout with databinding.
+     */
+    public abstract void onStart();
+
+    /**
+     * Updates the current info for the bottom sheet through the bindings.
+     *
+     * @param selectedItem
+     */
+    protected abstract void updateCurrent(CustomOverlayItem selectedItem);
+
+    /**
+     * Call to stop the current race. Used by passiveBottomSheet.
+     */
+    public abstract void onStartClicked();
+
+    /**
+     * Call to stop the current race. Used by activeBottomSheet.
+     */
+    public abstract void onStopClicked();
+
+    /**
+     * Call when the user quits the activity but doesnt stop the activity
+     */
+    public abstract void saveOngoingBaseTime();
+
+    public RealmRace getActiveRace() {
+        return currentRace;
+    }
+
+    public boolean isRaceActive() {
+        return raceActive;
+    }
+
 }

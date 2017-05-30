@@ -18,59 +18,6 @@
         android:theme="@style/AppTheme">
         <service android:name=".map.GeofenceTransitionsIntentService"/>
 
-        <activity
-            android:name=".activities.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.HomeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.SignupActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.ResetPasswordActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".activities.ProfileActivity"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppTheme.Dark"
-            tools:targetApi="jelly_bean">
-
-            <!-- The meta-data element is needed for versions lower than 4.1 -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity"/>
-        </activity>
-        <activity
-            android:name=".activities.ExploreActivity"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppTheme.Dark"
-            tools:targetApi="jelly_bean">
-
-            <!-- The meta-data element is needed for versions lower than 4.1 -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.HomeActivity"/>
-        </activity>
-        <activity
-            android:name=".activities.NewLogin"
-            android:theme="@style/SplashTheme">
-        </activity>
-
         <!-- Auth0 Lock -->
         <activity
             android:name="com.auth0.android.lock.LockActivity"
@@ -85,7 +32,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
 
                 <data
-                    android:host="ccaroni.eu.auth0.com"
+                    android:host="caroni.eu.auth0.com"
                     android:pathPrefix="/android/com.ccaroni.kreasport/callback"
                     android:scheme="https"/>
             </intent-filter>
@@ -94,6 +41,56 @@
             android:name="com.auth0.android.provider.WebAuthActivity"
             android:theme="@style/Lock.Theme"/>
         <!-- Auth0 Lock End -->
+
+        <activity
+            android:name=".view.activities.WelcomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".view.activities.HomeActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Dark">
+        </activity>
+        <activity
+            android:name=".view.activities.ExploreActivity"
+            android:parentActivityName=".view.activities.HomeActivity"
+            android:theme="@style/AppTheme.Dark"
+            tools:targetApi="jelly_bean">
+
+            <!-- The meta-data element is needed for versions lower than 4.1 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.activities.HomeActivity"/>
+        </activity>
+        <activity
+            android:name=".view.activities.LoginActivity"
+            android:theme="@style/SplashTheme">
+        </activity>
+        <activity
+            android:name=".view.activities.ProfileActivity"
+            android:label="@string/title_activity_scrolling"
+            android:parentActivityName=".view.activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.activities.HomeActivity"/>
+        </activity>
+        <activity
+            android:name=".view.activities.DownloadedRacesActivity"
+            android:label="@string/title_activity_downloaded_races"
+            android:parentActivityName=".view.activities.ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
+        </activity>
     </application>
 
 </manifest>

@@ -1,42 +1,39 @@
 package com.ccaroni.domain;
 
-import java.util.List;
-
 /**
  * Created by Master on 04/04/2017.
  */
 public class Checkpoint extends BasePoint {
 
-    private String question;
-    private List<String> possiblePossibleAnswers;
+    private CheckpointKey checkpointKey;
+    private Riddle riddle;
 
     public Checkpoint(){
+        super();
     }
 
-    public Checkpoint(String title, String description, String question, double latitude, double longitude, List<String> possiblePossibleAnswers) {
+    public Checkpoint(String title, String description, double latitude, double longitude) {
         super(title, description, latitude, longitude);
-        this.question = question;
-        this.possiblePossibleAnswers = possiblePossibleAnswers;
     }
 
-    public String getQuestion() {
-        return question;
+    public Checkpoint(String title, String description, double latitude, double longitude, Riddle riddle) {
+        super(title, description, latitude, longitude);
+        this.riddle = riddle;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public CheckpointKey getCheckpointKey() {
+        return checkpointKey;
     }
 
-    public List<String> getPossiblePossibleAnswers() {
-        return possiblePossibleAnswers;
+    public void setCheckpointKey(CheckpointKey checkpointKey) {
+        this.checkpointKey = checkpointKey;
     }
 
-    public void setPossiblePossibleAnswers(List<String> possiblePossibleAnswers) {
-        this.possiblePossibleAnswers = possiblePossibleAnswers;
+    public Riddle getRiddle() {
+        return riddle;
     }
 
-    public void addPossibleAnswer(String possibleAnswer) {
-        possiblePossibleAnswers.add(possibleAnswer);
+    public void setRiddle(Riddle riddle) {
+        this.riddle = riddle;
     }
-
 }

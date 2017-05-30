@@ -14,12 +14,19 @@ public class Race extends BasePoint {
 
     private List<Checkpoint> checkpoints;
 
+    /**
+     * Constructor for de/se-rializing
+     */
     public Race() {
+        super();
+    }
 
+    private Race(String title, String description, double latitude, double longitude) {
+        super(title, description, latitude, longitude);
     }
 
     public Race(String title, String description, double latitude, double longitude, List<Checkpoint> checkpoints) {
-        super(title, description, latitude, longitude);
+        this(title, description, latitude, longitude);
         this.checkpoints = checkpoints;
     }
 
@@ -27,8 +34,33 @@ public class Race extends BasePoint {
         return checkpoints;
     }
 
-    public void setCheckpoints(List<Checkpoint> checkpoints) {
-        this.checkpoints = checkpoints;
+
+    /**
+     * Replaces the current list of checkpoints with checkpointsToAdd. Sets their {@link CheckpointKey}s.
+     *
+     * @param checkpointsToAdd
+     */
+    public void setCheckpoints(List<Checkpoint> checkpointsToAdd) {
+        this.checkpoints = checkpointsToAdd;
+        int order = 0;
+        for (Checkpoint checkpoint : this.checkpoints) {
+            checkpoint.setCheckpointKey(new CheckpointKey(getId(), order));
+            order++;
+        }
+    }
+
+    /**
+     * Adds a list of checkpoints to the current list, and their {@link CheckpointKey}s.
+     *
+     * @param checkpointsToAdd
+     */
+    public void addCheckpoints(List<Checkpoint> checkpointsToAdd) {
+        int order = this.checkpoints.size() + 1;
+        for (Checkpoint checkpoint : this.checkpoints) {
+            checkpoint.setCheckpointKey(new CheckpointKey(getId(), order));
+            this.checkpoints.add(checkpoint);
+            order++;
+        }
     }
 
     public void addCheckpoint(Checkpoint checkpoint) {
@@ -44,19 +76,49 @@ public class Race extends BasePoint {
         List<Checkpoint> dummyCheckpointList = new ArrayList<>();
 
         // FIRST RACE IUT
-        dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 50.613664, 3.136939,
-                Arrays.asList("First Question", "Second Question")));
-        dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 50.613278, 3.137973,
-                Arrays.asList("First Question", "Second Question")));
-        dummyRaces.add(new Race("Dummy Race Title 0", "Dummy Race Description 0", 50.613664, 3.136939, dummyCheckpointList));
+        Race race = new Race("Dummy Race Title 0", "Dummy Race Description 0", 50.613664, 3.136939);
+
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 0", "Dummy Checkpoint Description 0", 50.613144, 3.138257,
+                        new Riddle()
+                                .setQuestion("What answer? (0)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(0)
+                )
+        );
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 1", "Dummy Checkpoint Description 1", 50.612489, 3.139485,
+                        new Riddle()
+                                .setQuestion("What answer? (1)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(1)
+                )
+        );
+        race.setCheckpoints(dummyCheckpointList);
+        dummyRaces.add(race);
 
         // SECOND RACE GLASGOW
+        race = new Race("Dummy Race Title 1", "Dummy Race Description 1", 55.866576, -4.251175);
+
         dummyCheckpointList = new ArrayList<>();
-        dummyCheckpointList.add(new Checkpoint("Dummy title 1", "Dummy Description 1", "Dummy question 1", 55.866576, -4.251175,
-                Arrays.asList("First Question", "Second Question")));
-        dummyCheckpointList.add(new Checkpoint("Dummy title 2", "Dummy Description 2", "Dummy question 2", 55.866035, -4.251379,
-                Arrays.asList("First Question", "Second Question")));
-        dummyRaces.add(new Race("Dummy Race Title 1", "Dummy Race Description 1", 55.866576, -4.251175, dummyCheckpointList));
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 0", "Dummy Checkpoint Description 0", 55.866363, -4.253852,
+                        new Riddle()
+                                .setQuestion("What answer? (0)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(0)
+                )
+        );
+        dummyCheckpointList.add(
+                new Checkpoint("Dummy Checkpoint title 1", "Dummy Checkpoint Description 1", 55.866823, -4.256497,
+                        new Riddle()
+                                .setQuestion("What answer? (1)")
+                                .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
+                                .setAnswerIndex(1)
+                )
+        );
+        race.setCheckpoints(dummyCheckpointList);
+        dummyRaces.add(race);
 
         return dummyRaces;
     }

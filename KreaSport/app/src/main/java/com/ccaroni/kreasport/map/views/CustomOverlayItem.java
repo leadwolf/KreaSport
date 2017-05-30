@@ -13,23 +13,8 @@ public class CustomOverlayItem extends OverlayItem {
     private String raceId;
     private boolean primary;
 
-    public CustomOverlayItem(String aTitle, String aSnippet, IGeoPoint aGeoPoint) {
-        super(aTitle, aSnippet, aGeoPoint);
-    }
-
-    public CustomOverlayItem(String aTitle, String aSnippet, IGeoPoint aGeoPoint, String id) {
-        super(aTitle, aSnippet, aGeoPoint);
-        this.id = id;
-    }
-
     public CustomOverlayItem(String aTitle, String aSnippet, IGeoPoint aGeoPoint, String id, String raceId) {
         super(aTitle, aSnippet, aGeoPoint);
-        this.id = id;
-        this.raceId = raceId;
-    }
-
-    public CustomOverlayItem(String aUid, String aTitle, String aDescription, IGeoPoint aGeoPoint, String id, String raceId) {
-        super(aUid, aTitle, aDescription, aGeoPoint);
         this.id = id;
         this.raceId = raceId;
     }
@@ -51,8 +36,8 @@ public class CustomOverlayItem extends OverlayItem {
     }
 
     /**
-     * Whether this item represents a checkpoint or a Race.
-     * If it is a Race, it does not have a checkpointId
+     * Whether this item represents a checkpoint or a RealmRace.
+     * If it is a RealmRace, it does not have a checkpointId
      * @return
      */
     public boolean isPrimary() {
