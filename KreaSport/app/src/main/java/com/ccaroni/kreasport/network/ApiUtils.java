@@ -15,4 +15,10 @@ public class ApiUtils {
         return RetrofitClient.getClient(BASE_URL, accessToken).create(RaceService.class);
     }
 
+    public static RaceRecordService getRaceRecordService(boolean debug, String accessToken) {
+        if (debug)
+            return RetrofitClient.getClient(DEBUG_URL, accessToken).create(RaceRecordService.class);
+        return RetrofitClient.getClient(BASE_URL, accessToken).create(RaceRecordService.class);
+    }
+
 }

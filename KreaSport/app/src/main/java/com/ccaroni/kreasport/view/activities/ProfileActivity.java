@@ -169,10 +169,9 @@ public class ProfileActivity extends BaseActivity {
         if (userProfile != null && userProfile.getPictureURL() != null) {
             Glide.with(ProfileActivity.this)
                     .load(userProfile.getPictureURL())
-                    .apply(new RequestOptions()
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop())
                             .placeholder(R.drawable.ic_person_outline_white_24dp)
                             .error(R.drawable.ic_person_outline_white_24dp)
-                            .bitmapTransform(new CircleCrop())
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                     )
 //                            .transition(Glide.withCrossFade().crossFade(750))

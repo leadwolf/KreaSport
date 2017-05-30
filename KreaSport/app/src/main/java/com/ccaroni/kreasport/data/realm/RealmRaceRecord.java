@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.data.realm;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.RaceRecord;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
@@ -154,5 +155,13 @@ public class RealmRaceRecord extends RealmObject {
 
     public void incrementGeofenceProgression() {
         geofenceProgression++;
+    }
+
+    public RaceRecord toDTO() {
+        return new RaceRecord()
+                .setRaceId(raceId)
+                .setUserId(userId)
+                .setTimeExpired(timeExpired)
+                .setDateTime(dateTime);
     }
 }
