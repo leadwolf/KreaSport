@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.network;
 import com.ccaroni.kreasport.data.dto.RaceRecord;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
@@ -11,6 +12,6 @@ import retrofit2.http.POST;
 
 public interface RaceRecordService {
 
-    @POST
-    Call<RaceRecord> uploadRaceRecord();
+    @POST("/records")
+    Call<RaceRecord> uploadRaceRecord(@Body RaceRecord raceRecord);
 }

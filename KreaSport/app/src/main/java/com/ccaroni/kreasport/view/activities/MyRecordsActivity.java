@@ -10,16 +10,21 @@ import android.view.View;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.RaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityMyRecordsBinding;
+import com.ccaroni.kreasport.network.ApiUtils;
+import com.ccaroni.kreasport.network.RaceRecordService;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.view.adapter.RaceRecordAdapter;
 
 import io.realm.RealmResults;
 
-public class MyRecordsActivity extends AppCompatActivity {
+public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAdapter.RaceRecordCommunication {
 
     private ActivityMyRecordsBinding binding;
+
+    private RaceRecordService raceRecordService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,9 @@ public class MyRecordsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setBindings();
+
+        String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
+        raceRecordService = ApiUtils.getRaceRecordService(true, accessToken);
 
     }
 
@@ -44,4 +52,8 @@ public class MyRecordsActivity extends AppCompatActivity {
         binding.contentMyRecords.tvNbRecords.setText("" + myRecords.size());
     }
 
+    @Override
+    public void uploadRaceRecord(RaceRecord raceRecord) {
+        raceRecordService.uploadRaceRecord(raceRecord);
+    }
 }
