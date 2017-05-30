@@ -5,6 +5,8 @@ import android.util.Log;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.RaceRecord;
 
+import java.util.UUID;
+
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 
@@ -17,6 +19,8 @@ public class RealmRaceRecord extends RealmObject {
     @Ignore
     private static final String LOG = RealmRaceRecord.class.getSimpleName();
 
+
+    private String id;
 
     private String raceId;
     private String userId;
@@ -35,6 +39,15 @@ public class RealmRaceRecord extends RealmObject {
 
     public RealmRaceRecord() {
         inProgress = false;
+        id = UUID.randomUUID().toString();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getRaceId() {
@@ -112,7 +125,8 @@ public class RealmRaceRecord extends RealmObject {
     @Override
     public String toString() {
         return "RealmRaceRecord{" +
-                "raceId='" + raceId + '\'' +
+                "id='" + id + '\'' +
+                ", raceId='" + raceId + '\'' +
                 ", userId='" + userId + '\'' +
                 ", inProgress=" + inProgress +
                 ", timeExpired=" + timeExpired +
@@ -159,6 +173,7 @@ public class RealmRaceRecord extends RealmObject {
 
     public RaceRecord toDTO() {
         return new RaceRecord()
+                .setId(id)
                 .setRaceId(raceId)
                 .setUserId(userId)
                 .setTimeExpired(timeExpired)

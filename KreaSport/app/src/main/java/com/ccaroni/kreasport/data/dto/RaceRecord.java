@@ -1,11 +1,15 @@
 package com.ccaroni.kreasport.data.dto;
 
+import java.util.UUID;
+
 /**
  * Created by Master on 30/05/2017.
  */
 
 public class RaceRecord {
 
+
+    private String id;
 
     private String raceId;
     private String userId;
@@ -15,6 +19,15 @@ public class RaceRecord {
     private String dateTime;
 
     public RaceRecord() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public RaceRecord setId(String id) {
+        this.id = id;
+        return this;
     }
 
     public String getRaceId() {
