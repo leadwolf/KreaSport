@@ -23,10 +23,11 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class CustomCacheManagerCallback implements CacheManager.CacheManagerCallback {
 
     private final String LOG = CustomCacheManagerCallback.class.getSimpleName();
-    private final int ERROR_DOWNLOAD = 1;
-    private final int SUCCESS_DOWNLOAD = ERROR_DOWNLOAD + 1;
-    private final int ONGOING_DOWNLOAD = SUCCESS_DOWNLOAD + 1;
-    private final int START_DOWNLOAD = ONGOING_DOWNLOAD + 1;
+
+    private final int DOWNLOAD_ERROR = 1;
+    private final int DOWNLOAD_SUCCESS = DOWNLOAD_ERROR + 1;
+    private final int DOWNLOAD_ONGOING = DOWNLOAD_SUCCESS + 1;
+    private final int DOWNLOAD_START = DOWNLOAD_ONGOING + 1;
 
     private Activity activity;
     private SqliteArchiveTileWriter writer;
@@ -47,12 +48,12 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     @Override
     public void onTaskComplete() {
-        Log.i(LOG, "Download complete!");
-        Log.i(LOG, "Last tile size: " + possibleTiles);
+        Log.d(LOG, "Download complete!");
+        Log.d(LOG, "Last tile count: " + possibleTiles);
         if (writer != null)
             writer.onDetach();
 
-        NotificationCompat.Builder mBuilder = createNotification(SUCCESS_DOWNLOAD, downloadingAreaName, 0);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_SUCCESS, downloadingAreaName, 0);
         mNotifyMgr.notify(notificationID, mBuilder.build());
     }
 
@@ -62,7 +63,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
         if (writer != null)
             writer.onDetach();
 
-        NotificationCompat.Builder mBuilder = createNotification(ERROR_DOWNLOAD, downloadingAreaName, 0);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_ERROR, downloadingAreaName, 0);
         mNotifyMgr.notify(notificationID, mBuilder.build());
 
     }
@@ -71,7 +72,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
 //            Log.i(LOG, "progress " + progress);
 
-        NotificationCompat.Builder mBuilder = createNotification(ONGOING_DOWNLOAD, downloadingAreaName, progress);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_ONGOING, downloadingAreaName, progress);
         mNotifyMgr.notify(notificationID, mBuilder.build());
     }
 
@@ -79,7 +80,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     public void downloadStarted() {
         Log.i(LOG, "started download");
 
-        NotificationCompat.Builder mBuilder = createNotification(START_DOWNLOAD, downloadingAreaName, 0);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_START, downloadingAreaName, 0);
         mNotifyMgr.notify(notificationID, mBuilder.build());
     }
 
@@ -91,22 +92,22 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     private NotificationCompat.Builder createNotification(int status, String downloadingAreaName, int progress) {
         NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(activity)
-                .setSmallIcon(R.drawable.ic_map_black_24dp)
+                .setSmallIcon(R.drawable.ic_file_download_black_24dp)
                 .setContentTitle(downloadingAreaName);
         String content = "";
         switch (status) {
-            case ERROR_DOWNLOAD:
+            case DOWNLOAD_ERROR:
                 content = String.format(activity.getString(R.string.offline_area_selection_notification_error), downloadingAreaName);
                 break;
-            case ONGOING_DOWNLOAD:
+            case DOWNLOAD_ONGOING:
                 content = activity.getString(R.string.offline_area_selection_notification_ongoing, progress, possibleTiles);
                 mBuilder.setProgress(possibleTiles, progress, false);
                 break;
-            case SUCCESS_DOWNLOAD:
+            case DOWNLOAD_SUCCESS:
                 content = String.format(activity.getString(R.string.offline_area_selection_notification_success), downloadingAreaName);
                 mBuilder.setProgress(0, 0, false);
                 break;
-            case START_DOWNLOAD:
+            case DOWNLOAD_START:
                 content = String.format(activity.getString(R.string.offline_area_selection_notification_start), downloadingAreaName);
                 break;
             default:
@@ -114,12 +115,17 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
         }
 
         mBuilder.setContentText(content);
-        setPendingIntent(mBuilder);
+        setPendingIntentForBuilder(mBuilder);
 
         return mBuilder;
     }
 
-    private NotificationCompat.Builder setPendingIntent(NotificationCompat.Builder mBuilder) {
+    /**
+     * Creates an intent for the notification to lead to {@link OfflineAreasActivity}
+     * @param mBuilder
+     * @return the builder inputted with the changes.
+     */
+    private NotificationCompat.Builder setPendingIntentForBuilder(NotificationCompat.Builder mBuilder) {
         Intent resultIntent = new Intent(activity.getApplicationContext(), OfflineAreasActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity.getApplicationContext()); // to preserve navigation

@@ -15,7 +15,7 @@ public class Utils {
         CacheManager cacheManager = new CacheManager(mMapView, null);
 
         int nTiles = cacheManager.possibleTilesInArea(currentBB, mMapView.getZoomLevel(), mMapView.getMaxZoomLevel());
-        return 0.001 * (Constants.TILE_KB_SIZE * nTiles);
+        return 0.001 * (Constants.TILE_KB_SIZE * nTiles); // divide to get in MB
     }
 
     public static String getBaseString(String simpleName) {

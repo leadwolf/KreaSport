@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.map.models.MapOptions;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
@@ -25,6 +27,7 @@ import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
+import org.threeten.bp.OffsetDateTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +38,7 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
     private static final String LOG = AreaSelectionActivity.class.getSimpleName();
 
     private static final String KEY_BASE = Utils.getBaseString(AreaSelectionActivity.class.getSimpleName()) + "keys.";
-    private static final String KEY_AREA_NAME = KEY_BASE + "area_name";
-    private static final String KEY_AREA_FILE_ABSOLUTE_PATH = KEY_BASE + "area_file_absolute_path";
-    private static final String KEY_AREA_SIZE = KEY_BASE + "estimated_size";
+    private static final String KEY_AREA_ID = KEY_BASE + "area_id";
 
 
     private CustomMapView mMapView;
@@ -133,6 +134,7 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
 
     /**
      * Puts the necessary data in an Intent for {@link OfflineAreasActivity} and calls {@link #finish()}
+     *
      * @param currentBB
      * @param locationName
      * @param absoluteFilePath
@@ -141,17 +143,24 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
         double estimatedSize = Utils.getDownloadSizeForBoundingBox(currentBB, mMapView);
         int roundedSize = (int) Math.round(estimatedSize);
 
+        RealmHelper.getInstance(this).beginTransaction();
+
+        DownloadedArea area = RealmHelper.getInstance(this).createRealmObject(DownloadedArea.class)
+                .setDateDownloaded(OffsetDateTime.now().toString())
+                .setName(locationName)
+                .setPath(absoluteFilePath)
+                .setSize(estimatedSize);
+
+        RealmHelper.getInstance(this).commitTransaction();
+
         Intent response = new Intent();
-        response.putExtra(KEY_AREA_NAME, locationName);
-        response.putExtra(KEY_AREA_FILE_ABSOLUTE_PATH, absoluteFilePath);
-        response.putExtra(KEY_AREA_SIZE, roundedSize);
+        response.putExtra(KEY_AREA_ID, area.getId());
 
         setResult(RESULT_OK, response);
         finish();
     }
 
     /**
-     *
      * @return either "New Area" or {@link Address#getLocality()} for the address associated to the center of the map.
      */
     private String getLocationName() {
