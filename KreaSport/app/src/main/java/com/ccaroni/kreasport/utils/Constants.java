@@ -36,7 +36,6 @@ public class Constants {
     public static final long GEOLOCATION_UPDATE_FASTEST_INTERVAL = 1500; // in ms
 
 
-
     /**
      * Minimum distance that the user needs to be from the start of a race in m (meters).
      */
@@ -44,4 +43,19 @@ public class Constants {
 
 
     public static final int AUTO_ZOOM_LEVEL = 15;
+
+    /**
+     * The minimum the user has to be zoomed in to prevent downloading to large of an area.
+     */
+    public static final Integer DOWNLOAD_MIN_ZOOM = 11;
+
+    /**
+     * The maximum the user can be zoomed in to prevent the server from having to render the area for the download.
+     */
+    public static final Integer DOWNLOAD_MAX_ZOOM = 17;
+
+    /**
+     * Average size of one downloaded tile
+     */
+    public static final int TILE_KB_SIZE = 15;
 }

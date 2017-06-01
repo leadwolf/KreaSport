@@ -110,15 +110,22 @@
                 android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.OfflineAreaSelection"
-            android:label="@string/title_activity_offline_area_selection"
+            android:name=".view.activities.OfflineAreasActivity"
+            android:label="@string/title_activity_offline_areas"
             android:parentActivityName=".view.activities.HomeActivity"
             android:theme="@style/AppTheme.Dark">
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.HomeActivity"/>
+                android:value="com.ccaroni.kreasport.view.activities.HomeActivity"/>
+        </activity>
+        <activity
+            android:name=".view.activities.Dummy"
+            android:label="@string/title_activity_dummy"
+            android:parentActivityName=".view.activities.OfflineAreasActivity"
+            android:theme="@style/AppTheme.Dark">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ccaroni.kreasport.view.activities.OfflineAreasActivity"/>
         </activity>
     </application>
 

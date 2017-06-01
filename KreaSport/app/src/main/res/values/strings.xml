@@ -175,4 +175,12 @@
     <string name="title_activity_riddle">RiddleActivity</string>
     <string name="title_activity_my_records">MyRecordsActivity</string>
     <string name="title_activity_offline_area_selection">OfflineAreaSelection</string>
+    <string name="offline_area_selection_notification_start" formatted="false">Starting download for %s</string>
+    <string name="offline_area_selection_notification_success" formatted="false">Finished download for %s</string>
+    <string name="offline_area_selection_notification_ongoing" formatted="false">Downloading: %d tiles out of %d</string>
+    <string name="offline_area_selection_notification_error" formatted="false">Error downloading %s</string>
+    <string name="title_activity_offline_areas">OfflineAreasActivity</string>
+    <string name="title_activity_dummy">Dummy</string>
+    <string name="offline_areas_pre_downloaded_areas_title">Downloaded areas:</string>
+    <string name="offline_areas_button_download_custom_area">Download a custom area</string>
 </resources>

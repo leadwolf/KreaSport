@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.ccaroni.kreasport.view.activities.OfflineAreasActivity"
+    tools:showIn="@layout/app_bar_offline_areas">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayoutDownload"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
+
+        <Button
+            android:paddingBottom="8dp"
+            android:id="@+id/btn_download_custom_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableLeft="@drawable/ic_file_download_black_24dp"
+            android:drawablePadding="8dp"
+            android:drawableStart="@drawable/ic_file_download_black_24dp"
+            android:text="@string/offline_areas_button_download_custom_area"
+            android:textAlignment="viewStart"
+            android:textStyle="normal"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
+            android:paddingTop="8dp"
+            android:id="@+id/previously_downloaded_items_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="@string/offline_areas_pre_downloaded_areas_title"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/offline_areas_no_downloaded_areas_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:visibility="gone"/>
+
+        <ListView
+            android:id="@+id/list_view_downloaded_areas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

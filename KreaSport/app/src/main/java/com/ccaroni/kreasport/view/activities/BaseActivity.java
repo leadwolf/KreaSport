@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.view.fragments.AreaSelectionFragment;
 import com.ccaroni.kreasport.view.fragments.HomeFragment;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 
@@ -158,7 +157,7 @@ public class BaseActivity extends AppCompatActivity
                 activityIntent = new Intent(this, ProfileActivity.class);
                 break;
             case R.id.nav_offline_area:
-                activityIntent = new Intent(this, OfflineAreaSelection.class);
+                activityIntent = new Intent(this, OfflineAreasActivity.class);
                 break;
             case R.id.nav_share:
                 break;
@@ -215,9 +214,6 @@ public class BaseActivity extends AppCompatActivity
             case R.id.nav_home:
                 Log.d(LOG, "created new HomeFragment");
                 return HomeFragment.newInstance("", "");
-            case R.id.nav_offline_area:
-                Log.d(LOG, "created new " + AreaSelectionFragment.class.getSimpleName());
-                return AreaSelectionFragment.newInstance("", "");
         }
         return null;
     }
