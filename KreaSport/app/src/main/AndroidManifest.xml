@@ -109,6 +109,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
         </activity>
+        <activity
+            android:name=".view.activities.OfflineAreaSelection"
+            android:label="@string/title_activity_offline_area_selection"
+            android:parentActivityName=".view.activities.HomeActivity"
+            android:theme="@style/AppTheme.Dark">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.activities.HomeActivity"/>
+        </activity>
     </application>
 
 </manifest>

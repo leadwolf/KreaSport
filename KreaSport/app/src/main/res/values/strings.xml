@@ -174,4 +174,5 @@
     <string name="title_activity_downloaded_races">DownloadedRacesActivity</string>
     <string name="title_activity_riddle">RiddleActivity</string>
     <string name="title_activity_my_records">MyRecordsActivity</string>
+    <string name="title_activity_offline_area_selection">OfflineAreaSelection</string>
 </resources>
