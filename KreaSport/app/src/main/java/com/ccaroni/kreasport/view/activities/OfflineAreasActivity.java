@@ -35,7 +35,7 @@ public class OfflineAreasActivity extends BaseActivity {
         downloadCustomArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(OfflineAreasActivity.this, Dummy.class), CUSTOM_AREA_REQUEST_CODE);
+                startActivityForResult(new Intent(OfflineAreasActivity.this, AreaSelectionActivity.class), CUSTOM_AREA_REQUEST_CODE);
             }
         });
     }

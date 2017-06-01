@@ -119,7 +119,7 @@
                 android:value="com.ccaroni.kreasport.view.activities.HomeActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.Dummy"
+            android:name=".view.activities.AreaSelectionActivity"
             android:label="@string/title_activity_dummy"
             android:parentActivityName=".view.activities.OfflineAreasActivity"
             android:theme="@style/AppTheme.Dark">

@@ -30,11 +30,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-public class Dummy extends AppCompatActivity implements CustomMapView.MapViewCommunication {
+public class AreaSelectionActivity extends AppCompatActivity implements CustomMapView.MapViewCommunication {
 
-    private static final String LOG = Dummy.class.getSimpleName();
+    private static final String LOG = AreaSelectionActivity.class.getSimpleName();
 
-    private static final String KEY_BASE = Utils.getBaseString(Dummy.class.getSimpleName()) + "keys.";
+    private static final String KEY_BASE = Utils.getBaseString(AreaSelectionActivity.class.getSimpleName()) + "keys.";
     private static final String KEY_AREA_NAME = KEY_BASE + "area_name";
     private static final String KEY_AREA_FILE_ABSOLUTE_PATH = KEY_BASE + "area_file_absolute_path";
     private static final String KEY_AREA_SIZE = KEY_BASE + "estimated_size";
@@ -46,7 +46,7 @@ public class Dummy extends AppCompatActivity implements CustomMapView.MapViewCom
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_dummy);
+        setContentView(R.layout.activity_area_selection);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

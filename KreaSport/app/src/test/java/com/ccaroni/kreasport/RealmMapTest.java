@@ -18,7 +18,7 @@ public class RealmMapTest {
 
     @Test
     public void testNormalBaseToRealm() {
-        String title = "Dummy checkpoint";
+        String title = "AreaSelectionActivity checkpoint";
 
         Checkpoint checkpoint = (Checkpoint) new Checkpoint()
                 .setTitle(title);
