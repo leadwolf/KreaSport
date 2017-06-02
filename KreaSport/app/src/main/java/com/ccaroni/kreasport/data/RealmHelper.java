@@ -161,4 +161,9 @@ public class RealmHelper {
                 .equalTo("id", areaId)
                 .findFirst();
     }
+
+    public RealmResults<DownloadedArea> findAllDownloadedAreas() {
+        return realm.where(DownloadedArea.class)
+                .findAll();
+    }
 }

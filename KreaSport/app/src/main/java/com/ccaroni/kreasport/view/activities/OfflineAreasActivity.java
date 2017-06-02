@@ -7,10 +7,14 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.view.adapter.DownloadedAreaAdapter;
+
+import io.realm.RealmResults;
 
 public class OfflineAreasActivity extends BaseActivity {
 
@@ -31,6 +35,17 @@ public class OfflineAreasActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        setupListView();
+    }
+
+    private void setupListView() {
+        ListView listView = (ListView) findViewById(R.id.list_view_downloaded_areas);
+
+        RealmResults<DownloadedArea> downloadedAreas = RealmHelper.getInstance(this).findAllDownloadedAreas();
+        DownloadedAreaAdapter adapter = new DownloadedAreaAdapter(this, downloadedAreas);
+
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -45,7 +60,7 @@ public class OfflineAreasActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CUSTOM_AREA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Log.d(LOG, "received download from " +  AreaSelectionActivity.class.getSimpleName());
+                Log.d(LOG, "received download from " + AreaSelectionActivity.class.getSimpleName());
 
                 String areaId = data.getStringExtra(AreaSelectionActivity.KEY_AREA_ID);
                 if (areaId == null) {
