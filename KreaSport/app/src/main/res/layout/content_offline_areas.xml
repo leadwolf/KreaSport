@@ -22,8 +22,6 @@
         android:orientation="vertical">
 
         <Button
-            android:paddingBottom="8dp"
-            android:id="@+id/btn_download_custom_area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -31,6 +29,8 @@
             android:drawableLeft="@drawable/ic_file_download_black_24dp"
             android:drawablePadding="8dp"
             android:drawableStart="@drawable/ic_file_download_black_24dp"
+            android:onClick="downloadCustomArea"
+            android:paddingBottom="8dp"
             android:text="@string/offline_areas_button_download_custom_area"
             android:textAlignment="viewStart"
             android:textStyle="normal"/>
@@ -41,11 +41,11 @@
             android:background="@android:color/darker_gray"/>
 
         <TextView
-            android:paddingTop="8dp"
             android:id="@+id/previously_downloaded_items_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"
+            android:paddingTop="8dp"
             android:text="@string/offline_areas_pre_downloaded_areas_title"
             android:textSize="16sp"
             android:textStyle="bold"/>

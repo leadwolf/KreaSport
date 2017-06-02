@@ -31,18 +31,6 @@ public class OfflineAreasActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        setButtons();
-    }
-
-    private void setButtons() {
-        Button downloadCustomArea = (Button) findViewById(R.id.btn_download_custom_area);
-        downloadCustomArea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(OfflineAreasActivity.this, AreaSelectionActivity.class), CUSTOM_AREA_REQUEST_CODE);
-            }
-        });
     }
 
     @Override
@@ -71,5 +59,9 @@ public class OfflineAreasActivity extends BaseActivity {
         } else {
             Log.d(LOG, "area selection cancelled");
         }
+    }
+
+    public void downloadCustomArea(View view) {
+        startActivityForResult(new Intent(OfflineAreasActivity.this, AreaSelectionActivity.class), CUSTOM_AREA_REQUEST_CODE);
     }
 }

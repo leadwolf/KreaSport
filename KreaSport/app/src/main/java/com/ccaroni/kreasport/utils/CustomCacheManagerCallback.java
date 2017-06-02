@@ -49,7 +49,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     @Override
     public void onTaskComplete() {
         Log.d(LOG, "Download complete!");
-        Log.d(LOG, "Last tile count: " + possibleTiles);
+//        Log.d(LOG, "Last tile count: " + possibleTiles);
         if (writer != null)
             writer.onDetach();
 
@@ -93,7 +93,8 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     private NotificationCompat.Builder createNotification(int status, String downloadingAreaName, int progress) {
         NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(activity)
                 .setSmallIcon(R.drawable.ic_file_download_black_24dp)
-                .setContentTitle(downloadingAreaName);
+                .setContentTitle(downloadingAreaName)
+                .setOngoing(false);
         String content = "";
         switch (status) {
             case DOWNLOAD_ERROR:
@@ -102,6 +103,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
             case DOWNLOAD_ONGOING:
                 content = activity.getString(R.string.offline_area_selection_notification_ongoing, progress, possibleTiles);
                 mBuilder.setProgress(possibleTiles, progress, false);
+                mBuilder.setOngoing(true);
                 break;
             case DOWNLOAD_SUCCESS:
                 content = String.format(activity.getString(R.string.offline_area_selection_notification_success), downloadingAreaName);
@@ -122,6 +124,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     /**
      * Creates an intent for the notification to lead to {@link OfflineAreasActivity}
+     *
      * @param mBuilder
      * @return the builder inputted with the changes.
      */

@@ -20,7 +20,6 @@ import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CustomCacheManagerCallback;
-import com.ccaroni.kreasport.utils.Utils;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
@@ -37,7 +36,7 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
 
     private static final String LOG = AreaSelectionActivity.class.getSimpleName();
 
-    private static final String KEY_BASE = Utils.getBaseString(AreaSelectionActivity.class.getSimpleName()) + "keys.";
+    private static final String KEY_BASE = Constants.getBaseString(AreaSelectionActivity.class.getSimpleName()) + "keys.";
     public static final String KEY_AREA_ID = KEY_BASE + "area_id";
 
 
@@ -123,24 +122,29 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         CacheManager mgr = new CacheManager(mMapView, writer);
 
         CustomCacheManagerCallback customCacheManagerCallback = new CustomCacheManagerCallback(this, writer, locationName);
 
-        mgr.downloadAreaAsyncNoUI(this, currentBB, mMapView.getZoomLevel(), mMapView.getMaxZoomLevel(), customCacheManagerCallback);
+        CacheManager.DownloadingTask downloadingTask = mgr.downloadAreaAsyncNoUI(this, currentBB, mMapView.getZoomLevel(), mMapView.getMaxZoomLevel(), customCacheManagerCallback);
+        // TODO use downloadingTask to cancel in notification
 
-        closeActivity(currentBB, locationName, absoluteFilePath);
+        closeActivity(mgr, currentBB, locationName, absoluteFilePath);
     }
 
     /**
      * Puts the necessary data in an Intent for {@link OfflineAreasActivity} and calls {@link #finish()}
      *
+     * @param mgr
      * @param currentBB
      * @param locationName
      * @param absoluteFilePath
      */
-    private void closeActivity(BoundingBox currentBB, String locationName, String absoluteFilePath) {
-        double estimatedSize = Utils.getDownloadSizeForBoundingBox(currentBB, mMapView);
+    private void closeActivity(CacheManager mgr, BoundingBox currentBB, String locationName, String absoluteFilePath) {
+
+        int nTiles = mgr.possibleTilesInArea(currentBB, mMapView.getZoomLevel(), mMapView.getMaxZoomLevel());
+        double estimatedSize = 0.001 * (Constants.TILE_KB_SIZE * nTiles); // divide to get in MB
         int roundedSize = (int) Math.round(estimatedSize);
 
         RealmHelper.getInstance(this).beginTransaction();
