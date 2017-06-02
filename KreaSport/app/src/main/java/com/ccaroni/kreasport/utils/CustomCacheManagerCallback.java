@@ -30,6 +30,8 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     private final int DOWNLOAD_START = DOWNLOAD_ONGOING + 1;
 
     private Activity activity;
+    private CacheCommunicationInterface cacheCommunicationInterface;
+
     private SqliteArchiveTileWriter writer;
     private int notificationID;
     private NotificationManager mNotifyMgr;
@@ -38,6 +40,11 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     private String downloadingAreaName;
 
     public CustomCacheManagerCallback(Activity activity, SqliteArchiveTileWriter writer, String downloadingAreaName) {
+        if (activity instanceof CacheCommunicationInterface) {
+            this.cacheCommunicationInterface = (CacheCommunicationInterface) activity;
+        } else {
+            throw new RuntimeException(activity + " must implement " + CacheCommunicationInterface.class.getSimpleName());
+        }
         this.activity = activity;
         this.writer = writer;
         this.notificationID = 42;
@@ -49,7 +56,6 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     @Override
     public void onTaskComplete() {
         Log.d(LOG, "Download complete!");
-//        Log.d(LOG, "Last tile count: " + possibleTiles);
         if (writer != null)
             writer.onDetach();
 
@@ -68,6 +74,13 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     }
 
+    /**
+     *
+     * @param progress the number of tiles currently downloaded out of the {@link #setPossibleTilesInArea(int)}
+     * @param currentZoomLevel
+     * @param zoomMin
+     * @param zoomMax
+     */
     @Override
     public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
 //            Log.d(LOG, "progress " + progress);
@@ -139,5 +152,23 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
         mBuilder.setContentIntent(pendingIntent);
         return mBuilder;
+    }
+
+    public int getTotalTiles() {
+        return possibleTiles;
+    }
+
+    /**
+     * Interface to notify the attached activity about the download.
+     */
+    public interface CacheCommunicationInterface {
+
+        void onTaskComplete();
+
+        void updateProgress(int progress);
+
+        void downloadStarted();
+
+        void onTaskFailed(int errors);
     }
 }

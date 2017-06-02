@@ -19,11 +19,8 @@ import com.ccaroni.kreasport.map.models.MapOptions;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.CustomCacheManagerCallback;
 
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.cachemanager.CacheManager;
-import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.threeten.bp.OffsetDateTime;
@@ -99,7 +96,7 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startDownload();
+                saveDownloadCircumstances();
             }
         });
     }
@@ -107,7 +104,7 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
     /**
      * Initiates the download process by getting the download path, size, notificaiton...
      */
-    private void startDownload() {
+    private void saveDownloadCircumstances() {
         BoundingBox currentBB = mMapView.getBoundingBox();
 
         String locationName = getLocationName();
@@ -116,44 +113,27 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
         Log.d(LOG, "Selected area: " + locationName);
         Log.d(LOG, "Will download to: " + absoluteFilePath);
 
-        SqliteArchiveTileWriter writer = null;
-        try {
-            writer = new SqliteArchiveTileWriter(absoluteFilePath);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        transferDownloadInfo(currentBB, locationName, absoluteFilePath);
 
-        CacheManager mgr = new CacheManager(mMapView, writer);
-
-        CustomCacheManagerCallback customCacheManagerCallback = new CustomCacheManagerCallback(this, writer, locationName);
-
-        CacheManager.DownloadingTask downloadingTask = mgr.downloadAreaAsyncNoUI(this, currentBB, mMapView.getZoomLevel(), mMapView.getMaxZoomLevel(), customCacheManagerCallback);
-        // TODO use downloadingTask to cancel in notification
-
-        closeActivity(mgr, currentBB, locationName, absoluteFilePath);
     }
 
     /**
      * Puts the necessary data in an Intent for {@link OfflineAreasActivity} and calls {@link #finish()}
      *
-     * @param mgr
      * @param currentBB
      * @param locationName
      * @param absoluteFilePath
      */
-    private void closeActivity(CacheManager mgr, BoundingBox currentBB, String locationName, String absoluteFilePath) {
-
-        int nTiles = mgr.possibleTilesInArea(currentBB, mMapView.getZoomLevel(), mMapView.getMaxZoomLevel());
-        double estimatedSize = 0.001 * (Constants.TILE_KB_SIZE * nTiles); // divide to get in MB
-        int roundedSize = (int) Math.round(estimatedSize);
+    private void transferDownloadInfo(BoundingBox currentBB, String locationName, String absoluteFilePath) {
 
         RealmHelper.getInstance(this).beginTransaction();
 
         DownloadedArea area = RealmHelper.getInstance(this).createRealmObject(DownloadedArea.class)
+                .setBoundingBox(currentBB)
                 .setDateDownloaded(OffsetDateTime.now().toString())
                 .setName(locationName)
                 .setPath(absoluteFilePath)
-                .setSize(estimatedSize);
+                .setMinZoom(mMapView.getZoomLevel());
 
         RealmHelper.getInstance(this).commitTransaction();
 

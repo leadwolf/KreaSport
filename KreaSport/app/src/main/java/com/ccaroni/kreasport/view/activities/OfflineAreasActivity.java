@@ -1,22 +1,29 @@
 package com.ccaroni.kreasport.view.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.utils.CustomCacheManagerCallback;
 import com.ccaroni.kreasport.view.adapter.DownloadedAreaAdapter;
+
+import org.osmdroid.tileprovider.cachemanager.CacheManager;
+import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
+import org.osmdroid.util.BoundingBox;
+import org.osmdroid.views.MapView;
 
 import io.realm.RealmResults;
 
-public class OfflineAreasActivity extends BaseActivity {
+public class OfflineAreasActivity extends BaseActivity implements CustomCacheManagerCallback.CacheCommunicationInterface {
 
     private static final String LOG = OfflineAreasActivity.class.getSimpleName();
     private static final int CUSTOM_AREA_REQUEST_CODE = 100;
@@ -70,6 +77,8 @@ public class OfflineAreasActivity extends BaseActivity {
                 DownloadedArea downloadedArea = RealmHelper.getInstance(this).findDownloadedAreaById(areaId);
                 Log.d(LOG, "got transferred id: " + areaId + " for " + downloadedArea.getName());
 
+                startDownload(downloadedArea);
+
             }
         } else {
             Log.d(LOG, "area selection cancelled");
@@ -82,5 +91,52 @@ public class OfflineAreasActivity extends BaseActivity {
 
     public void asyncActivity(View view) {
         startActivity(new Intent(this, ThreadsLifecycleActivity.class));
+    }
+
+    /**
+     * Creates the cache managers and starts the download with {@link CacheManager#downloadAreaAsync(Context, BoundingBox, int, int, CacheManager.CacheManagerCallback)}
+     * @param downloadedArea
+     */
+    public void startDownload(DownloadedArea downloadedArea) {
+
+        SqliteArchiveTileWriter writer = null;
+        try {
+            writer = new SqliteArchiveTileWriter(downloadedArea.getPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        MapView mMapView = new MapView(this, null, null);
+        CacheManager mgr = new CacheManager(mMapView, writer);
+        CustomCacheManagerCallback customCacheManagerCallback = new CustomCacheManagerCallback(this, writer, downloadedArea.getName());
+
+        CacheManager.DownloadingTask downloadingTask = mgr.downloadAreaAsyncNoUI(this, downloadedArea.getBoundingBox(),
+                downloadedArea.getMinZoom(), Constants.DOWNLOAD_MAX_ZOOM, customCacheManagerCallback);
+        // TODO use downloadingTask to cancel in notification
+
+
+        int nTiles = customCacheManagerCallback.getTotalTiles();
+        double estimatedSize = 0.001 * (Constants.TILE_KB_SIZE * nTiles); // divide to get in MB
+        int roundedSize = (int) Math.round(estimatedSize);
+    }
+
+    @Override
+    public void onTaskComplete() {
+
+    }
+
+    @Override
+    public void updateProgress(int progress) {
+
+    }
+
+    @Override
+    public void downloadStarted() {
+
+    }
+
+    @Override
+    public void onTaskFailed(int errors) {
+
     }
 }

@@ -82,8 +82,10 @@ public class CustomMapView extends MapView {
     }
 
     private void applyState(MapVM mMapVM) {
-        getController().setZoom(mMapVM.getZoom());
-        getController().setCenter(mMapVM.getCenter());
+        if (mMapVM != null) {
+            getController().setZoom(mMapVM.getZoom());
+            getController().setCenter(mMapVM.getCenter());
+        }
     }
 
     @SuppressWarnings({"MissingPermission"})

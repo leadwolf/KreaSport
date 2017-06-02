@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.data.realm;
 
+import org.osmdroid.util.BoundingBox;
+
 import java.util.UUID;
 
 import io.realm.RealmObject;
@@ -11,10 +13,14 @@ import io.realm.RealmObject;
 public class DownloadedArea extends RealmObject {
 
     private String id;
+
+    private BoundingBox boundingBox;
+
     private String name;
     private String path;
     private double size;
     private String dateDownloaded;
+    private int minZoom;
 //    private OffsetDateTime dateTime;
 
 
@@ -28,6 +34,15 @@ public class DownloadedArea extends RealmObject {
 
     public DownloadedArea setId(String id) {
         this.id = id;
+        return this;
+    }
+
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
+    }
+
+    public DownloadedArea setBoundingBox(BoundingBox boundingBox) {
+        this.boundingBox = boundingBox;
         return this;
     }
 
@@ -64,6 +79,15 @@ public class DownloadedArea extends RealmObject {
 
     public DownloadedArea setDateDownloaded(String dateDownloaded) {
         this.dateDownloaded = dateDownloaded;
+        return this;
+    }
+
+    public int getMinZoom() {
+        return minZoom;
+    }
+
+    public DownloadedArea setMinZoom(int minZoom) {
+        this.minZoom = minZoom;
         return this;
     }
 }
