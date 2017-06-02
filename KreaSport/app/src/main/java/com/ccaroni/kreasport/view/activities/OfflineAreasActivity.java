@@ -79,4 +79,8 @@ public class OfflineAreasActivity extends BaseActivity {
     public void downloadCustomArea(View view) {
         startActivityForResult(new Intent(OfflineAreasActivity.this, AreaSelectionActivity.class), CUSTOM_AREA_REQUEST_CODE);
     }
+
+    public void asyncActivity(View view) {
+        startActivity(new Intent(this, ThreadsLifecycleActivity.class));
+    }
 }
