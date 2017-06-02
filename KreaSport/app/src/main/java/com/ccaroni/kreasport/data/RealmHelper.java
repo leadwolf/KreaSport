@@ -155,4 +155,10 @@ public class RealmHelper {
     public <E extends RealmObject> E createRealmObject(Class<E> classz) {
         return realm.createObject(classz);
     }
+
+    public DownloadedArea findDownloadedAreaById(String areaId) {
+        return realm.where(DownloadedArea.class)
+                .equalTo("id", areaId)
+                .findFirst();
+    }
 }

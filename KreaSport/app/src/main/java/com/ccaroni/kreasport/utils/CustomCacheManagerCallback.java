@@ -59,7 +59,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     @Override
     public void onTaskFailed(int errors) {
-        Log.i(LOG, "Download complete with " + errors + " errors");
+        Log.d(LOG, "Download complete with " + errors + " errors");
         if (writer != null)
             writer.onDetach();
 
@@ -70,7 +70,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     @Override
     public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-//            Log.i(LOG, "progress " + progress);
+//            Log.d(LOG, "progress " + progress);
 
         NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_ONGOING, downloadingAreaName, progress);
         mNotifyMgr.notify(notificationID, mBuilder.build());
@@ -78,7 +78,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     @Override
     public void downloadStarted() {
-        Log.i(LOG, "started download");
+        Log.d(LOG, "started download");
 
         NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_START, downloadingAreaName, 0);
         mNotifyMgr.notify(notificationID, mBuilder.build());
@@ -86,7 +86,7 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
 
     @Override
     public void setPossibleTilesInArea(int total) {
-        Log.i(LOG, "actual tile size: " + total);
+        Log.d(LOG, "actual tile size: " + total);
         possibleTiles = total;
     }
 

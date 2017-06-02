@@ -55,8 +55,6 @@ public class BaseActivity extends AppCompatActivity
      * @param layout
      */
     protected void customCreate(@Nullable Bundle savedInstanceState, int layout) {
-        Log.d(LOG, "custom create");
-
         setContentView(layout);
         secondaryCreate();
     }
@@ -212,7 +210,7 @@ public class BaseActivity extends AppCompatActivity
         Fragment fragment;
         switch (id) {
             case R.id.nav_home:
-                Log.d(LOG, "created new HomeFragment");
+//                Log.d(LOG, "created new HomeFragment");
                 return HomeFragment.newInstance("", "");
         }
         return null;

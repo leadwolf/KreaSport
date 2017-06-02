@@ -38,7 +38,7 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
     private static final String LOG = AreaSelectionActivity.class.getSimpleName();
 
     private static final String KEY_BASE = Utils.getBaseString(AreaSelectionActivity.class.getSimpleName()) + "keys.";
-    private static final String KEY_AREA_ID = KEY_BASE + "area_id";
+    public static final String KEY_AREA_ID = KEY_BASE + "area_id";
 
 
     private CustomMapView mMapView;

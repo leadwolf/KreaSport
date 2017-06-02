@@ -84,7 +84,7 @@ public class CredentialsManager {
     }
 
     public static void saveUserId(Context context, String id) {
-        Log.d(LOG, "saving userId: " + id);
+//        Log.d(LOG, "saving userId: " + id);
 
         SharedPreferences sp = context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
