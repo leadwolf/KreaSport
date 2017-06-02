@@ -1,12 +1,12 @@
 package com.ccaroni.kreasport.view.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +17,12 @@ import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
-import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.view.activities.DownloadedAreaActivity;
 
 import io.realm.RealmResults;
+
+import static com.ccaroni.kreasport.view.activities.AreaSelectionActivity.KEY_AREA_ID;
 
 /**
  * Created by Master on 02/06/2017.
@@ -43,7 +46,7 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        DownloadedArea downloadedArea = getItem(position);
+        final DownloadedArea downloadedArea = getItem(position);
 
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
@@ -81,6 +84,15 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
 
         viewHolder.progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.primary), PorterDuff.Mode.MULTIPLY);
         viewHolder.progressBar.getProgressDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.primary), PorterDuff.Mode.MULTIPLY);
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), DownloadedAreaActivity.class);
+                intent.putExtra(KEY_AREA_ID, downloadedArea.getId());
+                getContext().startActivity(intent);
+            }
+        });
 
         // Return the completed view to render on screen
         return convertView;

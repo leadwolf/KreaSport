@@ -129,6 +129,15 @@
         </activity>
         <activity android:name=".view.activities.ThreadsLifecycleActivity">
         </activity>
+        <activity
+            android:name=".view.activities.DownloadedAreaActivity"
+            android:label="@string/title_activity_downloaded_area"
+            android:parentActivityName=".view.activities.OfflineAreasActivity"
+            android:theme="@style/AppTheme.Dark">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ccaroni.kreasport.view.activities.OfflineAreasActivity"/>
+        </activity>
     </application>
 
 </manifest>

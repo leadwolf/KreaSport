@@ -183,4 +183,5 @@
     <string name="title_activity_dummy">Dummy</string>
     <string name="offline_areas_pre_downloaded_areas_title">Downloaded areas:</string>
     <string name="offline_areas_button_download_custom_area">Download a custom area</string>
+    <string name="title_activity_downloaded_area">DownloadedAreaActivity</string>
 </resources>
