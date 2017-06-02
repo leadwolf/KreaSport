@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.data.realm.RealmBoundingBox;
 import com.ccaroni.kreasport.map.models.MapOptions;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
@@ -128,8 +129,11 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
 
         RealmHelper.getInstance(this).beginTransaction();
 
+        RealmBoundingBox realmBoundingBox = RealmHelper.getInstance(this).createRealmObject(RealmBoundingBox.class);
+        realmBoundingBox.importFromBoundingBox(currentBB);
+
         DownloadedArea area = RealmHelper.getInstance(this).createRealmObject(DownloadedArea.class)
-                .setBoundingBox(currentBB)
+                .setBoundingBox(realmBoundingBox)
                 .setDateDownloaded(OffsetDateTime.now().toString())
                 .setName(locationName)
                 .setPath(absoluteFilePath)

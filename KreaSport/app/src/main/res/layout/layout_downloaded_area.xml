@@ -31,16 +31,17 @@
 
         <TextView
             android:id="@+id/tv_area_size"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Download size"/>
+            android:text="Download size"
+            android:visibility="gone"/>
 
         <ProgressBar
             android:id="@+id/progress_bar_downloading_area"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:theme="@style/ProgressBarStyle"
             android:visibility="visible"/>
 
     </LinearLayout>

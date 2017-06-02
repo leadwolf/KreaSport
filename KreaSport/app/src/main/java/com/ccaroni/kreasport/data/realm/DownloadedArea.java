@@ -14,7 +14,7 @@ public class DownloadedArea extends RealmObject {
 
     private String id;
 
-    private BoundingBox boundingBox;
+    private RealmBoundingBox boundingBox;
 
     private String name;
     private String path;
@@ -43,11 +43,11 @@ public class DownloadedArea extends RealmObject {
         return this;
     }
 
-    public BoundingBox getBoundingBox() {
+    public RealmBoundingBox getBoundingBox() {
         return boundingBox;
     }
 
-    public DownloadedArea setBoundingBox(BoundingBox boundingBox) {
+    public DownloadedArea setBoundingBox(RealmBoundingBox boundingBox) {
         this.boundingBox = boundingBox;
         return this;
     }

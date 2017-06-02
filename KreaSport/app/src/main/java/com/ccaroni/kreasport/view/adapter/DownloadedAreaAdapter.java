@@ -1,9 +1,12 @@
 package com.ccaroni.kreasport.view.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,8 @@ import io.realm.RealmResults;
  */
 
 public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
+
+    private static final String LOG = DownloadedAreaAdapter.class.getSimpleName();
 
     private static class ViewHolder {
         ImageView image;
@@ -61,7 +66,10 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
 
         // Populate the data from the data object via the viewHolder object
         // into the template view.
-        viewHolder.image.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_map_black_24dp));
+
+        Drawable drawable = downloadedArea.isOngoing() ? ContextCompat.getDrawable(getContext(), R.drawable.ic_file_download_black_24dp) : ContextCompat.getDrawable(getContext()
+                , R.drawable.ic_check_circle_black_24dp);
+        viewHolder.image.setImageDrawable(drawable);
         viewHolder.name.setText(downloadedArea.getName());
         viewHolder.size.setText("" + Math.round(downloadedArea.getSize()) + " MB");
         viewHolder.progressBar.setMax(100);
@@ -70,6 +78,9 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
 
         viewHolder.size.setVisibility(downloadedArea.isOngoing() ? View.GONE : View.VISIBLE);
         viewHolder.progressBar.setVisibility(downloadedArea.isOngoing() ? View.VISIBLE : View.GONE);
+
+        viewHolder.progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.primary), PorterDuff.Mode.MULTIPLY);
+        viewHolder.progressBar.getProgressDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.primary), PorterDuff.Mode.MULTIPLY);
 
         // Return the completed view to render on screen
         return convertView;

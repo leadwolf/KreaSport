@@ -59,7 +59,7 @@ public abstract class CacheManagerCallback implements CacheManager.CacheManagerC
      */
     @Override
     public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-        double percentage = (progress / possibleTiles) * 100;
+        double percentage = ( (double) progress / (double) possibleTiles) * 100;
         cacheCommunicationInterface.updateProgress(downloadingArea, percentage);
     }
 

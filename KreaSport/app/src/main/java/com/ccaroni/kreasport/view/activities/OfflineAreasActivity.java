@@ -118,7 +118,9 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
         CacheManager mgr = new CacheManager(mMapView, writer);
         CacheManagerCallback cacheManagerCallbackImpl = new CacheManagerCallbackImpl(this, writer, downloadedArea);
 
-        CacheManager.DownloadingTask downloadingTask = mgr.downloadAreaAsyncNoUI(this, downloadedArea.getBoundingBox(),
+        BoundingBox bareBoundingBox = downloadedArea.getBoundingBox().toBareBoundingBox();
+
+        CacheManager.DownloadingTask downloadingTask = mgr.downloadAreaAsyncNoUI(this, bareBoundingBox,
                 downloadedArea.getMinZoom(), Constants.DOWNLOAD_MAX_ZOOM, cacheManagerCallbackImpl);
 
         taskMap.put(downloadedArea.getId(), downloadingTask);
@@ -127,7 +129,12 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
 
         int nTiles = cacheManagerCallbackImpl.getTotalTiles();
         double estimatedSize = 0.001 * (Constants.TILE_KB_SIZE * nTiles); // divide to get in MB
-        int roundedSize = (int) Math.round(estimatedSize);
+
+        RealmHelper.getInstance(this).beginTransaction();
+
+        downloadedArea.setSize(estimatedSize);
+
+        RealmHelper.getInstance(this).commitTransaction();
     }
 
 
