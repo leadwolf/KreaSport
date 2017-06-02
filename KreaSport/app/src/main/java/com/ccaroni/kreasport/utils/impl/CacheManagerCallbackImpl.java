@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.utils;
+package com.ccaroni.kreasport.utils.impl;
 
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -9,6 +9,8 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.utils.CacheManagerCallback;
 import com.ccaroni.kreasport.view.activities.OfflineAreasActivity;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
@@ -20,46 +22,23 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * Created by Master on 01/06/2017.
  */
 
-public class CustomCacheManagerCallback implements CacheManager.CacheManagerCallback {
+public class CacheManagerCallbackImpl extends CacheManagerCallback {
 
-    private final String LOG = CustomCacheManagerCallback.class.getSimpleName();
+    private final String LOG = CacheManagerCallbackImpl.class.getSimpleName();
 
-    private final int DOWNLOAD_ERROR = 1;
-    private final int DOWNLOAD_SUCCESS = DOWNLOAD_ERROR + 1;
-    private final int DOWNLOAD_ONGOING = DOWNLOAD_SUCCESS + 1;
-    private final int DOWNLOAD_START = DOWNLOAD_ONGOING + 1;
-
-    private Activity activity;
-    private CacheCommunicationInterface cacheCommunicationInterface;
-
-    private SqliteArchiveTileWriter writer;
-    private int notificationID;
-    private NotificationManager mNotifyMgr;
-
-    private int possibleTiles;
-    private String downloadingAreaName;
-
-    public CustomCacheManagerCallback(Activity activity, SqliteArchiveTileWriter writer, String downloadingAreaName) {
-        if (activity instanceof CacheCommunicationInterface) {
-            this.cacheCommunicationInterface = (CacheCommunicationInterface) activity;
-        } else {
-            throw new RuntimeException(activity + " must implement " + CacheCommunicationInterface.class.getSimpleName());
-        }
-        this.activity = activity;
-        this.writer = writer;
-        this.notificationID = 42;
-        this.downloadingAreaName = downloadingAreaName;
-
-        this.mNotifyMgr = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
+    public CacheManagerCallbackImpl(Activity activity, SqliteArchiveTileWriter writer, DownloadedArea downloadingArea) {
+        super(activity, writer, downloadingArea);
     }
 
     @Override
     public void onTaskComplete() {
+        super.onTaskComplete();
+
         Log.d(LOG, "Download complete!");
         if (writer != null)
             writer.onDetach();
 
-        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_SUCCESS, downloadingAreaName, 0);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_SUCCESS, downloadingArea.getName(), 0);
         mNotifyMgr.notify(notificationID, mBuilder.build());
     }
 
@@ -69,23 +48,18 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
         if (writer != null)
             writer.onDetach();
 
-        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_ERROR, downloadingAreaName, 0);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_ERROR, downloadingArea.getName(), 0);
         mNotifyMgr.notify(notificationID, mBuilder.build());
 
     }
 
-    /**
-     *
-     * @param progress the number of tiles currently downloaded out of the {@link #setPossibleTilesInArea(int)}
-     * @param currentZoomLevel
-     * @param zoomMin
-     * @param zoomMax
-     */
     @Override
     public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
+        super.updateProgress(progress, currentZoomLevel, zoomMin, zoomMax);
+
 //            Log.d(LOG, "progress " + progress);
 
-        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_ONGOING, downloadingAreaName, progress);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_ONGOING, downloadingArea.getName(), progress);
         mNotifyMgr.notify(notificationID, mBuilder.build());
     }
 
@@ -93,14 +67,8 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
     public void downloadStarted() {
         Log.d(LOG, "started download");
 
-        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_START, downloadingAreaName, 0);
+        NotificationCompat.Builder mBuilder = createNotification(DOWNLOAD_START, downloadingArea.getName(), 0);
         mNotifyMgr.notify(notificationID, mBuilder.build());
-    }
-
-    @Override
-    public void setPossibleTilesInArea(int total) {
-        Log.d(LOG, "actual tile size: " + total);
-        possibleTiles = total;
     }
 
     private NotificationCompat.Builder createNotification(int status, String downloadingAreaName, int progress) {
@@ -154,21 +122,4 @@ public class CustomCacheManagerCallback implements CacheManager.CacheManagerCall
         return mBuilder;
     }
 
-    public int getTotalTiles() {
-        return possibleTiles;
-    }
-
-    /**
-     * Interface to notify the attached activity about the download.
-     */
-    public interface CacheCommunicationInterface {
-
-        void onTaskComplete();
-
-        void updateProgress(int progress);
-
-        void downloadStarted();
-
-        void onTaskFailed(int errors);
-    }
 }

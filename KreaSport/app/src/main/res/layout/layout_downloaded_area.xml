@@ -6,8 +6,8 @@
     <RelativeLayout
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:gravity="center">
 
         <ImageView
             android:id="@+id/imageview_area"
@@ -26,14 +26,23 @@
             android:id="@+id/tv_area_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Area name"/>
+            android:text="Area name"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_area_size"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Download size"/>
+
+        <ProgressBar
+            android:id="@+id/progress_bar_downloading_area"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"/>
+
     </LinearLayout>
 
 </LinearLayout>

@@ -20,12 +20,18 @@ public class DownloadedArea extends RealmObject {
     private String path;
     private double size;
     private String dateDownloaded;
+    //    private OffsetDateTime dateTime;
+
     private int minZoom;
-//    private OffsetDateTime dateTime;
+
+    private boolean ongoing;
+    private double progress;
 
 
     public DownloadedArea() {
         id = UUID.randomUUID().toString();
+        ongoing = true;
+        progress = 0;
     }
 
     public String getId() {
@@ -88,6 +94,24 @@ public class DownloadedArea extends RealmObject {
 
     public DownloadedArea setMinZoom(int minZoom) {
         this.minZoom = minZoom;
+        return this;
+    }
+
+    public boolean isOngoing() {
+        return ongoing;
+    }
+
+    public DownloadedArea setOngoing(boolean ongoing) {
+        this.ongoing = ongoing;
+        return this;
+    }
+
+    public double getProgress() {
+        return progress;
+    }
+
+    public DownloadedArea setProgress(double progress) {
+        this.progress = progress;
         return this;
     }
 }

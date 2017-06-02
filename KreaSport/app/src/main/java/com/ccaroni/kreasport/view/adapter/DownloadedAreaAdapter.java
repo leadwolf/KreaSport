@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
@@ -27,6 +28,7 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
         ImageView image;
         TextView name;
         TextView size;
+        ProgressBar progressBar;
     }
 
     public DownloadedAreaAdapter(Context context, RealmResults<DownloadedArea> downloadedAreas) {
@@ -48,6 +50,7 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
             viewHolder.image = (ImageView) convertView.findViewById(R.id.imageview_area);
             viewHolder.name = (TextView) convertView.findViewById(R.id.tv_area_name);
             viewHolder.size = (TextView) convertView.findViewById(R.id.tv_area_size);
+            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progress_bar_downloading_area);
 
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
@@ -61,6 +64,12 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
         viewHolder.image.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_map_black_24dp));
         viewHolder.name.setText(downloadedArea.getName());
         viewHolder.size.setText("" + Math.round(downloadedArea.getSize()) + " MB");
+        viewHolder.progressBar.setMax(100);
+        int roundedProgress = (int) Math.round(downloadedArea.getProgress());
+        viewHolder.progressBar.setProgress(roundedProgress);
+
+        viewHolder.size.setVisibility(downloadedArea.isOngoing() ? View.GONE : View.VISIBLE);
+        viewHolder.progressBar.setVisibility(downloadedArea.isOngoing() ? View.VISIBLE : View.GONE);
 
         // Return the completed view to render on screen
         return convertView;

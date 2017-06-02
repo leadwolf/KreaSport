@@ -12,8 +12,9 @@ import android.widget.ListView;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.utils.CacheManagerCallback;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.CustomCacheManagerCallback;
+import com.ccaroni.kreasport.utils.impl.CacheManagerCallbackImpl;
 import com.ccaroni.kreasport.view.adapter.DownloadedAreaAdapter;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
@@ -21,13 +22,18 @@ import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.views.MapView;
 
+import java.util.HashMap;
+
 import io.realm.RealmResults;
 
-public class OfflineAreasActivity extends BaseActivity implements CustomCacheManagerCallback.CacheCommunicationInterface {
+public class OfflineAreasActivity extends BaseActivity implements CacheManagerCallbackImpl.CacheCommunicationInterface {
 
     private static final String LOG = OfflineAreasActivity.class.getSimpleName();
     private static final int CUSTOM_AREA_REQUEST_CODE = 100;
 
+
+    private HashMap<String, CacheManager.DownloadingTask> taskMap;
+    private DownloadedAreaAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,8 @@ public class OfflineAreasActivity extends BaseActivity implements CustomCacheMan
             }
         });
 
+        taskMap = new HashMap<>();
+
         setupListView();
     }
 
@@ -50,7 +58,7 @@ public class OfflineAreasActivity extends BaseActivity implements CustomCacheMan
         ListView listView = (ListView) findViewById(R.id.list_view_downloaded_areas);
 
         RealmResults<DownloadedArea> downloadedAreas = RealmHelper.getInstance(this).findAllDownloadedAreas();
-        DownloadedAreaAdapter adapter = new DownloadedAreaAdapter(this, downloadedAreas);
+        adapter = new DownloadedAreaAdapter(this, downloadedAreas);
 
         listView.setAdapter(adapter);
     }
@@ -108,35 +116,40 @@ public class OfflineAreasActivity extends BaseActivity implements CustomCacheMan
 
         MapView mMapView = new MapView(this, null, null);
         CacheManager mgr = new CacheManager(mMapView, writer);
-        CustomCacheManagerCallback customCacheManagerCallback = new CustomCacheManagerCallback(this, writer, downloadedArea.getName());
+        CacheManagerCallback cacheManagerCallbackImpl = new CacheManagerCallbackImpl(this, writer, downloadedArea);
 
         CacheManager.DownloadingTask downloadingTask = mgr.downloadAreaAsyncNoUI(this, downloadedArea.getBoundingBox(),
-                downloadedArea.getMinZoom(), Constants.DOWNLOAD_MAX_ZOOM, customCacheManagerCallback);
+                downloadedArea.getMinZoom(), Constants.DOWNLOAD_MAX_ZOOM, cacheManagerCallbackImpl);
+
+        taskMap.put(downloadedArea.getId(), downloadingTask);
         // TODO use downloadingTask to cancel in notification
 
 
-        int nTiles = customCacheManagerCallback.getTotalTiles();
+        int nTiles = cacheManagerCallbackImpl.getTotalTiles();
         double estimatedSize = 0.001 * (Constants.TILE_KB_SIZE * nTiles); // divide to get in MB
         int roundedSize = (int) Math.round(estimatedSize);
     }
 
-    @Override
-    public void onTaskComplete() {
 
+    @Override
+    public void onTaskComplete(DownloadedArea downloadedArea) {
+        RealmHelper.getInstance(this).beginTransaction();
+
+        downloadedArea.setOngoing(false);
+
+        RealmHelper.getInstance(this).commitTransaction();
+
+        adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void updateProgress(int progress) {
+    public void updateProgress(DownloadedArea downloadedArea, double progressPercentage) {
+        RealmHelper.getInstance(this).beginTransaction();
 
-    }
+        downloadedArea.setProgress(progressPercentage);
 
-    @Override
-    public void downloadStarted() {
+        RealmHelper.getInstance(this).commitTransaction();
 
-    }
-
-    @Override
-    public void onTaskFailed(int errors) {
-
+        adapter.notifyDataSetChanged();
     }
 }
