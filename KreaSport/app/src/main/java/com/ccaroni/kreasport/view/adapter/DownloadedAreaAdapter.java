@@ -1,6 +1,6 @@
 package com.ccaroni.kreasport.view.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -17,12 +17,14 @@ import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
-import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.view.activities.DownloadedAreaActivity;
+import com.ccaroni.kreasport.view.activities.OfflineAreasActivity;
+
+import java.util.List;
 
 import io.realm.RealmResults;
 
-import static com.ccaroni.kreasport.view.activities.AreaSelectionActivity.KEY_AREA_ID;
+import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
 
 /**
  * Created by Master on 02/06/2017.
@@ -31,6 +33,7 @@ import static com.ccaroni.kreasport.view.activities.AreaSelectionActivity.KEY_AR
 public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
 
     private static final String LOG = DownloadedAreaAdapter.class.getSimpleName();
+    private Activity originActivity;
 
     private static class ViewHolder {
         ImageView image;
@@ -39,8 +42,9 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
         ProgressBar progressBar;
     }
 
-    public DownloadedAreaAdapter(Context context, RealmResults<DownloadedArea> downloadedAreas) {
-        super(context, R.layout.layout_downloaded_area, downloadedAreas);
+    public DownloadedAreaAdapter(Activity originActivity, List<DownloadedArea> downloadedAreas) {
+        super(originActivity, R.layout.layout_downloaded_area, downloadedAreas);
+        this.originActivity = originActivity;
     }
 
     @NonNull
@@ -90,7 +94,7 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), DownloadedAreaActivity.class);
                 intent.putExtra(KEY_AREA_ID, downloadedArea.getId());
-                getContext().startActivity(intent);
+                originActivity.startActivityForResult(intent, OfflineAreasActivity.REQUEST_CODE_DELETION);
             }
         });
 
@@ -98,5 +102,7 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
         return convertView;
 
     }
+
+
 
 }

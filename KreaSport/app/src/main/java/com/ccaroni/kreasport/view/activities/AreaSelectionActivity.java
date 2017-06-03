@@ -30,12 +30,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
+import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
+
 public class AreaSelectionActivity extends AppCompatActivity implements CustomMapView.MapViewCommunication {
 
     private static final String LOG = AreaSelectionActivity.class.getSimpleName();
 
     private static final String KEY_BASE = Constants.getBaseString(AreaSelectionActivity.class.getSimpleName()) + "keys.";
-    public static final String KEY_AREA_ID = KEY_BASE + "area_id";
 
 
     private CustomMapView mMapView;

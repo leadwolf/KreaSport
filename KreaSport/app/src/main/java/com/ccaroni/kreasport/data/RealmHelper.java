@@ -166,4 +166,8 @@ public class RealmHelper {
         return realm.where(DownloadedArea.class)
                 .findAll();
     }
+
+    public void deleteDownloadedArea(DownloadedArea downloadedArea) {
+        downloadedArea.deleteFromRealm();
+    }
 }

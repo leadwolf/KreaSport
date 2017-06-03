@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
@@ -22,14 +23,20 @@ import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.views.MapView;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.realm.RealmResults;
+
+import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
 
 public class OfflineAreasActivity extends BaseActivity implements CacheManagerCallbackImpl.CacheCommunicationInterface {
 
     private static final String LOG = OfflineAreasActivity.class.getSimpleName();
-    private static final int CUSTOM_AREA_REQUEST_CODE = 100;
+    private static final int REQUEST_CODE_CUSTOM_AREA = 100;
+    public static final int REQUEST_CODE_DELETION = REQUEST_CODE_CUSTOM_AREA + 1;
 
 
     private HashMap<String, CacheManager.DownloadingTask> taskMap;
@@ -57,7 +64,12 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
     private void setupListView() {
         ListView listView = (ListView) findViewById(R.id.list_view_downloaded_areas);
 
-        RealmResults<DownloadedArea> downloadedAreas = RealmHelper.getInstance(this).findAllDownloadedAreas();
+        RealmResults<DownloadedArea> realmDownloadedAreas = RealmHelper.getInstance(this).findAllDownloadedAreas();
+        List<DownloadedArea> downloadedAreas = new ArrayList<>();
+        for (DownloadedArea realmDownloadedArea : realmDownloadedAreas) {
+            downloadedAreas.add(realmDownloadedArea);
+        }
+
         adapter = new DownloadedAreaAdapter(this, downloadedAreas);
 
         listView.setAdapter(adapter);
@@ -73,28 +85,56 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CUSTOM_AREA_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Log.d(LOG, "received download from " + AreaSelectionActivity.class.getSimpleName());
+        switch (requestCode) {
+            case REQUEST_CODE_CUSTOM_AREA:
+                if (resultCode == RESULT_OK) {
+                    Log.d(LOG, "received download from " + AreaSelectionActivity.class.getSimpleName());
 
-                String areaId = data.getStringExtra(AreaSelectionActivity.KEY_AREA_ID);
-                if (areaId == null) {
-                    throw new IllegalArgumentException("could not find area id in the intent");
+                    String areaId = data.getStringExtra(KEY_AREA_ID);
+                    if (areaId == null) {
+                        throw new IllegalArgumentException("could not find area id in the intent");
+                    }
+
+                    DownloadedArea downloadedArea = RealmHelper.getInstance(this).findDownloadedAreaById(areaId);
+                    Log.d(LOG, "got transferred id: " + areaId + " for " + downloadedArea.getName());
+
+                    startDownload(downloadedArea);
+
+                }
+                break;
+            case REQUEST_CODE_DELETION:
+                if (resultCode == RESULT_OK) {
+                    String idToDelete = data.getStringExtra(KEY_AREA_ID);
+                    if (idToDelete == null) {
+                        throw new IllegalArgumentException("could not find area id in the intent");
+                    }
+                    DownloadedArea downloadedArea = RealmHelper.getInstance(this).findDownloadedAreaById(idToDelete);
+                    String id = downloadedArea.getId();
+                    String name = downloadedArea.getName();
+
+                    File file = new File(downloadedArea.getPath());
+                    if (file.delete()) {
+                        Log.d(LOG, "deleted from filesystem area " + id + " " + name);
+                    } else {
+                        Log.e(LOG, "failed to delete from filesystem area: " + id + " " + name);
+                    }
+
+                    adapter.remove(downloadedArea);
+                    adapter.notifyDataSetChanged();
+                    RealmHelper.getInstance(this).beginTransaction();
+                    RealmHelper.getInstance(this).deleteDownloadedArea(downloadedArea);
+                    RealmHelper.getInstance(this).commitTransaction();
+
+                    Log.d(LOG, "deleted from realm area " + id + " " + name);
                 }
 
-                DownloadedArea downloadedArea = RealmHelper.getInstance(this).findDownloadedAreaById(areaId);
-                Log.d(LOG, "got transferred id: " + areaId + " for " + downloadedArea.getName());
-
-                startDownload(downloadedArea);
-
-            }
-        } else {
-            Log.d(LOG, "area selection cancelled");
+            default:
+                break;
         }
     }
 
     public void downloadCustomArea(View view) {
-        startActivityForResult(new Intent(OfflineAreasActivity.this, AreaSelectionActivity.class), CUSTOM_AREA_REQUEST_CODE);
+        startActivityForResult(new Intent(OfflineAreasActivity.this, AreaSelectionActivity.class), REQUEST_CODE_CUSTOM_AREA);
     }
 
     public void asyncActivity(View view) {
@@ -103,6 +143,7 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
 
     /**
      * Creates the cache managers and starts the download with {@link CacheManager#downloadAreaAsync(Context, BoundingBox, int, int, CacheManager.CacheManagerCallback)}
+     *
      * @param downloadedArea
      */
     public void startDownload(DownloadedArea downloadedArea) {

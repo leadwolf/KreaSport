@@ -8,7 +8,7 @@ KreaSport
 
  - **MainActivity**
 	 - Permissions
-		 - custom frag/activity
+		 - custom frag/originActivity
 		 - request + request receiver
 	 - Transfer downloaded races to `ExploreFragment`
  - **HomeFragment**
@@ -40,8 +40,8 @@ KreaSport
 		 ~~- Backstack~~
 	 - Moved to activities
 		 - Proper switching
-		 - Force selected nav item to current activity
-		 - Sub-activites use fragments, recreate each time bc the activity itself is destroyed when switching with the navigation drawer
+		 - Force selected nav item to current originActivity
+		 - Sub-activites use fragments, recreate each time bc the originActivity itself is destroyed when switching with the navigation drawer
 	 - Callbacks
 		 - Callback for downloads from `HomeFragment`
 		 - Other callback methods in place

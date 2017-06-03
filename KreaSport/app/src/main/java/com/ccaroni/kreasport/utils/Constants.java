@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.utils;
 
+import com.ccaroni.kreasport.view.activities.AreaSelectionActivity;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -62,4 +63,8 @@ public class Constants {
     public static String getBaseString(String simpleName) {
         return "com.ccaroni.kreasport." + simpleName;
     }
+
+
+    private static final String KEY_BASE = Constants.getBaseString(Constants.class.getSimpleName()) + "keys.";
+    public static final String KEY_AREA_ID = KEY_BASE + "area_id";
 }
