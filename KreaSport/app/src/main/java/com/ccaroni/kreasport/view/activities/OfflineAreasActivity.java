@@ -148,6 +148,9 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
      */
     public void startDownload(DownloadedArea downloadedArea) {
 
+        adapter.add(downloadedArea);
+        adapter.notifyDataSetChanged();
+
         SqliteArchiveTileWriter writer = null;
         try {
             writer = new SqliteArchiveTileWriter(downloadedArea.getPath());
