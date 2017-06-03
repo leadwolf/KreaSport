@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +79,7 @@ public class DownloadedAreaAdapter extends ArrayAdapter<DownloadedArea> {
                 , R.drawable.ic_check_circle_black_24dp);
         viewHolder.image.setImageDrawable(drawable);
         viewHolder.name.setText(downloadedArea.getName());
-        viewHolder.size.setText("" + Math.round(downloadedArea.getSize()) + " MB");
+        viewHolder.size.setText(Formatter.formatShortFileSize(originActivity, (long) downloadedArea.getSize()));
         viewHolder.progressBar.setMax(100);
         int roundedProgress = (int) Math.round(downloadedArea.getProgress());
         viewHolder.progressBar.setProgress(roundedProgress);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import io.realm.RealmResults;
 
+import static android.text.format.Formatter.formatShortFileSize;
 import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
 
 public class OfflineAreasActivity extends BaseActivity implements CacheManagerCallbackImpl.CacheCommunicationInterface {
@@ -172,7 +174,7 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
 
 
         int nTiles = cacheManagerCallbackImpl.getTotalTiles();
-        double estimatedSize = 0.001 * (Constants.TILE_KB_SIZE * nTiles); // divide to get in MB
+        double estimatedSize = 1000 * (Constants.TILE_KB_SIZE * nTiles); // multiply to get in bytes
 
         RealmHelper.getInstance(this).beginTransaction();
 
@@ -184,9 +186,17 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
 
     @Override
     public void onTaskComplete(DownloadedArea downloadedArea) {
+        File file = new File(downloadedArea.getPath());
+        long actualSize = file.length();
+        String estimatedSizeFormatted = Formatter.formatShortFileSize(this, (long) downloadedArea.getSize());
+        String actualSizeFormatted = Formatter.formatShortFileSize(this, actualSize);
+        Log.d(LOG, "from estimated: " + estimatedSizeFormatted + " to " + actualSizeFormatted);
+
+
         RealmHelper.getInstance(this).beginTransaction();
 
         downloadedArea.setOngoing(false);
+        downloadedArea.setSize(actualSize);
 
         RealmHelper.getInstance(this).commitTransaction();
 

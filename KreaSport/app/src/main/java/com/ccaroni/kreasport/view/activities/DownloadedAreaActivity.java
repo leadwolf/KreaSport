@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Formatter;
 import android.view.View;
 
 import com.ccaroni.kreasport.R;
@@ -55,7 +56,7 @@ public class DownloadedAreaActivity extends AppCompatActivity implements CustomM
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        int roundedSize = (int) Math.round(downloadedArea.getSize());
+        String roundedSize = Formatter.formatShortFileSize(this, (long) downloadedArea.getSize());
         String date = downloadedArea.getDateDownloaded();
         date = LocalDate.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toString();
 
