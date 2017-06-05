@@ -5,6 +5,8 @@ import android.util.Log;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.RaceRecord;
 
+import org.threeten.bp.OffsetDateTime;
+
 import java.util.UUID;
 
 import io.realm.RealmObject;
@@ -40,6 +42,7 @@ public class RealmRaceRecord extends RealmObject {
     public RealmRaceRecord() {
         inProgress = false;
         id = UUID.randomUUID().toString();
+        dateTime = OffsetDateTime.now().toString();
     }
 
     public String getId() {
