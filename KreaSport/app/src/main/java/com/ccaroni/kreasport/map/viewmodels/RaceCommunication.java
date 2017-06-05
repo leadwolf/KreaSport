@@ -58,8 +58,6 @@ public interface RaceCommunication {
      */
     void onMyLocationClicked();
 
-    void toggleMyLocationFabPosition(boolean isBottomSheetVisible, boolean isStartFabVisible);
-
     void unsetFocusedItem();
 
     /**

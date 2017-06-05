@@ -443,41 +443,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     }
 
-    @Override
-    public void toggleMyLocationFabPosition(boolean isBottomSheetVisible, boolean isStartFabVisible) {
-        RelativeLayout rl = binding.appBarMain.layoutExplore.rlFabMyLocation;
-        CoordinatorLayout.LayoutParams rlFabLP = (CoordinatorLayout.LayoutParams) rl.getLayoutParams();
-
-        FloatingActionButton fab = binding.appBarMain.layoutExplore.fabMyLocation;
-        RelativeLayout.LayoutParams fabLP = (RelativeLayout.LayoutParams) fab.getLayoutParams();
-
-        int dp = 16;
-        boolean modifyFab = false;
-
-        if (isBottomSheetVisible && isStartFabVisible) {
-            rlFabLP.setAnchorId(R.id.rl_fab_start);
-            rlFabLP.anchorGravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            dp = 5;
-        } else if (isBottomSheetVisible) { // i.e. && !isStartFabVisible
-            rlFabLP.setAnchorId(R.id.bottom_sheet);
-            rlFabLP.anchorGravity = Gravity.TOP | Gravity.END;
-            dp = 16;
-            modifyFab = true;
-        } else {
-            rlFabLP.setAnchorId(R.id.frame_layout_map);
-            rlFabLP.anchorGravity = Gravity.BOTTOM | Gravity.END;
-            dp = 16;
-        }
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
-        if (modifyFab) {
-            fabLP.setMargins(px, px, px, px);
-        } else {
-            fabLP.setMargins(0, 0, 0, 0);
-        }
-        // TODO, the first time user reached condition "else if (isBottomSheetVisible)", only a quarter of the fab is visible for a second and then reappears.
-        rlFabLP.setMargins(px, px, px, px);
-    }
-
     public void unsetFocusedItem() {
         raceListOverlay.unSetFocusedItem();
         mMapView.invalidate();

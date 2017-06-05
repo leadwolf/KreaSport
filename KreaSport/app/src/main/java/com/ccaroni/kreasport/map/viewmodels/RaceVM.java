@@ -37,7 +37,7 @@ public abstract class RaceVM extends BaseObservable {
     private int bottomSheetVisibility;
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
-    protected int fabVisibility;
+    protected int fabStartVisibility;
 
     /*
      * Separate attrs because we can't just grab from currentRace or currentCheckpoint depending on raceActive?, progression and even if the user deliberately selects another
@@ -55,6 +55,8 @@ public abstract class RaceVM extends BaseObservable {
     protected LocationUtils mLocationUtils;
 
     private String userId;
+    private int fabMyLocationCornerVisibility;
+    private int fabMyLocationAnchoredVisibility;
 
     /**
      * Default constructor to use. Initializes Realm with activity and calls {@link #initRaceRecord()}.
@@ -97,8 +99,18 @@ public abstract class RaceVM extends BaseObservable {
     }
 
     @Bindable
-    public int getFabVisibility() {
-        return fabVisibility;
+    public int getFabStartVisibility() {
+        return fabStartVisibility;
+    }
+
+    @Bindable
+    public int getFabMyLocationCornerVisibility() {
+        return fabMyLocationCornerVisibility;
+    }
+
+    @Bindable
+    public int getFabMyLocationAnchoredVisibility() {
+        return fabMyLocationAnchoredVisibility;
     }
 
     @Bindable
@@ -277,12 +289,13 @@ public abstract class RaceVM extends BaseObservable {
         passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
         activeInfoVisibility = raceActive ? View.VISIBLE : View.GONE;
 
-        fabVisibility = raceActive || currentRace == null ? View.GONE : View.VISIBLE;
+        fabStartVisibility = raceActive || currentRace == null ? View.GONE : View.VISIBLE;
+        fabMyLocationAnchoredVisibility = fabStartVisibility == View.VISIBLE ? View.VISIBLE : View.GONE;
+        fabMyLocationCornerVisibility = fabStartVisibility == View.VISIBLE ? View.GONE : View.VISIBLE;
         bottomSheetVisibility = currentRace == null ? View.GONE : View.VISIBLE;
 
         notifyChange();
 
-        raceCommunication.toggleMyLocationFabPosition(bottomSheetVisibility == View.VISIBLE, fabVisibility == View.VISIBLE);
     }
 
     /**
