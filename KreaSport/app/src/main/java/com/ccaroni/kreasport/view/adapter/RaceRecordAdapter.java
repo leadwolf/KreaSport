@@ -9,11 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.RaceRecord;
+import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
+import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.views.CustomMapView;
+import com.ccaroni.kreasport.utils.Constants;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 import io.realm.RealmResults;
 
@@ -26,16 +35,19 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
     private static final String LOG = RaceRecordAdapter.class.getSimpleName();
 
 
+    private Activity activity;
     private RaceRecordCommunication raceRecordCommunication;
 
     private static class ViewHolder {
         TextView id;
         TextView date;
-        Button buttonUpload;
+        RelativeLayout rlMap;
     }
 
     public RaceRecordAdapter(Activity activity, RealmResults<RealmRaceRecord> records) {
         super(activity, R.layout.layout_record_item, records);
+
+        this.activity = activity;
 
         if (activity instanceof RaceRecordCommunication) {
             this.raceRecordCommunication = (RaceRecordCommunication) activity;
@@ -61,7 +73,7 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
 
             viewHolder.id = (TextView) convertView.findViewById(R.id.tv_race_id);
             viewHolder.date = (TextView) convertView.findViewById(R.id.tv_date);
-            viewHolder.buttonUpload = (Button) convertView.findViewById(R.id.btn_upload);
+            viewHolder.rlMap = (RelativeLayout) convertView.findViewById(R.id.rl_race_map);
 
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
@@ -74,19 +86,22 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
         // into the template view.
         viewHolder.id.setText(record.getRaceId());
         viewHolder.date.setText(record.getDateTime());
-        viewHolder.buttonUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                raceRecordCommunication.uploadRaceRecord(record.toDTO());
-            }
-        });
+
+
+        RealmRace realmRace = RealmHelper.getInstance(activity).findRaceById(record.getRaceId());
+        if (realmRace != null) {
+            GeoPoint center = new GeoPoint(realmRace.getLatitude(), realmRace.getLongitude());
+
+            MapVM mMapVM = new MapVM(center, Constants.DEFAULT_ZOOM_MAP_ITEM);
+            MapView mMapView = new CustomMapView(activity, null, mMapVM);
+            viewHolder.rlMap.addView(mMapView);
+        }
 
         // Return the completed view to render on screen
         return convertView;
     }
 
     public interface RaceRecordCommunication {
-        public void uploadRaceRecord(RaceRecord raceRecord);
     }
 
 }

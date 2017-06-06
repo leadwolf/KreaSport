@@ -59,6 +59,7 @@ public class Constants {
      * Average size of one downloaded tile
      */
     public static final int TILE_KB_SIZE = 15;
+    public static final int DEFAULT_ZOOM_MAP_ITEM = 13;
 
     public static String getBaseString(String simpleName) {
         return "com.ccaroni.kreasport." + simpleName;

@@ -60,8 +60,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
         binding.contentMyRecords.tvNbRecords.setText(getString(R.string.number_records_title, myRecords.size()));
     }
 
-    @Override
-    public void uploadRaceRecord(RaceRecord raceRecord) {
+    private void uploadRaceRecord(RaceRecord raceRecord) {
         Log.d(LOG, "call to upload race record: " + raceRecord.getId());
         raceRecordService.uploadRaceRecord(raceRecord).enqueue(new Callback<RaceRecord>() {
             @Override
