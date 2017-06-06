@@ -5,13 +5,14 @@ import com.ccaroni.other.RaceRecordNotFoundException;
 import com.ccaroni.repository.RaceRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * Created by Master on 30/05/2017.
@@ -29,8 +30,13 @@ public class RaceRecordController {
     }
 
     @RequestMapping(method = POST)
-    public void createRaceRecord(@RequestBody RaceRecord raceRecord) {
+    public ResponseEntity<?> createRaceRecord(@RequestBody RaceRecord raceRecord) {
         raceRecordRepository.save(raceRecord);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(raceRecord.getId()).toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @RequestMapping(path = "/{id}", method = GET)
