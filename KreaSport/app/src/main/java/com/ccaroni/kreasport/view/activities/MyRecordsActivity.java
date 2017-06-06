@@ -19,6 +19,7 @@ import com.ccaroni.kreasport.databinding.ActivityMyRecordsBinding;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.network.ApiUtils;
 import com.ccaroni.kreasport.network.RaceRecordService;
+import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.view.adapter.RaceRecordAdapter;
 
@@ -108,7 +109,6 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
     @Override
     public void onMapBackgroundTouch() {
-
     }
 
     private void setNumberOfRecords(int nb) {
@@ -128,5 +128,12 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
                 Log.e(LOG, "Unable to delete race record from server: " + t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onRecordSelection(RealmRaceRecord realmRaceRecord) {
+        Intent intent = new Intent(this, RecordActivity.class);
+        intent.putExtra(Constants.KEY_RECORD_ID, realmRaceRecord.getId());
+        startActivityForResult(intent, MyRecordsActivity.REQUEST_CODE_RECORD_ID_TO_DELETE); // if a race is deleted, ot will use this request code
     }
 }

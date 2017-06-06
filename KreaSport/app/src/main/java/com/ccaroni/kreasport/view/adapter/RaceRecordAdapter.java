@@ -1,28 +1,23 @@
 package com.ccaroni.kreasport.view.adapter;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.RaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.view.activities.MyRecordsActivity;
-import com.ccaroni.kreasport.view.activities.RecordActivity;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -30,8 +25,6 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.List;
-
-import io.realm.RealmResults;
 
 /**
  * Created by Master on 24/05/2017.
@@ -46,7 +39,8 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
     private RaceRecordCommunication raceRecordCommunication;
 
     private static class ViewHolder {
-        TextView id;
+        TextView raceId;
+        TextView recordId;
         TextView date;
         RelativeLayout rlMap;
     }
@@ -78,7 +72,8 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.layout_record_item, parent, false);
 
-            viewHolder.id = (TextView) convertView.findViewById(R.id.tv_race_id);
+            viewHolder.raceId = (TextView) convertView.findViewById(R.id.tv_race_id);
+            viewHolder.recordId = (TextView) convertView.findViewById(R.id.tv_record_id);
             viewHolder.date = (TextView) convertView.findViewById(R.id.tv_date);
             viewHolder.rlMap = (RelativeLayout) convertView.findViewById(R.id.rl_race_map);
 
@@ -91,7 +86,8 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
 
         // Populate the data from the data object via the viewHolder object
         // into the template view.
-        viewHolder.id.setText(getContext().getString(R.string.race_id, record.getRaceId()));
+        viewHolder.raceId.setText(getContext().getString(R.string.race_id, record.getRaceId()));
+        viewHolder.recordId.setText(getContext().getString(R.string.record_id, record.getId()));
         String date = LocalDate.parse(record.getDateTime(), DateTimeFormatter.ISO_OFFSET_DATE_TIME).toString();
         viewHolder.date.setText(getContext().getString(R.string.record_date, date));
 
@@ -102,25 +98,35 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
 
             MapVM mMapVM = new MapVM(center, Constants.DEFAULT_ZOOM_MAP_ITEM);
             MapView mMapView = new CustomMapView(activity, null, mMapVM);
-            mMapView.setClickable(false);
+            mMapView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        raceRecordCommunication.onRecordSelection(record);
+                    }
+                    return true;
+                }
+            });
             viewHolder.rlMap.addView(mMapView);
         }
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, RecordActivity.class);
-                intent.putExtra(Constants.KEY_RECORD_ID, record.getId());
-                activity.startActivityForResult(intent, MyRecordsActivity.REQUEST_CODE_RECORD_ID_TO_DELETE);
-            }
-        });
+        convertView.setOnClickListener(onItemClick(raceRecordCommunication, record));
 
         // Return the completed view to render on screen
         return convertView;
     }
 
     public interface RaceRecordCommunication {
+        void onRecordSelection(RealmRaceRecord realmRaceRecord);
+    }
 
+    private static View.OnClickListener onItemClick(final RaceRecordCommunication raceRecordCommunication, final RealmRaceRecord record) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                raceRecordCommunication.onRecordSelection(record);
+            }
+        };
     }
 
 }
