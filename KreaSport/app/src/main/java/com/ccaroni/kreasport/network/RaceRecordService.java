@@ -20,7 +20,7 @@ public interface RaceRecordService {
     Call<Void> uploadRaceRecord(@Body RaceRecord raceRecord);
 
     @DELETE("/records/{id}")
-    Call<RaceRecord> deleteRaceRecord(@Path("id") String recordId);
+    Call<Void> deleteRaceRecord(@Path("id") String recordId);
 
     @GET("/records/{id}")
     Call<RaceRecord> getRaceRecord(@Path("id") String id);

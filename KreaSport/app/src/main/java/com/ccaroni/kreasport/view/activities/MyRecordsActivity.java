@@ -115,33 +115,16 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
         binding.contentMyRecords.tvNbRecords.setText(getString(R.string.number_records_title, nb));
     }
 
-    private void uploadRaceRecord(RaceRecord raceRecord) {
-        Log.d(LOG, "call to upload race record: " + raceRecord.getId());
-        raceRecordService.uploadRaceRecord(raceRecord).enqueue(new Callback<Void>() {
+    private void deleteRemoteRaceRecord(String recordId) {
+        Log.d(LOG, "call to delete race record " + recordId);
+        raceRecordService.deleteRaceRecord(recordId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                Toast.makeText(MyRecordsActivity.this, response.body().toString(), Toast.LENGTH_SHORT).show();
-                Log.d(LOG, "raceRecord submitted to API." + response.body().toString());
+                Log.d(LOG, "delete success: " + response.isSuccessful());
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e(LOG, "Unable to submit post to API: " + t.getMessage());
-            }
-        });
-    }
-
-    private void deleteRemoteRaceRecord(String recordId) {
-        Log.d(LOG, "call to delete race record " + recordId);
-        raceRecordService.deleteRaceRecord(recordId).enqueue(new Callback<RaceRecord>() {
-            @Override
-            public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
-                Log.d(LOG, "raceRecord submitted to API." + response.body().toString());
-                Log.d(LOG, "response: " + response.body().toString());
-            }
-
-            @Override
-            public void onFailure(Call<RaceRecord> call, Throwable t) {
                 Log.e(LOG, "Unable to delete race record from server: " + t.getMessage());
             }
         });
