@@ -92,6 +92,8 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
                 raceRecordAdapter.remove(raceRecord);
                 raceRecordAdapter.notifyDataSetChanged();
 
+                deleteRemoteRaceRecord(raceRecord.getId());
+
 
                 RealmHelper.getInstance(this).beginTransaction();
                 raceRecord.deleteFromRealm();
@@ -102,6 +104,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
             }
         }
     }
+
 
     @Override
     public void onMapBackgroundTouch() {
@@ -118,12 +121,28 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
             @Override
             public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
                 Toast.makeText(MyRecordsActivity.this, response.body().toString(), Toast.LENGTH_SHORT).show();
-                Log.i(LOG, "raceRecord submitted to API." + response.body().toString());
+                Log.d(LOG, "raceRecord submitted to API." + response.body().toString());
             }
 
             @Override
             public void onFailure(Call<RaceRecord> call, Throwable t) {
                 Log.e(LOG, "Unable to submit post to API: " + t.getMessage());
+            }
+        });
+    }
+
+    private void deleteRemoteRaceRecord(String recordId) {
+        Log.d(LOG, "call to delete race record " + recordId);
+        raceRecordService.deleteRaceRecord(recordId).enqueue(new Callback<RaceRecord>() {
+            @Override
+            public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
+                Log.d(LOG, "raceRecord submitted to API." + response.body().toString());
+                Log.d(LOG, "response: " + response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<RaceRecord> call, Throwable t) {
+                Log.e(LOG, "Unable to delete race record from server: " + t.getMessage());
             }
         });
     }
