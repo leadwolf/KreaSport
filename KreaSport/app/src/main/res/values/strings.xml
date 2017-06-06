@@ -185,4 +185,5 @@
     <string name="offline_areas_button_download_custom_area">Download a custom area</string>
     <string name="title_activity_downloaded_area">DownloadedAreaActivity</string>
     <string name="downloaded_area_description" formatted="false">%s ● Downloaded %s</string>
+    <string name="number_records_title">Number of records: %d</string>
 </resources>

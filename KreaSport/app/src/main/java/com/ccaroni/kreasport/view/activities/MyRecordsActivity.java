@@ -57,7 +57,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
         RaceRecordAdapter adapter = new RaceRecordAdapter(this, myRecords);
         binding.contentMyRecords.listViewRecords.setAdapter(adapter);
-        binding.contentMyRecords.tvNbRecords.setText("" + myRecords.size());
+        binding.contentMyRecords.tvNbRecords.setText(getString(R.string.number_records_title, myRecords.size()));
     }
 
     @Override
