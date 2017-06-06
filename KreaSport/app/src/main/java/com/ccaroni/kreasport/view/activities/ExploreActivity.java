@@ -150,7 +150,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         List<CustomOverlayItem> items = raceVM.getOverlayItems();
 
         raceListOverlay = new ItemizedOverlayWithFocus<>(items, itemGestureListener, this);
-        raceListOverlay.setFocusItemsOnTap(true);
+//        raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
     }

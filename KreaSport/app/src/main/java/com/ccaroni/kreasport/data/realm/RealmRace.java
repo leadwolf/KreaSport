@@ -6,6 +6,7 @@ import android.util.Log;
 import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
@@ -176,5 +177,17 @@ public class RealmRace extends RealmObject {
      */
     public boolean isOnLastCheckpoint(int progression) {
         return progression == realmCheckpoints.size()-1;
+    }
+
+    private List<GeoPoint> getCheckpointGeoPoints() {
+        List<GeoPoint> geoPoints = new ArrayList<>();
+        for (RealmCheckpoint realmCheckpoint : realmCheckpoints) {
+            geoPoints.add(new GeoPoint(realmCheckpoint.getLatitude(), realmCheckpoint.getLongitude()));
+        }
+        return geoPoints;
+    }
+
+    public BoundingBox getBoundingBox() {
+        return BoundingBox.fromGeoPoints(getCheckpointGeoPoints());
     }
 }

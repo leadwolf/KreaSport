@@ -19,12 +19,15 @@ import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
 
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.List;
+
+import static com.ccaroni.kreasport.utils.Constants.DEFAULT_ZOOM_MAP_ITEM;
 
 /**
  * Created by Master on 24/05/2017.
@@ -96,17 +99,23 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
         if (realmRace != null) {
             GeoPoint center = new GeoPoint(realmRace.getLatitude(), realmRace.getLongitude());
 
-            MapVM mMapVM = new MapVM(center, Constants.DEFAULT_ZOOM_MAP_ITEM);
+            MapVM mMapVM = new MapVM(center, DEFAULT_ZOOM_MAP_ITEM);
             MapView mMapView = new CustomMapView(activity, null, mMapVM);
-            mMapView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        raceRecordCommunication.onRecordSelection(record);
-                    }
-                    return true;
-                }
-            });
+
+            mMapView.setMaxZoomLevel(DEFAULT_ZOOM_MAP_ITEM);
+            mMapView.setMinZoomLevel(DEFAULT_ZOOM_MAP_ITEM);
+            mMapView.setScrollableAreaLimitDouble(realmRace.getBoundingBox());
+
+            mMapView.setOnClickListener(onItemClick(raceRecordCommunication, record));
+//            mMapView.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                        raceRecordCommunication.onRecordSelection(record);
+//                    }
+//                    return true;
+//                }
+//            });
             viewHolder.rlMap.addView(mMapView);
         }
 
