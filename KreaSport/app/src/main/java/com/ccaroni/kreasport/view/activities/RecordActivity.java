@@ -104,6 +104,23 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
 
             }
         });
+
+        binding.contentRecord.btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                raceRecordService.uploadRaceRecord(raceRecord.toDTO()).enqueue(new Callback<RaceRecord>() {
+                    @Override
+                    public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
+                        Log.d(LOG, "on response for race upload");
+                    }
+
+                    @Override
+                    public void onFailure(Call<RaceRecord> call, Throwable t) {
+                        Log.d(LOG, "error uploading race record: " + t.getMessage());
+                    }
+                });
+            }
+        });
     }
 
     private void updateUploadStatus() {
@@ -121,7 +138,7 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
 
             @Override
             public void onFailure(Call<RaceRecord> call, Throwable t) {
-                Log.d(LOG, "error calling to check if race record uploaded");
+                Log.d(LOG, "error calling to check if race record uploaded: " + t.getMessage());
                 setUploadStatus(false);
             }
         });
