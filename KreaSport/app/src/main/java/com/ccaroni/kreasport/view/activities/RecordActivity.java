@@ -44,6 +44,8 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
     private RaceRecordService raceRecordService;
     private RealmRaceRecord raceRecord;
 
+    private int uploadAttempts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,8 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        uploadAttempts = 0;
 
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
         raceRecordService = ApiUtils.getRaceRecordService(true, accessToken);
@@ -151,6 +155,14 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
      * @param realmRaceRecord
      */
     private void uploadRaceRecord(RealmRaceRecord realmRaceRecord) {
+
+        if (uploadAttempts >= Constants.MAX_CONSECUTIVE_UPLOAD_ATTEMPTS) {
+            Log.d(LOG, "too many consecutive upload attempts, stopping");
+            return;
+        }
+        uploadAttempts++;
+
+
         Log.d(LOG, "call to upload record: " + realmRaceRecord.getId());
         raceRecordService.uploadRaceRecord(raceRecord.toDTO()).enqueue(new Callback<Void>() {
             @Override

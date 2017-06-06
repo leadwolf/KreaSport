@@ -60,6 +60,7 @@ public class Constants {
      */
     public static final int TILE_KB_SIZE = 15;
     public static final int DEFAULT_ZOOM_MAP_ITEM = 13;
+    public static final int MAX_CONSECUTIVE_UPLOAD_ATTEMPTS = 3;
 
     public static String getBaseString(String simpleName) {
         return "com.ccaroni.kreasport." + simpleName;
