@@ -186,4 +186,8 @@
     <string name="title_activity_downloaded_area">DownloadedAreaActivity</string>
     <string name="downloaded_area_description" formatted="false">%s ● Downloaded %s</string>
     <string name="number_records_title">Number of records: %d</string>
+    <string name="title_activity_record">RecordActivity</string>
+    <string name="record_date">Date: %s</string>
+    <string name="record_id">Record id: %s</string>
+    <string name="race_id">Race id: %s</string>
 </resources>

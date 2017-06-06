@@ -68,4 +68,5 @@ public class Constants {
 
     private static final String KEY_BASE = Constants.getBaseString(Constants.class.getSimpleName()) + "keys.";
     public static final String KEY_AREA_ID = KEY_BASE + "area_id";
+    public static final String KEY_RECORD_ID = KEY_BASE + "record_id";
 }

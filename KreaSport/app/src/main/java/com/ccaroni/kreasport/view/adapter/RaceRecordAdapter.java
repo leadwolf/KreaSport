@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.view.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -20,9 +21,15 @@ import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.view.activities.MyRecordsActivity;
+import com.ccaroni.kreasport.view.activities.RecordActivity;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.util.List;
 
 import io.realm.RealmResults;
 
@@ -44,7 +51,7 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
         RelativeLayout rlMap;
     }
 
-    public RaceRecordAdapter(Activity activity, RealmResults<RealmRaceRecord> records) {
+    public RaceRecordAdapter(Activity activity, List<RealmRaceRecord> records) {
         super(activity, R.layout.layout_record_item, records);
 
         this.activity = activity;
@@ -84,8 +91,9 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
 
         // Populate the data from the data object via the viewHolder object
         // into the template view.
-        viewHolder.id.setText(record.getRaceId());
-        viewHolder.date.setText(record.getDateTime());
+        viewHolder.id.setText(getContext().getString(R.string.race_id, record.getRaceId()));
+        String date = LocalDate.parse(record.getDateTime(), DateTimeFormatter.ISO_OFFSET_DATE_TIME).toString();
+        viewHolder.date.setText(getContext().getString(R.string.record_date, date));
 
 
         RealmRace realmRace = RealmHelper.getInstance(activity).findRaceById(record.getRaceId());
@@ -94,14 +102,25 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
 
             MapVM mMapVM = new MapVM(center, Constants.DEFAULT_ZOOM_MAP_ITEM);
             MapView mMapView = new CustomMapView(activity, null, mMapVM);
+            mMapView.setClickable(false);
             viewHolder.rlMap.addView(mMapView);
         }
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, RecordActivity.class);
+                intent.putExtra(Constants.KEY_RECORD_ID, record.getId());
+                activity.startActivityForResult(intent, MyRecordsActivity.REQUEST_CODE_RECORD_ID_TO_DELETE);
+            }
+        });
 
         // Return the completed view to render on screen
         return convertView;
     }
 
     public interface RaceRecordCommunication {
+
     }
 
 }

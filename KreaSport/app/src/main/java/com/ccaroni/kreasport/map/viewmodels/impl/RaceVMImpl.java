@@ -63,6 +63,7 @@ public class RaceVMImpl extends RaceVM {
 
         Log.d(LOG, "started recording for " + currentRace.getId() + " and record id: " + raceRecord.getId());
         raceRecord.setInProgress(true);
+        raceRecord.setStarted(true);
         raceRecord.setRaceId(currentRace.getId());
 
         RealmHelper.getInstance(null).commitTransaction();

@@ -27,6 +27,7 @@ public class RealmRaceRecord extends RealmObject {
     private String raceId;
     private String userId;
 
+    private boolean started;
     private boolean inProgress;
     private long timeExpired;
     private int progression;
@@ -40,6 +41,7 @@ public class RealmRaceRecord extends RealmObject {
 //    private OffsetDateTime dateTime;
 
     public RealmRaceRecord() {
+        started = false;
         inProgress = false;
         id = UUID.randomUUID().toString();
         dateTime = OffsetDateTime.now().toString();
@@ -67,6 +69,14 @@ public class RealmRaceRecord extends RealmObject {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 
     public boolean isInProgress() {

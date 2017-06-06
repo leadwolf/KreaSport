@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.dto.Race;
+import com.ccaroni.kreasport.data.dto.RaceRecord;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
@@ -145,6 +146,7 @@ public class RealmHelper {
     public RealmResults<RealmRaceRecord> getMyRecords(String userId) {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("userId", userId)
+                .equalTo("started", true)
                 .findAll();
     }
 
@@ -170,4 +172,11 @@ public class RealmHelper {
     public void deleteDownloadedArea(DownloadedArea downloadedArea) {
         downloadedArea.deleteFromRealm();
     }
+
+    public RealmRaceRecord findRecordById(String recordId) {
+        return realm.where(RealmRaceRecord.class)
+                .equalTo("id", recordId)
+                .findFirst();
+    }
+
 }
