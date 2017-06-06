@@ -117,15 +117,15 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
     private void uploadRaceRecord(RaceRecord raceRecord) {
         Log.d(LOG, "call to upload race record: " + raceRecord.getId());
-        raceRecordService.uploadRaceRecord(raceRecord).enqueue(new Callback<RaceRecord>() {
+        raceRecordService.uploadRaceRecord(raceRecord).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 Toast.makeText(MyRecordsActivity.this, response.body().toString(), Toast.LENGTH_SHORT).show();
                 Log.d(LOG, "raceRecord submitted to API." + response.body().toString());
             }
 
             @Override
-            public void onFailure(Call<RaceRecord> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(LOG, "Unable to submit post to API: " + t.getMessage());
             }
         });

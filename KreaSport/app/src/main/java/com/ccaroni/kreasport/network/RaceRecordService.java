@@ -17,7 +17,7 @@ import retrofit2.http.Path;
 public interface RaceRecordService {
 
     @POST("/records")
-    Call<RaceRecord> uploadRaceRecord(@Body RaceRecord raceRecord);
+    Call<Void> uploadRaceRecord(@Body RaceRecord raceRecord);
 
     @DELETE("/records/{id}")
     Call<RaceRecord> deleteRaceRecord(@Path("id") String recordId);

@@ -2,9 +2,9 @@ package com.ccaroni.kreasport.view.activities;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +33,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.os.Build.VERSION_CODES.M;
 import static com.ccaroni.kreasport.utils.Constants.KEY_RECORD_ID;
 
 public class RecordActivity extends AppCompatActivity implements CustomMapView.MapViewCommunication {
@@ -108,40 +107,37 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
         binding.contentRecord.btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                raceRecordService.uploadRaceRecord(raceRecord.toDTO()).enqueue(new Callback<RaceRecord>() {
-                    @Override
-                    public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
-                        Log.d(LOG, "on response for race upload");
-                    }
-
-                    @Override
-                    public void onFailure(Call<RaceRecord> call, Throwable t) {
-                        Log.d(LOG, "error uploading race record: " + t.getMessage());
-                    }
-                });
+                uploadRaceRecord(raceRecord);
             }
         });
     }
 
+    /**
+     * Verifies the upload status of the record in Realm. If not, compares against what the server has.<br>
+     * Calls {@link #setUploadStatus(boolean)} in any case with the relevant status
+     */
     private void updateUploadStatus() {
-        raceRecordService.getRaceRecord(raceRecord.getId()).enqueue(new Callback<RaceRecord>() {
-            @Override
-            public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
-                if (response.isSuccessful()) {
-                    Log.d(LOG, "correctly found race record, means is already uploaded");
-                    setUploadStatus(true);
-                } else {
-                    Log.d(LOG, "error getting response to see if race record uploaded");
-                    setUploadStatus(false);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<RaceRecord> call, Throwable t) {
-                Log.d(LOG, "error calling to check if race record uploaded: " + t.getMessage());
-                setUploadStatus(false);
-            }
-        });
+        if (raceRecord.isSynced()) {
+            Log.d(LOG, "record already synced, updating status");
+            setUploadStatus(true);
+        } else {
+            Log.d(LOG, "record not verified synced, checking against server");
+            raceRecordService.getRaceRecord(raceRecord.getId()).enqueue(new Callback<RaceRecord>() {
+                @Override
+                public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
+                    Log.d(LOG, "GET RaceRecord response: " + response.code());
+                    setUploadStatus(response.isSuccessful());
+                }
+
+                @Override
+                public void onFailure(Call<RaceRecord> call, Throwable t) {
+                    Log.d(LOG, "error checking upload status: " + t.getMessage());
+                    setUploadStatus(false);
+
+                }
+            });
+        }
     }
 
     @Override
@@ -149,11 +145,55 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
 
     }
 
+    /**
+     * Uses {@link #raceRecordService} to upload the race. Calls {@link #setUploadStatus(boolean)} on both response &nd failure.
+     *
+     * @param realmRaceRecord
+     */
+    private void uploadRaceRecord(RealmRaceRecord realmRaceRecord) {
+        Log.d(LOG, "call to upload record: " + realmRaceRecord.getId());
+        raceRecordService.uploadRaceRecord(raceRecord.toDTO()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d(LOG, "on response for race upload, success: " + response.isSuccessful());
+                setUploadStatus(response.isSuccessful());
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(LOG, "error uploading race record: " + t.getMessage());
+                setUploadStatus(false);
+            }
+        });
+
+    }
+
+    /**
+     * Sets the upload status. Sets the upload button accordingly (cant press if already uploaded).
+     *
+     * @param isUploaded <b>false:</b> set the icon, enable upload button and call to upload<br>
+     *                   <b>true:</b> set the icon, disable upload button and update the record in Realm
+     */
     private void setUploadStatus(boolean isUploaded) {
         if (isUploaded) {
             binding.contentRecord.imageViewUploadStatus.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_cloud_done_black_24dp));
         } else {
             binding.contentRecord.imageViewUploadStatus.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_cloud_upload_black_24dp));
+        }
+
+
+        if (!raceRecord.isSynced()) {
+            RealmHelper.getInstance(this).beginTransaction();
+            raceRecord.setSynced(isUploaded);
+            RealmHelper.getInstance(this).commitTransaction();
+        }
+
+        binding.contentRecord.btnUpload.setEnabled(!isUploaded);
+        if (!isUploaded) {
+            uploadRaceRecord(raceRecord);
+            binding.contentRecord.btnUpload.getBackground().setColorFilter(null);
+        } else {
+            binding.contentRecord.btnUpload.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
         }
     }
 }
