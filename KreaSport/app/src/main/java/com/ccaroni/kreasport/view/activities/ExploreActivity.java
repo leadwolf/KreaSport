@@ -13,14 +13,10 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.widget.Chronometer;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;

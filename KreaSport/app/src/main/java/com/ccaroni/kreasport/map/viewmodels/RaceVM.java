@@ -56,7 +56,8 @@ public abstract class RaceVM extends BaseObservable {
 
     private String userId;
     private int fabMyLocationCornerVisibility;
-    private int fabMyLocationAnchoredVisibility;
+    private int fabMyLocationAnchoredStartVisibility;
+    private int fabMyLocationAnchoredBottomSheetVisibility;
 
     /**
      * Default constructor to use. Initializes Realm with activity and calls {@link #initRaceRecord()}.
@@ -109,8 +110,13 @@ public abstract class RaceVM extends BaseObservable {
     }
 
     @Bindable
-    public int getFabMyLocationAnchoredVisibility() {
-        return fabMyLocationAnchoredVisibility;
+    public int getFabMyLocationAnchoredStartVisibility() {
+        return fabMyLocationAnchoredStartVisibility;
+    }
+
+    @Bindable
+    public int getFabMyLocationAnchoredBottomSheetVisibility() {
+        return fabMyLocationAnchoredBottomSheetVisibility;
     }
 
     @Bindable
@@ -290,9 +296,12 @@ public abstract class RaceVM extends BaseObservable {
         activeInfoVisibility = raceActive ? View.VISIBLE : View.GONE;
 
         fabStartVisibility = raceActive || currentRace == null ? View.GONE : View.VISIBLE;
-        fabMyLocationAnchoredVisibility = fabStartVisibility == View.VISIBLE ? View.VISIBLE : View.GONE;
-        fabMyLocationCornerVisibility = fabStartVisibility == View.VISIBLE ? View.GONE : View.VISIBLE;
         bottomSheetVisibility = currentRace == null ? View.GONE : View.VISIBLE;
+
+        fabMyLocationAnchoredStartVisibility = fabStartVisibility == View.VISIBLE ? View.VISIBLE : View.GONE;
+        fabMyLocationAnchoredBottomSheetVisibility = bottomSheetVisibility == View.VISIBLE && fabStartVisibility == View.GONE ? View.VISIBLE : View.GONE;
+        fabMyLocationCornerVisibility = bottomSheetVisibility == View.GONE ? View.VISIBLE : View.GONE;
+
 
         notifyChange();
 
