@@ -45,16 +45,28 @@ public class RaceRecordController {
         return raceRecordRepository.findById(id).get();
     }
 
-    private void validateRaceRecord(String id) {
-        if (!raceRecordRepository.findById(id).isPresent())
-            throw new RaceRecordNotFoundException(id);
-    }
-
     @RequestMapping(path = "{id}", method = DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteRaceRecordById(@PathVariable("id") String id) {
         validateRaceRecord(id);
         raceRecordRepository.deleteById(id);
     }
+
+
+    @RequestMapping(path = "batch", method = DELETE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteBatchRecords(@RequestBody List<String> idsToDelete) {
+        for (String id : idsToDelete) {
+            validateRaceRecord(id);
+            raceRecordRepository.deleteById(id);
+        }
+    }
+
+
+    private void validateRaceRecord(String id) {
+        if (!raceRecordRepository.findById(id).isPresent())
+            throw new RaceRecordNotFoundException(id);
+    }
+
 
 }
