@@ -95,6 +95,9 @@ public class RealmRaceRecord extends RealmObject {
         this.timeExpired = timeExpired;
     }
 
+    /**
+     * @return the index of the last checkpoint the user reached.
+     */
     public int getProgression() {
         return progression;
     }
@@ -103,6 +106,9 @@ public class RealmRaceRecord extends RealmObject {
         this.progression = progression;
     }
 
+    /**
+     * @return the index of the checkpoint that the current geofence is targeting. Is supposed to be one increment ahead of {@link #getProgression()}
+     */
     public int getGeofenceProgression() {
         return geofenceProgression;
     }
@@ -151,7 +157,6 @@ public class RealmRaceRecord extends RealmObject {
     }
 
     /**
-     *
      * @param inProgress
      * @param directSave if this method should modify the value right here. Set to false if you are going to batch save some values.
      */

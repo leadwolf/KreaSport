@@ -88,6 +88,7 @@ public abstract class RaceVM extends BaseObservable {
         raceRecord.setUserId(userId);
 
         RealmHelper.getInstance(null).commitTransaction();
+        Log.d(LOG, "prepared new record: " + raceRecord.getId());
     }
 
     @Bindable
@@ -351,6 +352,11 @@ public abstract class RaceVM extends BaseObservable {
      * The real method that starts the race.
      */
     protected abstract void startRace();
+    /**
+     * The real method that starts the race.
+     * @param toArchive
+     */
+    protected abstract void stopRace(boolean toArchive);
 
     /**
      * Call to stop the current race. Used by activeBottomSheet.
@@ -369,4 +375,9 @@ public abstract class RaceVM extends BaseObservable {
     public boolean isRaceActive() {
         return raceActive;
     }
+
+    /**
+     * Call from the activity to confirm that user wants to stop in response to {@link RaceCommunication#confirmStopRace()}
+     */
+    public abstract void confirmStop();
 }

@@ -70,9 +70,12 @@ public class RaceVMImpl extends RaceVM {
     }
 
     /**
-     * Stops the race recording, archives it and notifies the {@link android.content.Context} that whatever implementation of a chronometer should be stopped.
+     * Stops the race recording, archives it and notifies the {@link #raceCommunication} that whatever implementation of a chronometer should be stopped.
+     *
+     * @param toArchive
      */
-    private void stopRace() {
+    @Override
+    protected void stopRace(boolean toArchive) {
         if (currentRace == null) {
             throw new IllegalStateException("Cannot stop race when no race is in use");
         }
@@ -82,7 +85,15 @@ public class RaceVMImpl extends RaceVM {
 
         changeVisibilitiesOnRaceState(false);
 
-        archiveRaceRecord();
+        if (toArchive) {
+            archiveRaceRecord();
+        } else {
+            Log.d(LOG, "deleting record" + raceRecord.getId());
+            RealmHelper.getInstance(null).beginTransaction();
+            raceRecord.deleteFromRealm();
+            RealmHelper.getInstance(null).commitTransaction();
+            initRaceRecord();
+        }
 
         raceCommunication.stopChronometer();
     }
@@ -91,6 +102,7 @@ public class RaceVMImpl extends RaceVM {
      * Stops the recording in raceRecord (saved with Realm), creates a new one for next time the user starts.
      */
     private void archiveRaceRecord() {
+        Log.d(LOG, "archiving: " + raceRecord.getId());
         final long timeDifference = SystemClock.currentThreadTimeMillis() - baseAtStart;
 
         RealmHelper.getInstance(null).beginTransaction();
@@ -227,7 +239,7 @@ public class RaceVMImpl extends RaceVM {
             throw new IllegalStateException("No race is active");
         }
 
-        stopRace();
+        raceCommunication.confirmStopRace();
     }
 
 
@@ -237,5 +249,11 @@ public class RaceVMImpl extends RaceVM {
     @Override
     public void saveOngoingBaseTime() {
         // TODO, save the base time in RealmRaceRecord to be persisted
+    }
+
+    @Override
+    public void confirmStop() {
+        Log.d(LOG, raceCommunication + " confirmed stop");
+        stopRace(currentRace.isOnLastCheckpoint(raceRecord.getProgression()));
     }
 }

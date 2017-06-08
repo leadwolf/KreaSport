@@ -45,6 +45,8 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
     private RealmRaceRecord raceRecord;
 
     private int uploadAttempts;
+    private Call<Void> uploadCall;
+    private Call<RaceRecord> existingCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +100,14 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
         binding.contentRecord.btnDeleteRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // cancel ongoing any network request on deletion because their callbacks reference a now deleted object
+                Log.d(LOG, "call to delete " + recordId + " , cancelling any network requests");
+                if (existingCall != null)
+                    existingCall.cancel();
+                if (uploadCall != null)
+                    uploadCall.cancel();
+
                 Intent intent = new Intent();
                 intent.putExtra(KEY_RECORD_ID, recordId);
 
@@ -127,7 +137,8 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
             setUploadStatus(true);
         } else {
             Log.d(LOG, "record not verified synced, checking against server");
-            raceRecordService.getRaceRecord(raceRecord.getId()).enqueue(new Callback<RaceRecord>() {
+            existingCall = raceRecordService.getRaceRecord(raceRecord.getId());
+            existingCall.enqueue(new Callback<RaceRecord>() {
                 @Override
                 public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
                     Log.d(LOG, "GET RaceRecord response: " + response.code());
@@ -164,7 +175,8 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
 
 
         Log.d(LOG, "call to upload record: " + realmRaceRecord.getId());
-        raceRecordService.uploadRaceRecord(raceRecord.toDTO()).enqueue(new Callback<Void>() {
+        uploadCall = raceRecordService.uploadRaceRecord(raceRecord.toDTO());
+        uploadCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d(LOG, "on response for race upload, success: " + response.isSuccessful());

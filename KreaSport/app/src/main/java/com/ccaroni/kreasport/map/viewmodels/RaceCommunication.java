@@ -69,4 +69,9 @@ public interface RaceCommunication {
      * @return if an animation will be needed
      */
     boolean needToAnimateToStart(GeoPoint startPoint);
+
+    /**
+     * Call by the {@link RaceVM} for a user interaction to confirm that the race should be stopped in the middle of its progression.
+     */
+    void confirmStopRace();
 }

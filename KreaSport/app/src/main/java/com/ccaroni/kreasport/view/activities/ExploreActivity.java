@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.view.activities;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
@@ -15,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Chronometer;
 import android.widget.Toast;
@@ -456,6 +458,24 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
         return !reducedBB.contains(startPoint);
 
+    }
+
+    @Override
+    public void confirmStopRace() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
+                .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        raceVM.confirmStop();
+                    }
+                })
+                .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object and return it
+        builder.create().show();
     }
 
     /* END RACE COMMS */
