@@ -62,6 +62,14 @@ public class RaceRecordController {
         }
     }
 
+    @RequestMapping(path = "batch", method = POST)
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void saveBatchRecords(@RequestBody List<RaceRecord> recordList) {
+        for (RaceRecord raceRecord : recordList) {
+            raceRecordRepository.save(raceRecord);
+        }
+    }
+
 
     private void validateRaceRecord(String id) {
         if (!raceRecordRepository.findById(id).isPresent())
