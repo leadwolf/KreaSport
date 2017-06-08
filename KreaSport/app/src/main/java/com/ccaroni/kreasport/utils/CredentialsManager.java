@@ -16,6 +16,7 @@ import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.view.activities.LoginActivity;
+import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +37,7 @@ public class CredentialsManager {
     private static final String KEY_USER_ID = "user_id";
 
     private static long lastCheckTime;
+    private static String KEY_USER_PROFILE = "user_profile";
 
     public static void saveCredentials(Context context, Credentials credentials) {
         Log.d(LOG, "saving access token " + credentials.getAccessToken());
@@ -81,6 +83,7 @@ public class CredentialsManager {
                 .apply();
 
         deleteUserId(context);
+        deleteUserProfile(context);
     }
 
     public static void saveUserId(Context context, String id) {
@@ -211,6 +214,38 @@ public class CredentialsManager {
                         }
                     });
         }
+
+    }
+
+    public static void saveUserProfile(Context context, UserProfile profile) {
+        String profileJson = new Gson().toJson(profile, UserProfile.class);
+        SharedPreferences sp = context.getSharedPreferences(
+                AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        sp.edit()
+                .putString(KEY_USER_PROFILE, profileJson)
+                .apply();
+
+    }
+
+    public static UserProfile getUserProfile(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(
+                AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        String profileJson = sp.getString(KEY_USER_PROFILE, null);
+        if (profileJson != null) {
+            UserProfile userProfile = new Gson().fromJson(profileJson, UserProfile.class);
+            return userProfile;
+        }
+        return null;
+    }
+
+    public static void deleteUserProfile(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(
+                AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        sp.edit()
+                .putString(KEY_USER_PROFILE, null);
 
     }
 }

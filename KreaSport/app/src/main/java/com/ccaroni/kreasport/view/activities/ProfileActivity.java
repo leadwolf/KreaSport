@@ -57,7 +57,14 @@ public class ProfileActivity extends BaseActivity {
 
         setBindings();
 
-        getUserData();
+        userProfile = CredentialsManager.getUserProfile(this);
+        if (userProfile == null) {
+            Log.d(LOG, "stored user profile is null, will download");
+            getUserData();
+        } else {
+            Log.d(LOG, "got stored user profile, will use to set data");
+            setUserData();
+        }
     }
 
     private void setBindings() {
@@ -187,6 +194,7 @@ public class ProfileActivity extends BaseActivity {
             userProfile = profile;
             Log.d(LOG, "got user profile");
             setUserData();
+            CredentialsManager.saveUserProfile(ProfileActivity.this, profile);
         }
 
         @Override
