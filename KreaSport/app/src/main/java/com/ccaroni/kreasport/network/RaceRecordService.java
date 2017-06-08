@@ -3,6 +3,8 @@ package com.ccaroni.kreasport.network;
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.dto.RaceRecord;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -24,4 +26,7 @@ public interface RaceRecordService {
 
     @GET("/records/{id}")
     Call<RaceRecord> getRaceRecord(@Path("id") String id);
+
+    @DELETE("/records/batch")
+    Call<Void> deleteMultipleRecords(@Body List<String> idsToDeleteList);
 }

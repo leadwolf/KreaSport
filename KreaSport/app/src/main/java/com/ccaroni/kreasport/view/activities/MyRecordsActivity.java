@@ -24,6 +24,7 @@ import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.view.adapter.RaceRecordAdapter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -57,6 +58,42 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
         raceRecordService = ApiUtils.getRaceRecordService(true, accessToken);
+
+        deleteMarkedRecords();
+
+    }
+
+    /**
+     * This method fins all records that have been marked for deletion and calls for them to be deleted.
+     */
+    private void deleteMarkedRecords() {
+
+        final RealmResults<RealmRaceRecord> realmList = RealmHelper.getInstance(this).getRecordsToDelete();
+
+        final List<String> idsToDeleteList = new ArrayList<>();
+        for (RealmRaceRecord record : realmList) {
+            idsToDeleteList.add(record.getId());
+        }
+
+        raceRecordService.deleteMultipleRecords(idsToDeleteList).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d(LOG, "remote batch deletion success: " + response.isSuccessful());
+                Log.d(LOG, "will delete locally");
+
+                RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
+                boolean deleted = realmList.deleteAllFromRealm();
+                RealmHelper.getInstance(MyRecordsActivity.this).commitTransaction();
+
+                Log.d(LOG, "local deletion success: " + deleted);
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e(LOG, "failed remote batch record deletion");
+            }
+        });
 
     }
 
@@ -92,16 +129,11 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
                 RealmRaceRecord raceRecord = RealmHelper.getInstance(this).findRecordById(recordIdToDelete);
                 raceRecordAdapter.remove(raceRecord);
                 raceRecordAdapter.notifyDataSetChanged();
-
-                deleteRemoteRaceRecord(raceRecord.getId());
-
-
-                RealmHelper.getInstance(this).beginTransaction();
-                raceRecord.deleteFromRealm();
-                RealmHelper.getInstance(this).commitTransaction();
-
-
                 setNumberOfRecords(raceRecordAdapter.getCount());
+
+                deleteRemoteRaceRecord(raceRecord);
+
+
             }
         }
     }
@@ -115,17 +147,26 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
         binding.contentMyRecords.tvNbRecords.setText(getString(R.string.number_records_title, nb));
     }
 
-    private void deleteRemoteRaceRecord(String recordId) {
-        Log.d(LOG, "call to delete race record " + recordId);
-        raceRecordService.deleteRaceRecord(recordId).enqueue(new Callback<Void>() {
+    private void deleteRemoteRaceRecord(final RealmRaceRecord raceRecord) {
+        Log.d(LOG, "call to delete race record " + raceRecord);
+        raceRecordService.deleteRaceRecord(raceRecord.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d(LOG, "delete success: " + response.isSuccessful());
+
+                RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
+                raceRecord.deleteFromRealm();
+                RealmHelper.getInstance(MyRecordsActivity.this).commitTransaction();
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e(LOG, "Unable to delete race record from server: " + t.getMessage());
+                Log.d(LOG, "Will mark for deletion");
+
+                RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
+                raceRecord.markForDeletion();
+                RealmHelper.getInstance(MyRecordsActivity.this).commitTransaction();
             }
         });
     }

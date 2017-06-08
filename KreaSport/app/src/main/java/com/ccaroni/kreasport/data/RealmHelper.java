@@ -99,6 +99,7 @@ public class RealmHelper {
 
     /**
      * Finds the race matching the id.
+     *
      * @param id the id to lookup
      * @return the race found or null
      */
@@ -143,10 +144,15 @@ public class RealmHelper {
         realm.delete(RealmRaceRecord.class);
     }
 
+    /**
+     * @param userId
+     * @return records that have been started (because we pre load record objects in {@link com.ccaroni.kreasport.map.viewmodels.RaceVM} and that are <b>NOT</b> marked for deletion
+     */
     public RealmResults<RealmRaceRecord> getMyRecords(String userId) {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("userId", userId)
                 .equalTo("started", true)
+                .equalTo("toDelete", false)
                 .findAll();
     }
 
@@ -173,10 +179,17 @@ public class RealmHelper {
         downloadedArea.deleteFromRealm();
     }
 
+
     public RealmRaceRecord findRecordById(String recordId) {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("id", recordId)
                 .findFirst();
+    }
+
+    public RealmResults<RealmRaceRecord> getRecordsToDelete() {
+        return realm.where(RealmRaceRecord.class)
+                .equalTo("toDelete", true)
+                .findAll();
     }
 
 }

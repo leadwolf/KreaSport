@@ -35,6 +35,7 @@ public class RealmRaceRecord extends RealmObject {
     private int geofenceProgression;
 
     private boolean synced;
+    private boolean toDelete;
 
 
     private String dateTime;
@@ -43,6 +44,7 @@ public class RealmRaceRecord extends RealmObject {
     public RealmRaceRecord() {
         started = false;
         inProgress = false;
+        toDelete = false;
         id = UUID.randomUUID().toString();
         dateTime = OffsetDateTime.now().toString();
     }
@@ -196,5 +198,13 @@ public class RealmRaceRecord extends RealmObject {
                 .setUserId(userId)
                 .setTimeExpired(timeExpired)
                 .setDateTime(dateTime);
+    }
+
+    public void markForDeletion() {
+        toDelete = true;
+    }
+
+    public boolean isToDelete() {
+        return toDelete;
     }
 }
