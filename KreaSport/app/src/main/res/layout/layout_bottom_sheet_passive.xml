@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:showIn="@layout/layout_bottom_sheet">
 
     <data>
 
         <variable
             name="raceVM"
-            type="com.ccaroni.kreasport.map.viewmodels.RaceVM" />
+            type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
     </data>
 
     <LinearLayout

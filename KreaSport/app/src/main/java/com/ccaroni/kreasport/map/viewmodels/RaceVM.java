@@ -5,6 +5,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;
@@ -278,9 +279,24 @@ public abstract class RaceVM extends BaseObservable {
         // set this at the start because normally it has to be triggered by a change
         RealmRaceRecord raceRecordResult = RealmHelper.getInstance(null).findCurrentRaceRecord();
         if (raceRecordResult != null) {
-            Log.d(LOG, "found an ongoing race in db: " + raceRecordResult);
+            Log.d(LOG, "found an ongoing record in db: " + raceRecordResult);
 
             currentRace = RealmHelper.getInstance(null).findRaceById(raceRecord.getRaceId());
+            if (currentRace == null) {
+                Log.d(LOG, "could not find the interrupted race");
+                raceCommunication.toast("The race you were previously on was corrupted");
+
+                RealmHelper.getInstance(null).beginTransaction();
+                Log.d(LOG, "deleting the one initialized on start: " + raceRecord);
+                raceRecord.deleteFromRealm();
+                Log.d(LOG, "deleting the ongoing corrupted one: " + raceRecordResult);
+                raceRecordResult.deleteFromRealm();
+                RealmHelper.getInstance(null).commitTransaction();
+                initRaceRecord();
+
+                changeVisibilitiesOnRaceState(false);
+                return;
+            }
             currentCheckpoint = raceRecord.getCurrentCheckpoint(currentRace);
             startRace();
         } else {
