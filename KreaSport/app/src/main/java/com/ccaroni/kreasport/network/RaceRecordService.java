@@ -29,4 +29,7 @@ public interface RaceRecordService {
 
     @DELETE("/records/batch")
     Call<Void> deleteMultipleRecords(@Body List<String> idsToDeleteList);
+
+    @POST("/records/batch")
+    Call<Void> uploadMultipleRaceRecords(@Body List<RaceRecord> raceRecords);
 }

@@ -44,6 +44,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
     private RaceRecordService raceRecordService;
     private RaceRecordAdapter raceRecordAdapter;
+    private RealmResults<RealmRaceRecord> myRecords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,57 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
         raceRecordService = ApiUtils.getRaceRecordService(true, accessToken);
 
+        uploadRecords();
         deleteMarkedRecords();
+
+    }
+
+    private void setBindings() {
+        final String userId = CredentialsManager.getUserId(this);
+
+        myRecords = RealmHelper.getInstance(this).getMyRecords(userId).sort("dateTime");
+
+        List<RealmRaceRecord> realmRaceRecordList = new ArrayList<>();
+        for (RealmRaceRecord realmRaceRecord : myRecords) {
+            realmRaceRecordList.add(realmRaceRecord);
+        }
+
+        myRecords = null;
+
+        raceRecordAdapter = new RaceRecordAdapter(this, realmRaceRecordList);
+        binding.contentMyRecords.listViewRecords.setAdapter(raceRecordAdapter);
+
+        setNumberOfRecords(raceRecordAdapter.getCount());
+    }
+
+    private void uploadRecords() {
+
+        Log.d(LOG, "will attempt to batch upload records");
+
+        List<RaceRecord> raceRecords = new ArrayList<>();
+        for (RealmRaceRecord realmRaceRecord : myRecords) {
+            raceRecords.add(realmRaceRecord.toDTO());
+        }
+
+        raceRecordService.uploadMultipleRaceRecords(raceRecords).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d(LOG, "batch upload success: " + response.isSuccessful());
+                Log.d(LOG, "will mark as synced");
+
+                RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
+                for (RealmRaceRecord realmRaceRecord : myRecords) {
+                    realmRaceRecord.setSynced(true);
+                }
+                RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(LOG, "batch upload failure: " + t.getMessage());
+
+            }
+        });
 
     }
 
@@ -69,6 +120,13 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
     private void deleteMarkedRecords() {
 
         final RealmResults<RealmRaceRecord> realmList = RealmHelper.getInstance(this).getRecordsToDelete();
+
+        if (realmList.size() == 0) {
+            Log.d(LOG, "no records marked for deletion");
+            return;
+        }
+
+        Log.d(LOG, "found " + realmList.size() + " to delete");
 
         final List<String> idsToDeleteList = new ArrayList<>();
         for (RealmRaceRecord record : realmList) {
@@ -95,24 +153,6 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
             }
         });
 
-    }
-
-    private void setBindings() {
-        final String userId = CredentialsManager.getUserId(this);
-
-        RealmResults<RealmRaceRecord> myRecords = RealmHelper.getInstance(this).getMyRecords(userId).sort("dateTime");
-
-        List<RealmRaceRecord> realmRaceRecordList = new ArrayList<>();
-        for (RealmRaceRecord realmRaceRecord : myRecords) {
-            realmRaceRecordList.add(realmRaceRecord);
-        }
-
-        myRecords = null;
-
-        raceRecordAdapter = new RaceRecordAdapter(this, realmRaceRecordList);
-        binding.contentMyRecords.listViewRecords.setAdapter(raceRecordAdapter);
-
-        setNumberOfRecords(raceRecordAdapter.getCount());
     }
 
     @Override
