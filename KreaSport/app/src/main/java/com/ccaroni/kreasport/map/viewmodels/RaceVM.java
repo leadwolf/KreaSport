@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.map.viewmodels;
 import android.app.Activity;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -302,10 +303,11 @@ public abstract class RaceVM extends BaseObservable {
                 initRaceRecord();
 
                 changeVisibilitiesOnRaceState(false);
-                return;
+            } else {
+                Log.d(LOG, "will now re start it");
+                raceCommunication.toast("Resuming your race...");
+                startRace(false);
             }
-            currentCheckpoint = raceRecord.getCurrentCheckpoint(currentRace);
-            startRace();
         } else {
             Log.d(LOG, "no previous ongoing race, hiding bottom sheet");
             changeVisibilitiesOnRaceState(false);
@@ -356,8 +358,9 @@ public abstract class RaceVM extends BaseObservable {
 
     /**
      * The real method that starts the race.
+     * @param setNewTime if we need to set {@link SystemClock#elapsedRealtime()} as the current base for the race.
      */
-    protected abstract void startRace();
+    protected abstract void startRace(boolean setNewTime);
     /**
      * The real method that starts the race.
      * @param toArchive

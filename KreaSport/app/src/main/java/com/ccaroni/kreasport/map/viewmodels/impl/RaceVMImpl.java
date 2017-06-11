@@ -23,17 +23,12 @@ public class RaceVMImpl extends RaceVM {
 
     private static final String LOG = RaceVMImpl.class.getSimpleName();
 
-    /**
-     * The system time as of {@link #onStartClicked()} minus the offset for any restored time
-     */
-    private long baseAtStart;
-
     public RaceVMImpl(Activity activity, LocationUtils mLocationUtils) {
         super(activity, mLocationUtils);
     }
 
     @Override
-    protected void startRace() {
+    protected void startRace(boolean setNewTime) {
         if (currentRace == null) {
             throw new IllegalStateException("Cannot start race when no race is in use");
         }
@@ -45,23 +40,26 @@ public class RaceVMImpl extends RaceVM {
 
         changeVisibilitiesOnRaceState(true);
 
-        beginRecording();
-
-        raceCommunication.toast("Started!");
+        beginRecording(setNewTime);
 
         raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
         Log.d(LOG, "asking for geofence for checkpoint: " + currentCheckpoint.getId() + " " + currentCheckpoint.getTitle());
         raceCommunication.addGeoFence(currentCheckpoint);
 
-        // if the user quit the app without stopping the race, we need to keep the old time elapsed.
-        this.baseAtStart = SystemClock.elapsedRealtime() - raceRecord.getTimeExpired();
-        raceCommunication.startChronometer(baseAtStart);
+        raceCommunication.startChronometer(raceRecord.getBaseTime());
     }
 
-    private void beginRecording() {
+    private void beginRecording(boolean setNewTime) {
         RealmHelper.getInstance(null).beginTransaction();
 
         Log.d(LOG, "started recording for raceId " + currentRace.getId() + " and record id: " + raceRecord.getId());
+        if (setNewTime) {
+            // only set it here, otherwise it will overwrite the previous base time if we're resuming a race/record
+            raceRecord.setBaseTime(SystemClock.elapsedRealtime());
+        } else {
+            raceCommunication.toast("Started!");
+        }
+
         raceRecord.setInProgress(true);
         raceRecord.setStarted(true);
         raceRecord.setRaceId(currentRace.getId());
@@ -103,12 +101,12 @@ public class RaceVMImpl extends RaceVM {
      */
     private void archiveRaceRecord() {
         Log.d(LOG, "archiving: " + raceRecord.getId());
-        final long timeDifference = SystemClock.currentThreadTimeMillis() - baseAtStart;
+        final long timeDifference = SystemClock.currentThreadTimeMillis() - raceRecord.getBaseTime();
 
         RealmHelper.getInstance(null).beginTransaction();
 
         raceRecord.setInProgress(false, false);
-        raceRecord.setTimeExpired(timeDifference, false);
+        raceRecord.setTimeExpired(timeDifference);
         raceRecord.setDateTime(OffsetDateTime.now().toString());
 
         RealmHelper.getInstance(null).commitTransaction();
@@ -198,12 +196,12 @@ public class RaceVMImpl extends RaceVM {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startRace();
+                        startRace(true);
                     }
                 }, 1500);
             } else {
                 Log.d(LOG, "no animation, starting race");
-                startRace();
+                startRace(true);
             }
         }
 

@@ -1,7 +1,5 @@
 package com.ccaroni.kreasport.data.dto;
 
-import java.util.UUID;
-
 /**
  * Created by Master on 30/05/2017.
  */

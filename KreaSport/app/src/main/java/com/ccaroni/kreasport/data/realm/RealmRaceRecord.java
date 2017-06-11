@@ -29,7 +29,10 @@ public class RealmRaceRecord extends RealmObject {
 
     private boolean started;
     private boolean inProgress;
+
+    private long baseTime;
     private long timeExpired;
+
     private int progression;
 
     private int geofenceProgression;
@@ -73,6 +76,10 @@ public class RealmRaceRecord extends RealmObject {
         this.userId = userId;
     }
 
+    /**
+     * @return if the user actually started recording. Use to differenciate between a default instance of {@link RealmRaceRecord} and a {@link RealmRaceRecord} that has started
+     * being used for recording.
+     */
     public boolean isStarted() {
         return started;
     }
@@ -81,6 +88,9 @@ public class RealmRaceRecord extends RealmObject {
         this.started = started;
     }
 
+    /**
+     * @return if this record is currently active (the user has started a race and not canceled)
+     */
     public boolean isInProgress() {
         return inProgress;
     }
@@ -89,12 +99,12 @@ public class RealmRaceRecord extends RealmObject {
         this.inProgress = inProgress;
     }
 
-    public long getTimeExpired() {
-        return timeExpired;
+    public long getBaseTime() {
+        return baseTime;
     }
 
-    public void setTimeExpired(long timeExpired) {
-        this.timeExpired = timeExpired;
+    public void setBaseTime(long baseTime) {
+        this.baseTime = baseTime;
     }
 
     /**
@@ -135,6 +145,14 @@ public class RealmRaceRecord extends RealmObject {
         this.dateTime = dateTime;
     }
 
+    public long getTimeExpired() {
+        return timeExpired;
+    }
+
+    public void setTimeExpired(long timeExpired) {
+        this.timeExpired = timeExpired;
+    }
+
     public RealmCheckpoint getCurrentCheckpoint(RealmRace realmRace) {
         if (realmRace == null) {
             throw new IllegalArgumentException("Cannot get checkpoint from a null race");
@@ -149,11 +167,14 @@ public class RealmRaceRecord extends RealmObject {
                 "id='" + id + '\'' +
                 ", raceId='" + raceId + '\'' +
                 ", userId='" + userId + '\'' +
+                ", started=" + started +
                 ", inProgress=" + inProgress +
+                ", baseTime=" + baseTime +
                 ", timeExpired=" + timeExpired +
                 ", progression=" + progression +
                 ", geofenceProgression=" + geofenceProgression +
                 ", synced=" + synced +
+                ", toDelete=" + toDelete +
                 ", dateTime='" + dateTime + '\'' +
                 '}';
     }
@@ -170,17 +191,6 @@ public class RealmRaceRecord extends RealmObject {
         } else {
             this.inProgress = inProgress;
         }
-    }
-
-    public void setTimeExpired(long timeDifference, boolean directSave) {
-        if (directSave) {
-            RealmHelper.getInstance(null).beginTransaction();
-            this.timeExpired = timeDifference;
-            RealmHelper.getInstance(null).commitTransaction();
-        } else {
-            this.timeExpired = timeDifference;
-        }
-
     }
 
     public void incrementProgression() {
