@@ -156,6 +156,23 @@ public class RealmHelper {
                 .findAll();
     }
 
+    /**
+     * @param userId
+     * @return records that respond to the folliwing criteria<br>
+     * = userId<br>
+     * started = true<br>
+     * toDelete = false<br>
+     * synced = false
+     */
+    public RealmResults<RealmRaceRecord> getMyRecordsToUpload(String userId) {
+        return realm.where(RealmRaceRecord.class)
+                .equalTo("userId", userId)
+                .equalTo("started", true)
+                .equalTo("toDelete", false)
+                .equalTo("synced", false)
+                .findAll();
+    }
+
     public DownloadedArea createDownloadedArea() {
         return realm.createObject(DownloadedArea.class);
     }

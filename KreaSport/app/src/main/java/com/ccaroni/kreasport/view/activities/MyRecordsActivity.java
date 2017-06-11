@@ -44,7 +44,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
     private RaceRecordService raceRecordService;
     private RaceRecordAdapter raceRecordAdapter;
-    private RealmResults<RealmRaceRecord> myRecords;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +66,9 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
     }
 
     private void setBindings() {
-        final String userId = CredentialsManager.getUserId(this);
+        userId = CredentialsManager.getUserId(this);
 
-        myRecords = RealmHelper.getInstance(this).getMyRecords(userId).sort("dateTime");
+        RealmResults<RealmRaceRecord> myRecords = RealmHelper.getInstance(this).getMyRecords(userId).sort("dateTime");
 
         List<RealmRaceRecord> realmRaceRecordList = new ArrayList<>();
         for (RealmRaceRecord realmRaceRecord : myRecords) {
@@ -85,10 +85,17 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
     private void uploadRecords() {
 
+        final RealmResults<RealmRaceRecord> myRecordsToUpload = RealmHelper.getInstance(this).getMyRecordsToUpload(userId).sort("dateTime");
+
+        if (myRecordsToUpload.size() == 0) {
+            Log.d(LOG, "no records to upload");
+            return;
+        }
+
         Log.d(LOG, "will attempt to batch upload records");
 
         List<RaceRecord> raceRecords = new ArrayList<>();
-        for (RealmRaceRecord realmRaceRecord : myRecords) {
+        for (RealmRaceRecord realmRaceRecord : myRecordsToUpload) {
             raceRecords.add(realmRaceRecord.toDTO());
         }
 
@@ -99,7 +106,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
                 Log.d(LOG, "will mark as synced");
 
                 RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
-                for (RealmRaceRecord realmRaceRecord : myRecords) {
+                for (RealmRaceRecord realmRaceRecord : myRecordsToUpload) {
                     realmRaceRecord.setSynced(true);
                 }
                 RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
