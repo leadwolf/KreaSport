@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -315,7 +314,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
-        raceVM.onStart();
         super.onStart();
     }
 
@@ -350,6 +348,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         if (mLocationUtilsImpl != null) {
             mLocationUtilsImpl.startLocationUpdates();
         }
+        raceVM.onStart();
         if (raceVM.isRaceActive()) {
             Log.d(LOG, "adding geofence");
             addGeofence();
@@ -519,12 +518,12 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     /**
      * Internal callback for when question is answered.<br>
-     * Calls {@link RaceVM#onQuestionAnswered(int)}
+     * Calls {@link RaceVM#onQuestionCorrectlyAnswered(int)}
      *
      * @param answerIndex
      */
 
     private void onQuestionAnswered(int answerIndex) {
-        raceVM.onQuestionAnswered(answerIndex);
+        raceVM.onQuestionCorrectlyAnswered(answerIndex);
     }
 }

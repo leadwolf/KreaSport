@@ -216,7 +216,7 @@ public abstract class RaceVM extends BaseObservable {
             Log.d(LOG, "last checkpoint has just been geofence validated");
 
         } else {
-            Log.d(LOG, "checkpoint has just been geofence validated");
+            Log.d(LOG, "checkpoint " + checkpointId + " has just been geofence validated");
             RealmHelper.getInstance(null).beginTransaction();
             raceRecord.incrementGeofenceProgression();
             RealmHelper.getInstance(null).commitTransaction();
@@ -226,7 +226,11 @@ public abstract class RaceVM extends BaseObservable {
         raceCommunication.askRiddle(targetingCheckpoint.getRiddle().toDTO());
     }
 
-    public void onQuestionAnswered(int index) {
+    /**
+     *
+     * @param index the index of the answer selected
+     */
+    public void onQuestionCorrectlyAnswered(int index) {
         RealmCheckpoint targetingCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getGeofenceProgression());
         if (index != targetingCheckpoint.getAnswerIndex()) {
             throw new IllegalStateException("Expected correct answer index");
@@ -260,6 +264,8 @@ public abstract class RaceVM extends BaseObservable {
             currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
 
             raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
+
+            // TODO add next geofence
         }
     }
 
@@ -275,14 +281,14 @@ public abstract class RaceVM extends BaseObservable {
      * Loads the appropriate config (w/ raceActive?) and with applies to according the layout with databinding.
      */
     public void onStart() {
-        Log.d(LOG, "onStart, UI is ready to be manipulated");
+        Log.d(LOG, "onStart, UI is ready to be manipulated and Google API is connected");
 
         // set this at the start because normally it has to be triggered by a change
-        RealmRaceRecord raceRecordResult = RealmHelper.getInstance(null).findCurrentRaceRecord();
-        if (raceRecordResult != null) {
-            Log.d(LOG, "found an ongoing record in db: " + raceRecordResult);
+        RealmRaceRecord previouslyOngoingRaceRecord = RealmHelper.getInstance(null).findCurrentRaceRecord();
+        if (previouslyOngoingRaceRecord != null) {
+            Log.d(LOG, "found an ongoing record in db: " + previouslyOngoingRaceRecord);
 
-            currentRace = RealmHelper.getInstance(null).findRaceById(raceRecord.getRaceId());
+            currentRace = RealmHelper.getInstance(null).findRaceById(previouslyOngoingRaceRecord.getRaceId());
             if (currentRace == null) {
                 Log.d(LOG, "could not find the interrupted race");
                 raceCommunication.toast("The race you were previously on was corrupted");
@@ -290,8 +296,8 @@ public abstract class RaceVM extends BaseObservable {
                 RealmHelper.getInstance(null).beginTransaction();
                 Log.d(LOG, "deleting the one initialized on start: " + raceRecord);
                 raceRecord.deleteFromRealm();
-                Log.d(LOG, "deleting the ongoing corrupted one: " + raceRecordResult);
-                raceRecordResult.deleteFromRealm();
+                Log.d(LOG, "deleting the ongoing corrupted one: " + previouslyOngoingRaceRecord);
+                previouslyOngoingRaceRecord.deleteFromRealm();
                 RealmHelper.getInstance(null).commitTransaction();
                 initRaceRecord();
 

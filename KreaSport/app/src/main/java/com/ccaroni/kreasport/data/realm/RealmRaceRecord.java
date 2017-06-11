@@ -139,7 +139,7 @@ public class RealmRaceRecord extends RealmObject {
         if (realmRace == null) {
             throw new IllegalArgumentException("Cannot get checkpoint from a null race");
         }
-        Log.d(LOG, "finding checkpoint at " + progression + " as current checkpoint for " + realmRace.getId());
+        Log.d(LOG, "finding checkpoint at index " + progression + " as current checkpoint for " + realmRace.getId());
         return realmRace.getRealmCheckpoints().get(progression);
     }
 
