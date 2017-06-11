@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport;
 
 import com.auth0.spring.security.mvc.Auth0Config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -16,6 +17,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class AppConfig extends Auth0Config {
+
+    @Value(value = "${auth0.audience}")
+    private String apiAudience;
+    @Value(value = "${auth0.issuer}")
+    private String issuer;
+
 
     @Override
     protected void authorizeRequests(final HttpSecurity http) throws Exception {
