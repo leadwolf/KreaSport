@@ -43,4 +43,12 @@ public class Riddle {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "Riddle{" +
+                "question='" + question + '\'' +
+                ", answers=" + answers +
+                ", answerIndex=" + answerIndex +
+                '}';
+    }
 }

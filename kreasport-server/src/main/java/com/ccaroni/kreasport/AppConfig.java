@@ -27,8 +27,8 @@ public class AppConfig extends Auth0Config {
     @Override
     protected void authorizeRequests(final HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/css/**", "/fonts/**", "/js/**", "/login").permitAll()
+                .antMatchers("/css/**", "/fonts/**", "/js/**", "/login", "/dummy").permitAll()
 //                .antMatchers("/portal/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers(securedRoute).authenticated();
+                .antMatchers(securedRoute, "/map").authenticated();
     }
 }

@@ -123,4 +123,15 @@ public class Race extends BasePoint {
         return dummyRaces;
     }
 
+    @Override
+    public String toString() {
+        return "Race{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", latitude=" + latitude +
+                ", checkpoints=" + checkpoints +
+                ", longitude=" + longitude +
+                '}';
+    }
 }
