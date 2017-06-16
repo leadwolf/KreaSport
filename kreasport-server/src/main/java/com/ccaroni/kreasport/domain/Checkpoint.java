@@ -36,4 +36,17 @@ public class Checkpoint extends BasePoint {
     public void setRiddle(Riddle riddle) {
         this.riddle = riddle;
     }
+
+    @Override
+    public String toString() {
+        return "Checkpoint{" +
+                "checkpointKey=" + checkpointKey +
+                ", riddle=" + riddle +
+                ", id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
 }
