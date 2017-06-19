@@ -20,7 +20,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
     @Override
     public MongoClient mongoClient() {
-        String MONGO_URI = System.getenv("MONGO_URI");
+        String MONGO_URI = System.getenv("MONGO_MLAB");
         MongoClientURI uri = new MongoClientURI(MONGO_URI);
         return new MongoClient(uri);
     }
