@@ -11,10 +11,10 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.network.KreasportAPI;
 import com.ccaroni.kreasport.view.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.dto.Race;
-import com.ccaroni.kreasport.network.ApiUtils;
-import com.ccaroni.kreasport.network.RaceService;
+import com.ccaroni.kreasport.network.RetrofitService;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.utils.PreferenceManager;
 
@@ -33,7 +33,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
 
     private PreferenceManager preferenceManager;
 
-    private RaceService raceService;
+    private KreasportAPI raceAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
         setupFragments();
 
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
-        raceService = ApiUtils.getRaceService(true, accessToken);
+        raceAPI = RetrofitService.getKreasportAPI(true, accessToken);
         preferenceManager = new PreferenceManager(this, HomeActivity.class.getSimpleName());
     }
 
@@ -86,7 +86,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
     }
 
     private void downloadPublicRaces(final ProgressDialog progressDialog) {
-        raceService.getPublicRaces().enqueue(new Callback<List<Race>>() {
+        raceAPI.getPublicRaces().enqueue(new Callback<List<Race>>() {
             @Override
             public void onResponse(Call<List<Race>> call, retrofit2.Response<List<Race>> response) {
                 progressDialog.dismiss();

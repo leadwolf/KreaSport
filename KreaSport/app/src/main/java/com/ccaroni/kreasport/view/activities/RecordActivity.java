@@ -19,8 +19,8 @@ import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityRecordBinding;
 import com.ccaroni.kreasport.map.viewmodels.MapVM;
 import com.ccaroni.kreasport.map.views.CustomMapView;
-import com.ccaroni.kreasport.network.ApiUtils;
-import com.ccaroni.kreasport.network.RaceRecordService;
+import com.ccaroni.kreasport.network.RetrofitService;
+import com.ccaroni.kreasport.network.KreasportAPI;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 
@@ -41,7 +41,7 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
 
 
     private ActivityRecordBinding binding;
-    private RaceRecordService raceRecordService;
+    private KreasportAPI kreasportAPI;
     private RealmRaceRecord raceRecord;
 
     private int uploadAttempts;
@@ -61,7 +61,7 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
         uploadAttempts = 0;
 
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
-        raceRecordService = ApiUtils.getRaceRecordService(true, accessToken);
+        kreasportAPI = RetrofitService.getKreasportAPI(true, accessToken);
 
         setInfo();
     }
@@ -137,7 +137,7 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
             setUploadStatus(true);
         } else {
             Log.d(LOG, "record not verified synced, checking against server");
-            existingCall = raceRecordService.getRaceRecord(raceRecord.getId());
+            existingCall = kreasportAPI.getRaceRecord(raceRecord.getId());
             existingCall.enqueue(new Callback<RaceRecord>() {
                 @Override
                 public void onResponse(Call<RaceRecord> call, Response<RaceRecord> response) {
@@ -161,7 +161,7 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
     }
 
     /**
-     * Uses {@link #raceRecordService} to upload the race. Calls {@link #setUploadStatus(boolean)} on both response &nd failure.
+     * Uses {@link #kreasportAPI} to upload the race. Calls {@link #setUploadStatus(boolean)} on both response &nd failure.
      *
      * @param realmRaceRecord
      */
@@ -175,7 +175,7 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
 
 
         Log.d(LOG, "call to upload record: " + realmRaceRecord.getId());
-        uploadCall = raceRecordService.uploadRaceRecord(raceRecord.toDTO());
+        uploadCall = kreasportAPI.uploadRaceRecord(raceRecord.toDTO());
         uploadCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

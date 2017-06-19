@@ -16,7 +16,7 @@ import retrofit2.http.Path;
  * Created by Master on 30/05/2017.
  */
 
-public interface RaceRecordService {
+public interface KreasportAPI {
 
     @POST("/records")
     Call<Void> uploadRaceRecord(@Body RaceRecord raceRecord);
@@ -32,4 +32,7 @@ public interface RaceRecordService {
 
     @POST("/records/batch")
     Call<Void> uploadMultipleRaceRecords(@Body List<RaceRecord> raceRecords);
+
+    @GET("/races")
+    Call<List<Race>> getPublicRaces();
 }

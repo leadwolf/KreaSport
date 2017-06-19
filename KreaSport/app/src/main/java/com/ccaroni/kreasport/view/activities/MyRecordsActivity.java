@@ -3,13 +3,9 @@ package com.ccaroni.kreasport.view.activities;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
@@ -17,14 +13,13 @@ import com.ccaroni.kreasport.data.dto.RaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityMyRecordsBinding;
 import com.ccaroni.kreasport.map.views.CustomMapView;
-import com.ccaroni.kreasport.network.ApiUtils;
-import com.ccaroni.kreasport.network.RaceRecordService;
+import com.ccaroni.kreasport.network.RetrofitService;
+import com.ccaroni.kreasport.network.KreasportAPI;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.view.adapter.RaceRecordAdapter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import io.realm.RealmResults;
@@ -42,7 +37,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
     private ActivityMyRecordsBinding binding;
 
-    private RaceRecordService raceRecordService;
+    private KreasportAPI kreasportAPI;
     private RaceRecordAdapter raceRecordAdapter;
     private String userId;
 
@@ -58,7 +53,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
         setBindings();
 
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
-        raceRecordService = ApiUtils.getRaceRecordService(true, accessToken);
+        kreasportAPI = RetrofitService.getKreasportAPI(true, accessToken);
 
         uploadRecords();
         deleteMarkedRecords();
@@ -99,7 +94,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
             raceRecords.add(realmRaceRecord.toDTO());
         }
 
-        raceRecordService.uploadMultipleRaceRecords(raceRecords).enqueue(new Callback<Void>() {
+        kreasportAPI.uploadMultipleRaceRecords(raceRecords).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d(LOG, "batch upload success: " + response.isSuccessful());
@@ -140,7 +135,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
             idsToDeleteList.add(record.getId());
         }
 
-        raceRecordService.deleteMultipleRecords(idsToDeleteList).enqueue(new Callback<Void>() {
+        kreasportAPI.deleteMultipleRecords(idsToDeleteList).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d(LOG, "remote batch deletion success: " + response.isSuccessful());
@@ -196,7 +191,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
     private void deleteRemoteRaceRecord(final RealmRaceRecord raceRecord) {
         Log.d(LOG, "call to delete race record " + raceRecord);
-        raceRecordService.deleteRaceRecord(raceRecord.getId()).enqueue(new Callback<Void>() {
+        kreasportAPI.deleteRaceRecord(raceRecord.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d(LOG, "delete success: " + response.isSuccessful());
