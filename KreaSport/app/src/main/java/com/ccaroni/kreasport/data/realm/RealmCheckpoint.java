@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.data.realm;
 
+import com.ccaroni.kreasport.data.CheckpointKey;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.GeoPoint;

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.map.viewmodels;
+package com.ccaroni.kreasport.race;
 
 import android.app.Activity;
 import android.databinding.BaseObservable;
@@ -6,7 +6,6 @@ import android.databinding.Bindable;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;

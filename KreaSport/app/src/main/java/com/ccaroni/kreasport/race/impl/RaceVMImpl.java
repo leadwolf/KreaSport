@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.map.viewmodels.impl;
+package com.ccaroni.kreasport.race.impl;
 
 import android.app.Activity;
 import android.location.Location;
@@ -7,8 +7,8 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.LocationUtils;
 

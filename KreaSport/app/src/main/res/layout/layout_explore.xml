@@ -7,7 +7,7 @@
 
         <variable
             name="raceVM"
-            type="com.ccaroni.kreasport.map.viewmodels.RaceVM"/>
+            type="com.ccaroni.kreasport.race.RaceVM"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.map.viewmodels;
+package com.ccaroni.kreasport.race;
 
 import android.widget.Toast;
 
