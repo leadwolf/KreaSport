@@ -31,4 +31,10 @@ public class CheckpointKey {
     public void setOrder(int order) {
         this.order = order;
     }
+
+	@Override
+	public String toString() {
+		return "CheckpointKey [raceId=" + raceId + ", order=" + order + "]";
+	}
+
 }

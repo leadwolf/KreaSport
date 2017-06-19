@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.controller;
 
+import com.ccaroni.kreasport.domain.BasePoint;
 import com.ccaroni.kreasport.domain.Race;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,5 +23,6 @@ public class DummyController {
             logger.debug("DUMMY REQUEST");
             logger.debug("received Race: " + race);
     }
+
 
 }

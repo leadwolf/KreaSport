@@ -94,7 +94,7 @@ function submitRace() {
                     answerIndex: 0
                 },
                 location:[50.613144,3.138257]
-            }]
+            }
   };
 
 
