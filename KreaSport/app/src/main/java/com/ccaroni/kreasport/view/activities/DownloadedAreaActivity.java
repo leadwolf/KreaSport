@@ -12,7 +12,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.databinding.ActivityDownloadedAreaBinding;
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.models.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 
 import org.osmdroid.util.BoundingBox;
@@ -65,9 +65,9 @@ public class DownloadedAreaActivity extends AppCompatActivity implements CustomM
 
     private void setMap() {
         BoundingBox boundingBox = downloadedArea.getBoundingBox().toBareBoundingBox();
-        MapVM mapVM = new MapVM(boundingBox.getCenter(), 13);
+        MapDefaults mapDefaults = new MapDefaults(boundingBox.getCenter(), 13);
 
-        mMapView = new CustomMapView(this, null, mapVM);
+        mMapView = new CustomMapView(this, null, mapDefaults);
 
         binding.contentDownloadedArea.rlDownloadedAreaMap.addView(mMapView);
 

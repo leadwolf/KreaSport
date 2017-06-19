@@ -17,7 +17,7 @@ import com.ccaroni.kreasport.data.dto.RaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityRecordBinding;
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.models.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.network.RetrofitService;
 import com.ccaroni.kreasport.network.KreasportAPI;
@@ -83,8 +83,8 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
 
             GeoPoint center = new GeoPoint(realmRace.getLatitude(), realmRace.getLongitude());
 
-            MapVM mMapVM = new MapVM(center, Constants.DEFAULT_ZOOM_MAP_ITEM);
-            MapView mMapView = new CustomMapView(this, null, mMapVM);
+            MapDefaults mMapDefaults = new MapDefaults(center, Constants.DEFAULT_ZOOM_MAP_ITEM);
+            MapView mMapView = new CustomMapView(this, null, mMapDefaults);
             mMapView.setClickable(false);
             binding.contentRecord.rlRaceMap.addView(mMapView);
         }

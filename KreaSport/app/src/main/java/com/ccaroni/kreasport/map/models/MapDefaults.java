@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.map.viewmodels;
+package com.ccaroni.kreasport.map.models;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -10,17 +10,17 @@ import com.ccaroni.kreasport.map.views.CustomMapView;
  * Created by Master on 05/04/2017.
  */
 
-public class MapVM implements Serializable {
+public class MapDefaults implements Serializable {
 
     GeoPoint center;
     int zoom;
 
-    public MapVM(CustomMapView mMapView) {
+    public MapDefaults(CustomMapView mMapView) {
         center = (GeoPoint) mMapView.getMapCenter();
         zoom = mMapView.getZoomLevel();
     }
 
-    public MapVM(GeoPoint center, int zoom) {
+    public MapDefaults(GeoPoint center, int zoom) {
         this.center = center;
         this.zoom = zoom;
     }

@@ -17,7 +17,7 @@ import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.data.realm.RealmBoundingBox;
 import com.ccaroni.kreasport.map.models.MapOptions;
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.models.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
 
@@ -63,12 +63,12 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
                 .setEnableMultiTouchControls(true)
                 .setEnableScaleOverlay(true);
 
-        MapVM mMapVM = new MapVM(new GeoPoint(50.633621, 3.0651845), 9);
+        MapDefaults mMapDefaults = new MapDefaults(new GeoPoint(50.633621, 3.0651845), 9);
 
         // needs to be called before the MapView is created to enable hw acceleration
         Configuration.getInstance().setMapViewHardwareAccelerated(true);
 
-        mMapView = new CustomMapView(this, mMapOptions, mMapVM);
+        mMapView = new CustomMapView(this, mMapOptions, mMapDefaults);
 
 
         mMapView.setMinZoomLevel(Constants.DOWNLOAD_MIN_ZOOM);

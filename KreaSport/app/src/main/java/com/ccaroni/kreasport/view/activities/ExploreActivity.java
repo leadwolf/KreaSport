@@ -26,7 +26,7 @@ import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.models.MapOptions;
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.models.MapDefaults;
 import com.ccaroni.kreasport.map.viewmodels.RaceCommunication;
 import com.ccaroni.kreasport.map.viewmodels.RaceVM;
 import com.ccaroni.kreasport.map.viewmodels.impl.RaceVMImpl;
@@ -126,12 +126,12 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                 .setEnableMultiTouchControls(true)
                 .setEnableScaleOverlay(true);
 
-        MapVM mMapVM = new MapVM(new GeoPoint(50.633621, 3.0651845), 9);
+        MapDefaults mMapDefaults = new MapDefaults(new GeoPoint(50.633621, 3.0651845), 9);
 
         // needs to be called before the MapView is created to enable hw acceleration
         Configuration.getInstance().setMapViewHardwareAccelerated(true);
 
-        mMapView = new CustomMapView(this, mMapOptions, mMapVM);
+        mMapView = new CustomMapView(this, mMapOptions, mMapDefaults);
         initRaceOverlays();
 
         binding.appBarMain.layoutExplore.frameLayoutMap.addView(mMapView);

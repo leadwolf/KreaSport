@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -15,11 +14,9 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.models.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
-import com.ccaroni.kreasport.utils.Constants;
 
-import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.threeten.bp.LocalDate;
@@ -99,8 +96,8 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
         if (realmRace != null) {
             GeoPoint center = new GeoPoint(realmRace.getLatitude(), realmRace.getLongitude());
 
-            MapVM mMapVM = new MapVM(center, DEFAULT_ZOOM_MAP_ITEM);
-            MapView mMapView = new CustomMapView(activity, null, mMapVM);
+            MapDefaults mMapDefaults = new MapDefaults(center, DEFAULT_ZOOM_MAP_ITEM);
+            MapView mMapView = new CustomMapView(activity, null, mMapDefaults);
 
             mMapView.setMaxZoomLevel(DEFAULT_ZOOM_MAP_ITEM);
             mMapView.setMinZoomLevel(DEFAULT_ZOOM_MAP_ITEM);

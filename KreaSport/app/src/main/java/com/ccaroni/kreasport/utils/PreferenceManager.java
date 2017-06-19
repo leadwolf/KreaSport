@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.models.MapDefaults;
 
 
 public class PreferenceManager {
@@ -35,15 +35,15 @@ public class PreferenceManager {
         return prefs.getBoolean(IS_FIRST_TIME_LAUNCH, true);
     }
 
-    public void saveMapState(MapVM mapVM) {
-        String mapStateJSON = new Gson().toJson(mapVM, MapVM.class);
+    public void saveMapState(MapDefaults mapDefaults) {
+        String mapStateJSON = new Gson().toJson(mapDefaults, MapDefaults.class);
         prefs.edit()
                 .putString(KEY_MAP_STATE, mapStateJSON)
                 .apply();
     }
 
-    public MapVM getMapState() {
+    public MapDefaults getMapState() {
         String mapStateVMJson = prefs.getString(KEY_MAP_STATE, "");
-        return new Gson().fromJson(mapStateVMJson, MapVM.class);
+        return new Gson().fromJson(mapStateVMJson, MapDefaults.class);
     }
 }

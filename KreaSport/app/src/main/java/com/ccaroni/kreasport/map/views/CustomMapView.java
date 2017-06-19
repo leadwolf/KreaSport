@@ -17,7 +17,7 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
-import com.ccaroni.kreasport.map.viewmodels.MapVM;
+import com.ccaroni.kreasport.map.models.MapDefaults;
 import com.ccaroni.kreasport.map.models.MapOptions;
 
 /**
@@ -33,7 +33,7 @@ public class CustomMapView extends MapView {
     private MapViewCommunication mapViewCommunication;
     private DirectedLocationOverlay mLocationOverlay;
 
-    public CustomMapView(Activity activity, MapOptions mMapOptions, MapVM mMapVM) {
+    public CustomMapView(Activity activity, MapOptions mMapOptions, MapDefaults mMapDefaults) {
         super(activity);
 
         if (activity instanceof MapViewCommunication) {
@@ -46,7 +46,7 @@ public class CustomMapView extends MapView {
 
         applyBasics();
         applyOptions(mMapOptions);
-        applyState(mMapVM);
+        applyState(mMapDefaults);
     }
 
     private void applyBasics() {
@@ -81,10 +81,10 @@ public class CustomMapView extends MapView {
         getOverlays().add(0, mMapEventOverlay);
     }
 
-    private void applyState(MapVM mMapVM) {
-        if (mMapVM != null) {
-            getController().setZoom(mMapVM.getZoom());
-            getController().setCenter(mMapVM.getCenter());
+    private void applyState(MapDefaults mMapDefaults) {
+        if (mMapDefaults != null) {
+            getController().setZoom(mMapDefaults.getZoom());
+            getController().setCenter(mMapDefaults.getCenter());
         }
     }
 
