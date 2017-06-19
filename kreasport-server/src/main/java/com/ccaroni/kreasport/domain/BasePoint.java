@@ -74,4 +74,9 @@ public class BasePoint {
         return new double[]{latitude, longitude};
     }
 
+	@Override
+	public String toString() {
+		return "BasePoint [id=" + id + ", title=" + title + ", description=" + description + ", latitude=" + latitude
+				+ ", longitude=" + longitude;
+	}
 }
