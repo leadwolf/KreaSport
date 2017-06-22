@@ -7,29 +7,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Map Page</title>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/css/jumbotron-narrow.css">
-    <link rel="stylesheet" type="text/css" href="/css/home.css">
-    <link rel="stylesheet" type="text/css" href="/css/jquery.growl.css"/>
     <link rel="stylesheet" type="text/css" href="/css/map.css"/>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="/js/jquery.growl.js" type="text/javascript"></script>
 </head>
-
+<nav>
+<a href="/">home page</a>
+</nav>
 <body>
-<style>
-#map{
-height:50%;
-}</style>
+
 <div id="map">
 </div>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4Lz7J3WRKLuF2YFTCMXMpmwi0D_DvsJQ&callback=initMap&libraries=geometry">
 		</script>
 
 <div id = "formulaire">
-<p>longitude : </p>
-<p>latitude : </p>
-<input type="button" onclick="submitRace()" value="save">
+<form action="">
+<label >question <a id="questionNbr"></a>: </label><input id="question"><br/>
+<label>Answer : </label><br/>
+<label>1 : </label><input id ="answer 1"> <label>2 : </label><input id="answer 2"><br/>
+<label>3 : </label><input id="answer 3"> <label>4 : </label><input id="answer 3"><br/>
+<label>correct : </label><input value="fill with the right number"><br/>
+ <button type="button">previous</button>  <button type="button" onclick="getQuestion()">save</button>  <button type="button">next</button> 
+</form>
 </div>
 <script type="text/javascript">
 function initMap() {
@@ -59,6 +59,14 @@ function initMap() {
 </script>
 
 <script type="text/javascript" >
+var questionNbr=1;
+document.getElementById('questionNbr').innerHTML=questionNbr;
+
+function getQuestion(){
+	alert(document.getElementById('question').value);
+	
+}
+
 function submitRace() {
 
 	/*var riddle = {

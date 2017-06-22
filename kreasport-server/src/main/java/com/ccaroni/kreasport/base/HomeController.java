@@ -26,5 +26,7 @@ public class HomeController {
         model.put("user", user);
         return "home";
     }
+    
+
 
 }
