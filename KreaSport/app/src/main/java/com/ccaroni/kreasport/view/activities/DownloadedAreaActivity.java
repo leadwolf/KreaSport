@@ -12,7 +12,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.databinding.ActivityDownloadedAreaBinding;
-import com.ccaroni.kreasport.map.models.MapDefaults;
+import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 
 import org.osmdroid.util.BoundingBox;

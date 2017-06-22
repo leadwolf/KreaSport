@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
-import com.ccaroni.kreasport.map.models.MapDefaults;
+import com.ccaroni.kreasport.map.MapDefaults;
 
 
 public class PreferenceManager {

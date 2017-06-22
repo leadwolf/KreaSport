@@ -346,7 +346,7 @@ public abstract class RaceVM extends BaseObservable {
     /**
      * Updates the current info for the bottom sheet through the bindings.
      *
-     * @param selectedItem
+     * @param selectedItem the tapped item
      */
     protected abstract void updateCurrent(CustomOverlayItem selectedItem);
 
@@ -362,7 +362,7 @@ public abstract class RaceVM extends BaseObservable {
     protected abstract void startRace(boolean setNewTime);
     /**
      * The real method that starts the race.
-     * @param toArchive
+     * @param toArchive if the user completed the race at this moment so the record should be archived
      */
     protected abstract void stopRace(boolean toArchive);
 
@@ -372,7 +372,7 @@ public abstract class RaceVM extends BaseObservable {
     public abstract void onStopClicked();
 
     /**
-     * Call when the user quits the activity but doesnt stop the activity
+     * Call when the user quits the activity but doesn't stop the activity
      */
     public abstract void saveOngoingBaseTime();
 
@@ -387,5 +387,5 @@ public abstract class RaceVM extends BaseObservable {
     /**
      * Call from the activity to confirm that user wants to stop in response to {@link RaceCommunication#confirmStopRace()}
      */
-    public abstract void confirmStop();
+    public abstract void onConfirmStop();
 }

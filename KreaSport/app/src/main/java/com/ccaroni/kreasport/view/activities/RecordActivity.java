@@ -17,7 +17,7 @@ import com.ccaroni.kreasport.data.dto.RaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityRecordBinding;
-import com.ccaroni.kreasport.map.models.MapDefaults;
+import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.network.RetrofitService;
 import com.ccaroni.kreasport.network.KreasportAPI;

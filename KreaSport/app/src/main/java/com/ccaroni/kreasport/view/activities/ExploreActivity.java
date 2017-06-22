@@ -25,8 +25,8 @@ import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.utils.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.map.models.MapOptions;
-import com.ccaroni.kreasport.map.models.MapDefaults;
+import com.ccaroni.kreasport.map.MapOptions;
+import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.race.RaceCommunication;
 import com.ccaroni.kreasport.race.impl.RaceVMImpl;
@@ -465,7 +465,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
                 .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        raceVM.confirmStop();
+                        raceVM.onConfirmStop();
                     }
                 })
                 .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {

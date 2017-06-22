@@ -16,8 +16,8 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.data.realm.RealmBoundingBox;
-import com.ccaroni.kreasport.map.models.MapOptions;
-import com.ccaroni.kreasport.map.models.MapDefaults;
+import com.ccaroni.kreasport.map.MapOptions;
+import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
 

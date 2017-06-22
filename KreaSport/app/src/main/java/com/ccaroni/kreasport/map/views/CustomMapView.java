@@ -17,8 +17,8 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
-import com.ccaroni.kreasport.map.models.MapDefaults;
-import com.ccaroni.kreasport.map.models.MapOptions;
+import com.ccaroni.kreasport.map.MapDefaults;
+import com.ccaroni.kreasport.map.MapOptions;
 
 /**
  * Created by Master on 30/03/2017.

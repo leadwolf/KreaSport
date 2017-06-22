@@ -250,7 +250,7 @@ public class RaceVMImpl extends RaceVM {
     }
 
     @Override
-    public void confirmStop() {
+    public void onConfirmStop() {
         Log.d(LOG, raceCommunication + " confirmed stop");
         stopRace(currentRace.isOnLastCheckpoint(raceRecord.getProgression()));
     }
