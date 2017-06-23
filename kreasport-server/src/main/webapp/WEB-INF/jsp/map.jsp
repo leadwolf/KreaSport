@@ -22,14 +22,16 @@
 		</script>
 
 <div id = "formulaire">
-<form action="">
+<form id="form">
 <label >question <a id="questionNbr"></a>: </label><input id="question"><br/>
-<label>Answer : </label><br/>
+<label>Answers : </label><br/>
 <label>1 : </label><input id ="answer 1"> <label>2 : </label><input id="answer 2"><br/>
-<label>3 : </label><input id="answer 3"> <label>4 : </label><input id="answer 3"><br/>
-<label>correct : </label><input value="fill with the right number"><br/>
- <button type="button">previous</button>  <button type="button" onclick="getQuestion()">save</button>  <button type="button">next</button> 
-</form>
+<label>3 : </label><input id="answer 3"> <label>4 : </label><input id="answer 4"><br/>
+<label>correct : </label><input id ="correct"value="fill with the right number"><br/>
+ </form>
+ 	<div id="myButton">
+		<button type="button" onclick="previous()" id="previous">previous</button>  <button type="button" onclick="getQuestion()" id="save">save</button>  <button type="button" onclick="next()" id="next">next</button> 
+	</div>
 </div>
 <script type="text/javascript">
 function initMap() {
@@ -54,17 +56,86 @@ function initMap() {
      });    
 }
 
-
-
 </script>
 
 <script type="text/javascript" >
 var questionNbr=1;
-document.getElementById('questionNbr').innerHTML=questionNbr;
+var riddles= new Array(5);
+
+displayControl();
+
+function displayControl(){
+	if(questionNbr==1){
+		document.getElementById('previous').style.opacity=0.6;
+		document.getElementById('previous').style.cursor="not-allowed";
+	} else if(questionNbr == 5){
+		document.getElementById('next').style.opacity=0.6;
+		document.getElementById('next').style.cursor="not-allowed";
+		
+	} else {
+		document.getElementById('previous').style.opacity=1;
+		document.getElementById('previous').style.cursor="allowed";
+
+		document.getElementById('next').style.opacity=1;
+		document.getElementById('next').style.cursor="allowed";
+		
+	}
+	document.getElementById('questionNbr').innerHTML=questionNbr;
+	
+}
+
+function storeData(){
+	riddles[questionNbr]={
+		question: getQuestion(),
+        answers:getAnswers(),
+        answerIndex: getCorrect()
+	}
+}
+
+function dataControl(){
+	storeData();
+	if(riddles[questionNbr].question==""){
+		alert("please fill out the question field");
+		return false;
+	}else if(riddles[questionNbr].answers[0]=="" ||riddles[questionNbr].answers[1]=="" ||riddles[questionNbr].answers[2]=="" ||riddles[questionNbr].answers[3]==""  ){
+		alert("please fill out all the answers fields");
+		return false;
+	}
+	
+	else {
+		return true;
+	}
+	
+}
+
+function previous(){
+		if(questionNbr>1){
+		questionNbr=questionNbr - 1;
+		alert(questionNbr);
+		displayControl();
+		} 
+}
+
+function next(){
+	if(dataControl()){
+		if(questionNbr<5){
+		questionNbr=questionNbr + 1;
+		alert(questionNbr);
+		displayControl();
+		}
+	}
+}
 
 function getQuestion(){
-	alert(document.getElementById('question').value);
-	
+	return document.getElementById('question').value;
+}
+
+function getAnswers(){
+	return [document.getElementById('answer 1').value,document.getElementById('answer 2').value,document.getElementById('answer 3').value,document.getElementById('answer 4').value];
+}
+
+function getCorrect(){
+	return parseInt(document.getElementById('correct').value)
 }
 
 function submitRace() {
