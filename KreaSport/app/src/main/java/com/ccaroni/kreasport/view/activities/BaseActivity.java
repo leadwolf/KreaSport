@@ -158,10 +158,10 @@ public class BaseActivity extends AppCompatActivity
             case R.id.nav_offline_area:
                 activityIntent = new Intent(this, OfflineAreasActivity.class);
                 break;
-            case R.id.nav_share:
-                break;
-            case R.id.nav_send:
-                break;
+//            case R.id.nav_share:
+//                break;
+//            case R.id.nav_send:
+//                break;
             default:
                 break;
         }
