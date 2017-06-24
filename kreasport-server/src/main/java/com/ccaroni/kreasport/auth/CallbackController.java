@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.base;
+package com.ccaroni.kreasport.auth;
 
 import com.auth0.spring.security.mvc.Auth0CallbackHandler;
 import org.springframework.stereotype.Controller;

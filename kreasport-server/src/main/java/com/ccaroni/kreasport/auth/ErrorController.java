@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.base;
+package com.ccaroni.kreasport.auth;
 
 import com.ccaroni.kreasport.AppConfig;
 import org.slf4j.Logger;

@@ -83,7 +83,7 @@ public class Race extends BasePoint {
                         new Riddle()
                                 .setQuestion("What answer? (0)")
                                 .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
-                                .setAnswerIndex(0), new CheckpointKey()
+                                .setAnswerIndex(0)
                 )
         );
         dummyCheckpointList.add(
@@ -91,7 +91,7 @@ public class Race extends BasePoint {
                         new Riddle()
                                 .setQuestion("What answer? (1)")
                                 .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
-                                .setAnswerIndex(1),new CheckpointKey()
+                                .setAnswerIndex(1)
                 )
         );
         race.setCheckpoints(dummyCheckpointList);
@@ -106,7 +106,7 @@ public class Race extends BasePoint {
                         new Riddle()
                                 .setQuestion("What answer? (0)")
                                 .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
-                                .setAnswerIndex(0),new CheckpointKey()
+                                .setAnswerIndex(0)
                 )
         );
         dummyCheckpointList.add(
@@ -114,7 +114,7 @@ public class Race extends BasePoint {
                         new Riddle()
                                 .setQuestion("What answer? (1)")
                                 .setAnswers(Arrays.asList("Answer 0", "Answer 1"))
-                                .setAnswerIndex(1),new CheckpointKey()
+                                .setAnswerIndex(1)
                 )
         );
         race.setCheckpoints(dummyCheckpointList);
