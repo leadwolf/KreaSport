@@ -16,9 +16,9 @@
     <string name="app_name_caps">KREASPORT</string>
 
     <!--FRAGMENT HOME-->
-    <string name="fragment_home_button_download_from_key">Unlock realmRace</string>
-    <string name="fragment_home_private_key_hint">Private realmRace key</string>
-    <string name="fragment_home_private_key_error">Not a private realmRace key</string>
+    <string name="fragment_home_button_download_from_key">Download race</string>
+    <string name="fragment_home_private_key_hint">Enter a race key</string>
+    <string name="fragment_home_private_key_error">Not a race key</string>
     <string name="fragment_home_tv_no_private_key">Don\'t have a private key? Download all public races</string>
 
     <!--MainAcitivy Downloads-->

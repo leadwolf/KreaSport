@@ -303,6 +303,11 @@ public abstract class RaceVM extends BaseObservable {
 
                 changeVisibilitiesOnRaceState(false);
             } else {
+                RealmHelper.getInstance(null).beginTransaction();
+                Log.d(LOG, "deleting the one initialized on start: " + raceRecord);
+                raceRecord.deleteFromRealm();
+                RealmHelper.getInstance(null).commitTransaction();
+                raceRecord = previouslyOngoingRaceRecord;
                 Log.d(LOG, "will now re start it");
                 raceCommunication.toast("Resuming your race...");
                 startRace(false);

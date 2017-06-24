@@ -15,6 +15,8 @@ import com.ccaroni.kreasport.utils.LocationUtils;
 import org.osmdroid.util.GeoPoint;
 import org.threeten.bp.OffsetDateTime;
 
+import static android.R.attr.id;
+
 /**
  * Created by Master on 19/05/2017.
  */
@@ -52,7 +54,7 @@ public class RaceVMImpl extends RaceVM {
     private void beginRecording(boolean setNewTime) {
         RealmHelper.getInstance(null).beginTransaction();
 
-        Log.d(LOG, "started recording for raceId " + currentRace.getId() + " and record id: " + raceRecord.getId());
+        Log.d(LOG, "started recording " + raceRecord.getId() + " for raceId " + currentRace.getId());
         if (setNewTime) {
             // only set it here, otherwise it will overwrite the previous base time if we're resuming a race/record
             raceRecord.setBaseTime(SystemClock.elapsedRealtime());
@@ -79,7 +81,12 @@ public class RaceVMImpl extends RaceVM {
         }
         Log.d(LOG, "set race IN active");
 
+        Log.d(LOG, "stopping: " + raceRecord.getId());
+
         this.raceActive = false;
+        RealmHelper.getInstance(null).beginTransaction();
+        raceRecord.setInProgress(false);
+        RealmHelper.getInstance(null).commitTransaction();
 
         changeVisibilitiesOnRaceState(false);
 
