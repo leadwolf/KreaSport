@@ -1,8 +1,8 @@
-package com.ccaroni.controller;
+package com.ccaroni.kreasport.controller;
 
-import com.ccaroni.domain.Race;
-import com.ccaroni.other.RaceNotFoundException;
-import com.ccaroni.repository.RaceRepository;
+import com.ccaroni.kreasport.dto.Race;
+import com.ccaroni.kreasport.exception.RaceNotFoundException;
+import com.ccaroni.kreasport.repository.RaceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

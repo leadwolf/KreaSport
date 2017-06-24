@@ -1,4 +1,4 @@
-package com.ccaroni.domain;
+package com.ccaroni.kreasport.dto;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 

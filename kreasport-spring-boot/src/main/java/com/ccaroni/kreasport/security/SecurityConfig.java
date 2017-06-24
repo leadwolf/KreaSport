@@ -1,4 +1,4 @@
-package com.ccaroni.security;
+package com.ccaroni.kreasport.security;
 
 import com.auth0.spring.security.api.JwtWebSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Value;

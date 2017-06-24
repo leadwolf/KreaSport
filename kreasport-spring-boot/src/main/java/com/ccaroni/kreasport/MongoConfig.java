@@ -1,4 +1,4 @@
-package com.ccaroni;
+package com.ccaroni.kreasport;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  * Created by Master on 16/04/2017.
  */
 @Configuration
-@EnableMongoRepositories(basePackages = "com.ccaroni.repository")
+@EnableMongoRepositories(basePackages = "com.ccaroni.kreasport.repository")
 public class MongoConfig extends AbstractMongoConfiguration {
 
     @Override

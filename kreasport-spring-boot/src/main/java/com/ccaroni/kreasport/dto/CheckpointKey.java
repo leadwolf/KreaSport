@@ -1,4 +1,4 @@
-package com.ccaroni.domain;
+package com.ccaroni.kreasport.dto;
 
 /**
  * Created by Master on 22/05/2017.

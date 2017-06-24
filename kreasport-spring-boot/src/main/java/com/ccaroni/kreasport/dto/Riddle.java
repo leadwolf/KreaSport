@@ -1,4 +1,4 @@
-package com.ccaroni.domain;
+package com.ccaroni.kreasport.dto;
 
 import java.util.ArrayList;
 import java.util.List;

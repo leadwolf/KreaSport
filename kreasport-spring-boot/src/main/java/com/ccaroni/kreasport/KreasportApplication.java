@@ -1,4 +1,4 @@
-package com.ccaroni;
+package com.ccaroni.kreasport;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySources;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EnableMongoRepositories(basePackages = "com.ccaroni.repository")
+@EnableMongoRepositories(basePackages = "com.ccaroni.kreasport.repository")
 @ComponentScan(basePackages = "com.ccaroni")
 @EnableAutoConfiguration
 @PropertySources({
