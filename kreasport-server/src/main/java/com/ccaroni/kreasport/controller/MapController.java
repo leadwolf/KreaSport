@@ -38,7 +38,7 @@ public class MapController {
         logger.info("Principal name: " + name);
         final Auth0User user = SessionUtils.getAuth0User(req);
         model.put("user", user);
-        logger.info(user.getGivenName());
+        logger.info(user.getUserId());
         return "map";
     }
     
