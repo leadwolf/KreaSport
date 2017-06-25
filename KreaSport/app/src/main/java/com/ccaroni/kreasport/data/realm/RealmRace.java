@@ -98,8 +98,17 @@ public class RealmRace extends RealmObject {
 
     @Override
     public String toString() {
+        StringBuilder checkpointString = new StringBuilder();
+        for (RealmCheckpoint realmCheckpoint : realmCheckpoints) {
+            checkpointString.append(realmCheckpoint.toString());
+        }
         return "RealmRace{" +
-                "realmCheckpoints=" + realmCheckpoints +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", realmCheckpoints=" + checkpointString +
                 '}';
     }
 
@@ -190,4 +199,6 @@ public class RealmRace extends RealmObject {
     public BoundingBox getBoundingBox() {
         return BoundingBox.fromGeoPoints(getCheckpointGeoPoints());
     }
+
+
 }

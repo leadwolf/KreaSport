@@ -54,4 +54,14 @@ public class CustomOverlayItem extends OverlayItem {
         this.primary = primary;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "CustomOverlayItem{" +
+                "id='" + id + '\'' +
+                "title'" + getTitle() + '\'' +
+                ", raceId='" + raceId + '\'' +
+                ", primary=" + primary +
+                '}';
+    }
 }

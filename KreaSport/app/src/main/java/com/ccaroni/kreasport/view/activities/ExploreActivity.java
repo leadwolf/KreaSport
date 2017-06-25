@@ -401,7 +401,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void revealNextCheckpoint(CustomOverlayItem nextCheckpoint) {
-        Log.d(LOG, "revealing next checkpoint: " + nextCheckpoint.getId() + " " + nextCheckpoint.getTitle());
+        Log.d(LOG, "revealing next checkpoint: " + nextCheckpoint);
 
         raceListOverlay.addItem(nextCheckpoint);
 

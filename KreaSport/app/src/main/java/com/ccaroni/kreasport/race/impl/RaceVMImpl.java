@@ -44,6 +44,7 @@ public class RaceVMImpl extends RaceVM {
 
         beginRecording(setNewTime);
 
+        Log.d(LOG, "telling exploreActivity to reveal: " + currentCheckpoint);
         raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
         Log.d(LOG, "asking for geofence for checkpoint: " + currentCheckpoint.getId() + " " + currentCheckpoint.getTitle());
         raceCommunication.addGeoFence(currentCheckpoint);
