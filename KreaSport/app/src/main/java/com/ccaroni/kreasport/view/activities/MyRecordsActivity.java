@@ -104,7 +104,7 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
                 for (RealmRaceRecord realmRaceRecord : myRecordsToUpload) {
                     realmRaceRecord.setSynced(true);
                 }
-                RealmHelper.getInstance(MyRecordsActivity.this).beginTransaction();
+                RealmHelper.getInstance(MyRecordsActivity.this).commitTransaction();
             }
 
             @Override

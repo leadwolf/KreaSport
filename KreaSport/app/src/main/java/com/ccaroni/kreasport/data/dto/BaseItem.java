@@ -87,12 +87,11 @@ public abstract class BaseItem extends BaseObservable {
     @Override
     public String toString() {
         return "BaseItem{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
     }
-
 }

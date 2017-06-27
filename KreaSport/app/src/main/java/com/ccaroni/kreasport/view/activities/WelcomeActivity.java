@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 public class WelcomeActivity extends AppCompatActivity {
 
     private final static String PREF_NAME = "intro_slider-welcome";
+    private static final String LOG = WelcomeActivity.class.getSimpleName();
 
     private CustomViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
@@ -48,7 +50,9 @@ public class WelcomeActivity extends AppCompatActivity {
         // Checking for first time launch - before calling setContentView()
         prefManager = new PreferenceManager(this, PREF_NAME);
         permissionsManager = new PermissionsManager(this);
-        if (!prefManager.isFirstTimeLaunch()) {
+        boolean writeAccess = permissionsManager.isPermissionGranted(PermissionsManager.WRITE_EXTERNAL_STORAGE);
+        boolean locationAccess = permissionsManager.isPermissionGranted(PermissionsManager.ACCESS_FINE_LOCATION);
+        if (!prefManager.isFirstTimeLaunch() && writeAccess && locationAccess) {
             launchHomeScreen();
             return;
         }
@@ -90,7 +94,7 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                launchHomeScreen();
 //                Go to first permission request screen
-                viewPager.setCurrentItem(layouts.length - 2);
+                viewPager.setCurrentItem(layouts.length - 3);
             }
         });
 
@@ -120,6 +124,14 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (!prefManager.isFirstTimeLaunch()) {
+            if (!writeAccess) {
+                viewPager.setCurrentItem(layouts.length - 3);
+            } else {
+                viewPager.setCurrentItem(layouts.length - 2);
+            }
+        }
     }
 
     private void addBottomDots(int currentPage) {

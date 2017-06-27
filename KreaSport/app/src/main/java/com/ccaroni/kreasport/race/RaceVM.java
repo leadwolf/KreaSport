@@ -227,7 +227,6 @@ public abstract class RaceVM extends BaseObservable {
     }
 
     /**
-     *
      * @param index the index of the answer selected
      */
     public void onQuestionCorrectlyAnswered(int index) {
@@ -303,7 +302,18 @@ public abstract class RaceVM extends BaseObservable {
 
                 changeVisibilitiesOnRaceState(false);
             } else {
+                if (raceRecord.getId().equals(previouslyOngoingRaceRecord.getId())) {
+                    Log.d(LOG, "it is the same as the one already held");
+                } else {
+                    RealmHelper.getInstance(null).beginTransaction();
+                    Log.d(LOG, "deleting the one initialized on start: " + raceRecord);
+                    raceRecord.deleteFromRealm();
+                    RealmHelper.getInstance(null).commitTransaction();
+                    raceRecord = RealmHelper.getInstance(null).findRecordById(previouslyOngoingRaceRecord.getId());
+//                raceRecord = previouslyOngoingRaceRecord;
+                }
                 Log.d(LOG, "will now re start it");
+                Log.d(LOG, "resuming race: " + currentRace);
                 raceCommunication.toast("Resuming your race...");
                 startRace(false);
             }
@@ -357,11 +367,14 @@ public abstract class RaceVM extends BaseObservable {
 
     /**
      * The real method that starts the race.
+     *
      * @param setNewTime if we need to set {@link SystemClock#elapsedRealtime()} as the current base for the race.
      */
     protected abstract void startRace(boolean setNewTime);
+
     /**
      * The real method that starts the race.
+     *
      * @param toArchive if the user completed the race at this moment so the record should be archived
      */
     protected abstract void stopRace(boolean toArchive);
