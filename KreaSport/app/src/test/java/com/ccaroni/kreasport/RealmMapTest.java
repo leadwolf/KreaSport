@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport;
 
+import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.dto.Checkpoint;
 
@@ -17,14 +18,15 @@ import static org.junit.Assert.assertEquals;
 public class RealmMapTest {
 
     @Test
-    public void testNormalBaseToRealm() {
+    public void testDTOToRealm() {
         String title = "AreaSelectionActivity checkpoint";
+        String raceId = "dummyRaceId";
 
         Checkpoint checkpoint = (Checkpoint) new Checkpoint()
                 .setTitle(title);
         assertEquals(title, checkpoint.getTitle());
 
-        RealmCheckpoint realmCheckpoint = checkpoint.toRealmCheckpoint();
+        RealmCheckpoint realmCheckpoint = checkpoint.toRealmCheckpoint(raceId);
         assertEquals(title, realmCheckpoint.getTitle());
 
         String title2 = "Second checkpoint";
@@ -32,9 +34,10 @@ public class RealmMapTest {
 
         checkpoint = new Checkpoint()
                 .setTitle(title2)
-                .setPossibleAnswers(answers);
+                .setRiddle(new Riddle()
+                .setAnswers(answers));
 
-        realmCheckpoint = checkpoint.toRealmCheckpoint();
+        realmCheckpoint = checkpoint.toRealmCheckpoint(raceId);
         assertEquals(title2, realmCheckpoint.getTitle());
         assertEquals(answers, realmCheckpoint.getPossibleAnswersAsStrings());
     }

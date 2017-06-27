@@ -92,7 +92,7 @@ public class RealmRace extends RealmObject {
 
     public void setRealmCheckpointsFromNormal(List<Checkpoint> checkpoints) {
         for (Checkpoint checkpoint : checkpoints) {
-            this.realmCheckpoints.add(checkpoint.toRealmCheckpoint());
+            this.realmCheckpoints.add(checkpoint.toRealmCheckpoint(getId()));
         }
     }
 
