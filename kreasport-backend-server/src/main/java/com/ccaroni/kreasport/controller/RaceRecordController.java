@@ -29,7 +29,7 @@ public class RaceRecordController {
         return raceRecordRepository.findAll();
     }
 
-    @RequestMapping(method = POST)
+    @RequestMapping(method = PUT)
     public ResponseEntity<?> createRaceRecord(@RequestBody RaceRecord raceRecord) {
         raceRecordRepository.save(raceRecord);
         URI location = ServletUriComponentsBuilder
@@ -41,28 +41,32 @@ public class RaceRecordController {
 
     @RequestMapping(path = "/{id}", method = GET)
     public RaceRecord getRaceRecordById(@PathVariable("id") String id) {
-        validateRaceRecord(id);
+        verifyRecordExists(id);
         return raceRecordRepository.findById(id).get();
     }
 
     @RequestMapping(path = "{id}", method = DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteRaceRecordById(@PathVariable("id") String id) {
-        validateRaceRecord(id);
+        verifyRecordExists(id);
         raceRecordRepository.deleteById(id);
     }
 
 
-    @RequestMapping(path = "batch", method = DELETE)
+    @RequestMapping(path = "/batch", method = DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteBatchRecords(@RequestBody List<String> idsToDelete) {
         for (String id : idsToDelete) {
-            validateRaceRecord(id);
+            verifyRecordExists(id);
             raceRecordRepository.deleteById(id);
         }
     }
 
-    @RequestMapping(path = "batch", method = POST)
+    /**
+     * POST because we don't specifically place a Race at a location
+     * @param recordList
+     */
+    @RequestMapping(path = "/batch", method = POST)
     @ResponseStatus(value = HttpStatus.CREATED)
     public void saveBatchRecords(@RequestBody List<RaceRecord> recordList) {
         for (RaceRecord raceRecord : recordList) {
@@ -71,7 +75,7 @@ public class RaceRecordController {
     }
 
 
-    private void validateRaceRecord(String id) {
+    private void verifyRecordExists(String id) {
         if (!raceRecordRepository.findById(id).isPresent())
             throw new RaceRecordNotFoundException(id);
     }

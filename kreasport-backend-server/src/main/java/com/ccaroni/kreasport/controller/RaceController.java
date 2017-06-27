@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.controller;
 
 import com.ccaroni.kreasport.dto.Race;
+import com.ccaroni.kreasport.exception.RaceIdNotSameException;
 import com.ccaroni.kreasport.exception.RaceNotFoundException;
 import com.ccaroni.kreasport.repository.RaceRepository;
 import org.slf4j.Logger;
@@ -28,8 +29,17 @@ public class RaceController {
 
     final static Logger logger = LoggerFactory.getLogger(RaceController.class);
 
-    @RequestMapping(method = POST)
-    public ResponseEntity<?> createRace(@RequestBody Race race) {
+
+    /**
+     * Use PUT to create a {@link Race} at the given id or totally modify.
+     * @param race
+     * @return
+     */
+    @RequestMapping(method = PUT, path = "/{id}")
+    private ResponseEntity<?> createRace(@RequestBody Race race, @PathVariable("id") String id) {
+
+        verifyExpectedRaceId(race.getId(), id);
+
         raceRepository.save(race);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("{id}")
@@ -51,22 +61,28 @@ public class RaceController {
 
     @RequestMapping(path = "/{id}", method = GET)
     public Race getRaceById(@PathVariable("id") String id) {
-        validateRace(id);
+        verifyRaceExists(id);
         return raceRepository.findById(id).get();
     }
 
     @RequestMapping(path = "{id}", method = DELETE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteRaceById(@PathVariable("id") String id) {
-        validateRace(id);
+        verifyRaceExists(id);
         raceRepository.deleteById(id);
     }
 
 
-    private void validateRace(String id) {
+    private void verifyRaceExists(String id) {
         if (!raceRepository.findById(id).isPresent())
             throw new RaceNotFoundException(id);
 
+    }
+
+    private void verifyExpectedRaceId(String raceId, String expectedId) {
+        if (!raceId.equals(expectedId)) {
+            throw new RaceIdNotSameException(raceId, expectedId);
+        }
     }
 
 
