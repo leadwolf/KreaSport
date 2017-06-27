@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -69,7 +70,7 @@ public class BasePoint {
         this.longitude = longitude;
     }
 
-    @Transient
+    @JsonIgnore
     public double[] getLocation() {
         return new double[]{latitude, longitude};
     }

@@ -36,7 +36,7 @@ public class Race extends BasePoint {
 
 
     /**
-     * Replaces the current list of checkpoints with checkpointsToAdd. Sets their {@link CheckpointKey}s.
+     * Replaces the current list of checkpoints with checkpointsToAdd. Sets their order.
      *
      * @param checkpointsToAdd
      */
@@ -44,20 +44,18 @@ public class Race extends BasePoint {
         this.checkpoints = checkpointsToAdd;
         int order = 0;
         for (Checkpoint checkpoint : this.checkpoints) {
-            checkpoint.setCheckpointKey(new CheckpointKey(getId(), order));
             order++;
         }
     }
 
     /**
-     * Adds a list of checkpoints to the current list, and their {@link CheckpointKey}s.
+     * Adds a list of checkpoints to the current list, and their order.
      *
      * @param checkpointsToAdd
      */
     public void addCheckpoints(List<Checkpoint> checkpointsToAdd) {
         int order = this.checkpoints.size() + 1;
         for (Checkpoint checkpoint : this.checkpoints) {
-            checkpoint.setCheckpointKey(new CheckpointKey(getId(), order));
             this.checkpoints.add(checkpoint);
             order++;
         }

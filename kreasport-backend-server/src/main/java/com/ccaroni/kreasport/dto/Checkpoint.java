@@ -5,8 +5,8 @@ package com.ccaroni.kreasport.dto;
  */
 public class Checkpoint extends BasePoint {
 
-    private CheckpointKey checkpointKey;
     private Riddle riddle;
+    private int order;
 
     public Checkpoint(){
         super();
@@ -21,13 +21,6 @@ public class Checkpoint extends BasePoint {
         this.riddle = riddle;
     }
 
-    public CheckpointKey getCheckpointKey() {
-        return checkpointKey;
-    }
-
-    public void setCheckpointKey(CheckpointKey checkpointKey) {
-        this.checkpointKey = checkpointKey;
-    }
 
     public Riddle getRiddle() {
         return riddle;
@@ -35,5 +28,13 @@ public class Checkpoint extends BasePoint {
 
     public void setRiddle(Riddle riddle) {
         this.riddle = riddle;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }
