@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.base;
+package com.ccaroni.kreasport.auth;
 
 import com.auth0.Auth0User;
 import com.auth0.SessionUtils;

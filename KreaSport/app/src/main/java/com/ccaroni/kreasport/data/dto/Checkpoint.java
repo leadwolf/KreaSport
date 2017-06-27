@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.data.dto;
 
+import android.util.Log;
+
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.CheckpointKey;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
@@ -9,6 +11,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class Checkpoint extends BaseItem {
+
+    private static final String LOG = Checkpoint.class.getSimpleName();
 
     @SerializedName("checkpointKey")
     @Expose
@@ -84,7 +88,7 @@ public class Checkpoint extends BaseItem {
 
     @Override
     public String toString() {
-        return "Checkpoint{" +
+        return super.toString() + "Checkpoint{" +
                 "checkpointKey=" + checkpointKey +
                 ", riddle=" + riddle +
                 ", location=" + location +

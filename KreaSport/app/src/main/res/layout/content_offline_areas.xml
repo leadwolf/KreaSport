@@ -31,12 +31,12 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1">
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="asyncActivity"
-            android:text="Test Async"/>
+        <!--<Button-->
+            <!--android:id="@+id/button2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:onClick="asyncActivity"-->
+            <!--android:text="Test Async"/>-->
 
         <Button
             android:layout_width="match_parent"
