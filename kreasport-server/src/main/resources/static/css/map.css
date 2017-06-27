@@ -23,9 +23,14 @@ margin-bottom: 1%;
 form{
 	text-align: center;
 }
-form>button {
+#myButton {
+	text-align: center;
+}
+
+#previous, #next, #save{
 	width : 10%;
 }
+
 form>label,form>input{
 	margin-bottom: 1%;
 }

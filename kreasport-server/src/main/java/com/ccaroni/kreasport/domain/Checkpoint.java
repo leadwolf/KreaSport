@@ -16,10 +16,9 @@ public class Checkpoint extends BasePoint {
         super(title, description, latitude, longitude);
     }
 
-    public Checkpoint(String title, String description, double latitude, double longitude, Riddle riddle, CheckpointKey checkpointkey) {
+    public Checkpoint(String title, String description, double latitude, double longitude, Riddle riddle) {
         super(title, description, latitude, longitude);
         this.riddle = riddle;
-        this.checkpointKey=checkpointkey;
     }
 
     public CheckpointKey getCheckpointKey() {
