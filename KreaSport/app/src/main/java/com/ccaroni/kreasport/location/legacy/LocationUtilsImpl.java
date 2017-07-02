@@ -1,11 +1,10 @@
-package com.ccaroni.kreasport.utils.impl;
+package com.ccaroni.kreasport.location.legacy;
 
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.LocationUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.utils;
+package com.ccaroni.kreasport.location.legacy;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;

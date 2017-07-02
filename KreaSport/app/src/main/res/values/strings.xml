@@ -190,4 +190,5 @@
     <string name="record_date">Date: %s</string>
     <string name="record_id">Record id: %s</string>
     <string name="race_id">Race id: %s</string>
+    <string name="location_service_name">Location Service</string>
 </resources>

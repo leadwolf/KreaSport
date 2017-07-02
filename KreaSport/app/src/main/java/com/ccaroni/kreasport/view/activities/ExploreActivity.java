@@ -24,7 +24,8 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
-import com.ccaroni.kreasport.utils.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.location.LocationService;
+import com.ccaroni.kreasport.location.legacy.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.race.RaceVM;
@@ -33,8 +34,8 @@ import com.ccaroni.kreasport.race.impl.RaceVMImpl;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.LocationUtils;
-import com.ccaroni.kreasport.utils.impl.LocationUtilsImpl;
+import com.ccaroni.kreasport.location.legacy.LocationUtils;
+import com.ccaroni.kreasport.location.legacy.LocationUtilsImpl;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -114,6 +115,9 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         setBindings();
 
         setupMap();
+
+        Intent locationServiceIntent = new Intent(this, LocationService.class);
+        startService(locationServiceIntent);
     }
 
     private void setBindings() {

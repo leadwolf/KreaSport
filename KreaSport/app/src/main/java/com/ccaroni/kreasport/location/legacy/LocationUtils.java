@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.utils;
+package com.ccaroni.kreasport.location.legacy;
 
 import android.content.Context;
 import android.location.Location;
