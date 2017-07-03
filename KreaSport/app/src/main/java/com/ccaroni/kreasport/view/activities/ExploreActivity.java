@@ -82,6 +82,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private boolean hasFix;
     private PendingIntent mGeofencePendingIntent;
 
+    private boolean googlePlayServicesAvailable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +108,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             lbc.registerReceiver(receiver, new IntentFilter(Constants.GEOFENCE_RECEIVER_ID));
         } else {
             // Force to go back to Home
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+//            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+//            finish();
+
+            // TODO don't redirect here, move the whole verification in the launcher activity instead, this commit is only a quickfix
         }
 
         raceVM = new RaceVMImpl(this, mLocationUtilsImpl);
@@ -219,6 +224,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      * Creating google api client object
      */
     protected synchronized void buildGoogleApiClient() {
+        Log.d(LOG, "creating google api client");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -235,6 +241,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
+            Log.d(LOG, "Google Play Services not available!");
+
             if (apiAvailability.isUserResolvableError(resultCode)) {
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
                         .show();
@@ -244,8 +252,11 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                 Toast.makeText(this, "Your device does not support Google Play Services.", Toast.LENGTH_SHORT).show();
                 // TODO error
             }
+            googlePlayServicesAvailable = false;
             return false;
         }
+        Log.d(LOG, "Google Play Services is available!");
+        googlePlayServicesAvailable = true;
         return true;
     }
 
@@ -317,7 +328,9 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     protected void onStart() {
-        mGoogleApiClient.connect();
+        if (googlePlayServicesAvailable) {
+            mGoogleApiClient.connect();
+        }
         super.onStart();
     }
 
@@ -326,7 +339,9 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     protected void onStop() {
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
         super.onStop();
     }
 
@@ -450,7 +465,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     *
      * @param startPoint the point we need to theoretically animate to
      * @return if the current {@link BoundingBox} scaled by a factor of 0.5 contains the startPoint
      */
