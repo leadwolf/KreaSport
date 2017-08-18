@@ -6,6 +6,7 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
@@ -27,7 +28,12 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import static android.R.attr.handle;
+import static android.provider.Contacts.SettingsColumns.KEY;
+import static com.ccaroni.kreasport.view.activities.ExploreActivity.KEY_LOCATION_PREFS_FILENAME;
 
 /**
  * Created by Master on 02/07/2017.
@@ -36,13 +42,21 @@ import static android.R.attr.handle;
 public class LocationService extends Service {
 
     private static final String TAG = LocationService.class.getSimpleName();
+    private static final String KEY_BASE =  "com.ccaroni.kreasport." + TAG + ".key.";
+    private static final String KEY_LAST_LOCATION = KEY_BASE + "last_location";
 
     private FusedLocationProviderClient mLocationProviderClient;
     private LocationCallback mLocationCallback;
 
+    private SharedPreferences sharedPreferences;
+    private String prefsFileName;
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return Service.START_NOT_STICKY;
+        prefsFileName = intent.getStringExtra(KEY_LOCATION_PREFS_FILENAME);
+        sharedPreferences = getSharedPreferences(prefsFileName, MODE_PRIVATE);
+        return Service.START_REDELIVER_INTENT;
     }
 
     @Nullable
@@ -58,7 +72,6 @@ public class LocationService extends Service {
 
         mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
         // Create the location request
         LocationRequest mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -71,7 +84,7 @@ public class LocationService extends Service {
                 for (Location location : locationResult.getLocations()) {
                     Log.d(TAG, "got location result: "+ location.toString());
 
-                    displayNotification();
+                    handleUpdate(location);
 
                     // TODO broadcast to activity?
                 }
@@ -87,6 +100,18 @@ public class LocationService extends Service {
                         handleLocationRequestError();
                     }
                 });
+
+    }
+
+    private void handleUpdate(Location location) {
+
+        displayNotification();
+
+        // Write to SharedPrefs, activity will subscribe and therfore see changes
+
+        sharedPreferences.edit()
+                .putString(KEY_LAST_LOCATION, location.toString())
+                .apply();
 
     }
 
@@ -124,6 +149,7 @@ public class LocationService extends Service {
     }
 
     private void handleLocationRequestError() {
+        Log.d(TAG, "location request error");
         // TODO cancel race
     }
 

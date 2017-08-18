@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
@@ -58,13 +59,21 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.R.attr.key;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
         <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceCommunication, CustomMapView.MapViewCommunication {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_CODE_RIDDLE_ANSWER = 100;
-    public static final String KEY_RIDDLE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + "key.riddle";
+
+    private static final String KEY_BASE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + ".key.";
+    public static final String KEY_RIDDLE = KEY_BASE + ".riddle";
+    public static final String KEY_LOCATION_PREFS_FILENAME = KEY_BASE + "location_prefs_filename";
+
+    private static final String locationPrefsFilename = "locations";
 
 
     private ActivityExploreBinding binding;
@@ -83,6 +92,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private PendingIntent mGeofencePendingIntent;
 
     private boolean googlePlayServicesAvailable;
+
+    private SharedPreferences.OnSharedPreferenceChangeListener locationPrefsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +132,25 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
         setupMap();
 
+        SharedPreferences locationPrefs = getSharedPreferences(locationPrefsFilename, MODE_PRIVATE);
+
+        locationPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                Log.d(LOG, "location prefs updated");
+                String data = sharedPreferences.getString(key, "");
+
+                if (!data.equals("")) {
+                    Log.d(LOG, "received from location prefs: " + data);
+                }
+
+            }
+        };
+
+        locationPrefs.registerOnSharedPreferenceChangeListener(locationPrefsListener);
+
         Intent locationServiceIntent = new Intent(this, LocationService.class);
+        locationServiceIntent.putExtra(KEY_LOCATION_PREFS_FILENAME, locationPrefsFilename);
         startService(locationServiceIntent);
     }
 
