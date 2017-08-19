@@ -25,7 +25,8 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
-import com.ccaroni.kreasport.location.legacy.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.location.GeofenceUtils;
+import com.ccaroni.kreasport.location.legacy.LEGACYGeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.race.RaceVM;
@@ -85,6 +86,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private boolean googlePlayServicesAvailable;
 
     private LocationUtils mLocationUtils;
+    private GeofenceUtils mGeofenceUtils;
     private SharedPreferences.OnSharedPreferenceChangeListener locationPrefsListener;
 
     private Gson gson;
@@ -106,7 +108,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             // Building the GoogleApi client
             buildGoogleApiClient();
 
-            // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
+            // GeofenceReceiver will receive the geofence results once validated by LEGACYGeofenceTransitionsIntentService
             LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
             receiver = new GeofenceReceiver();
             lbc.registerReceiver(receiver, new IntentFilter(Constants.GEOFENCE_RECEIVER_ID));
@@ -119,6 +121,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         }
 
         mLocationUtils = new LocationUtils(this);
+        mGeofenceUtils = new GeofenceUtils(this);
 
         raceVM = new RaceVMImpl(this, mLocationUtils);
         binding.setRaceVM(raceVM);
@@ -162,56 +165,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 //        raceListOverlay.setFocusItemsOnTap(true);
 
         mMapView.getOverlays().add(raceListOverlay);
-    }
-
-    @SuppressWarnings({"MissingPermission"})
-    private void addGeofence() {
-        LocationServices.GeofencingApi.addGeofences(
-                mGoogleApiClient,
-                getGeofencingRequest(),
-                getGeofencePendingIntent()
-        ).setResultCallback(this);
-        Log.d(LOG, "called api to add geofence");
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        RealmCheckpoint checkpoint = raceVM.getActiveCheckpoint();
-        Log.d(LOG, "got geofence request for checkpoint: " + checkpoint.getId() + " " + checkpoint.getTitle());
-
-        if (!checkpoint.getId().equals("")) {
-            GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER); // should be triggered if user already inside
-
-            builder.addGeofence(
-                    new Geofence.Builder()
-                            .setRequestId(checkpoint.getId())
-
-                            .setCircularRegion(
-                                    checkpoint.getLatitude(),
-                                    checkpoint.getLongitude(),
-                                    Constants.GEOFENCE_RADIUS_METERS
-                            )
-                            .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_MILLISECONDS)
-                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
-                            .setLoiteringDelay(Constants.GEOFENCE_LOITERING_DELAY)
-                            .build()
-            );
-            return builder.build();
-        } else {
-            Log.d(LOG, "checkpoint to trigger does not exist");
-            return null;
-        }
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -356,7 +309,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         raceVM.onStart();
         if (raceVM.isRaceActive()) {
             Log.d(LOG, "adding geofence");
-            addGeofence();
+            mGeofenceUtils.addGeofences(raceVM.getActiveCheckpoint());
         }
     }
 
@@ -400,7 +353,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void addGeoFence(RealmCheckpoint checkpoint) {
-        addGeofence();
+        mGeofenceUtils.addGeofences(checkpoint);
     }
 
 
@@ -504,7 +457,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
+            String checkpointId = intent.getStringExtra(LEGACYGeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
             if (checkpointId == null) {
                 throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
             }

@@ -16,7 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".location.legacy.GeofenceTransitionsIntentService"/>
+        <service android:name=".location.legacy.LEGACYGeofenceTransitionsIntentService"/>
+
+        <service android:name=".location.GeofenceTransitionsIntentService"/>
 
         <service android:name=".location.GoogleLocationService"
                  android:icon="@drawable/ic_kreasport_logo_no_bg"

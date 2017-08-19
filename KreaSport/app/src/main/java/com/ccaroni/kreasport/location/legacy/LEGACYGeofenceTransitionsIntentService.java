@@ -18,15 +18,15 @@ import java.util.List;
  * Created by Master on 24/04/2017.
  */
 
-public class GeofenceTransitionsIntentService extends IntentService {
+public class LEGACYGeofenceTransitionsIntentService extends IntentService {
 
-    private static final String LOG = GeofenceTransitionsIntentService.class.getSimpleName();
+    private static final String LOG = LEGACYGeofenceTransitionsIntentService.class.getSimpleName();
 
-    public static final String KEY_GEOFENCE_ID = "com.ccaroni.kreasport." + GeofenceTransitionsIntentService.class.getSimpleName() + ".key.geofence_id";
+    public static final String KEY_GEOFENCE_ID = "com.ccaroni.kreasport." + LEGACYGeofenceTransitionsIntentService.class.getSimpleName() + ".key.geofence_id";
 
 
-    public GeofenceTransitionsIntentService() {
-        super(GeofenceTransitionsIntentService.class.getSimpleName());
+    public LEGACYGeofenceTransitionsIntentService() {
+        super(LEGACYGeofenceTransitionsIntentService.class.getSimpleName());
     }
 
     @Override
