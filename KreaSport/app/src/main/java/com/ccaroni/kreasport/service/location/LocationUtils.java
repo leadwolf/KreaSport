@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.location;
+package com.ccaroni.kreasport.service.location;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.ccaroni.kreasport.location.BaseLocationService.KEY_LAST_LOCATION;
 
 public class LocationUtils {
 
@@ -87,7 +86,7 @@ public class LocationUtils {
 //        return LocationServices.getFusedLocationProviderClient(context).getLastLocation().getResult();
 
 //        Use our own previously sourced data
-        String locationJson = locationPrefs.getString(KEY_LAST_LOCATION, "");
+        String locationJson = locationPrefs.getString(BaseLocationService.KEY_LAST_LOCATION, "");
         return gson.fromJson(locationJson, Location.class);
     }
 

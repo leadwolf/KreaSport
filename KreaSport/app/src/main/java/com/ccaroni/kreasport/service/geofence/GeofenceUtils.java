@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.location;
+package com.ccaroni.kreasport.service.geofence;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.utils.Constants;
 import com.google.android.gms.location.Geofence;

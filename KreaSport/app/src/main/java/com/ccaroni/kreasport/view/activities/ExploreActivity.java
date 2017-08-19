@@ -25,24 +25,22 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
-import com.ccaroni.kreasport.location.GeofenceUtils;
-import com.ccaroni.kreasport.location.legacy.LEGACYGeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.MapDefaults;
-import com.ccaroni.kreasport.race.RaceVM;
-import com.ccaroni.kreasport.race.RaceCommunication;
-import com.ccaroni.kreasport.race.impl.RaceVMImpl;
+import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.race.RaceCommunication;
+import com.ccaroni.kreasport.race.RaceVM;
+import com.ccaroni.kreasport.race.impl.RaceVMImpl;
+import com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.service.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.service.location.LocationUtils;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.location.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 
@@ -457,7 +455,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String checkpointId = intent.getStringExtra(LEGACYGeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
+            String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
             if (checkpointId == null) {
                 throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
             }

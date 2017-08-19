@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.location;
+package com.ccaroni.kreasport.service.geofence;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -23,8 +23,6 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ccaroni.kreasport.location.legacy.LEGACYGeofenceTransitionsIntentService.KEY_GEOFENCE_ID;
-
 /**
  * Created by Master on 19/08/2017.
  */
@@ -32,6 +30,8 @@ import static com.ccaroni.kreasport.location.legacy.LEGACYGeofenceTransitionsInt
 public class GeofenceTransitionsIntentService extends IntentService {
 
     private static final String TAG = GeofenceTransitionsIntentService.class.getSimpleName();
+    private static final String KEY_BASE = "com.ccaroni.kreasport." + GeofenceTransitionsIntentService.class.getSimpleName() + ".keys.";
+    public static final String KEY_GEOFENCE_ID = KEY_BASE + "geofence_id";
 
     public GeofenceTransitionsIntentService() {
         super(TAG);
@@ -64,16 +64,20 @@ public class GeofenceTransitionsIntentService extends IntentService {
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
-            // Get the transition details as a String.
-            String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
-                    triggeringGeofences);
-
-            // Send notification and log the transition details.
-            sendNotification(geofenceTransitionDetails);
-            Log.i(TAG, geofenceTransitionDetails);
+            notifyActivity(triggeringGeofences);
         } else {
             // Log the error.
             Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
+        }
+    }
+
+    private void notifyActivity(List<Geofence> triggeringGeofences) {
+        for (Geofence geofence : triggeringGeofences) {
+            Log.d(TAG, "sending geofence to " + ExploreActivity.class.getSimpleName() + " : " + geofence.getRequestId());
+
+            Intent resendIntent = new Intent(Constants.GEOFENCE_RECEIVER_ID); //Send to the receiver listening for this in ExploreActivity
+            resendIntent.putExtra(KEY_GEOFENCE_ID, geofence.getRequestId());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(resendIntent);
         }
     }
 

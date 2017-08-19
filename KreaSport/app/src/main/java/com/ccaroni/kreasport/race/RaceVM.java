@@ -14,7 +14,7 @@ import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.CredentialsManager;
-import com.ccaroni.kreasport.location.LocationUtils;
+import com.ccaroni.kreasport.service.location.LocationUtils;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
@@ -214,7 +214,6 @@ public abstract class RaceVM extends BaseObservable {
 
         if (currentRace.isOnLastCheckpoint(raceRecord.getGeofenceProgression())) {
             Log.d(LOG, "last checkpoint has just been geofence validated");
-
         } else {
             Log.d(LOG, "checkpoint " + checkpointId + " has just been geofence validated");
             RealmHelper.getInstance(null).beginTransaction();

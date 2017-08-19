@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.location;
+package com.ccaroni.kreasport.service.location;
 
 import android.location.Location;
 import android.support.annotation.NonNull;

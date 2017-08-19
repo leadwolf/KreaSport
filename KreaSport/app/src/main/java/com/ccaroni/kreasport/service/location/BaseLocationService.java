@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.location;
+package com.ccaroni.kreasport.service.location;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,8 +8,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
-
-import static com.ccaroni.kreasport.location.LocationUtils.KEY_LOCATION_PREFS_FILENAME;
 
 /**
  * Created by Master on 19/08/2017.
@@ -26,7 +24,7 @@ public abstract class BaseLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String prefsFileName = intent.getStringExtra(KEY_LOCATION_PREFS_FILENAME);
+        String prefsFileName = intent.getStringExtra(LocationUtils.KEY_LOCATION_PREFS_FILENAME);
         sharedPreferences = getSharedPreferences(prefsFileName, MODE_PRIVATE);
         return Service.START_REDELIVER_INTENT;
     }
