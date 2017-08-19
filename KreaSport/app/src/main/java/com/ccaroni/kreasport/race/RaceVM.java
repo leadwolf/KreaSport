@@ -311,7 +311,6 @@ public abstract class RaceVM extends BaseObservable {
                     raceRecord = RealmHelper.getInstance(null).findRecordById(previouslyOngoingRaceRecord.getId());
 //                raceRecord = previouslyOngoingRaceRecord;
                 }
-                Log.d(LOG, "will now re start it");
                 Log.d(LOG, "resuming race: " + currentRace);
                 raceCommunication.toast("Resuming your race...");
                 startRace(false);

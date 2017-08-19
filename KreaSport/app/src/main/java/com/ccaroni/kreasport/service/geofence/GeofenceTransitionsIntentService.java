@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
@@ -32,6 +33,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
     private static final String TAG = GeofenceTransitionsIntentService.class.getSimpleName();
     private static final String KEY_BASE = "com.ccaroni.kreasport." + GeofenceTransitionsIntentService.class.getSimpleName() + ".keys.";
     public static final String KEY_GEOFENCE_ID = KEY_BASE + "geofence_id";
+
+    /**
+     * The action that we send the geofence to
+     */
+    public static final String GEOFENCE_TRIGGERED = KEY_BASE + "geofence_triggered";
 
     public GeofenceTransitionsIntentService() {
         super(TAG);
@@ -75,7 +81,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         for (Geofence geofence : triggeringGeofences) {
             Log.d(TAG, "sending geofence to " + ExploreActivity.class.getSimpleName() + " : " + geofence.getRequestId());
 
-            Intent resendIntent = new Intent(Constants.GEOFENCE_RECEIVER_ID); //Send to the receiver listening for this in ExploreActivity
+            Intent resendIntent = new Intent(GEOFENCE_TRIGGERED); //Send to the receiver listening for this in ExploreActivity
             resendIntent.putExtra(KEY_GEOFENCE_ID, geofence.getRequestId());
             LocalBroadcastManager.getInstance(this).sendBroadcast(resendIntent);
         }

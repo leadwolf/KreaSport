@@ -61,7 +61,7 @@ public class GeofenceUtils implements OnCompleteListener<Void> {
      * Also specifies how the geofence notifications are initially triggered.
      */
     private GeofencingRequest getGeofencingRequest(RealmCheckpoint checkpoint) {
-        Log.d(TAG, "got geofence request for checkpoint: " + checkpoint.getId() + " " + checkpoint.getTitle());
+        Log.d(TAG, "building geofence request for checkpoint: " + checkpoint.getId() + " " + checkpoint.getTitle());
 
         if (!checkpoint.getId().equals("")) {
 

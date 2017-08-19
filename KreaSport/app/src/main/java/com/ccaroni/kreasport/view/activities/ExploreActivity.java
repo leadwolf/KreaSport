@@ -32,8 +32,10 @@ import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.RaceCommunication;
 import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.race.impl.RaceVMImpl;
+import com.ccaroni.kreasport.service.RacingService;
 import com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.service.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.service.location.GoogleLocationService;
 import com.ccaroni.kreasport.service.location.LocationUtils;
 import com.ccaroni.kreasport.utils.Constants;
 import com.google.android.gms.common.ConnectionResult;
@@ -55,6 +57,9 @@ import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+import static com.ccaroni.kreasport.service.location.LocationUtils.KEY_LOCATION_PREFS_FILENAME;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
         <Status>, RaceCommunication, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
@@ -106,10 +111,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             // Building the GoogleApi client
             buildGoogleApiClient();
 
-            // GeofenceReceiver will receive the geofence results once validated by LEGACYGeofenceTransitionsIntentService
+            // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
             LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
             receiver = new GeofenceReceiver();
-            lbc.registerReceiver(receiver, new IntentFilter(Constants.GEOFENCE_RECEIVER_ID));
+            lbc.registerReceiver(receiver, new IntentFilter(GEOFENCE_TRIGGERED));
         } else {
             // Force to go back to Home
 //            onNavigationItemSelected(navigationView.getMenu().getItem(0));
@@ -120,6 +125,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
         mLocationUtils = new LocationUtils(this);
         mGeofenceUtils = new GeofenceUtils(this);
+
+        // Ensure that the racing service is active, multiple calls to an already running service are taken care of
+        Intent racingServiceIntent = new Intent(this, RacingService.class);
+        startService(racingServiceIntent);
 
         raceVM = new RaceVMImpl(this, mLocationUtils);
         binding.setRaceVM(raceVM);

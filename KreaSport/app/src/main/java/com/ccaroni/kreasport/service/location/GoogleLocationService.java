@@ -62,4 +62,10 @@ public class GoogleLocationService extends BaseLocationService {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mLocationProviderClient.removeLocationUpdates(mLocationCallback);
+    }
 }
