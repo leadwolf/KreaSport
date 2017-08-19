@@ -56,6 +56,7 @@ public abstract class LocationUtils implements LocationListener {
      * <p>
      * Depending on what implementation decided on, the location updates may only need to be called on a certain point in time in the lifecycle of the {@link Context}.
      */
+    @Deprecated
     public abstract void stopLocationUpdates();
 
     /**
@@ -63,11 +64,13 @@ public abstract class LocationUtils implements LocationListener {
      * <p>
      * Depending on what implementation decided on, the location updates may only need to be called on a certain point in time in the lifecycle of the {@link Context}.
      */
+    @Deprecated
     public abstract void startLocationUpdates();
 
     /**
      * This interface must be implemented by the {@link Context} associated. It defines how this class may send callbacks if the view needs to be updated accordingly.
      */
+    @Deprecated
     public interface LocationCommunicationInterface {
 
         /**
@@ -75,6 +78,7 @@ public abstract class LocationUtils implements LocationListener {
          *
          * @param location
          */
+        @Deprecated
         void onLocationChanged(Location location);
     }
 }

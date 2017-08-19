@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
         <service android:name=".location.legacy.GeofenceTransitionsIntentService"/>
 
-        <service android:name=".location.LocationService"
+        <service android:name=".location.GoogleLocationService"
                  android:icon="@drawable/ic_kreasport_logo_no_bg"
                  android:label="@string/location_service_name"
                  />
