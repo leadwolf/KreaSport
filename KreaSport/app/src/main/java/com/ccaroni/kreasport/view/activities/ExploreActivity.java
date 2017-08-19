@@ -22,6 +22,7 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
@@ -29,6 +30,8 @@ import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.race.RaceHolder;
+import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
 import com.ccaroni.kreasport.race.legacy.RaceCommunication;
 import com.ccaroni.kreasport.race.legacy.impl.LEGACYRaceVMImpl;
@@ -37,6 +40,7 @@ import com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.service.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.service.location.LocationUtils;
 import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -76,7 +80,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private Chronometer chronometer;
     private ItemizedOverlayWithFocus raceListOverlay;
 
-    private LEGACYRaceVM LEGACYRaceVM;
+    private RaceVM raceVM;
 
     private GeofenceReceiver receiver;
 
@@ -128,8 +132,11 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         Intent racingServiceIntent = new Intent(this, RacingService.class);
         startService(racingServiceIntent);
 
-        LEGACYRaceVM = new LEGACYRaceVMImpl(this, mLocationUtils);
-        binding.setRaceVM(LEGACYRaceVM);
+        RealmHelper.getInstance(this);
+        RaceHolder.init(CredentialsManager.getUserId(this));
+
+        raceVM = new RaceVM();
+        binding.setRaceVM(raceVM);
 
         setBindings();
 
@@ -163,8 +170,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      * The {@link LEGACYRaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
      */
     private void initRaceOverlays() {
-        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = LEGACYRaceVM.getIconGestureListener();
-        List<CustomOverlayItem> items = LEGACYRaceVM.getOverlayItems();
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
+        List<CustomOverlayItem> items = raceVM.getOverlayItems();
 
         raceListOverlay = new ItemizedOverlayWithFocus<>(items, itemGestureListener, this);
 //        raceListOverlay.setFocusItemsOnTap(true);
@@ -301,7 +308,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     protected void onPause() {
         super.onPause();
         mLocationUtils.stopLocationUpdates();
-        LEGACYRaceVM.saveOngoingBaseTime();
+//        LEGACYRaceVM.saveOngoingBaseTime(); TODO
     }
 
     /**
@@ -311,11 +318,12 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        LEGACYRaceVM.onStart();
-        if (LEGACYRaceVM.isRaceActive()) {
-            Log.d(LOG, "adding geofence");
-            mGeofenceUtils.addGeofences(LEGACYRaceVM.getActiveCheckpoint());
-        }
+//        LEGACYRaceVM.onStart();
+//        if (LEGACYRaceVM.isRaceActive()) {
+//            Log.d(LOG, "adding geofence");
+//            mGeofenceUtils.addGeofences(LEGACYRaceVM.getActiveCheckpoint());
+//        }
+//        TODO
     }
 
     /**
@@ -427,7 +435,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
                 .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        LEGACYRaceVM.onConfirmStop();
+                        raceVM.onConfirmStop();
                     }
                 })
                 .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {
@@ -443,7 +451,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void onMapBackgroundTouch() {
-        LEGACYRaceVM.onMapBackgroundTouch();
+        raceVM.onMapBackgroundTouch();
     }
 
     /**
@@ -467,7 +475,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                 throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
             }
 
-            LEGACYRaceVM.onGeofenceTriggered(checkpointId);
+            raceVM.onGeofenceTriggered(checkpointId);
 
         }
 
@@ -498,6 +506,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
 
     private void onQuestionAnswered(int answerIndex) {
-        LEGACYRaceVM.onQuestionCorrectlyAnswered(answerIndex);
+        raceVM.onQuestionCorrectlyAnswered(answerIndex);
     }
 }

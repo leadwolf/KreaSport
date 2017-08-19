@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="LEGACYRaceVM"
-            type="com.ccaroni.kreasport.race.LEGACYRaceVM"/>
+            name="raceVM"
+            type="com.ccaroni.kreasport.race.RaceVM"/>
     </data>
 
     <LinearLayout
@@ -30,7 +30,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:background="?android:attr/selectableItemBackground"
-                android:onClick="@{() -> LEGACYRaceVM.onStopClicked()}"
+                android:onClick="@{() -> raceVM.onStopClicked()}"
                 android:text="╳"
                 android:textColor="@color/black"
                 android:textSize="25sp"/>
@@ -69,7 +69,7 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:gravity="center"
                 android:hint="1/n"
-                android:text="@{LEGACYRaceVM.progression}"
+                android:text="@{raceVM.progression}"
                 android:textColor="@color/black"
                 android:textSize="15sp"/>
 
