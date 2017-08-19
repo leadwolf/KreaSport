@@ -32,6 +32,7 @@ import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
+import com.ccaroni.kreasport.race.RaceViewComms;
 import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
 import com.ccaroni.kreasport.race.legacy.RaceCommunication;
 import com.ccaroni.kreasport.race.legacy.impl.LEGACYRaceVMImpl;
@@ -64,7 +65,7 @@ import java.util.TimerTask;
 import static com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
-        <Status>, RaceCommunication, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
+        <Status>, RaceViewComms, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -135,7 +136,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         RealmHelper.getInstance(this);
         RaceHolder.init(CredentialsManager.getUserId(this));
 
-        raceVM = new RaceVM();
+        raceVM = new RaceVM(this);
         binding.setRaceVM(raceVM);
 
         setBindings();
@@ -348,50 +349,50 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     /* RACE COMMUNICATION */
 
-    @Override
-    public void startChronometer(long newBase) {
-        chronometer.setBase(newBase);
-        chronometer.start();
-    }
-
-    @Override
-    public void stopChronometer() {
-        chronometer.stop();
-    }
-
-    @Override
-    public void toast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void addGeoFence(RealmCheckpoint checkpoint) {
-        mGeofenceUtils.addGeofences(checkpoint);
-    }
-
-
-    @Override
-    public void revealNextCheckpoint(CustomOverlayItem nextCheckpoint) {
-        Log.d(LOG, "revealing next checkpoint: " + nextCheckpoint);
-
-        raceListOverlay.addItem(nextCheckpoint);
-
-        mMapView.invalidate();
-
-    }
-
-    /**
-     * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
-     *
-     * @param riddle
-     */
-    @Override
-    public void askRiddle(Riddle riddle) {
-        Intent intent = new Intent(this, RiddleActivity.class);
-        String riddleJson = new Gson().toJson(riddle, Riddle.class);
-        intent.putExtra(KEY_RIDDLE, riddleJson);
-        startActivityForResult(intent, REQUEST_CODE_RIDDLE_ANSWER);
-    }
+//    @Override
+//    public void startChronometer(long newBase) {
+//        chronometer.setBase(newBase);
+//        chronometer.start();
+//    }
+//
+//    @Override
+//    public void stopChronometer() {
+//        chronometer.stop();
+//    }
+//
+//    @Override
+//    public void toast(String message) {
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+//    }
+//
+//    @Override
+//    public void addGeoFence(RealmCheckpoint checkpoint) {
+//        mGeofenceUtils.addGeofences(checkpoint);
+//    }
+//
+//
+//    @Override
+//    public void revealNextCheckpoint(CustomOverlayItem nextCheckpoint) {
+//        Log.d(LOG, "revealing next checkpoint: " + nextCheckpoint);
+//
+//        raceListOverlay.addItem(nextCheckpoint);
+//
+//        mMapView.invalidate();
+//
+//    }
+//
+//    /**
+//     * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
+//     *
+//     * @param riddle
+//     */
+//    @Override
+//    public void askRiddle(Riddle riddle) {
+//        Intent intent = new Intent(this, RiddleActivity.class);
+//        String riddleJson = new Gson().toJson(riddle, Riddle.class);
+//        intent.putExtra(KEY_RIDDLE, riddleJson);
+//        startActivityForResult(intent, REQUEST_CODE_RIDDLE_ANSWER);
+//    }
 
     @Override
     public void onMyLocationClicked() {
@@ -411,47 +412,44 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     }
 
-    public void unsetFocusedItem() {
-        raceListOverlay.unSetFocusedItem();
-        mMapView.invalidate();
-    }
+//    /**
+//     * @param startPoint the point we need to theoretically animate to
+//     * @return if the current {@link BoundingBox} scaled by a factor of 0.5 contains the startPoint
+//     */
+//    public boolean needToAnimateToStart(GeoPoint startPoint) {
+//
+//        BoundingBox currentBb = mMapView.getBoundingBox();
+//        BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
+//
+//        return !reducedBB.contains(startPoint);
+//
+//    }
 
-    /**
-     * @param startPoint the point we need to theoretically animate to
-     * @return if the current {@link BoundingBox} scaled by a factor of 0.5 contains the startPoint
-     */
-    public boolean needToAnimateToStart(GeoPoint startPoint) {
-
-        BoundingBox currentBb = mMapView.getBoundingBox();
-        BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
-
-        return !reducedBB.contains(startPoint);
-
-    }
-
-    @Override
-    public void confirmStopRace() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
-                .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        raceVM.onConfirmStop();
-                    }
-                })
-                .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object and return it
-        builder.create().show();
-    }
+//    @Override
+//    public void confirmStopRace() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
+//                .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        raceVM.onConfirmStop();
+//                    }
+//                })
+//                .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // User cancelled the dialog
+//                    }
+//                });
+//        // Create the AlertDialog object and return it
+//        builder.create().show();
+//    }
 
     /* END RACE COMMS */
 
     @Override
     public void onMapBackgroundTouch() {
         raceVM.onMapBackgroundTouch();
+        raceListOverlay.unSetFocusedItem();
+        mMapView.invalidate();
     }
 
     /**

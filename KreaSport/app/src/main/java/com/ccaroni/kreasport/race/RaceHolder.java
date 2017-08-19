@@ -142,4 +142,9 @@ public class RaceHolder {
     public List<? extends CustomOverlayItem> raceToCustomOverlay() {
         return currentRace.toCustomOverlayWithCheckpoints(currentRaceRecord.getGeofenceProgression());
     }
+
+    public void removeWholeSelection() {
+        currentRace = null;
+        currentCheckpoint = null;
+    }
 }

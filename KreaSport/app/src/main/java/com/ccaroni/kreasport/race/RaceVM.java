@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.race;
 
+import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
@@ -47,7 +48,16 @@ public class RaceVM extends BaseObservable {
     private int fabMyLocationAnchoredBottomSheetVisibility;
     private List<CustomOverlayItem> overlayItems;
 
-    public RaceVM() {
+
+    private RaceViewComms raceViewComms;
+
+    public RaceVM(Context context) {
+        if (context instanceof RaceViewComms) {
+            this.raceViewComms = (RaceViewComms) context;
+        } else {
+            throw new RuntimeException(context + " must implement " + RaceViewComms.class.getSimpleName());
+        }
+
         raceActive = false;
 
         changeVisibilitiesOnRaceState();
@@ -210,8 +220,15 @@ public class RaceVM extends BaseObservable {
         return "" + progression + "/" + total;
     }
 
+    public void onMapBackgroundTouch() {
+        if (!raceActive) {
+            RaceHolder.getInstance().removeWholeSelection();
+            changeVisibilitiesOnRaceState();
+        }
+    }
+
     public void onMyLocationClicked() {
-        Log.d(TAG, "my location clicked");
+        raceViewComms.onMyLocationClicked();
     }
 
     public void onStartClicked() {
@@ -222,19 +239,15 @@ public class RaceVM extends BaseObservable {
         Log.d(TAG, "stop clicked");
     }
 
+    public void onConfirmStop() {
+
+    }
+
     public void onQuestionCorrectlyAnswered(int answerIndex) {
 
     }
 
     public void onGeofenceTriggered(String checkpointId) {
-
-    }
-
-    public void onMapBackgroundTouch() {
-
-    }
-
-    public void onConfirmStop() {
 
     }
 
