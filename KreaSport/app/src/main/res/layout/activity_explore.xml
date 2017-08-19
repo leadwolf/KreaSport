@@ -7,8 +7,8 @@
     <data>
 
         <variable
-            name="raceVM"
-            type="com.ccaroni.kreasport.race.RaceVM" />
+            name="LEGACYRaceVM"
+            type="com.ccaroni.kreasport.race.LEGACYRaceVM" />
     </data>
 
     <android.support.v4.widget.DrawerLayout
@@ -24,7 +24,7 @@
             layout="@layout/app_bar_explore"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            bind:raceVM="@{raceVM}"/>
+            bind:LEGACYRaceVM="@{LEGACYRaceVM}"/>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"

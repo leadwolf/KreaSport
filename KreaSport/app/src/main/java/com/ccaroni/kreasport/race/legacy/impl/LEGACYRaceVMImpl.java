@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race.impl;
+package com.ccaroni.kreasport.race.legacy.impl;
 
 import android.app.Activity;
 import android.location.Location;
@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.RaceVM;
+import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.service.location.LocationUtils;
 
@@ -19,11 +19,11 @@ import org.threeten.bp.OffsetDateTime;
  * Created by Master on 19/05/2017.
  */
 
-public class RaceVMImpl extends RaceVM {
+public class LEGACYRaceVMImpl extends LEGACYRaceVM {
 
-    private static final String LOG = RaceVMImpl.class.getSimpleName();
+    private static final String LOG = LEGACYRaceVMImpl.class.getSimpleName();
 
-    public RaceVMImpl(Activity activity, LocationUtils mLocationUtils) {
+    public LEGACYRaceVMImpl(Activity activity, LocationUtils mLocationUtils) {
         super(activity, mLocationUtils);
     }
 

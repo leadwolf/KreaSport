@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race;
+package com.ccaroni.kreasport.race.legacy;
 
 import android.widget.Toast;
 
@@ -47,7 +47,7 @@ public interface RaceCommunication {
 
     /**
      * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
-     * This needs to be called from the RaceVM to prevent any tampering.
+     * This needs to be called from the LEGACYRaceVM to prevent any tampering.
      *
      * @param riddle
      */
@@ -61,7 +61,7 @@ public interface RaceCommunication {
     void unsetFocusedItem();
 
     /**
-     * The {@link RaceVM} calls this to ask if we need to animate to the start.<br>
+     * The {@link LEGACYRaceVM} calls this to ask if we need to animate to the start.<br>
      * It's used because if we do, we need to postpone the start while waiting for the animation to end.
      * Otherwise, if this returns false, we can start right away.
      *
@@ -71,7 +71,7 @@ public interface RaceCommunication {
     boolean needToAnimateToStart(GeoPoint startPoint);
 
     /**
-     * Call by the {@link RaceVM} for a user interaction to confirm that the race should be stopped in the middle of its progression.
+     * Call by the {@link LEGACYRaceVM} for a user interaction to confirm that the race should be stopped in the middle of its progression.
      */
     void confirmStopRace();
 }

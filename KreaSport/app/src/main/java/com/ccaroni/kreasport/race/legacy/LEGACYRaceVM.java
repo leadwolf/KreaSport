@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race;
+package com.ccaroni.kreasport.race.legacy;
 
 import android.app.Activity;
 import android.databinding.BaseObservable;
@@ -27,9 +27,9 @@ import io.realm.RealmResults;
  * Created by Master on 22/05/2017.
  */
 
-public abstract class RaceVM extends BaseObservable {
+public abstract class LEGACYRaceVM extends BaseObservable {
 
-    private static final String LOG = RaceVM.class.getSimpleName();
+    private static final String LOG = LEGACYRaceVM.class.getSimpleName();
 
     /**
      * Whether this VM (not necessarily the race) is currently in an active state
@@ -63,10 +63,10 @@ public abstract class RaceVM extends BaseObservable {
     /**
      * Default constructor to use. Initializes Realm with activity and calls {@link #initRaceRecord()}.
      *
-     * @param activity       the activity linked to this RaceVM. It must implement {@link RaceCommunication}.
+     * @param activity       the activity linked to this LEGACYRaceVM. It must implement {@link RaceCommunication}.
      * @param mLocationUtils the instance of the location utility used by the activity.
      */
-    public RaceVM(Activity activity, LocationUtils mLocationUtils) {
+    public LEGACYRaceVM(Activity activity, LocationUtils mLocationUtils) {
         RealmHelper.getInstance(activity).init(activity);
         this.userId = CredentialsManager.getUserId(activity);
         if (activity instanceof RaceCommunication) {

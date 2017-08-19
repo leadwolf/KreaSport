@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="raceVM"
-            type="com.ccaroni.kreasport.race.RaceVM" />
+            name="LEGACYRaceVM"
+            type="com.ccaroni.kreasport.race.LEGACYRaceVM" />
     </data>
 
 
@@ -40,7 +40,7 @@
             <include
                 android:id="@+id/layout_explore"
                 layout="@layout/layout_explore"
-                bind:raceVM="@{raceVM}"/>
+                bind:LEGACYRaceVM="@{LEGACYRaceVM}"/>
 
         </android.support.design.widget.CoordinatorLayout>
 

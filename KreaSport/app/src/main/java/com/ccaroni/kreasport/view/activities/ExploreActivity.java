@@ -29,13 +29,12 @@ import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.RaceCommunication;
-import com.ccaroni.kreasport.race.RaceVM;
-import com.ccaroni.kreasport.race.impl.RaceVMImpl;
+import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
+import com.ccaroni.kreasport.race.legacy.RaceCommunication;
+import com.ccaroni.kreasport.race.legacy.impl.LEGACYRaceVMImpl;
 import com.ccaroni.kreasport.service.RacingService;
 import com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.service.geofence.GeofenceUtils;
-import com.ccaroni.kreasport.service.location.GoogleLocationService;
 import com.ccaroni.kreasport.service.location.LocationUtils;
 import com.ccaroni.kreasport.utils.Constants;
 import com.google.android.gms.common.ConnectionResult;
@@ -59,7 +58,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
-import static com.ccaroni.kreasport.service.location.LocationUtils.KEY_LOCATION_PREFS_FILENAME;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
         <Status>, RaceCommunication, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
@@ -78,7 +76,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private Chronometer chronometer;
     private ItemizedOverlayWithFocus raceListOverlay;
 
-    private RaceVM raceVM;
+    private LEGACYRaceVM LEGACYRaceVM;
 
     private GeofenceReceiver receiver;
 
@@ -130,8 +128,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         Intent racingServiceIntent = new Intent(this, RacingService.class);
         startService(racingServiceIntent);
 
-        raceVM = new RaceVMImpl(this, mLocationUtils);
-        binding.setRaceVM(raceVM);
+        LEGACYRaceVM = new LEGACYRaceVMImpl(this, mLocationUtils);
+        binding.setRaceVM(LEGACYRaceVM);
 
         setBindings();
 
@@ -160,13 +158,13 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     * Creates an overlay of all the race(s) needing to be displayed with help from the {@link RaceVM}.
+     * Creates an overlay of all the race(s) needing to be displayed with help from the {@link LEGACYRaceVM}.
      * Either creates an overlay for all the races or full overlay of one race.
-     * The {@link RaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
+     * The {@link LEGACYRaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
      */
     private void initRaceOverlays() {
-        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
-        List<CustomOverlayItem> items = raceVM.getOverlayItems();
+        ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = LEGACYRaceVM.getIconGestureListener();
+        List<CustomOverlayItem> items = LEGACYRaceVM.getOverlayItems();
 
         raceListOverlay = new ItemizedOverlayWithFocus<>(items, itemGestureListener, this);
 //        raceListOverlay.setFocusItemsOnTap(true);
@@ -303,7 +301,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     protected void onPause() {
         super.onPause();
         mLocationUtils.stopLocationUpdates();
-        raceVM.saveOngoingBaseTime();
+        LEGACYRaceVM.saveOngoingBaseTime();
     }
 
     /**
@@ -313,10 +311,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        raceVM.onStart();
-        if (raceVM.isRaceActive()) {
+        LEGACYRaceVM.onStart();
+        if (LEGACYRaceVM.isRaceActive()) {
             Log.d(LOG, "adding geofence");
-            mGeofenceUtils.addGeofences(raceVM.getActiveCheckpoint());
+            mGeofenceUtils.addGeofences(LEGACYRaceVM.getActiveCheckpoint());
         }
     }
 
@@ -429,7 +427,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
                 .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        raceVM.onConfirmStop();
+                        LEGACYRaceVM.onConfirmStop();
                     }
                 })
                 .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {
@@ -445,7 +443,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void onMapBackgroundTouch() {
-        raceVM.onMapBackgroundTouch();
+        LEGACYRaceVM.onMapBackgroundTouch();
     }
 
     /**
@@ -469,7 +467,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                 throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
             }
 
-            raceVM.onGeofenceTriggered(checkpointId);
+            LEGACYRaceVM.onGeofenceTriggered(checkpointId);
 
         }
 
@@ -494,12 +492,12 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     /**
      * Internal callback for when question is answered.<br>
-     * Calls {@link RaceVM#onQuestionCorrectlyAnswered(int)}
+     * Calls {@link LEGACYRaceVM#onQuestionCorrectlyAnswered(int)}
      *
      * @param answerIndex
      */
 
     private void onQuestionAnswered(int answerIndex) {
-        raceVM.onQuestionCorrectlyAnswered(answerIndex);
+        LEGACYRaceVM.onQuestionCorrectlyAnswered(answerIndex);
     }
 }
