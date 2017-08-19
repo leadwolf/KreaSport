@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 
-import static com.ccaroni.kreasport.view.activities.ExploreActivity.KEY_LOCATION_PREFS_FILENAME;
+import static com.ccaroni.kreasport.location.LocationUtils.KEY_LOCATION_PREFS_FILENAME;
 
 /**
  * Created by Master on 19/08/2017.
@@ -19,7 +19,7 @@ public abstract class BaseLocationService extends Service {
 
     private static final String TAG = BaseLocationService.class.getSimpleName();
     protected static final String KEY_BASE =  "com.ccaroni.kreasport." + TAG + ".key.";
-    protected static final String KEY_LAST_LOCATION = KEY_BASE + "last_location";
+    public static final String KEY_LAST_LOCATION = KEY_BASE + "last_location";
 
     protected SharedPreferences sharedPreferences;
     private Gson gson;

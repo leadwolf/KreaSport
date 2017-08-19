@@ -10,7 +10,7 @@ import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.location.legacy.LocationUtils;
+import com.ccaroni.kreasport.location.LocationUtils;
 
 import org.osmdroid.util.GeoPoint;
 import org.threeten.bp.OffsetDateTime;

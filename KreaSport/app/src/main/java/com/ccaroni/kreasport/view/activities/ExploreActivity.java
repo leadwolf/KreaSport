@@ -25,7 +25,6 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
-import com.ccaroni.kreasport.location.GoogleLocationService;
 import com.ccaroni.kreasport.location.legacy.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.MapDefaults;
@@ -35,8 +34,7 @@ import com.ccaroni.kreasport.race.impl.RaceVMImpl;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.location.legacy.LocationUtils;
-import com.ccaroni.kreasport.location.legacy.LocationUtilsImpl;
+import com.ccaroni.kreasport.location.LocationUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -60,7 +58,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
-        <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceCommunication, CustomMapView.MapViewCommunication {
+        <Status>, RaceCommunication, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -68,9 +66,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private static final String KEY_BASE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + ".key.";
     public static final String KEY_RIDDLE = KEY_BASE + ".riddle";
-    public static final String KEY_LOCATION_PREFS_FILENAME = KEY_BASE + "location_prefs_filename";
-
-    private static final String locationPrefsFilename = "locations";
 
 
     private ActivityExploreBinding binding;
@@ -81,7 +76,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private RaceVM raceVM;
 
-    private LocationUtils mLocationUtilsImpl;
     private GeofenceReceiver receiver;
 
     private GoogleApiClient mGoogleApiClient;
@@ -90,6 +84,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private boolean googlePlayServicesAvailable;
 
+    private LocationUtils mLocationUtils;
     private SharedPreferences.OnSharedPreferenceChangeListener locationPrefsListener;
 
     private Gson gson;
@@ -111,9 +106,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             // Building the GoogleApi client
             buildGoogleApiClient();
 
-            // LocationUtilsImpl will be our listener and manager
-            mLocationUtilsImpl = new LocationUtilsImpl(this, mGoogleApiClient);
-
             // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
             LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
             receiver = new GeofenceReceiver();
@@ -126,14 +118,14 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             // TODO don't redirect here, move the whole verification in the launcher activity instead, this commit is only a quickfix
         }
 
-        raceVM = new RaceVMImpl(this, mLocationUtilsImpl);
+        mLocationUtils = new LocationUtils(this);
+
+        raceVM = new RaceVMImpl(this, mLocationUtils);
         binding.setRaceVM(raceVM);
 
         setBindings();
 
         setupMap();
-
-        setupLocationListeners();
     }
 
     private void setBindings() {
@@ -155,30 +147,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         initRaceOverlays();
 
         binding.appBarMain.layoutExplore.frameLayoutMap.addView(mMapView);
-    }
-
-    private void setupLocationListeners() {
-        locationPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                String data = sharedPreferences.getString(key, "");
-
-                if (!data.equals("")) {
-                    Log.d(LOG, "received from location prefs: " + data);
-
-                    Location location = gson.fromJson(data, Location.class);
-
-                    updateLocationIcon(location);
-                }
-
-            }
-        };
-
-        getSharedPreferences(locationPrefsFilename, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(locationPrefsListener);
-
-        Intent locationServiceIntent = new Intent(this, GoogleLocationService.class);
-        locationServiceIntent.putExtra(KEY_LOCATION_PREFS_FILENAME, locationPrefsFilename);
-        startService(locationServiceIntent);
     }
 
     /**
@@ -305,22 +273,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         Log.d(LOG, "geofence creation callback with status " + status);
     }
 
-
-
-    /**
-     * This method decides what to do when we receive a location update.
-     * Any location update in {@link LocationUtilsImpl} should call this method.
-     *
-     * @param location the new location
-     */
-    @Deprecated
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(LOG, "got callback from location listener");
-
-        updateLocationIcon(location);
-    }
-
     /**
      * Updates the location icon
      *
@@ -369,6 +321,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         if (googlePlayServicesAvailable) {
             mGoogleApiClient.connect();
         }
+        mLocationUtils.startLocationUpdates();
         super.onStart();
     }
 
@@ -389,11 +342,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onPause() {
         super.onPause();
-        stopService(new Intent(this, GoogleLocationService.class));
+        mLocationUtils.stopLocationUpdates();
         raceVM.saveOngoingBaseTime();
-        if (mLocationUtilsImpl != null) {
-            mLocationUtilsImpl.stopLocationUpdates();
-        }
     }
 
     /**
@@ -403,9 +353,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (mLocationUtilsImpl != null) {
-            mLocationUtilsImpl.startLocationUpdates();
-        }
         raceVM.onStart();
         if (raceVM.isRaceActive()) {
             Log.d(LOG, "adding geofence");
@@ -482,7 +429,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void onMyLocationClicked() {
-        final Location lastKnownLocation = mLocationUtilsImpl.getLastKnownLocation();
+        final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
         updateLocationIcon(lastKnownLocation);
 
         final MapController mapController = (MapController) mMapView.getController();
@@ -540,6 +487,18 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     public void onMapBackgroundTouch() {
         raceVM.onMapBackgroundTouch();
     }
+
+    /**
+     * Notifiy the subscriber that location has been updated
+     *
+     * @param location the new location
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(LOG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
+        updateLocationIcon(location);
+    }
+
 
     class GeofenceReceiver extends BroadcastReceiver {
 

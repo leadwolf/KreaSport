@@ -14,7 +14,7 @@ import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.CredentialsManager;
-import com.ccaroni.kreasport.location.legacy.LocationUtils;
+import com.ccaroni.kreasport.location.LocationUtils;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 

@@ -29,6 +29,7 @@ public class GoogleLocationService extends BaseLocationService {
     @Override
     protected void startLocationUpdates() {
 
+        // Using the new 11.0.0 location api without a GoogleApiClient
         mLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Create the location request
