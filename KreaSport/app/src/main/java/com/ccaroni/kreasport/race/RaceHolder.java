@@ -1,7 +1,5 @@
 package com.ccaroni.kreasport.race;
 
-import android.content.res.Configuration;
-
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
@@ -9,10 +7,9 @@ import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import io.realm.RealmResults;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Created by Master on 20/08/2017.
@@ -52,6 +49,10 @@ public class RaceHolder {
     }
 
 
+    /**
+     * Creates the singleton instance
+     * @param userId
+     */
     public static synchronized void init(String userId) {
         if (instance == null) {
             synchronized (RealmHelper.class) {
@@ -67,6 +68,9 @@ public class RaceHolder {
         return instance;
     }
 
+    /**
+     * Initializes the attributes to be empty
+     */
     private static void init() {
         instance = new RaceHolder();
         instance.currentRace = null;
@@ -86,17 +90,11 @@ public class RaceHolder {
     }
 
     public int getCheckpointProgression() {
-        if (currentRaceRecord == null) {
-            return -1;
-        }
-        return currentRaceRecord.getProgression();
+        return currentRaceRecord == null ? -1 : currentRaceRecord.getProgression();
     }
 
     public int getNumberCheckpoints() {
-        if (currentRace == null) {
-            return -1;
-        }
-        return currentRace.getNbCheckpoints();
+        return currentRace == null ? -1 : currentRace.getNbCheckpoints();
     }
 
     public boolean isRaceSelected() {
@@ -104,31 +102,19 @@ public class RaceHolder {
     }
 
     public String getCurrentRaceTitle() {
-        if (currentRace == null) {
-            return "";
-        }
-        return currentRace.getTitle();
+        return currentRace == null ? "" : currentRace.getTitle();
     }
 
     public String getCurrentRaceDescription() {
-        if (currentRace == null) {
-            return "";
-        }
-        return currentRace.getDescription();
+        return currentRace == null ? "" : currentRace.getDescription();
     }
 
     public String getCurrentCheckpointTitle() {
-        if (currentCheckpoint == null) {
-            return "";
-        }
-        return currentCheckpoint.getTitle();
+        return currentCheckpoint == null ? "" : currentCheckpoint.getTitle();
     }
 
     public String getCurrentCheckpointDescription() {
-        if (currentCheckpoint == null) {
-            return "";
-        }
-        return currentCheckpoint.getDescription();
+        return currentCheckpoint == null ? "" : currentCheckpoint.getDescription();
     }
 
     public void updateCurrentCheckpoint(String newCheckpointId) {
@@ -140,6 +126,9 @@ public class RaceHolder {
     }
 
     public List<? extends CustomOverlayItem> raceToCustomOverlay() {
+        if (currentRace == null) {
+            return new ArrayList<>();
+        }
         return currentRace.toCustomOverlayWithCheckpoints(currentRaceRecord.getGeofenceProgression());
     }
 
