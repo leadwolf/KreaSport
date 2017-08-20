@@ -104,8 +104,6 @@ public class RealmHelper {
      * @return the race found or null
      */
     public RealmRace findRaceById(String id) {
-        Log.d(LOG, "attempting to find race:" + id);
-
         return realm.where(RealmRace.class)
                 .equalTo("id", id)
                 .findFirst();

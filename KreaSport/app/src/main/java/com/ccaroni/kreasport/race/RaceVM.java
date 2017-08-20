@@ -3,6 +3,9 @@ package com.ccaroni.kreasport.race;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.location.Location;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
@@ -10,7 +13,9 @@ import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.utils.Constants;
 
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
 import java.util.ArrayList;
@@ -232,15 +237,86 @@ public class RaceVM extends BaseObservable {
     }
 
     public void onStartClicked() {
-        Log.d(TAG, "start clicked");
+        if (raceActive) {
+            throw new IllegalStateException("A race is already active");
+        } else if (!RaceHolder.getInstance().isRaceSelected()) {
+            throw new IllegalStateException("No race is currently selected");
+        }
+
+        if (validateProximityToStart()) {
+
+            GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeopoint();
+            if (raceViewComms.needToAnimateToStart(startPoint)) {
+                Log.d(TAG, "waiting for animation to end to start race");
+                onMyLocationClicked(); // manually trigger animation to user's location
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startRace();
+                    }
+                }, 1500);
+            } else {
+                Log.d(TAG, "no animation, starting race");
+                startRace();
+            }
+        }
+    }
+
+    private boolean validateProximityToStart() {
+        boolean validStart = false;
+
+        Location lastLocation = raceViewComms.getLastKnownLocation();
+        Location raceLocation = RaceHolder.getInstance().getCurrentRaceLocation();
+
+        float distance = lastLocation.distanceTo(raceLocation);
+
+        if (distance > Constants.MINIMUM_DISTANCE_TO_START_RACE) {
+            Log.d(TAG, "User was " + distance + "m away from start. Too far by " + (distance - Constants.MINIMUM_DISTANCE_TO_START_RACE) + "m");
+            raceViewComms.toast("You are too far to start this race");
+        } else {
+            Log.d(TAG, "User was " + distance + "m away from start. Inside by " + (Constants.MINIMUM_DISTANCE_TO_START_RACE - distance) + "m");
+            validStart = true;
+        }
+
+        return validStart;
+    }
+
+    private void startRace() {
+
+        final long timeStart = SystemClock.elapsedRealtime();
+
+        RaceHolder.getInstance().startRace(timeStart);
+
+        raceActive = true;
+        changeVisibilitiesOnRaceState();
+
+        raceViewComms.startChronometer(timeStart);
+
+        raceViewComms.toast("Race started");
     }
 
     public void onStopClicked() {
-        Log.d(TAG, "stop clicked");
+        raceViewComms.askStopConfirmation();
     }
 
-    public void onConfirmStop() {
+    public void onStopConfirmation() {
+        this.raceActive = false;
 
+        RaceHolder.getInstance().setRaceRecordInProgress(false);
+        changeVisibilitiesOnRaceState();
+
+
+            RaceHolder.getInstance().deleteRaceRecord();
+
+//        TODO verify progression
+//        if (toArchive) {
+//            archiveRaceRecord();
+//        } else {
+//            RaceHolder.getInstance().deleteRaceRecord();
+//        }
+
+        raceViewComms.stopChronometer();
     }
 
     public void onQuestionCorrectlyAnswered(int answerIndex) {

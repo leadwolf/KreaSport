@@ -23,8 +23,6 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.Riddle;
-import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
@@ -34,8 +32,6 @@ import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.race.RaceViewComms;
 import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
-import com.ccaroni.kreasport.race.legacy.RaceCommunication;
-import com.ccaroni.kreasport.race.legacy.impl.LEGACYRaceVMImpl;
 import com.ccaroni.kreasport.service.RacingService;
 import com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.service.geofence.GeofenceUtils;
@@ -349,21 +345,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     /* RACE COMMUNICATION */
 
-//    @Override
-//    public void startChronometer(long newBase) {
-//        chronometer.setBase(newBase);
-//        chronometer.start();
-//    }
-//
-//    @Override
-//    public void stopChronometer() {
-//        chronometer.stop();
-//    }
-//
-//    @Override
-//    public void toast(String message) {
-//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-//    }
 //
 //    @Override
 //    public void addGeoFence(RealmCheckpoint checkpoint) {
@@ -412,36 +393,48 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     }
 
-//    /**
-//     * @param startPoint the point we need to theoretically animate to
-//     * @return if the current {@link BoundingBox} scaled by a factor of 0.5 contains the startPoint
-//     */
-//    public boolean needToAnimateToStart(GeoPoint startPoint) {
-//
-//        BoundingBox currentBb = mMapView.getBoundingBox();
-//        BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
-//
-//        return !reducedBB.contains(startPoint);
-//
-//    }
+    @Override
+    public void askStopConfirmation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
+                .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        raceVM.onStopConfirmation();
+                    }
+                })
+                .setNegativeButton("No, continue the race", null);
+        builder.create().show();
+    }
 
-//    @Override
-//    public void confirmStopRace() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
-//                .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        raceVM.onConfirmStop();
-//                    }
-//                })
-//                .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // User cancelled the dialog
-//                    }
-//                });
-//        // Create the AlertDialog object and return it
-//        builder.create().show();
-//    }
+    @Override
+    public void toast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void startChronometer(long timeStart) {
+        chronometer.setBase(timeStart);
+        chronometer.start();
+    }
+
+    @Override
+    public Location getLastKnownLocation() {
+        return mLocationUtils.getLastKnownLocation();
+    }
+
+    @Override
+    public boolean needToAnimateToStart(GeoPoint startPoint) {
+        BoundingBox currentBb = mMapView.getBoundingBox();
+        BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
+
+        return !reducedBB.contains(startPoint);
+    }
+
+    @Override
+    public void stopChronometer() {
+        chronometer.stop();
+    }
+
 
     /* END RACE COMMS */
 

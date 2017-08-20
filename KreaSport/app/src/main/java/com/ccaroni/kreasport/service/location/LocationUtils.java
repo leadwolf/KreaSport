@@ -68,7 +68,7 @@ public class LocationUtils {
                 String data = sharedPreferences.getString(key, "");
 
                 if (!data.equals("")) {
-                    Log.d(TAG, "received from location prefs: " + data);
+//                    Log.d(TAG, "received from location prefs: " + data);
 
                     Location location = gson.fromJson(data, Location.class);
 
@@ -87,7 +87,10 @@ public class LocationUtils {
 
 //        Use our own previously sourced data
         String locationJson = locationPrefs.getString(BaseLocationService.KEY_LAST_LOCATION, "");
-        return gson.fromJson(locationJson, Location.class);
+        Location lastLocation = gson.fromJson(locationJson, Location.class);
+
+        Log.d(TAG, "last known location: " + lastLocation);
+        return lastLocation;
     }
 
     /**
