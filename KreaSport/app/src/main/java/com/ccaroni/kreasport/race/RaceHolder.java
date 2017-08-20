@@ -177,18 +177,26 @@ public class RaceHolder {
         return currentRace == null ? new GeoPoint(0.0, 0.0) : new GeoPoint(currentRace.getLatitude(), currentRace.getLongitude());
     }
 
-    public void setRaceRecordInProgress(boolean raceRecordInProgress) {
+    private void setRaceRecordInProgress(boolean raceRecordInProgress) {
         RealmHelper.getInstance(null).beginTransaction();
         currentRaceRecord.setInProgress(raceRecordInProgress);
         RealmHelper.getInstance(null).commitTransaction();
     }
 
-    public void deleteRaceRecord() {
+    /**
+     * Stops the {@link RealmRaceRecord} and either deletes it if the race is unfinished or leaves it be
+     */
+    public void stopRecording() {
+        if (currentRaceRecord.getProgression() == currentRace.getNbCheckpoints()) {
+            setRaceRecordInProgress(false);
+        } else {
         Log.d(TAG, "deleting record" + currentRaceRecord.getId());
         RealmHelper.getInstance(null).beginTransaction();
         currentRaceRecord.deleteFromRealm();
         RealmHelper.getInstance(null).commitTransaction();
 
         currentRaceRecord = null;
+        }
     }
+
 }

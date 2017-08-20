@@ -399,6 +399,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
                 .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        chronometer.stop();
                         raceVM.onStopConfirmation();
                     }
                 })

@@ -303,20 +303,9 @@ public class RaceVM extends BaseObservable {
     public void onStopConfirmation() {
         this.raceActive = false;
 
-        RaceHolder.getInstance().setRaceRecordInProgress(false);
-        changeVisibilitiesOnRaceState();
+        RaceHolder.getInstance().stopRecording();
 
-
-            RaceHolder.getInstance().deleteRaceRecord();
-
-//        TODO verify progression
-//        if (toArchive) {
-//            archiveRaceRecord();
-//        } else {
-//            RaceHolder.getInstance().deleteRaceRecord();
-//        }
-
-        raceViewComms.stopChronometer();
+        changeVisibilitiesOnRaceState(); // TODO lead to a new screen if finished race
     }
 
     public void onQuestionCorrectlyAnswered(int answerIndex) {
