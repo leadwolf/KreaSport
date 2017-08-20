@@ -245,22 +245,24 @@ public class RaceVM extends BaseObservable {
             throw new IllegalStateException("No race is currently selected");
         }
 
-        if (validateProximityToStart()) {
+        if (!raceViewComms.verifyLocationSettings()) {
+            if (validateProximityToStart()) {
 
-            GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeopoint();
-            if (raceViewComms.needToAnimateToStart(startPoint)) {
-                Log.d(TAG, "waiting for animation to end to start race");
-                onMyLocationClicked(); // manually trigger animation to user's location
+                GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeopoint();
+                if (raceViewComms.needToAnimateToStart(startPoint)) {
+                    Log.d(TAG, "waiting for animation to end to start race");
+                    onMyLocationClicked(); // manually trigger animation to user's location
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startRace();
-                    }
-                }, 1500);
-            } else {
-                Log.d(TAG, "no animation, starting race");
-                startRace();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startRace();
+                        }
+                    }, 1500);
+                } else {
+                    Log.d(TAG, "no animation, starting race");
+                    startRace();
+                }
             }
         }
     }
@@ -314,6 +316,7 @@ public class RaceVM extends BaseObservable {
 
     /**
      * Interfaces with {@link RaceHolder} to verify progression, removes the geofence since we will now trigger the riddle for the checkpoint
+     *
      * @param checkpointId
      */
     public void onGeofenceTriggered(String checkpointId) {
@@ -332,6 +335,7 @@ public class RaceVM extends BaseObservable {
 
     /**
      * Interfaces with {@link RaceHolder} to increment targeting progression, triggeres the next checkpoint reveal and geofence
+     *
      * @param answerIndex
      */
     public void onQuestionCorrectlyAnswered(int answerIndex) {

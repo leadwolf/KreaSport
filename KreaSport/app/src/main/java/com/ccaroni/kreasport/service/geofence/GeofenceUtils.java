@@ -104,18 +104,7 @@ public class GeofenceUtils implements OnCompleteListener<Void> {
     @SuppressWarnings({"MissingPermission"})
     public void addGeofences(RealmCheckpoint checkpoint) {
         mGeofencingClient.addGeofences(getGeofencingRequest(checkpoint), getGeofencePendingIntent())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "add geofence SUCCESS");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "add geofence FAIL");
-                    }
-                });
+                .addOnCompleteListener(this);
     }
 
 

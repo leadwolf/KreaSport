@@ -1,11 +1,13 @@
 package com.ccaroni.kreasport.view.activities;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.BitmapDrawable;
@@ -34,7 +36,6 @@ import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.race.RaceViewComms;
 import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
-import com.ccaroni.kreasport.service.RacingService;
 import com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.service.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.service.location.LocationUtils;
@@ -69,8 +70,14 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_CODE_RIDDLE_ANSWER = 100;
 
+    /**
+     * Constant used in the location settings dialog.
+     */
+    private static final int REQUEST_CHECK_SETTINGS = 0x1;
+
     private static final String KEY_BASE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + ".key.";
     public static final String KEY_RIDDLE = KEY_BASE + ".riddle";
+    public static final String REQUIRES_LOCATION_SETTINGS_PROMPT = KEY_BASE + "requires_location_settings_prompt";
 
 
     private ActivityExploreBinding binding;
@@ -95,6 +102,11 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private Gson gson;
 
+    /**
+     * The {@link PendingIntent} that holds the necessary resolution to use google location
+     */
+    private PendingIntent locationSettingsPI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,18 +116,11 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         resetNavigationDrawer(navigationView.getMenu().getItem(1));
         setCurrentActivityIndex(1);
 
-        gson = new Gson();
-
         // First we need to check availability of play services
         if (checkPlayServices()) {
 
             // Building the GoogleApi client
             buildGoogleApiClient();
-
-            // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
-            LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
-            receiver = new GeofenceReceiver();
-            lbc.registerReceiver(receiver, new IntentFilter(GEOFENCE_TRIGGERED));
         } else {
             // Force to go back to Home
 //            onNavigationItemSelected(navigationView.getMenu().getItem(0));
@@ -124,13 +129,40 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             // TODO don't redirect here, move the whole verification in the launcher activity instead, this commit is only a quickfix
         }
 
+        locationSettingsPI = (PendingIntent) (getIntent().getParcelableExtra(REQUIRES_LOCATION_SETTINGS_PROMPT));
+        if (locationSettingsPI != null) {
+            try {
+                startIntentSenderForResult(locationSettingsPI.getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            setupLocationAndGeofenceServices();
+        }
+
+        gson = new Gson();
+
+//        Intent racingServiceIntent = new Intent(this, RacingService.class);
+//        startService(racingServiceIntent);
+        // TODO only use this service for background
+
+        setupUI();
+    }
+
+    private void setupLocationAndGeofenceServices() {
         mLocationUtils = new LocationUtils(this);
         mGeofenceUtils = new GeofenceUtils(this);
 
-        // Ensure that the racing service is active, multiple calls to an already running service are taken care of
-        Intent racingServiceIntent = new Intent(this, RacingService.class);
-        startService(racingServiceIntent);
+        // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
+        LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
+        receiver = new GeofenceReceiver();
+        lbc.registerReceiver(receiver, new IntentFilter(GEOFENCE_TRIGGERED));
+    }
 
+    /**
+     * Sets up the UI by setting up the map and loads everything needing to be displayed
+     */
+    private void setupUI() {
         RealmHelper.getInstance(this);
         RaceHolder.init(CredentialsManager.getUserId(this));
 
@@ -285,7 +317,9 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         if (googlePlayServicesAvailable) {
             mGoogleApiClient.connect();
         }
-        mLocationUtils.startLocationUpdates();
+        if (mLocationUtils != null) {
+            mLocationUtils.startLocationUpdates();
+        }
         super.onStart();
     }
 
@@ -306,7 +340,9 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onPause() {
         super.onPause();
-        mLocationUtils.stopLocationUpdates();
+        if (mLocationUtils != null) {
+            mLocationUtils.stopLocationUpdates();
+        }
 //        LEGACYRaceVM.saveOngoingBaseTime(); TODO
     }
 
@@ -367,20 +403,21 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void onMyLocationClicked() {
-        final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
-        updateLocationIcon(lastKnownLocation);
+        if (!verifyLocationSettings()) {
+            final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
+            updateLocationIcon(lastKnownLocation);
 
-        final MapController mapController = (MapController) mMapView.getController();
-        mapController.animateTo(new GeoPoint(lastKnownLocation));
+            final MapController mapController = (MapController) mMapView.getController();
+            mapController.animateTo(new GeoPoint(lastKnownLocation));
 
-        // delay this otherwise it interrupts the animateTo animation
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mapController.zoomTo(Constants.AUTO_ZOOM_LEVEL);
-            }
-        }, 500);
-
+            // delay this otherwise it interrupts the animateTo animation
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mapController.zoomTo(Constants.AUTO_ZOOM_LEVEL);
+                }
+            }, 500);
+        }
     }
 
     @Override
@@ -444,6 +481,24 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         mGeofenceUtils.removePreviousGeofences();
     }
 
+
+    /**
+     * Asks the user to agree to Google location settings
+     */
+    @Override
+    public boolean verifyLocationSettings() {
+        if (locationSettingsPI != null) {
+            try {
+                startIntentSenderForResult(locationSettingsPI.getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void revealNextCheckpoint(CustomOverlayItem nextCheckpointOverlayItem) {
         Log.d(LOG, "revealing next checkpoint: " + nextCheckpointOverlayItem);
@@ -494,17 +549,36 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_RIDDLE_ANSWER) {
-            if (resultCode == RESULT_OK) {
-                int answerIndex = data.getIntExtra(RiddleActivity.KEY_USER_ANSWER, -1);
-
-                if (answerIndex == -1) {
-                    throw new IllegalStateException("Received answer index -1 but requestCode was RESULT_OK");
+        switch (requestCode) {
+            // Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Log.i(LOG, "User agreed to make required location settings changes.");
+                        locationSettingsPI = null;
+                        setupLocationAndGeofenceServices();
+                        mLocationUtils.startLocationUpdates();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Log.i(LOG, "User chose not to make required location settings changes.");
+                        break;
                 }
+                break;
+            case REQUEST_CODE_RIDDLE_ANSWER:
+                if (resultCode == RESULT_OK) {
+                    int answerIndex = data.getIntExtra(RiddleActivity.KEY_USER_ANSWER, -1);
 
-                onQuestionAnswered(answerIndex);
-            }
+                    if (answerIndex == -1) {
+                        throw new IllegalStateException("Received answer index -1 but requestCode was RESULT_OK");
+                    }
+
+                    onQuestionAnswered(answerIndex);
+                }
+                break;
+            default:
+                break;
         }
+
     }
 
     /**

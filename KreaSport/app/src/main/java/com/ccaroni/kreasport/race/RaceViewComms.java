@@ -43,4 +43,10 @@ public interface RaceViewComms {
     void revealNextCheckpoint(CustomOverlayItem customOverlayItem);
 
     void removeLastGeofence();
+
+    /**
+     *
+     * @return if the user needs to accept google location settings
+     */
+    boolean verifyLocationSettings();
 }
