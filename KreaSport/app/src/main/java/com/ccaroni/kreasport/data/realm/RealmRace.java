@@ -182,9 +182,11 @@ public class RealmRace extends RealmObject {
     /**
      *
      * @param progression the index of what checkpoint we want to compare to
+     * @param indexName
      * @return if progression == realmCheckpoint.size() - 1
      */
-    public boolean isOnLastCheckpoint(int progression) {
+    public boolean isOnLastCheckpoint(int progression, String indexName) {
+        Log.d(LOG, "finish check from 0: nbCheckpoints: " + (realmCheckpoints.size() -1) + ", " + indexName + " " + progression);
         return progression == realmCheckpoints.size()-1;
     }
 

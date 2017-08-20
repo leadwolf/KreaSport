@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.Riddle;
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
 import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
@@ -362,18 +364,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 //
 //    }
 //
-//    /**
-//     * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
-//     *
-//     * @param riddle
-//     */
-//    @Override
-//    public void askRiddle(Riddle riddle) {
-//        Intent intent = new Intent(this, RiddleActivity.class);
-//        String riddleJson = new Gson().toJson(riddle, Riddle.class);
-//        intent.putExtra(KEY_RIDDLE, riddleJson);
-//        startActivityForResult(intent, REQUEST_CODE_RIDDLE_ANSWER);
-//    }
 
     @Override
     public void onMyLocationClicked() {
@@ -434,6 +424,33 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     public void stopChronometer() {
         chronometer.stop();
+    }
+
+    @Override
+    public void askRiddle(Riddle riddle) {
+        Intent intent = new Intent(this, RiddleActivity.class);
+        String riddleJson = new Gson().toJson(riddle, Riddle.class);
+        intent.putExtra(KEY_RIDDLE, riddleJson);
+        startActivityForResult(intent, REQUEST_CODE_RIDDLE_ANSWER);
+    }
+
+    @Override
+    public void addGeoFence(RealmCheckpoint targetingCheckpoint) {
+        mGeofenceUtils.addGeofences(targetingCheckpoint);
+    }
+
+    @Override
+    public void removeLastGeofence() {
+        mGeofenceUtils.removePreviousGeofences();
+    }
+
+    @Override
+    public void revealNextCheckpoint(CustomOverlayItem nextCheckpointOverlayItem) {
+        Log.d(LOG, "revealing next checkpoint: " + nextCheckpointOverlayItem);
+
+        raceListOverlay.addItem(nextCheckpointOverlayItem);
+
+        mMapView.invalidate();
     }
 
 

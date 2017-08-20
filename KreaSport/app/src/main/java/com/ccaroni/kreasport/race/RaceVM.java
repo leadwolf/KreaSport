@@ -11,7 +11,9 @@ import android.view.View;
 
 import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.utils.Constants;
 
@@ -291,6 +293,8 @@ public class RaceVM extends BaseObservable {
         raceActive = true;
         changeVisibilitiesOnRaceState();
 
+        triggerNextGeofence();
+
         raceViewComms.startChronometer(timeStart);
 
         raceViewComms.toast("Race started");
@@ -308,12 +312,46 @@ public class RaceVM extends BaseObservable {
         changeVisibilitiesOnRaceState(); // TODO lead to a new screen if finished race
     }
 
-    public void onQuestionCorrectlyAnswered(int answerIndex) {
-
-    }
-
+    /**
+     * Interfaces with {@link RaceHolder} to verify progression, removes the geofence since we will now trigger the riddle for the checkpoint
+     * @param checkpointId
+     */
     public void onGeofenceTriggered(String checkpointId) {
 
+        if (!RaceHolder.getInstance().verifyGeofenceProgression()) {
+            throw new IllegalStateException("Geofence was triggered but progressions are not synced");
+        } // else continue
+
+        raceViewComms.removeLastGeofence();
+
+        RaceHolder.getInstance().onGeofenceTriggered();
+
+        RealmRiddle targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpointRiddle();
+        raceViewComms.askRiddle(targetingCheckpoint.toDTO());
+    }
+
+    /**
+     * Interfaces with {@link RaceHolder} to increment targeting progression, triggeres the next checkpoint reveal and geofence
+     * @param answerIndex
+     */
+    public void onQuestionCorrectlyAnswered(int answerIndex) {
+        RaceHolder.getInstance().onQuestionAnswered(answerIndex);
+
+        if (RaceHolder.getInstance().finishedRace()) {
+            // trigger end
+            RaceHolder.getInstance().stopRecording();
+            raceViewComms.stopChronometer();
+            raceViewComms.toast("Finished!");
+        } else {
+            // trigger next
+            triggerNextGeofence();
+        }
+    }
+
+    private void triggerNextGeofence() {
+        RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
+        raceViewComms.addGeoFence(targetingCheckpoint);
+        raceViewComms.revealNextCheckpoint(targetingCheckpoint.toCustomOverlayItem());
     }
 
 

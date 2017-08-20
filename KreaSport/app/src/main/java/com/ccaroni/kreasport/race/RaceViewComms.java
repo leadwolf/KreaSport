@@ -2,6 +2,10 @@ package com.ccaroni.kreasport.race;
 
 import android.location.Location;
 
+import com.ccaroni.kreasport.data.dto.Riddle;
+import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+
 import org.osmdroid.util.GeoPoint;
 
 /**
@@ -31,4 +35,12 @@ public interface RaceViewComms {
     boolean needToAnimateToStart(GeoPoint startPoint);
 
     void stopChronometer();
+
+    void askRiddle(Riddle riddle);
+
+    void addGeoFence(RealmCheckpoint targetingCheckpoint);
+
+    void revealNextCheckpoint(CustomOverlayItem customOverlayItem);
+
+    void removeLastGeofence();
 }

@@ -161,4 +161,11 @@ public class GeofenceUtils implements OnCompleteListener<Void> {
     private void removeGeofences() {
         mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
     }
+
+    public void removePreviousGeofences() {
+        /**
+         * removes all previous geofences since {@link #getGeofencePendingIntent()} uses {@link PendingIntent.FLAG_UPDATE_CURRENT}
+         */
+        mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+    }
 }

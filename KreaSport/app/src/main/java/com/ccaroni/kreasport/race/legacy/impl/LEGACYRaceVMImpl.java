@@ -258,6 +258,6 @@ public class LEGACYRaceVMImpl extends LEGACYRaceVM {
     @Override
     public void onConfirmStop() {
         Log.d(LOG, raceCommunication + " confirmed stop");
-        stopRace(currentRace.isOnLastCheckpoint(raceRecord.getProgression()));
+        stopRace(currentRace.isOnLastCheckpoint(raceRecord.getTargetCheckpointIndex(), "current index"));
     }
 }

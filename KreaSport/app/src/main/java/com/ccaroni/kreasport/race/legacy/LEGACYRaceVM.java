@@ -205,14 +205,14 @@ public abstract class LEGACYRaceVM extends BaseObservable {
      */
     public void onGeofenceTriggered(String checkpointId) {
 
-        if (raceRecord.getProgression() != raceRecord.getGeofenceProgression()) {
+        if (raceRecord.getTargetCheckpointIndex() != raceRecord.getGeofenceProgression()) {
             Log.d(LOG, "Geofence was triggered but saved progression and geofence progression are already synced");
             Log.d(LOG, "progression should always be one step behind geofence progression at geofence trigger moment because normal progression is only validated on question " +
                     "answer");
             throw new IllegalStateException("Geofence was triggered but saved progression and geofence progression are already synced");
         }
 
-        if (currentRace.isOnLastCheckpoint(raceRecord.getGeofenceProgression())) {
+        if (currentRace.isOnLastCheckpoint(raceRecord.getGeofenceProgression(), "current index")) {
             Log.d(LOG, "last checkpoint has just been geofence validated");
         } else {
             Log.d(LOG, "checkpoint " + checkpointId + " has just been geofence validated");
@@ -248,7 +248,7 @@ public abstract class LEGACYRaceVM extends BaseObservable {
      * Stops the race & notifies the end of the race through {@link RaceCommunication}
      */
     private void incrementProgression() {
-        if (currentRace.isOnLastCheckpoint(raceRecord.getProgression())) {
+        if (currentRace.isOnLastCheckpoint(raceRecord.getTargetCheckpointIndex(), "current index")) {
             Log.d(LOG, "last checkpoint's answer has just been validated");
 
             // TODO end race
@@ -256,10 +256,10 @@ public abstract class LEGACYRaceVM extends BaseObservable {
             Log.d(LOG, "inc progression, revealing next w/ geofence");
 
             RealmHelper.getInstance(null).beginTransaction();
-            raceRecord.incrementProgression();
+            raceRecord.incrementTargetCheckpointIndex();
             RealmHelper.getInstance(null).commitTransaction();
 
-            currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getProgression());
+            currentCheckpoint = currentRace.getCheckpointByProgression(raceRecord.getTargetCheckpointIndex());
 
             raceCommunication.revealNextCheckpoint(currentCheckpoint.toCustomOverlayItem());
 
