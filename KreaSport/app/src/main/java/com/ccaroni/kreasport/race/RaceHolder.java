@@ -34,17 +34,21 @@ public class RaceHolder {
     /**
      * The selected race, with or without timer
      */
-    protected RealmRace currentRace;
+    private RealmRace currentRace;
 
     /**
      * The selected checkpoint, not necessarily the targeting one
      */
-    protected RealmCheckpoint currentCheckpoint;
+    private RealmCheckpoint currentCheckpoint;
 
     /**
      * The current record, it may not be in use as it it preloaded
      */
-    protected RealmRaceRecord currentRaceRecord;
+    private RealmRaceRecord currentRaceRecord;
+
+    private String currentTitle;
+
+    private String currentDescription;
 
     /**
      * The user id to tie to the race record.
@@ -132,11 +136,15 @@ public class RaceHolder {
         currentRace = RealmHelper.getInstance(null).findRaceById(raceId);
     }
 
+    /**
+     *
+     * @return A list of the race as {@link CustomOverlayItem} up to and including the targeting checkpoint according to {@link #currentRaceRecord}
+     */
     public List<? extends CustomOverlayItem> raceToCustomOverlay() {
         if (currentRace == null) {
             return new ArrayList<>();
         }
-        return currentRace.toCustomOverlayWithCheckpoints(currentRaceRecord.getGeofenceProgression());
+        return currentRace.toCustomOverlayWithCheckpoints(currentRaceRecord.getTargetCheckpointIndex());
     }
 
     public void removeWholeSelection() {
@@ -261,5 +269,33 @@ public class RaceHolder {
     public boolean finishedRace() {
         // TODO verify last riddle was answered
         return currentRace.isOnLastCheckpoint(currentRaceRecord.getTargetCheckpointIndex(), "target") && currentRace.isOnLastCheckpoint(currentRaceRecord.getGeofenceProgression(), "geofence index");
+    }
+
+    public String getCurrentTitle() {
+        return currentTitle;
+    }
+
+    public void setTitle(String title) {
+        this.currentTitle = title;
+    }
+
+    public String getCurrentDescription() {
+        return currentDescription;
+    }
+
+    public void setDescription(String description) {
+        this.currentDescription = description;
+    }
+
+    public boolean isRaceActive() {
+        return currentRaceRecord != null && currentRaceRecord.isInProgress();
+    }
+
+    public long getTimeStart() {
+        return currentRaceRecord == null ? 0 : currentRaceRecord.getBaseTime();
+    }
+
+    public String getCurrentRaceRecordId() {
+        return currentRaceRecord.getId();
     }
 }

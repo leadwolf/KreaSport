@@ -43,12 +43,6 @@ public class RaceVM extends BaseObservable {
     private int activeInfoVisibility;
     private int fabStartVisibility;
 
-    /*
-     * Separate attrs because we can't just grab from currentRace or currentCheckpoint depending on raceActive?, progression and even if the user deliberately selects another
-     * marker that is not related to his progression.
-     */
-    private String title;
-    private String description;
 
     private int fabMyLocationCornerVisibility;
     private int fabMyLocationAnchoredStartVisibility;
@@ -86,6 +80,10 @@ public class RaceVM extends BaseObservable {
 
 
         notifyChange();
+    }
+
+    private void resumeRace() {
+        raceViewComms.startChronometer(RaceHolder.getInstance().getTimeStart());
     }
 
     public ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener() {
@@ -201,21 +199,21 @@ public class RaceVM extends BaseObservable {
 
     @Bindable
     public String getTitle() {
-        return title;
+        return RaceHolder.getInstance().getCurrentTitle();
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        RaceHolder.getInstance().setTitle(title);
         notifyPropertyChanged(BR.title);
     }
 
     @Bindable
     public String getDescription() {
-        return description;
+        return RaceHolder.getInstance().getCurrentDescription();
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        RaceHolder.getInstance().setDescription(description);
         notifyPropertyChanged(BR.description);
     }
 
@@ -295,6 +293,8 @@ public class RaceVM extends BaseObservable {
         raceActive = true;
         changeVisibilitiesOnRaceState();
 
+        raceViewComms.focusOnRace(getOverlayItems());
+
         triggerNextGeofence();
 
         raceViewComms.startChronometer(timeStart);
@@ -352,6 +352,9 @@ public class RaceVM extends BaseObservable {
         }
     }
 
+    /**
+     * Calls the {@link #raceViewComms} to add a geofence for the targeting checkpoint as well as revealing it on the map
+     */
     private void triggerNextGeofence() {
         RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
         raceViewComms.addGeoFence(targetingCheckpoint);
@@ -373,5 +376,20 @@ public class RaceVM extends BaseObservable {
         }
 
         return items;
+    }
+
+    /**
+     * Call this to trigger the VM to check for a previous race. If one is found, bound view will be updated accordingly
+     */
+    public void checkPreviousRace() {
+        Log.d(TAG, "checking for a previous race");
+        raceActive = RaceHolder.getInstance().isRaceActive();
+        if (raceActive) {
+            Log.d(TAG, "found an active raceRecord, will be resuming: " + RaceHolder.getInstance().getCurrentRaceRecordId());
+            changeVisibilitiesOnRaceState();
+            resumeRace();
+
+            raceViewComms.focusOnRace(getOverlayItems());
+        }
     }
 }

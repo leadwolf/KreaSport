@@ -288,6 +288,7 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
         if (mLocationUtils != null) {
             mLocationUtils.startLocationUpdates();
         }
+        raceVM.checkPreviousRace();
         super.onStart();
     }
 
@@ -403,6 +404,14 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
         } else {
             return true;
         }
+    }
+
+    @Override
+    public void focusOnRace(List<CustomOverlayItem> overlayItemsList) {
+        Log.d(LOG, "clearing all markers except current race");
+        raceListOverlay.removeAllItems();
+        raceListOverlay.addItems(overlayItemsList);
+        mMapView.invalidate();
     }
 
     private void attemptLocationSetttingsResolution() {

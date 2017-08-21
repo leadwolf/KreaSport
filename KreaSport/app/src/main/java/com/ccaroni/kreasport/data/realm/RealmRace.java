@@ -116,11 +116,17 @@ public class RealmRace extends RealmObject {
         return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId(), getId()).setPrimary(true);
     }
 
-    public List<CustomOverlayItem> toCustomOverlayWithCheckpoints(int progression) {
+    /**
+     * Adds a marker for the race and a marker for every checkpoint including the target
+     * for (int i=0;i<=progression;i++)
+     * @param lastCheckpointIndex
+     * @return
+     */
+    public List<CustomOverlayItem> toCustomOverlayWithCheckpoints(int lastCheckpointIndex) {
         List<CustomOverlayItem> items = new ArrayList<>();
         items.add(toCustomOverlayItemAsSingle());
 
-        for (int i=0;i<=progression;i++) {
+        for (int i=0;i<=lastCheckpointIndex;i++) {
             RealmCheckpoint realmCheckpoint = realmCheckpoints.get(i);
             items.add(realmCheckpoint.toCustomOverlayItem());
             Log.d(LOG, "converted checkpoint for progression: " + i);

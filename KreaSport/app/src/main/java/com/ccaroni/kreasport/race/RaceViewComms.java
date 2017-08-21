@@ -8,6 +8,8 @@ import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.util.List;
+
 /**
  * Created by Master on 20/08/2017.
  */
@@ -49,4 +51,10 @@ public interface RaceViewComms {
      * @return if the user needs to accept google location settings
      */
     boolean verifyLocationSettings();
+
+    /**
+     * Clear all markers and add overlayItemsList
+     * @param overlayItemsList
+     */
+    void focusOnRace(List<CustomOverlayItem> overlayItemsList);
 }
