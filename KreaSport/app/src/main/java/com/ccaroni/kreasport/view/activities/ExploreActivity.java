@@ -8,10 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -46,7 +46,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 
 import org.osmdroid.config.Configuration;
@@ -90,15 +89,10 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private GeofenceReceiver receiver;
 
-    private GoogleApiClient mGoogleApiClient;
     private boolean hasFix;
-    private PendingIntent mGeofencePendingIntent;
-
-    private boolean googlePlayServicesAvailable;
 
     private LocationUtils mLocationUtils;
     private GeofenceUtils mGeofenceUtils;
-    private SharedPreferences.OnSharedPreferenceChangeListener locationPrefsListener;
 
     private Gson gson;
 
@@ -117,17 +111,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         setCurrentActivityIndex(1);
 
         // First we need to check availability of play services
-        if (checkPlayServices()) {
-
-            // Building the GoogleApi client
-            buildGoogleApiClient();
-        } else {
-            // Force to go back to Home
-//            onNavigationItemSelected(navigationView.getMenu().getItem(0));
-//            finish();
-
-            // TODO don't redirect here, move the whole verification in the launcher activity instead, this commit is only a quickfix
-        }
+        checkPlayServicesAvailable();
 
         locationSettingsPI = (PendingIntent) (getIntent().getParcelableExtra(REQUIRES_LOCATION_SETTINGS_PROMPT));
         if (locationSettingsPI != null) {
@@ -217,46 +201,48 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         setCurrentActivityIndex(1);
     }
 
-    /* GOOGLE API CLIENT */
-
-    /**
-     * Creating google api client object
-     */
-    protected synchronized void buildGoogleApiClient() {
-        Log.d(LOG, "creating google api client");
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
      */
-    private boolean checkPlayServices() {
+    private boolean checkPlayServicesAvailable() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
             Log.d(LOG, "Google Play Services not available!");
+            Log.d(LOG, "Error Code: " + resultCode + ", " + apiAvailability.getErrorString(resultCode));
 
             if (apiAvailability.isUserResolvableError(resultCode)) {
+                // WARNING even this may indicate that the user simply cannot use the app if he gets code "SERVICE_INVALID"
+                Log.d(LOG, "attempting user resolution");
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
                         .show();
             } else {
-                Log.d(LOG, "This device does not support Google Play Services.");
-                selectDrawerItem(navigationView.getMenu().getItem(0));
-                Toast.makeText(this, "Your device does not support Google Play Services.", Toast.LENGTH_SHORT).show();
-                // TODO error
+                Log.d(LOG, "This device does not support Google Play Services and is not user resolvable");
+                Toast.makeText(this, "Your device does not support Google Play Services.", Toast.LENGTH_LONG).show();
+                closeActivity();
             }
-            googlePlayServicesAvailable = false;
+            if (resultCode == ConnectionResult.SERVICE_INVALID) {
+                closeActivity();
+            }
             return false;
         }
         Log.d(LOG, "Google Play Services is available!");
-        googlePlayServicesAvailable = true;
         return true;
+    }
+
+    /**
+     * Quits this activity and forces back to app home screen, or whatever was in the back stack
+     */
+    private void closeActivity() {
+        Log.d(LOG, "Device completely does not support Google Play Services. Forcing back to app home screen");
+        // this finishes this activity and forces to go back to home screen since its in the back stack
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAndRemoveTask();
+        } else {
+            finishAffinity();
+        }
     }
 
     /**
@@ -314,25 +300,12 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     protected void onStart() {
-        if (googlePlayServicesAvailable) {
-            mGoogleApiClient.connect();
-        }
         if (mLocationUtils != null) {
             mLocationUtils.startLocationUpdates();
         }
         super.onStart();
     }
 
-    /**
-     * Disconnects the google client api for battery considerations.
-     */
-    @Override
-    protected void onStop() {
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
-        super.onStop();
-    }
 
     /**
      * Stops location updates when this activity is paused for battery considerations.
@@ -353,12 +326,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-//        LEGACYRaceVM.onStart();
-//        if (LEGACYRaceVM.isRaceActive()) {
-//            Log.d(LOG, "adding geofence");
-//            mGeofenceUtils.addGeofences(LEGACYRaceVM.getActiveCheckpoint());
-//        }
-//        TODO
+        // TODO remove all google api connection stuff since its now automatic
     }
 
     /**
@@ -382,24 +350,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /* RACE COMMUNICATION */
-
-//
-//    @Override
-//    public void addGeoFence(RealmCheckpoint checkpoint) {
-//        mGeofenceUtils.addGeofences(checkpoint);
-//    }
-//
-//
-//    @Override
-//    public void revealNextCheckpoint(CustomOverlayItem nextCheckpoint) {
-//        Log.d(LOG, "revealing next checkpoint: " + nextCheckpoint);
-//
-//        raceListOverlay.addItem(nextCheckpoint);
-//
-//        mMapView.invalidate();
-//
-//    }
-//
 
     @Override
     public void onMyLocationClicked() {

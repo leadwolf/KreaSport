@@ -20,8 +20,10 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import static com.ccaroni.kreasport.view.activities.ExploreActivity.REQUIRES_LOCATION_SETTINGS_PROMPT;
 
@@ -39,7 +41,6 @@ public class GoogleLocationService extends BaseLocationService {
 
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
-    private OnFailureListener onFailureListener;
 
 
     @SuppressWarnings({"MissingPermission"})
@@ -61,24 +62,20 @@ public class GoogleLocationService extends BaseLocationService {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-        onFailureListener = new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "location request failure");
-                Log.d(TAG, e.toString());
-            }
-        };
-
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null)
-                .addOnFailureListener(onFailureListener);
-
-    }
-
-    private void createLocationRequest() {
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(Constants.GEOLOCATION_UPDATE_INTERVAL)
-                .setFastestInterval(Constants.GEOLOCATION_UPDATE_FASTEST_INTERVAL);
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "location updates request SUCCESS");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "location updates request FAILURE");
+                        Log.d(TAG, e.toString());
+                    }
+                });
 
     }
 
@@ -95,8 +92,23 @@ public class GoogleLocationService extends BaseLocationService {
         };
     }
 
+    private void createLocationRequest() {
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(Constants.GEOLOCATION_UPDATE_INTERVAL)
+                .setFastestInterval(Constants.GEOLOCATION_UPDATE_FASTEST_INTERVAL);
+
+    }
+
+    private void buildLocationSettingsRequest() {
+        mLocationSettingsRequest = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest)
+                .build();
+    }
+
     private void verifyLocationSettings() {
         // Begin by checking if the device has the necessary location settings.
+        Log.d(TAG, "checking if google play services is compatible with out location request");
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
@@ -116,13 +128,16 @@ public class GoogleLocationService extends BaseLocationService {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
                                         "location settings ");
-                                    // Show the dialog by calling startResolutionForResult(), and check the
-                                    // result in onActivityResult().
-                                    ResolvableApiException rae = (ResolvableApiException) e;
-                                    PendingIntent pI = rae.getResolution();
-                                    startActivity(new Intent(GoogleLocationService.this, ExploreActivity.class)
-                                            .putExtra(REQUIRES_LOCATION_SETTINGS_PROMPT, pI)
-                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                // Show the dialog by calling startResolutionForResult(), and check the
+                                // result in onActivityResult().
+                                ResolvableApiException rae = (ResolvableApiException) e;
+                                PendingIntent pI = rae.getResolution();
+                                startActivity(new Intent(GoogleLocationService.this, ExploreActivity.class)
+                                        .putExtra(REQUIRES_LOCATION_SETTINGS_PROMPT, pI)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+                                // TODO just use broadcast?
+
                                 break;
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                                 String errorMessage = "Location settings are inadequate, and cannot be " +
@@ -132,12 +147,6 @@ public class GoogleLocationService extends BaseLocationService {
                         }
                     }
                 });
-    }
-
-    private void buildLocationSettingsRequest() {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
-        mLocationSettingsRequest = builder.build();
     }
 
     @Override
