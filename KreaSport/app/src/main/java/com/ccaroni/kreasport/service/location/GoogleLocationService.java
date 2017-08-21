@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.view.activities.ExploreActivity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -20,11 +20,10 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
+import static com.ccaroni.kreasport.view.activities.ExploreActivity.KEY_LOCATION_SETTINGS_PI;
 import static com.ccaroni.kreasport.view.activities.ExploreActivity.REQUIRES_LOCATION_SETTINGS_PROMPT;
 
 /**
@@ -108,7 +107,7 @@ public class GoogleLocationService extends BaseLocationService {
 
     private void verifyLocationSettings() {
         // Begin by checking if the device has the necessary location settings.
-        Log.d(TAG, "checking if google play services is compatible with out location request");
+        Log.d(TAG, "checking if google play services is compatible with our location request");
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
@@ -131,12 +130,14 @@ public class GoogleLocationService extends BaseLocationService {
                                 // Show the dialog by calling startResolutionForResult(), and check the
                                 // result in onActivityResult().
                                 ResolvableApiException rae = (ResolvableApiException) e;
-                                PendingIntent pI = rae.getResolution();
-                                startActivity(new Intent(GoogleLocationService.this, ExploreActivity.class)
-                                        .putExtra(REQUIRES_LOCATION_SETTINGS_PROMPT, pI)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                PendingIntent settingsRequestPI = rae.getResolution();
 
-                                // TODO just use broadcast?
+                                Intent parentIntent = new Intent(REQUIRES_LOCATION_SETTINGS_PROMPT)
+                                        .putExtra(KEY_LOCATION_SETTINGS_PI, settingsRequestPI);
+
+                                Log.d(TAG, "broadcasting location settings error");
+
+                                LocalBroadcastManager.getInstance(GoogleLocationService.this).sendBroadcast(parentIntent);
 
                                 break;
                             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:

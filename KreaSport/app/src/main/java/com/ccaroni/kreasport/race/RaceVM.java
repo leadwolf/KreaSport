@@ -245,7 +245,7 @@ public class RaceVM extends BaseObservable {
             throw new IllegalStateException("No race is currently selected");
         }
 
-        if (!raceViewComms.verifyLocationSettings()) {
+        if (raceViewComms.verifyLocationSettings()) {
             if (validateProximityToStart()) {
 
                 GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeopoint();

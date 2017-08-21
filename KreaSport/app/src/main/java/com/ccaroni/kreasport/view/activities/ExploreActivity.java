@@ -14,8 +14,6 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -43,9 +41,6 @@ import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.gson.Gson;
 
 import org.osmdroid.config.Configuration;
@@ -62,8 +57,7 @@ import java.util.TimerTask;
 
 import static com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
-public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
-        <Status>, RaceViewComms, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
+public class ExploreActivity extends BaseActivity implements RaceViewComms, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -76,6 +70,8 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private static final String KEY_BASE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + ".key.";
     public static final String KEY_RIDDLE = KEY_BASE + ".riddle";
+
+    public static final String KEY_LOCATION_SETTINGS_PI = KEY_BASE + "location_settings_request_pending_intent";
     public static final String REQUIRES_LOCATION_SETTINGS_PROMPT = KEY_BASE + "requires_location_settings_prompt";
 
 
@@ -87,19 +83,23 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private RaceVM raceVM;
 
-    private GeofenceReceiver receiver;
+    private GeofenceReceiver geofenceReceiver;
+
+    /**
+     * Receiver to listen to requests to change the user's location settings
+     */
+    private LocationSettingsReceiver locationSettingsReceiver;
+
+    /**
+     * The intent containing the resolution for the location settings. null if we don't need to change any settings
+     */
+    private PendingIntent locationSettingsPI;
 
     private boolean hasFix;
 
     private LocationUtils mLocationUtils;
     private GeofenceUtils mGeofenceUtils;
 
-    private Gson gson;
-
-    /**
-     * The {@link PendingIntent} that holds the necessary resolution to use google location
-     */
-    private PendingIntent locationSettingsPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,18 +113,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         // First we need to check availability of play services
         checkPlayServicesAvailable();
 
-        locationSettingsPI = (PendingIntent) (getIntent().getParcelableExtra(REQUIRES_LOCATION_SETTINGS_PROMPT));
-        if (locationSettingsPI != null) {
-            try {
-                startIntentSenderForResult(locationSettingsPI.getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-        } else {
-            setupLocationAndGeofenceServices();
-        }
-
-        gson = new Gson();
+        setupLocationAndGeofenceServices();
 
 //        Intent racingServiceIntent = new Intent(this, RacingService.class);
 //        startService(racingServiceIntent);
@@ -134,13 +123,19 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     private void setupLocationAndGeofenceServices() {
+        LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
+
+        // initialize broadcast receiver for location settings error before we start location updates with mLocationUtils
+        locationSettingsReceiver = new LocationSettingsReceiver();
+        lbc.registerReceiver(locationSettingsReceiver, new IntentFilter(REQUIRES_LOCATION_SETTINGS_PROMPT));
+
+
         mLocationUtils = new LocationUtils(this);
         mGeofenceUtils = new GeofenceUtils(this);
 
         // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
-        LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
-        receiver = new GeofenceReceiver();
-        lbc.registerReceiver(receiver, new IntentFilter(GEOFENCE_TRIGGERED));
+        geofenceReceiver = new GeofenceReceiver();
+        lbc.registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
     }
 
     /**
@@ -246,16 +241,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     * Geofence creation callback
-     *
-     * @param status
-     */
-    @Override
-    public void onResult(@NonNull Status status) {
-        Log.d(LOG, "geofence creation callback with status " + status);
-    }
-
-    /**
      * Updates the location icon
      *
      * @param location where the new location is
@@ -316,44 +301,17 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         if (mLocationUtils != null) {
             mLocationUtils.stopLocationUpdates();
         }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationSettingsReceiver);
 //        LEGACYRaceVM.saveOngoingBaseTime(); TODO
     }
 
-    /**
-     * On connection to the google api client
-     *
-     * @param bundle
-     */
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        // TODO remove all google api connection stuff since its now automatic
-    }
-
-    /**
-     * On connection suspended to the google api client
-     *
-     * @param i
-     */
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    /**
-     * On connection failed to the google api client
-     *
-     * @param connectionResult
-     */
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
-    }
 
     /* RACE COMMUNICATION */
 
     @Override
     public void onMyLocationClicked() {
-        if (!verifyLocationSettings()) {
+        if (verifyLocationSettings()) {
             final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
             updateLocationIcon(lastKnownLocation);
 
@@ -434,18 +392,24 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     /**
      * Asks the user to agree to Google location settings
+     *
+     * @return if the settings are correct
      */
     @Override
     public boolean verifyLocationSettings() {
         if (locationSettingsPI != null) {
-            try {
-                startIntentSenderForResult(locationSettingsPI.getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
-            return true;
-        } else {
+            attemptLocationSetttingsResolution();
             return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void attemptLocationSetttingsResolution() {
+        try {
+            startIntentSenderForResult(locationSettingsPI.getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0);
+        } catch (IntentSender.SendIntentException e) {
+            e.printStackTrace();
         }
     }
 
@@ -480,8 +444,7 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
 
-    class GeofenceReceiver extends BroadcastReceiver {
-
+    private class GeofenceReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
@@ -492,7 +455,14 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             raceVM.onGeofenceTriggered(checkpointId);
 
         }
+    }
 
+    private class LocationSettingsReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            locationSettingsPI = intent.getParcelableExtra(KEY_LOCATION_SETTINGS_PI);
+            attemptLocationSetttingsResolution();
+        }
     }
 
     @Override
@@ -522,23 +492,12 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
                         throw new IllegalStateException("Received answer index -1 but requestCode was RESULT_OK");
                     }
 
-                    onQuestionAnswered(answerIndex);
+                    raceVM.onQuestionCorrectlyAnswered(answerIndex);
                 }
                 break;
             default:
                 break;
         }
 
-    }
-
-    /**
-     * Internal callback for when question is answered.<br>
-     * Calls {@link LEGACYRaceVM#onQuestionCorrectlyAnswered(int)}
-     *
-     * @param answerIndex
-     */
-
-    private void onQuestionAnswered(int answerIndex) {
-        raceVM.onQuestionCorrectlyAnswered(answerIndex);
     }
 }

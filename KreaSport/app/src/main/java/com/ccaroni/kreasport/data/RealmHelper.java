@@ -150,6 +150,7 @@ public class RealmHelper {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("userId", userId)
                 .equalTo("started", true)
+                .equalTo("inProgress", false)
                 .equalTo("toDelete", false)
                 .findAll();
     }
