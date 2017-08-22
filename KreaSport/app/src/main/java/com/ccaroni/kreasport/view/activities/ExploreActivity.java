@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,6 +52,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.util.List;
@@ -411,7 +415,25 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
         Log.d(LOG, "clearing all markers except current race");
         raceListOverlay.removeAllItems();
         raceListOverlay.addItems(overlayItemsList);
+
+        updateCheckpointIcons();
+
         mMapView.invalidate();
+    }
+
+    private void updateCheckpointIcons() {
+        int nbMarkers = raceListOverlay.size();
+
+        if (nbMarkers >= 3) {
+            OverlayItem item = raceListOverlay.getItem(nbMarkers - 2); // the second last one, the old target
+            item.setMarker(ContextCompat.getDrawable(this, R.drawable.ic_beenhere_light_blue_a700_36dp));
+        }
+
+        // at least one checkpoint
+        if (nbMarkers >= 2) {
+            OverlayItem item = raceListOverlay.getItem(nbMarkers - 1);
+            item.setMarker(ContextCompat.getDrawable(this, R.drawable.ic_directions_run_light_blue_a700_36dp));
+        }
     }
 
     private void attemptLocationSetttingsResolution() {
@@ -425,8 +447,8 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
     @Override
     public void revealNextCheckpoint(CustomOverlayItem nextCheckpointOverlayItem) {
         Log.d(LOG, "revealing next checkpoint: " + nextCheckpointOverlayItem);
-
         raceListOverlay.addItem(nextCheckpointOverlayItem);
+        updateCheckpointIcons();
 
         mMapView.invalidate();
     }

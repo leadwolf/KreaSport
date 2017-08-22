@@ -295,7 +295,8 @@ public class RaceVM extends BaseObservable {
 
         raceViewComms.focusOnRace(getOverlayItems());
 
-        triggerNextGeofence();
+        RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
+        triggerNextGeofence(targetingCheckpoint);
 
         raceViewComms.startChronometer(timeStart);
 
@@ -348,16 +349,20 @@ public class RaceVM extends BaseObservable {
             raceViewComms.toast("Finished!");
         } else {
             // trigger next
-            triggerNextGeofence();
+            RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
+            triggerNextGeofence(targetingCheckpoint);
+            revealNextCheckpoint(targetingCheckpoint);
         }
     }
 
     /**
-     * Calls the {@link #raceViewComms} to add a geofence for the targeting checkpoint as well as revealing it on the map
+     * Calls the {@link #raceViewComms} to add a geofence for the targeting checkpoint
      */
-    private void triggerNextGeofence() {
-        RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
+    private void triggerNextGeofence(RealmCheckpoint targetingCheckpoint) {
         raceViewComms.addGeoFence(targetingCheckpoint);
+    }
+
+    private void revealNextCheckpoint(RealmCheckpoint targetingCheckpoint) {
         raceViewComms.revealNextCheckpoint(targetingCheckpoint.toCustomOverlayItem());
     }
 
@@ -390,6 +395,7 @@ public class RaceVM extends BaseObservable {
             resumeRace();
 
             raceViewComms.focusOnRace(getOverlayItems());
+            // no need to add geofence since the service should still be alive
         }
     }
 }
