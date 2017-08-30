@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.service.geofence;
+package com.ccaroni.kreasport.background.geofence;
 
 import android.app.IntentService;
 import android.app.NotificationManager;

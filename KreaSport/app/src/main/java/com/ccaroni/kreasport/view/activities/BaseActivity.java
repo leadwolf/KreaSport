@@ -212,7 +212,7 @@ public class BaseActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_home:
 //                Log.d(LOG, "created new HomeFragment");
-                return HomeFragment.newInstance("", "");
+                return HomeFragment.newInstance();
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.service.geofence;
+package com.ccaroni.kreasport.background.geofence;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,8 +13,6 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;

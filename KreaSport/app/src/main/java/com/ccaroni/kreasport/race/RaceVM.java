@@ -398,4 +398,8 @@ public class RaceVM extends BaseObservable {
             // no need to add geofence since the service should still be alive
         }
     }
+
+    public boolean isRacing() {
+        return RaceHolder.getInstance().isRaceActive();
+    }
 }

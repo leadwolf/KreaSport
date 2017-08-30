@@ -287,6 +287,10 @@ public class RaceHolder {
         this.currentDescription = description;
     }
 
+    /**
+     *
+     * @return If {@link RealmRaceRecord#isInProgress()}
+     */
     public boolean isRaceActive() {
         return currentRaceRecord != null && currentRaceRecord.isInProgress();
     }

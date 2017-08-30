@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.service.geofence;
+package com.ccaroni.kreasport.background.geofence;
 
 import android.content.Context;
 import android.content.res.Resources;

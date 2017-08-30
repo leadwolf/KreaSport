@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.service.location;
+package com.ccaroni.kreasport.background.location;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +29,12 @@ public class LocationUtils {
     // Global variable to prevent garbage collection
     private SharedPreferences.OnSharedPreferenceChangeListener locationPrefsListener;
 
+    /**
+     * Attaches the context to a {@link LocationUtilsSubscriber} field and sets up an {@link android.content.SharedPreferences.OnSharedPreferenceChangeListener} to listen to
+     * location updates written by {@link GoogleLocationService}
+     *
+     * @param context the context that will becoime a {@link LocationUtilsSubscriber}
+     */
     public LocationUtils(Context context) {
         this.context = context;
 

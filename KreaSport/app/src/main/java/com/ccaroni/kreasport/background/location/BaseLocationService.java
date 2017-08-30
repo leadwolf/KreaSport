@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.service.location;
+package com.ccaroni.kreasport.background.location;
 
 import android.app.Service;
 import android.content.Intent;

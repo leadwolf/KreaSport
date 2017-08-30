@@ -9,10 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,9 +34,10 @@ import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.race.RaceViewComms;
 import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
-import com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.service.geofence.GeofenceUtils;
-import com.ccaroni.kreasport.service.location.LocationUtils;
+import com.ccaroni.kreasport.background.RacingService;
+import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.background.location.LocationUtils;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -59,7 +57,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.ccaroni.kreasport.service.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
 public class ExploreActivity extends BaseActivity implements RaceViewComms, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
 
@@ -104,6 +102,11 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
     private LocationUtils mLocationUtils;
     private GeofenceUtils mGeofenceUtils;
 
+    /**
+     * If this activity will be launching {@link RiddleActivity}
+     */
+    private boolean askingRiddle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,10 +121,6 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
         checkPlayServicesAvailable();
 
         setupLocationAndGeofenceServices();
-
-//        Intent racingServiceIntent = new Intent(this, RacingService.class);
-//        startService(racingServiceIntent);
-        // TODO only use this service for background
 
         setupUI();
     }
@@ -296,6 +295,15 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
         super.onStart();
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        // reset this so we can start the background service if needed
+        askingRiddle = false;
+        Intent racingServiceIntent = new Intent(this, RacingService.class);
+        stopService(racingServiceIntent);
+    }
 
     /**
      * Stops location updates when this activity is paused for battery considerations.
@@ -303,12 +311,29 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
     @Override
     protected void onPause() {
         super.onPause();
-        if (mLocationUtils != null) {
+        if (!raceVM.isRacing() && mLocationUtils != null) {
             mLocationUtils.stopLocationUpdates();
         }
+        if (!raceVM.isRacing() && mGeofenceUtils != null) {
+            // in case of force close
+            mGeofenceUtils.removePreviousGeofences();
+        }
+
+        // we don't need to stop location updates when stopping this activity while a race is active in the background because the service handling the location updates will
+        // continue to run update the SharedPrefs. Even if we do call LocationUtils#startLocationUpdates the android system will handle it
+        // we just need to create a new instance in the RacingService to receive the location updates via SharedPrefs
+
+        // TODO verify is we can just create a new instance, since the pending intent uses static variables
+        // but we do need to stop the #mGeofenceUtils because that instance contains the pending intent for previous geofences
+
         LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(locationSettingsReceiver);
-//        LEGACYRaceVM.saveOngoingBaseTime(); TODO
+
+
+        if (raceVM.isRacing() && !askingRiddle) {
+            Intent racingServiceIntent = new Intent(this, RacingService.class);
+            startService(racingServiceIntent);
+        }
     }
 
 
@@ -378,6 +403,8 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
 
     @Override
     public void askRiddle(Riddle riddle) {
+        askingRiddle = true;
+
         Intent intent = new Intent(this, RiddleActivity.class);
         String riddleJson = new Gson().toJson(riddle, Riddle.class);
         intent.putExtra(KEY_RIDDLE, riddleJson);

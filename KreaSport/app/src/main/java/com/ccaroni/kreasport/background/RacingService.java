@@ -1,0 +1,113 @@
+package com.ccaroni.kreasport.background;
+
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.location.Location;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
+import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.background.location.LocationUtils;
+import com.ccaroni.kreasport.view.activities.ExploreActivity;
+
+import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+
+/**
+ * Created by Master on 19/08/2017.
+ */
+
+public class RacingService extends Service implements LocationUtils.LocationUtilsSubscriber {
+
+    private static final String TAG = RacingService.class.getSimpleName();
+
+    private static final int ONGOING_NOTIFICATION_ID = 42;
+
+
+    private LocationUtils mLocationUtils;
+    private GeofenceUtils mGeofenceUtils;
+    private GeofenceReceiver geofenceReceiver;
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return Service.START_STICKY;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        initForground();
+
+        initGeofenceReceiver();
+
+    }
+
+    private void initForground() {
+        Intent notificationIntent = new Intent(this, ExploreActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification =
+                new Notification.Builder(this)
+                        .setContentTitle("title")
+                        .setContentText("Content text")
+                        .setSmallIcon(R.drawable.ic_kreasport_logo_no_bg)
+                        .setContentIntent(pendingIntent)
+                        .setTicker("ticker text")
+                        .build();
+
+        startForeground(ONGOING_NOTIFICATION_ID, notification);
+    }
+
+    private void initGeofenceReceiver() {
+        mLocationUtils = new LocationUtils(this);
+
+
+        // TODO make sure we can cancel geofences created in ExploreActivity from this instance
+        mGeofenceUtils = new GeofenceUtils(this);
+
+        geofenceReceiver = new GeofenceReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        // TODO
+    }
+
+    class GeofenceReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
+            if (checkpointId == null) {
+                throw new IllegalArgumentException("Received intent for geofenceReceiver with no checkpoint associated");
+            }
+
+            Log.d(TAG, "received geofence broadcast for checkpoint: " + checkpointId);
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
+    }
+}
