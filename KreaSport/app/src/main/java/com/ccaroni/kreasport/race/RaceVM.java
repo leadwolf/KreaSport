@@ -342,7 +342,7 @@ public class RaceVM extends BaseObservable {
     public void onQuestionCorrectlyAnswered(int answerIndex) {
         RaceHolder.getInstance().onQuestionAnswered(answerIndex);
 
-        if (RaceHolder.getInstance().finishedRace()) {
+        if (RaceHolder.getInstance().isCurrentRaceFinished()) {
             // trigger end
             RaceHolder.getInstance().stopRecording();
             raceViewComms.stopChronometer();

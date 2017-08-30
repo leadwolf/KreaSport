@@ -464,7 +464,7 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
     }
 
     /**
-     * Notifiy the subscriber that location has been updated
+     * Notify the subscriber that location has been updated
      *
      * @param location the new location
      */

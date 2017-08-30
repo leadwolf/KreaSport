@@ -193,7 +193,7 @@ public class RaceHolder {
      * Stops the {@link RealmRaceRecord} and either deletes it if the race is unfinished or leaves it be
      */
     public void stopRecording() {
-        if (finishedRace()) {
+        if (isCurrentRaceFinished()) {
             setRaceRecordInProgress(false);
         } else {
         Log.d(TAG, "deleting record" + currentRaceRecord.getId());
@@ -253,7 +253,7 @@ public class RaceHolder {
 
 
         Log.d(TAG, "checkpoint " + getTargetingCheckpoint().getId() + " has just been answered correctly");
-        if (finishedRace()) {
+        if (isCurrentRaceFinished()) {
             Log.d(TAG, "last checkpoint has just been answered correctly");
         } else {
             RealmHelper.getInstance(null).beginTransaction();
@@ -266,9 +266,9 @@ public class RaceHolder {
      *
      * @return if the last checkpoint that was answered correctly was the last checkpoint, i.e. the race is finished
      */
-    public boolean finishedRace() {
-        // TODO verify last riddle was answered
-        return currentRace.isOnLastCheckpoint(currentRaceRecord.getTargetCheckpointIndex(), "target") && currentRace.isOnLastCheckpoint(currentRaceRecord.getGeofenceProgression(), "geofence index");
+    public boolean isCurrentRaceFinished() {
+        return currentRace.isOnLastCheckpoint(currentRaceRecord.getTargetCheckpointIndex(), "target")
+                && currentRace.isOnLastCheckpoint(currentRaceRecord.getGeofenceProgression(), "geofence index");
     }
 
     public String getCurrentTitle() {
