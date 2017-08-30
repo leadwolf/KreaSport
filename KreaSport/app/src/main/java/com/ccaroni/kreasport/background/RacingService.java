@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -58,20 +59,38 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     }
 
     private void initForground() {
-        Intent notificationIntent = new Intent(this, ExploreActivity.class);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        // setup on notification click
+        Intent onClickIntent = new Intent(this, ExploreActivity.class);
+        PendingIntent piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
 
-        Notification notification =
-                new Notification.Builder(this)
-                        .setContentTitle("title")
-                        .setContentText("Content text")
-                        .setSmallIcon(R.drawable.ic_kreasport_logo_no_bg)
-                        .setContentIntent(pendingIntent)
-                        .setTicker("ticker text")
-                        .build();
+        // setup stop race button
+        Intent stopRaceIntent = new Intent(this, RacingService.class);
+        stopRaceIntent.setAction("STOP");
+        PendingIntent piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
 
-        startForeground(ONGOING_NOTIFICATION_ID, notification);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_kreasport_notification_icon)
+                        .setContentIntent(piOnClick)
+                        .setContentTitle("Title") // race name
+                        .setContentText("Text") // geofence progression
+                        .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
+                        /*
+                         * Sets the big view "big text" style and supplies the
+                         * text (the user's reminder message) that will be displayed
+                         * in the detail area of the expanded notification.
+                         * These calls are ignored by the support library for
+                         * pre-4.1 devices.
+                         */
+                        .setStyle(new NotificationCompat.InboxStyle()
+                                .addLine("Checkpoint progression: n/n") // geofence progression
+                                .setSummaryText("Race active")
+                                .setBigContentTitle("big title")) // race name
+                        .addAction(R.drawable.ic_kreasport_notification_icon,
+                                "Stop race", piStopRace);
+
+
+        startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
 
     private void initGeofenceReceiver() {

@@ -364,6 +364,9 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
         builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
                 .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
+                        // TODO reset map icons
+
                         chronometer.stop();
                         raceVM.onStopConfirmation();
                     }
