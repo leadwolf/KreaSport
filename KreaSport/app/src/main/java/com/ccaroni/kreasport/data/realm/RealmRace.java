@@ -92,7 +92,7 @@ public class RealmRace extends RealmObject {
 
     public void setRealmCheckpointsFromNormal(List<Checkpoint> checkpoints) {
         for (Checkpoint checkpoint : checkpoints) {
-            this.realmCheckpoints.add(checkpoint.toRealmCheckpoint());
+            this.realmCheckpoints.add(checkpoint.toRealmCheckpoint(getId()));
         }
     }
 
@@ -116,11 +116,17 @@ public class RealmRace extends RealmObject {
         return new CustomOverlayItem(getTitle(), getDescription(), new GeoPoint(getLatitude(), getLongitude()), getId(), getId()).setPrimary(true);
     }
 
-    public List<CustomOverlayItem> toCustomOverlayWithCheckpoints(int progression) {
+    /**
+     * Adds a marker for the race and a marker for every checkpoint including the target
+     * for (int i=0;i<=progression;i++)
+     * @param lastCheckpointIndex
+     * @return
+     */
+    public List<CustomOverlayItem> toCustomOverlayWithCheckpoints(int lastCheckpointIndex) {
         List<CustomOverlayItem> items = new ArrayList<>();
         items.add(toCustomOverlayItemAsSingle());
 
-        for (int i=0;i<=progression;i++) {
+        for (int i=0;i<=lastCheckpointIndex;i++) {
             RealmCheckpoint realmCheckpoint = realmCheckpoints.get(i);
             items.add(realmCheckpoint.toCustomOverlayItem());
             Log.d(LOG, "converted checkpoint for progression: " + i);
@@ -182,9 +188,11 @@ public class RealmRace extends RealmObject {
     /**
      *
      * @param progression the index of what checkpoint we want to compare to
+     * @param indexName
      * @return if progression == realmCheckpoint.size() - 1
      */
-    public boolean isOnLastCheckpoint(int progression) {
+    public boolean isOnLastCheckpoint(int progression, String indexName) {
+        Log.d(LOG, "finish check from 0: nbCheckpoints: " + (realmCheckpoints.size() -1) + ", " + indexName + " " + progression);
         return progression == realmCheckpoints.size()-1;
     }
 

@@ -33,7 +33,7 @@ public class RealmRaceRecord extends RealmObject {
     private long baseTime;
     private long timeExpired;
 
-    private int progression;
+    private int targetCheckpointIndex;
 
     private int geofenceProgression;
 
@@ -48,6 +48,9 @@ public class RealmRaceRecord extends RealmObject {
         started = false;
         inProgress = false;
         toDelete = false;
+
+        geofenceProgression = -1;
+
         id = UUID.randomUUID().toString();
         dateTime = OffsetDateTime.now().toString();
     }
@@ -108,18 +111,19 @@ public class RealmRaceRecord extends RealmObject {
     }
 
     /**
-     * @return the index of the last checkpoint the user reached.
+     * @return the index of the targeting checkpoint. When the user reaches the checkpoint but hasnt yet answered the riddle, the two values will be the same. Otherwise, this
+     * should always be one increment ahead
      */
-    public int getProgression() {
-        return progression;
+    public int getTargetCheckpointIndex() {
+        return targetCheckpointIndex;
     }
 
-    public void setProgression(int progression) {
-        this.progression = progression;
+    public void setTargetCheckpointIndex(int targetCheckpointIndex) {
+        this.targetCheckpointIndex = targetCheckpointIndex;
     }
 
     /**
-     * @return the index of the checkpoint that the current geofence is targeting. Is supposed to be one increment ahead of {@link #getProgression()}
+     * @return the index of the checkpoint that the current geofence is targeting. Is supposed to be one increment ahead of {@link #getTargetCheckpointIndex()}
      */
     public int getGeofenceProgression() {
         return geofenceProgression;
@@ -157,8 +161,8 @@ public class RealmRaceRecord extends RealmObject {
         if (realmRace == null) {
             throw new IllegalArgumentException("Cannot get checkpoint from a null race");
         }
-        Log.d(LOG, "finding checkpoint at index " + progression + " as current checkpoint for " + realmRace.getId());
-        return realmRace.getRealmCheckpoints().get(progression);
+        Log.d(LOG, "finding checkpoint at index " + targetCheckpointIndex + " as current checkpoint for " + realmRace.getId());
+        return realmRace.getRealmCheckpoints().get(targetCheckpointIndex);
     }
 
     @Override
@@ -171,7 +175,7 @@ public class RealmRaceRecord extends RealmObject {
                 ", inProgress=" + inProgress +
                 ", baseTime=" + baseTime +
                 ", timeExpired=" + timeExpired +
-                ", progression=" + progression +
+                ", targetCheckpointIndex=" + targetCheckpointIndex +
                 ", geofenceProgression=" + geofenceProgression +
                 ", synced=" + synced +
                 ", toDelete=" + toDelete +
@@ -193,8 +197,8 @@ public class RealmRaceRecord extends RealmObject {
         }
     }
 
-    public void incrementProgression() {
-        progression++;
+    public void incrementTargetCheckpointIndex() {
+        targetCheckpointIndex++;
     }
 
     public void incrementGeofenceProgression() {

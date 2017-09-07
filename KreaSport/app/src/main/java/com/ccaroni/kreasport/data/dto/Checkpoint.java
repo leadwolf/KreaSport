@@ -1,28 +1,14 @@
 package com.ccaroni.kreasport.data.dto;
 
-import android.util.Log;
-
 import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.data.CheckpointKey;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 public class Checkpoint extends BaseItem {
 
     private static final String LOG = Checkpoint.class.getSimpleName();
 
-    @SerializedName("checkpointKey")
-    @Expose
-    private CheckpointKey checkpointKey;
-    @SerializedName("riddle")
-    @Expose
     private Riddle riddle;
-    @SerializedName("location")
-    @Expose
-    private List<Double> location = null;
+    private int order;
 
     public Checkpoint() {
         super();
@@ -52,8 +38,9 @@ public class Checkpoint extends BaseItem {
         return riddle;
     }
 
-    public void setRiddle(Riddle riddle) {
+    public Checkpoint setRiddle(Riddle riddle) {
         this.riddle = riddle;
+        return this;
     }
 
     @Override
@@ -69,33 +56,15 @@ public class Checkpoint extends BaseItem {
         return this;
     }
 
-
-    public List<Double> getLocation() {
-        return location;
+    public int getOrder() {
+        return order;
     }
 
-    public void setLocation(List<Double> location) {
-        this.location = location;
+    public void setOrder(int order) {
+        this.order = order;
     }
 
-    public CheckpointKey getCheckpointKey() {
-        return checkpointKey;
-    }
-
-    public void setCheckpointKey(CheckpointKey checkpointKey) {
-        this.checkpointKey = checkpointKey;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + "Checkpoint{" +
-                "checkpointKey=" + checkpointKey +
-                ", riddle=" + riddle +
-                ", location=" + location +
-                '}';
-    }
-
-    public RealmCheckpoint toRealmCheckpoint() {
+    public RealmCheckpoint toRealmCheckpoint(String raceId) {
         RealmCheckpoint realmCheckpoint = (RealmCheckpoint) new RealmCheckpoint()
                 .setId(getId())
                 .setTitle(getTitle())
@@ -103,8 +72,9 @@ public class Checkpoint extends BaseItem {
                 .setLatitude(getLatitude())
                 .setLongitude(getLongitude());
         realmCheckpoint
-                .setCheckpointKey(checkpointKey)
-                .setRealmRiddle(riddle.toRealmRiddle());
+                .setRealmRiddle(riddle.toRealmRiddle())
+                .setOrder(getOrder())
+                .setRaceId(raceId);
         return realmCheckpoint;
 
     }

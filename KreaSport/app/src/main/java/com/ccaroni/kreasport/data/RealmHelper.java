@@ -7,7 +7,7 @@ import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
-import com.ccaroni.kreasport.race.RaceVM;
+import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
 
 import java.util.List;
 
@@ -104,8 +104,6 @@ public class RealmHelper {
      * @return the race found or null
      */
     public RealmRace findRaceById(String id) {
-        Log.d(LOG, "attempting to find race:" + id);
-
         return realm.where(RealmRace.class)
                 .equalTo("id", id)
                 .findFirst();
@@ -146,12 +144,13 @@ public class RealmHelper {
 
     /**
      * @param userId
-     * @return records that have been started (because we pre load record objects in {@link RaceVM} and that are <b>NOT</b> marked for deletion
+     * @return records that have been started (because we pre load record objects in {@link LEGACYRaceVM} and that are <b>NOT</b> marked for deletion
      */
     public RealmResults<RealmRaceRecord> getMyRecords(String userId) {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("userId", userId)
                 .equalTo("started", true)
+                .equalTo("inProgress", false)
                 .equalTo("toDelete", false)
                 .findAll();
     }

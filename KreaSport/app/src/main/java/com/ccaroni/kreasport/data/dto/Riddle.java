@@ -17,14 +17,8 @@ import io.realm.RealmList;
 
 public class Riddle implements Serializable {
 
-    @SerializedName("question")
-    @Expose
     private String question;
-    @SerializedName("answers")
-    @Expose
     private List<String> answers;
-    @SerializedName("answerIndex")
-    @Expose
     private int answerIndex;
 
     public Riddle() {

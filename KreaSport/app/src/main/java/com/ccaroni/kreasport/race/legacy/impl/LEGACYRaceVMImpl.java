@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race.impl;
+package com.ccaroni.kreasport.race.legacy.impl;
 
 import android.app.Activity;
 import android.location.Location;
@@ -8,24 +8,22 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.RaceVM;
+import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.LocationUtils;
+import com.ccaroni.kreasport.background.location.LocationUtils;
 
 import org.osmdroid.util.GeoPoint;
 import org.threeten.bp.OffsetDateTime;
-
-import static android.R.attr.id;
 
 /**
  * Created by Master on 19/05/2017.
  */
 
-public class RaceVMImpl extends RaceVM {
+public class LEGACYRaceVMImpl extends LEGACYRaceVM {
 
-    private static final String LOG = RaceVMImpl.class.getSimpleName();
+    private static final String LOG = LEGACYRaceVMImpl.class.getSimpleName();
 
-    public RaceVMImpl(Activity activity, LocationUtils mLocationUtils) {
+    public LEGACYRaceVMImpl(Activity activity, LocationUtils mLocationUtils) {
         super(activity, mLocationUtils);
     }
 
@@ -260,6 +258,6 @@ public class RaceVMImpl extends RaceVM {
     @Override
     public void onConfirmStop() {
         Log.d(LOG, raceCommunication + " confirmed stop");
-        stopRace(currentRace.isOnLastCheckpoint(raceRecord.getProgression()));
+        stopRace(currentRace.isOnLastCheckpoint(raceRecord.getTargetCheckpointIndex(), "current index"));
     }
 }

@@ -1,18 +1,19 @@
 package com.ccaroni.kreasport.view.activities;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -21,28 +22,26 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;
-import com.ccaroni.kreasport.utils.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.MapDefaults;
-import com.ccaroni.kreasport.race.RaceVM;
-import com.ccaroni.kreasport.race.RaceCommunication;
-import com.ccaroni.kreasport.race.impl.RaceVMImpl;
+import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.race.RaceHolder;
+import com.ccaroni.kreasport.race.RaceVM;
+import com.ccaroni.kreasport.race.RaceViewComms;
+import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
+import com.ccaroni.kreasport.background.RacingService;
+import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.background.location.LocationUtils;
 import com.ccaroni.kreasport.utils.Constants;
-import com.ccaroni.kreasport.utils.LocationUtils;
-import com.ccaroni.kreasport.utils.impl.LocationUtilsImpl;
+import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 
 import org.osmdroid.config.Configuration;
@@ -51,19 +50,31 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ExploreActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback
-        <Status>, LocationUtilsImpl.LocationCommunicationInterface, RaceCommunication, CustomMapView.MapViewCommunication {
+import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+
+public class ExploreActivity extends BaseActivity implements RaceViewComms, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_CODE_RIDDLE_ANSWER = 100;
-    public static final String KEY_RIDDLE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + "key.riddle";
+
+    /**
+     * Constant used in the location settings dialog.
+     */
+    private static final int REQUEST_CHECK_SETTINGS = 0x1;
+
+    private static final String KEY_BASE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + ".key.";
+    public static final String KEY_RIDDLE = KEY_BASE + ".riddle";
+
+    public static final String KEY_LOCATION_SETTINGS_PI = KEY_BASE + "location_settings_request_pending_intent";
+    public static final String REQUIRES_LOCATION_SETTINGS_PROMPT = KEY_BASE + "requires_location_settings_prompt";
 
 
     private ActivityExploreBinding binding;
@@ -74,12 +85,28 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
 
     private RaceVM raceVM;
 
-    private LocationUtils mLocationUtilsImpl;
-    private GeofenceReceiver receiver;
+    private GeofenceReceiver geofenceReceiver;
 
-    private GoogleApiClient mGoogleApiClient;
+    /**
+     * Receiver to listen to requests to change the user's location settings
+     */
+    private LocationSettingsReceiver locationSettingsReceiver;
+
+    /**
+     * The intent containing the resolution for the location settings. null if we don't need to change any settings
+     */
+    private PendingIntent locationSettingsPI;
+
     private boolean hasFix;
-    private PendingIntent mGeofencePendingIntent;
+
+    private LocationUtils mLocationUtils;
+    private GeofenceUtils mGeofenceUtils;
+
+    /**
+     * If this activity will be launching {@link RiddleActivity}
+     */
+    private boolean askingRiddle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,24 +118,37 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         setCurrentActivityIndex(1);
 
         // First we need to check availability of play services
-        if (checkPlayServices()) {
+        checkPlayServicesAvailable();
 
-            // Building the GoogleApi client
-            buildGoogleApiClient();
+        setupLocationAndGeofenceServices();
 
-            // LocationUtilsImpl will be our listener and manager
-            mLocationUtilsImpl = new LocationUtilsImpl(this, mGoogleApiClient);
+        setupUI();
+    }
 
-            // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
-            LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
-            receiver = new GeofenceReceiver();
-            lbc.registerReceiver(receiver, new IntentFilter(Constants.GEOFENCE_RECEIVER_ID));
-        } else {
-            // Force to go back to Home
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
-        }
+    private void setupLocationAndGeofenceServices() {
+        LocalBroadcastManager lbc = LocalBroadcastManager.getInstance(this);
 
-        raceVM = new RaceVMImpl(this, mLocationUtilsImpl);
+        // initialize broadcast receiver for location settings error before we start location updates with mLocationUtils
+        locationSettingsReceiver = new LocationSettingsReceiver();
+        lbc.registerReceiver(locationSettingsReceiver, new IntentFilter(REQUIRES_LOCATION_SETTINGS_PROMPT));
+
+
+        mLocationUtils = new LocationUtils(this);
+        mGeofenceUtils = new GeofenceUtils(this);
+
+        // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
+        geofenceReceiver = new GeofenceReceiver();
+        lbc.registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
+    }
+
+    /**
+     * Sets up the UI by setting up the map and loads everything needing to be displayed
+     */
+    private void setupUI() {
+        RealmHelper.getInstance(this);
+        RaceHolder.init(CredentialsManager.getUserId(this));
+
+        raceVM = new RaceVM(this);
         binding.setRaceVM(raceVM);
 
         setBindings();
@@ -138,9 +178,9 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     /**
-     * Creates an overlay of all the race(s) needing to be displayed with help from the {@link RaceVM}.
+     * Creates an overlay of all the race(s) needing to be displayed with help from the {@link LEGACYRaceVM}.
      * Either creates an overlay for all the races or full overlay of one race.
-     * The {@link RaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
+     * The {@link LEGACYRaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
      */
     private void initRaceOverlays() {
         ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
@@ -152,56 +192,6 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         mMapView.getOverlays().add(raceListOverlay);
     }
 
-    @SuppressWarnings({"MissingPermission"})
-    private void addGeofence() {
-        LocationServices.GeofencingApi.addGeofences(
-                mGoogleApiClient,
-                getGeofencingRequest(),
-                getGeofencePendingIntent()
-        ).setResultCallback(this);
-        Log.d(LOG, "called api to add geofence");
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        RealmCheckpoint checkpoint = raceVM.getActiveCheckpoint();
-        Log.d(LOG, "got geofence request for checkpoint: " + checkpoint.getId() + " " + checkpoint.getTitle());
-
-        if (!checkpoint.getId().equals("")) {
-            GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-            builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER); // should be triggered if user already inside
-
-            builder.addGeofence(
-                    new Geofence.Builder()
-                            .setRequestId(checkpoint.getId())
-
-                            .setCircularRegion(
-                                    checkpoint.getLatitude(),
-                                    checkpoint.getLongitude(),
-                                    Constants.GEOFENCE_RADIUS_METERS
-                            )
-                            .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_MILLISECONDS)
-                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL)
-                            .setLoiteringDelay(Constants.GEOFENCE_LOITERING_DELAY)
-                            .build()
-            );
-            return builder.build();
-        } else {
-            Log.d(LOG, "checkpoint to trigger does not exist");
-            return null;
-        }
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -209,63 +199,48 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
         setCurrentActivityIndex(1);
     }
 
-    /* GOOGLE API CLIENT */
-
-    /**
-     * Creating google api client object
-     */
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
      */
-    private boolean checkPlayServices() {
+    private boolean checkPlayServicesAvailable() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
+            Log.d(LOG, "Google Play Services not available!");
+            Log.d(LOG, "Error Code: " + resultCode + ", " + apiAvailability.getErrorString(resultCode));
+
             if (apiAvailability.isUserResolvableError(resultCode)) {
+                // WARNING even this may indicate that the user simply cannot use the app if he gets code "SERVICE_INVALID"
+                Log.d(LOG, "attempting user resolution");
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
                         .show();
             } else {
-                Log.d(LOG, "This device does not support Google Play Services.");
-                selectDrawerItem(navigationView.getMenu().getItem(0));
-                Toast.makeText(this, "Your device does not support Google Play Services.", Toast.LENGTH_SHORT).show();
-                // TODO error
+                Log.d(LOG, "This device does not support Google Play Services and is not user resolvable");
+                Toast.makeText(this, "Your device does not support Google Play Services.", Toast.LENGTH_LONG).show();
+                closeActivity();
+            }
+            if (resultCode == ConnectionResult.SERVICE_INVALID) {
+                closeActivity();
             }
             return false;
         }
+        Log.d(LOG, "Google Play Services is available!");
         return true;
     }
 
     /**
-     * Geofence creation callback
-     *
-     * @param status
+     * Quits this activity and forces back to app home screen, or whatever was in the back stack
      */
-    @Override
-    public void onResult(@NonNull Status status) {
-        Log.d(LOG, "geofence creation callback with status " + status);
-    }
-
-    /**
-     * This method decides what to do when we receive a location update.
-     * Any location update in {@link LocationUtilsImpl} should call this method.
-     *
-     * @param location the new location
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(LOG, "got callback from location listener");
-
-        updateLocationIcon(location);
+    private void closeActivity() {
+        Log.d(LOG, "Device completely does not support Google Play Services. Forcing back to app home screen");
+        // this finishes this activity and forces to go back to home screen since its in the back stack
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAndRemoveTask();
+        } else {
+            finishAffinity();
+        }
     }
 
     /**
@@ -313,17 +288,21 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
      */
     @Override
     protected void onStart() {
-        mGoogleApiClient.connect();
+        if (mLocationUtils != null) {
+            mLocationUtils.startLocationUpdates();
+        }
+        raceVM.checkPreviousRace();
         super.onStart();
     }
 
-    /**
-     * Disconnects the google client api for battery considerations.
-     */
     @Override
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
+    protected void onPostResume() {
+        super.onPostResume();
+
+        // reset this so we can start the background service if needed
+        askingRiddle = false;
+        Intent racingServiceIntent = new Intent(this, RacingService.class);
+        stopService(racingServiceIntent);
     }
 
     /**
@@ -332,60 +311,68 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onPause() {
         super.onPause();
-        raceVM.saveOngoingBaseTime();
-        if (mLocationUtilsImpl != null) {
-            mLocationUtilsImpl.stopLocationUpdates();
+        if (!raceVM.isRacing() && mLocationUtils != null) {
+            mLocationUtils.stopLocationUpdates();
+        }
+        if (!raceVM.isRacing() && mGeofenceUtils != null) {
+            // in case of force close
+            mGeofenceUtils.removePreviousGeofences();
+        }
+
+        // we don't need to stop location updates when stopping this activity while a race is active in the background because the service handling the location updates will
+        // continue to run update the SharedPrefs. Even if we do call LocationUtils#startLocationUpdates the android system will handle it
+        // we just need to create a new instance in the RacingService to receive the location updates via SharedPrefs
+
+        // TODO verify is we can just create a new instance, since the pending intent uses static variables
+        // but we do need to stop the #mGeofenceUtils because that instance contains the pending intent for previous geofences
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationSettingsReceiver);
+
+
+        if (raceVM.isRacing() && !askingRiddle) {
+            Intent racingServiceIntent = new Intent(this, RacingService.class);
+            startService(racingServiceIntent);
         }
     }
 
-    /**
-     * On connection to the google api client
-     *
-     * @param bundle
-     */
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (mLocationUtilsImpl != null) {
-            mLocationUtilsImpl.startLocationUpdates();
-        }
-        raceVM.onStart();
-        if (raceVM.isRaceActive()) {
-            Log.d(LOG, "adding geofence");
-            addGeofence();
-        }
-    }
-
-    /**
-     * On connection suspended to the google api client
-     *
-     * @param i
-     */
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    /**
-     * On connection failed to the google api client
-     *
-     * @param connectionResult
-     */
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(LOG, "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
-    }
 
     /* RACE COMMUNICATION */
 
     @Override
-    public void startChronometer(long newBase) {
-        chronometer.setBase(newBase);
-        chronometer.start();
+    public void onMyLocationClicked() {
+        if (verifyLocationSettings()) {
+            final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
+            updateLocationIcon(lastKnownLocation);
+
+            final MapController mapController = (MapController) mMapView.getController();
+            mapController.animateTo(new GeoPoint(lastKnownLocation));
+
+            // delay this otherwise it interrupts the animateTo animation
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mapController.zoomTo(Constants.AUTO_ZOOM_LEVEL);
+                }
+            }, 500);
+        }
     }
 
     @Override
-    public void stopChronometer() {
-        chronometer.stop();
+    public void askStopConfirmation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
+                .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        // TODO reset map icons
+
+                        chronometer.stop();
+                        raceVM.onStopConfirmation();
+                    }
+                })
+                .setNegativeButton("No, continue the race", null);
+        builder.create().show();
     }
 
     @Override
@@ -394,28 +381,33 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     @Override
-    public void addGeoFence(RealmCheckpoint checkpoint) {
-        addGeofence();
+    public void startChronometer(long timeStart) {
+        chronometer.setBase(timeStart);
+        chronometer.start();
     }
-
 
     @Override
-    public void revealNextCheckpoint(CustomOverlayItem nextCheckpoint) {
-        Log.d(LOG, "revealing next checkpoint: " + nextCheckpoint);
-
-        raceListOverlay.addItem(nextCheckpoint);
-
-        mMapView.invalidate();
-
+    public Location getLastKnownLocation() {
+        return mLocationUtils.getLastKnownLocation();
     }
 
-    /**
-     * Once the checkpoint has been validated by geofence, the user needs to answer the riddle.
-     *
-     * @param riddle
-     */
+    @Override
+    public boolean needToAnimateToStart(GeoPoint startPoint) {
+        BoundingBox currentBb = mMapView.getBoundingBox();
+        BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
+
+        return !reducedBB.contains(startPoint);
+    }
+
+    @Override
+    public void stopChronometer() {
+        chronometer.stop();
+    }
+
     @Override
     public void askRiddle(Riddle riddle) {
+        askingRiddle = true;
+
         Intent intent = new Intent(this, RiddleActivity.class);
         String riddleJson = new Gson().toJson(riddle, Riddle.class);
         intent.putExtra(KEY_RIDDLE, riddleJson);
@@ -423,69 +415,97 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     @Override
-    public void onMyLocationClicked() {
-        final Location lastKnownLocation = mLocationUtilsImpl.getLastKnownLocation();
-        updateLocationIcon(lastKnownLocation);
-
-        final MapController mapController = (MapController) mMapView.getController();
-        mapController.animateTo(new GeoPoint(lastKnownLocation));
-
-        // delay this otherwise it interrupts the animateTo animation
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mapController.zoomTo(Constants.AUTO_ZOOM_LEVEL);
-            }
-        }, 500);
-
-    }
-
-    public void unsetFocusedItem() {
-        raceListOverlay.unSetFocusedItem();
-        mMapView.invalidate();
-    }
-
-    /**
-     *
-     * @param startPoint the point we need to theoretically animate to
-     * @return if the current {@link BoundingBox} scaled by a factor of 0.5 contains the startPoint
-     */
-    public boolean needToAnimateToStart(GeoPoint startPoint) {
-
-        BoundingBox currentBb = mMapView.getBoundingBox();
-        BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
-
-        return !reducedBB.contains(startPoint);
-
+    public void addGeoFence(RealmCheckpoint targetingCheckpoint) {
+        mGeofenceUtils.addGeofences(targetingCheckpoint);
     }
 
     @Override
-    public void confirmStopRace() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to stop the race? All progress will be lost.")
-                .setPositiveButton("Yes, stop it", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        raceVM.onConfirmStop();
-                    }
-                })
-                .setNegativeButton("No, continue the race", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object and return it
-        builder.create().show();
+    public void removeLastGeofence() {
+        mGeofenceUtils.removePreviousGeofences();
     }
+
+
+    /**
+     * Asks the user to agree to Google location settings
+     *
+     * @return if the settings are correct
+     */
+    @Override
+    public boolean verifyLocationSettings() {
+        if (locationSettingsPI != null) {
+            attemptLocationSetttingsResolution();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void focusOnRace(List<CustomOverlayItem> overlayItemsList) {
+        Log.d(LOG, "clearing all markers except current race");
+        raceListOverlay.removeAllItems();
+        raceListOverlay.addItems(overlayItemsList);
+
+        updateCheckpointIcons();
+
+        mMapView.invalidate();
+    }
+
+    private void updateCheckpointIcons() {
+        int nbMarkers = raceListOverlay.size();
+
+        if (nbMarkers >= 3) {
+            OverlayItem item = raceListOverlay.getItem(nbMarkers - 2); // the second last one, the old target
+            item.setMarker(ContextCompat.getDrawable(this, R.drawable.ic_beenhere_light_blue_a700_36dp));
+        }
+
+        // at least one checkpoint
+        if (nbMarkers >= 2) {
+            OverlayItem item = raceListOverlay.getItem(nbMarkers - 1);
+            item.setMarker(ContextCompat.getDrawable(this, R.drawable.ic_directions_run_light_blue_a700_36dp));
+        }
+    }
+
+    private void attemptLocationSetttingsResolution() {
+        try {
+            startIntentSenderForResult(locationSettingsPI.getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0);
+        } catch (IntentSender.SendIntentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void revealNextCheckpoint(CustomOverlayItem nextCheckpointOverlayItem) {
+        Log.d(LOG, "revealing next checkpoint: " + nextCheckpointOverlayItem);
+        raceListOverlay.addItem(nextCheckpointOverlayItem);
+        updateCheckpointIcons();
+
+        mMapView.invalidate();
+    }
+
 
     /* END RACE COMMS */
 
     @Override
     public void onMapBackgroundTouch() {
         raceVM.onMapBackgroundTouch();
+        raceListOverlay.unSetFocusedItem();
+        mMapView.invalidate();
     }
 
-    class GeofenceReceiver extends BroadcastReceiver {
+    /**
+     * Notify the subscriber that location has been updated
+     *
+     * @param location the new location
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(LOG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
+        updateLocationIcon(location);
+    }
 
+
+    private class GeofenceReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
@@ -496,34 +516,49 @@ public class ExploreActivity extends BaseActivity implements GoogleApiClient.Con
             raceVM.onGeofenceTriggered(checkpointId);
 
         }
+    }
 
+    private class LocationSettingsReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            locationSettingsPI = intent.getParcelableExtra(KEY_LOCATION_SETTINGS_PI);
+            attemptLocationSetttingsResolution();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_RIDDLE_ANSWER) {
-            if (resultCode == RESULT_OK) {
-                int answerIndex = data.getIntExtra(RiddleActivity.KEY_USER_ANSWER, -1);
-
-                if (answerIndex == -1) {
-                    throw new IllegalStateException("Received answer index -1 but requestCode was RESULT_OK");
+        switch (requestCode) {
+            // Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Log.i(LOG, "User agreed to make required location settings changes.");
+                        locationSettingsPI = null;
+                        setupLocationAndGeofenceServices();
+                        mLocationUtils.startLocationUpdates();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Log.i(LOG, "User chose not to make required location settings changes.");
+                        break;
                 }
+                break;
+            case REQUEST_CODE_RIDDLE_ANSWER:
+                if (resultCode == RESULT_OK) {
+                    int answerIndex = data.getIntExtra(RiddleActivity.KEY_USER_ANSWER, -1);
 
-                onQuestionAnswered(answerIndex);
-            }
+                    if (answerIndex == -1) {
+                        throw new IllegalStateException("Received answer index -1 but requestCode was RESULT_OK");
+                    }
+
+                    raceVM.onQuestionCorrectlyAnswered(answerIndex);
+                }
+                break;
+            default:
+                break;
         }
-    }
 
-    /**
-     * Internal callback for when question is answered.<br>
-     * Calls {@link RaceVM#onQuestionCorrectlyAnswered(int)}
-     *
-     * @param answerIndex
-     */
-
-    private void onQuestionAnswered(int answerIndex) {
-        raceVM.onQuestionCorrectlyAnswered(answerIndex);
     }
 }
