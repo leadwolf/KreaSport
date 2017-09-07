@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.background;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -8,7 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -38,6 +42,17 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     private GeofenceUtils mGeofenceUtils;
     private GeofenceReceiver geofenceReceiver;
 
+    private NotificationManager mNotificationManager;
+
+    private Handler mHandler;
+    // Timer to update the ongoing notification
+    private final long mFrequency = 100;    // milliseconds
+    private final int TICK_WHAT = 2;
+
+    // PendingIntents for the notification
+    private PendingIntent piOnClick;
+    private PendingIntent piStopRace;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_STICKY;
@@ -53,39 +68,63 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     public void onCreate() {
         super.onCreate();
 
-        initForeground();
+        initHandler();
+        initPendingIntentsForNotification();
+
+        initAsForegroundService();
+
+        mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), mFrequency);
 
         initGeofenceReceiver();
 
     }
 
-    private void initForeground() {
+    /**
+     * Initializes the handler that will periodically update the notification.
+     * Also initialises {@link #mNotificationManager} so we don't have to call {@link #getSystemService(String)} multiple times
+     */
+    private void initHandler() {
+        mHandler = new Handler() {
+            public void handleMessage(Message m) {
+                updateNotification();
+                sendMessageDelayed(Message.obtain(this, TICK_WHAT), mFrequency);
+            }
+        };
 
-        Notification notification = createNotification();
-
-        startForeground(ONGOING_NOTIFICATION_ID, notification);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
+    private void updateNotification() {
+        Notification notification = createNotification();
+        mNotificationManager.notify(ONGOING_NOTIFICATION_ID, notification);
+    }
+
+    /**
+     * Creates the notification and uses it to call {@link #startForeground(int, Notification)}.
+     */
+    private void initAsForegroundService() {
+        Notification notification = createNotification();
+        startForeground(ONGOING_NOTIFICATION_ID, notification);
+
+    }
+
+    /**
+     * @return the notification for an ongoing race with the current time
+     */
     private Notification createNotification() {
-        // setup on notification click
-        Intent onClickIntent = new Intent(this, ExploreActivity.class);
-        PendingIntent piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
-
-        // setup stop race button
-        Intent stopRaceIntent = new Intent(this, RacingService.class);
-        stopRaceIntent.setAction("STOP");
-        PendingIntent piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
-
 
         String raceTitle = RaceHolder.getInstance().getCurrentRaceTitle();
-        String geofenceProgresion = "Progression " + RaceHolder.getInstance().getCheckpointProgression() + "/" + RaceHolder.getInstance().getNumberCheckpoints();
+        String geofenceProgression = "Progression " + RaceHolder.getInstance().getCheckpointProgression() + "/" + RaceHolder.getInstance().getNumberCheckpoints();
+
+        final long elapsedTime = SystemClock.elapsedRealtime() - RaceHolder.getInstance().getTimeStart();
+        String timeString = formatElapsedTime(elapsedTime);
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_kreasport_notification_icon)
                         .setContentIntent(piOnClick)
                         .setContentTitle(raceTitle) // race name
-                        .setContentText(geofenceProgresion) // geofence progression
+                        .setContentText(timeString) // elapsed time
                         /*
                          * Sets the big view "big text" style and supplies the
                          * text (the user's reminder message) that will be displayed
@@ -95,16 +134,31 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
                          */
                         .setStyle(new NotificationCompat.InboxStyle()
                                 .setBigContentTitle(raceTitle) // race name
-                                .addLine("Time")
-                                .addLine(geofenceProgresion) // geofence progression
-                                .setSummaryText("Race active"))
+                                .addLine(timeString)
+                                .addLine(geofenceProgression) // geofence progression
+                                .setSummaryText("Race active")) // Useful ?
                         .addAction(R.drawable.ic_stop_grey_600_24dp,
                                 "Stop race", piStopRace);
         return builder.build();
     }
 
+    /**
+     * Creates PendingIntents for the notification. These will stay the same even if the notification is updateded, therefore we initialise them once here.
+     */
+    private void initPendingIntentsForNotification() {
+        // setup on notification click
+        Intent onClickIntent = new Intent(this, ExploreActivity.class);
+        piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
+
+        // setup stop race button
+        Intent stopRaceIntent = new Intent(this, RacingService.class);
+        stopRaceIntent.setAction("STOP");
+        piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
+    }
+
     private void initGeofenceReceiver() {
         mLocationUtils = new LocationUtils(this);
+        // don't need to call start since it was already started in ExploreActivity
 
 
         // TODO make sure we can cancel geofences created in ExploreActivity from this instance
@@ -112,6 +166,52 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
 
         geofenceReceiver = new GeofenceReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
+    }
+
+    /***
+     * Given the time elapsed in tenths of seconds, returns the string
+     * representation of that time.
+     *
+     * @param now, the current time in tenths of seconds
+     * @return String with the current time in the format MM:SS.T or
+     * 			HH:MM:SS.T, depending on elapsed time.
+     */
+    private String formatElapsedTime(long now) {
+        long hours = 0, minutes = 0, seconds = 0, tenths = 0;
+        StringBuilder sb = new StringBuilder();
+
+        if (now < 1000) {
+            tenths = now / 100;
+        } else if (now < 60000) {
+            seconds = now / 1000;
+            now -= seconds * 1000;
+            tenths = (now / 100);
+        } else if (now < 3600000) {
+            hours = now / 3600000;
+            now -= hours * 3600000;
+            minutes = now / 60000;
+            now -= minutes * 60000;
+            seconds = now / 1000;
+            now -= seconds * 1000;
+            tenths = (now / 100);
+        }
+
+        if (hours > 0) {
+            sb.append(hours).append(":")
+                    .append(formatDigits(minutes)).append(":")
+                    .append(formatDigits(seconds)).append(".")
+                    .append(tenths);
+        } else {
+            sb.append(formatDigits(minutes)).append(":")
+                    .append(formatDigits(seconds)).append(".")
+                    .append(tenths);
+        }
+
+        return sb.toString();
+    }
+
+    private String formatDigits(long num) {
+        return (num < 10) ? "0" + num : new Long(num).toString();
     }
 
     @Override
@@ -130,6 +230,7 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
 
             Log.d(TAG, "received geofence broadcast for checkpoint: " + checkpointId);
 
+            // TODO
         }
     }
 
@@ -138,5 +239,6 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
+        mHandler.removeMessages(TICK_WHAT);
     }
 }
