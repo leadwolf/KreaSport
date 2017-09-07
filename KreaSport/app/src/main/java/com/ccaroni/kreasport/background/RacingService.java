@@ -18,6 +18,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.location.LocationUtils;
+import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
 
 import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
@@ -52,13 +53,20 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     public void onCreate() {
         super.onCreate();
 
-        initForground();
+        initForeground();
 
         initGeofenceReceiver();
 
     }
 
-    private void initForground() {
+    private void initForeground() {
+
+        Notification notification = createNotification();
+
+        startForeground(ONGOING_NOTIFICATION_ID, notification);
+    }
+
+    private Notification createNotification() {
         // setup on notification click
         Intent onClickIntent = new Intent(this, ExploreActivity.class);
         PendingIntent piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
@@ -68,13 +76,16 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
         stopRaceIntent.setAction("STOP");
         PendingIntent piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
 
+
+        String raceTitle = RaceHolder.getInstance().getCurrentRaceTitle();
+        String geofenceProgresion = "Progression " + RaceHolder.getInstance().getCheckpointProgression() + "/" + RaceHolder.getInstance().getNumberCheckpoints();
+
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_kreasport_notification_icon)
                         .setContentIntent(piOnClick)
-                        .setContentTitle("Title") // race name
-                        .setContentText("Text") // geofence progression
-                        .setDefaults(Notification.DEFAULT_ALL) // requires VIBRATE permission
+                        .setContentTitle(raceTitle) // race name
+                        .setContentText(geofenceProgresion) // geofence progression
                         /*
                          * Sets the big view "big text" style and supplies the
                          * text (the user's reminder message) that will be displayed
@@ -83,14 +94,13 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
                          * pre-4.1 devices.
                          */
                         .setStyle(new NotificationCompat.InboxStyle()
-                                .addLine("Checkpoint progression: n/n") // geofence progression
-                                .setSummaryText("Race active")
-                                .setBigContentTitle("big title")) // race name
-                        .addAction(R.drawable.ic_kreasport_notification_icon,
+                                .setBigContentTitle(raceTitle) // race name
+                                .addLine("Time")
+                                .addLine(geofenceProgresion) // geofence progression
+                                .setSummaryText("Race active"))
+                        .addAction(R.drawable.ic_stop_grey_600_24dp,
                                 "Stop race", piStopRace);
-
-
-        startForeground(ONGOING_NOTIFICATION_ID, builder.build());
+        return builder.build();
     }
 
     private void initGeofenceReceiver() {
