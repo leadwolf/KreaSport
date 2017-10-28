@@ -30,10 +30,6 @@ public abstract class IRaceVM extends BaseObservable {
 
     private static final String TAG = IRaceVM.class.getSimpleName();
 
-    /**
-     * Whether a timer is running
-     */
-    protected boolean raceActive;
     protected int bottomSheetVisibility;
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
@@ -47,6 +43,9 @@ public abstract class IRaceVM extends BaseObservable {
     protected IRaceView raceView;
 
 
+    /**
+     * @return a listener that will update the bottom sheet when a marker is clicked
+     */
     public ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener() {
         return new ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem>() {
             @Override
@@ -73,14 +72,13 @@ public abstract class IRaceVM extends BaseObservable {
     protected abstract void updateBottomSheetData(CustomOverlayItem item);
 
 
-
     /**
-     * @return A List of {@link CustomOverlayItem} representing the current race (and its progression with this VM) or a list of all the races.
+     * @return A List of {@link CustomOverlayItem} representing the current race (and its progression with this VM) OR a list of all the races.
      */
     public List<CustomOverlayItem> getOverlayItems() {
         List<CustomOverlayItem> items = new ArrayList<>();
 
-        if (raceActive) {
+        if (isRaceActive()) {
             items.addAll(RaceHolder.getInstance().raceToCustomOverlay());
         } else {
             RealmResults<RealmRace> allRaces = RealmHelper.getInstance(null).getAllRaces(false);
@@ -95,44 +93,44 @@ public abstract class IRaceVM extends BaseObservable {
      */
     public void checkPreviousRace() {
         Log.d(TAG, "checking for a previous race");
-        raceActive = RaceHolder.getInstance().isRaceActive();
-        if (raceActive) {
+        if (isRaceActive()) {
             Log.d(TAG, "found an active raceRecord, will be resuming: " + RaceHolder.getInstance().getCurrentRaceRecordId());
             changeVisibilitiesOnRaceState();
-            resumeRace();
+            raceView.startChronometer(RaceHolder.getInstance().getTimeStart());
 
             raceView.focusOnRace(getOverlayItems());
             // no need to add geofence since the service should still be alive
         }
     }
 
-    protected void resumeRace() {
-        raceView.startChronometer(RaceHolder.getInstance().getTimeStart());
-    }
-
+    /**
+     * Updates the visibilities for the whole bottom sheet and fab. NOT the data in the bottom sheet
+     */
     protected abstract void changeVisibilitiesOnRaceState();
 
-    public boolean isRacing() {
+    /**
+     * @return if a race is currently active
+     */
+    public boolean isRaceActive() {
         return RaceHolder.getInstance().isRaceActive();
     }
 
     /**
-     * The user confirmed to completely stop the race
+     * Call when the user confirmed to completely stop the race.
+     * Stops the recording, updates visibilites with {@link #changeVisibilitiesOnRaceState()} and then calls {@link IRaceView#setDefaultMarkers()}
      */
     public void onStopConfirmation() {
-        this.raceActive = false;
 
         RaceHolder.getInstance().stopRecording();
-        raceView.setDefaultMarkers();
-
         changeVisibilitiesOnRaceState(); // TODO lead to a new screen if finished race
+        raceView.setDefaultMarkers();
     }
 
     /**
      * Removes visibility of all views related to the current race/checkpoint
      */
     public void onMapBackgroundTouch() {
-        if (!raceActive) {
+        if (!isRaceActive()) {
             RaceHolder.getInstance().removeWholeSelection();
             changeVisibilitiesOnRaceState();
         }
@@ -182,7 +180,6 @@ public abstract class IRaceVM extends BaseObservable {
     protected abstract void revealNextCheckpoint(RealmCheckpoint targetingCheckpoint);
 
     protected abstract void triggerNextGeofence(RealmCheckpoint targetingCheckpoint);
-
 
 
     @Bindable
@@ -245,7 +242,7 @@ public abstract class IRaceVM extends BaseObservable {
 
 
     public void onStartClicked() {
-        if (raceActive) {
+        if (isRaceActive()) {
             throw new IllegalStateException("A race is already active");
         } else if (!RaceHolder.getInstance().isRaceSelected()) {
             throw new IllegalStateException("No race is currently selected");

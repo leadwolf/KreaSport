@@ -45,19 +45,14 @@ public class RaceVM extends IRaceVM {
             throw new RuntimeException(context + " must implement " + IRaceView.class.getSimpleName());
         }
 
-        raceActive = false;
-
         changeVisibilitiesOnRaceState();
     }
 
-    /**
-     * Updates the bindings for the whole bottom sheet visibilities and fab visibilities. NOT the data in the bottom sheet
-     */
     protected void changeVisibilitiesOnRaceState() {
-        passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
-        activeInfoVisibility = raceActive ? View.VISIBLE : View.GONE;
+        passiveInfoVisibility = isRaceActive() ? View.GONE : View.VISIBLE;
+        activeInfoVisibility = isRaceActive() ? View.VISIBLE : View.GONE;
 
-        fabStartVisibility = !raceActive && RaceHolder.getInstance().isRaceSelected() ? View.VISIBLE : View.GONE;
+        fabStartVisibility = !isRaceActive() && RaceHolder.getInstance().isRaceSelected() ? View.VISIBLE : View.GONE;
         bottomSheetVisibility = RaceHolder.getInstance().isRaceSelected() ? View.VISIBLE : View.GONE;
 
         fabMyLocationAnchoredStartVisibility = fabStartVisibility == View.VISIBLE ? View.VISIBLE : View.GONE;
@@ -71,7 +66,7 @@ public class RaceVM extends IRaceVM {
 
     @Override
     protected void updateBottomSheetData(CustomOverlayItem selectedItem) {
-        if (raceActive) {
+        if (isRaceActive()) {
             updateFromActiveState(selectedItem);
         } else {
             updateFromInactiveState(selectedItem);
@@ -84,7 +79,7 @@ public class RaceVM extends IRaceVM {
      * @param selectedItem
      */
     private void updateFromActiveState(CustomOverlayItem selectedItem) {
-        if (!raceActive) {
+        if (!isRaceActive()) {
             throw new IllegalStateException("This method is only supposed to be called from a raceActive state");
         }
 
@@ -106,7 +101,7 @@ public class RaceVM extends IRaceVM {
      * @param selectedItem
      */
     private void updateFromInactiveState(CustomOverlayItem selectedItem) {
-        if (raceActive) {
+        if (isRaceActive()) {
             throw new IllegalStateException("This method is only supposed to be called from a !raceActive state");
         }
 
@@ -148,7 +143,6 @@ public class RaceVM extends IRaceVM {
 
         RaceHolder.getInstance().startRace(timeStart);
 
-        raceActive = true;
         changeVisibilitiesOnRaceState();
 
         raceView.focusOnRace(getOverlayItems());

@@ -318,10 +318,10 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     @Override
     protected void onPause() {
         super.onPause();
-        if (!raceVM.isRacing() && mLocationUtils != null) {
+        if (!raceVM.isRaceActive() && mLocationUtils != null) {
             mLocationUtils.stopLocationUpdates();
         }
-        if (!raceVM.isRacing() && mGeofenceUtils != null) {
+        if (!raceVM.isRaceActive() && mGeofenceUtils != null) {
             // in case of force close
             mGeofenceUtils.removePreviousGeofences();
         }
@@ -337,7 +337,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         LocalBroadcastManager.getInstance(this).unregisterReceiver(locationSettingsReceiver);
 
 
-        if (raceVM.isRacing() && !askingRiddle) {
+        if (raceVM.isRaceActive() && !askingRiddle) {
             Intent racingServiceIntent = new Intent(this, RacingService.class);
             startService(racingServiceIntent);
         }
