@@ -32,7 +32,7 @@ import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
-import com.ccaroni.kreasport.race.IRaceView;
+import com.ccaroni.kreasport.race.interfaces.IRaceView;
 import com.ccaroni.kreasport.background.RacingService;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;

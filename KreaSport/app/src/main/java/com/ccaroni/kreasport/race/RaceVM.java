@@ -1,30 +1,18 @@
 package com.ccaroni.kreasport.race;
 
 import android.content.Context;
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.location.Location;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
-import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
-import com.ccaroni.kreasport.data.realm.RealmRace;
-import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.interfaces.IRaceVM;
+import com.ccaroni.kreasport.race.interfaces.IRaceView;
 import com.ccaroni.kreasport.utils.Constants;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
-
-import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.RealmResults;
 
 /**
  * Created by Master on 20/08/2017.

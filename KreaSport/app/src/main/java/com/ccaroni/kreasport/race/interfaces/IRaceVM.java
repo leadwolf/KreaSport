@@ -11,7 +11,6 @@ import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.IRaceView;
 import com.ccaroni.kreasport.race.RaceHolder;
 
 import org.osmdroid.util.GeoPoint;
