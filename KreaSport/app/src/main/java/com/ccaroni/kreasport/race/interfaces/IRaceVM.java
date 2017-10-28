@@ -292,7 +292,7 @@ public abstract class IRaceVM extends BaseObservable {
         if (raceView.userShouldVerifyLocationSettings()) {
             if (isUserLocationAtRaceStart()) {
 
-                GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeopoint();
+                GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeoPoint();
                 if (raceView.needToAnimateToPoint(startPoint)) {
                     Log.d(TAG, "waiting for animation to end to start race");
                     onMyLocationClicked(); // manually trigger animation to user's location

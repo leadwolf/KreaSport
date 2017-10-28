@@ -32,17 +32,17 @@ public class RaceHolder {
     // Actual class attributes
 
     /**
-     * The selected race, with or without timer
+     * The selected race. Is null when a race hasn't yet been selected.
      */
     private RealmRace currentRace;
 
     /**
-     * The selected checkpoint, not necessarily the targeting one
+     * The selected checkpoint, not necessarily the targeting one. Is null when there a checkpoint hasn't yet been selected.
      */
     private RealmCheckpoint currentCheckpoint;
 
     /**
-     * The current record, it may not be in use as it it preloaded
+     * The current record, it may not be in use as it is preloaded
      */
     private RealmRaceRecord currentRaceRecord;
 
@@ -151,7 +151,7 @@ public class RaceHolder {
     }
 
     /**
-     * Updates currentCheckpoint to the checkpoint corresponding to newCheckpointId.
+     * Updates {@link #currentCheckpoint} to the checkpoint corresponding to newCheckpointId.
      *
      * @param newCheckpointId the id of the checkpoint which should now be the current checkpoint. Must be a checkpoint belonging to currentRace
      */
@@ -160,7 +160,7 @@ public class RaceHolder {
     }
 
     /**
-     * Sets the current race to the one with the id = raceId
+     * Sets {@link #currentRace} to the one with the id = raceId
      *
      * @param raceId the id of the new race
      */
@@ -179,7 +179,7 @@ public class RaceHolder {
     }
 
     /**
-     * Removes the current race and checkpoint
+     * Sets {@link #currentRace} and {@link #currentCheckpoint} to null
      */
     public void removeWholeSelection() {
         currentRace = null;
@@ -187,7 +187,7 @@ public class RaceHolder {
     }
 
     /**
-     * Starts recording the current race in currentRaceRecord
+     * Starts recording the current race in {@link #currentRaceRecord}
      *
      * @param timeStart the time of the start of the race
      */
@@ -224,39 +224,26 @@ public class RaceHolder {
     /**
      * @return a {@link GeoPoint} of the first marker of the currentRace
      */
-    public GeoPoint getCurrentRaceAsGeopoint() {
+    public GeoPoint getCurrentRaceAsGeoPoint() {
         return currentRace == null ? new GeoPoint(0.0, 0.0) : new GeoPoint(currentRace.getLatitude(), currentRace.getLongitude());
-    }
-
-    /**
-     * Sets the state of the currentRaceRecord
-     *
-     * @param raceRecordInProgress if this record is in progress or not
-     */
-    private void setRaceRecordInProgress(boolean raceRecordInProgress) {
-        RealmHelper.getInstance(null).beginTransaction();
-        currentRaceRecord.setInProgress(raceRecordInProgress);
-        RealmHelper.getInstance(null).commitTransaction();
     }
 
     /**
      * Stops the {@link RealmRaceRecord} and either deletes it if the race is unfinished or leaves it be
      */
     public void stopRecording() {
+        RealmHelper.getInstance(null).beginTransaction();
         if (isCurrentRaceFinished()) {
-            setRaceRecordInProgress(false);
+            currentRaceRecord.setInProgress(true);
         } else {
             Log.d(TAG, "deleting record" + currentRaceRecord.getId());
-            RealmHelper.getInstance(null).beginTransaction();
             currentRaceRecord.deleteFromRealm();
-            RealmHelper.getInstance(null).commitTransaction();
-
             currentRaceRecord = null;
         }
+        RealmHelper.getInstance(null).commitTransaction();
     }
 
     /**
-     *
      * @return if the geofence progression really is one step behind the targeting checkpoint
      */
     public boolean isGeofenceProgressionCorrect() {
