@@ -32,7 +32,7 @@ import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
-import com.ccaroni.kreasport.race.RaceViewComms;
+import com.ccaroni.kreasport.race.IRaceView;
 import com.ccaroni.kreasport.background.RacingService;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
@@ -58,7 +58,7 @@ import java.util.TimerTask;
 
 import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
-public class ExploreActivity extends BaseActivity implements RaceViewComms, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
+public class ExploreActivity extends BaseActivity implements IRaceView, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
 
     private static final String LOG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -340,7 +340,7 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
 
     @Override
     public void onMyLocationClicked() {
-        if (verifyLocationSettings()) {
+        if (userShouldVerifyLocationSettings()) {
             final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
             updateLocationIcon(lastKnownLocation);
 
@@ -391,7 +391,7 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
     }
 
     @Override
-    public boolean needToAnimateToStart(GeoPoint startPoint) {
+    public boolean needToAnimateToPoint(GeoPoint startPoint) {
         BoundingBox currentBb = mMapView.getBoundingBox();
         BoundingBox reducedBB = currentBb.increaseByScale((float) 0.5);
 
@@ -430,7 +430,7 @@ public class ExploreActivity extends BaseActivity implements RaceViewComms, Cust
      * @return if the settings are correct
      */
     @Override
-    public boolean verifyLocationSettings() {
+    public boolean userShouldVerifyLocationSettings() {
         if (locationSettingsPI != null) {
             attemptLocationSetttingsResolution();
             return false;

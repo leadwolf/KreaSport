@@ -50,13 +50,13 @@ public class RaceVM extends BaseObservable {
     private List<CustomOverlayItem> overlayItems;
 
 
-    private RaceViewComms raceViewComms;
+    private IRaceView raceView;
 
     public RaceVM(Context context) {
-        if (context instanceof RaceViewComms) {
-            this.raceViewComms = (RaceViewComms) context;
+        if (context instanceof IRaceView) {
+            this.raceView = (IRaceView) context;
         } else {
-            throw new RuntimeException(context + " must implement " + RaceViewComms.class.getSimpleName());
+            throw new RuntimeException(context + " must implement " + IRaceView.class.getSimpleName());
         }
 
         raceActive = false;
@@ -83,7 +83,7 @@ public class RaceVM extends BaseObservable {
     }
 
     private void resumeRace() {
-        raceViewComms.startChronometer(RaceHolder.getInstance().getTimeStart());
+        raceView.startChronometer(RaceHolder.getInstance().getTimeStart());
     }
 
     public ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> getIconGestureListener() {
@@ -233,7 +233,7 @@ public class RaceVM extends BaseObservable {
     }
 
     public void onMyLocationClicked() {
-        raceViewComms.onMyLocationClicked();
+        raceView.onMyLocationClicked();
     }
 
     public void onStartClicked() {
@@ -243,11 +243,11 @@ public class RaceVM extends BaseObservable {
             throw new IllegalStateException("No race is currently selected");
         }
 
-        if (raceViewComms.verifyLocationSettings()) {
+        if (raceView.userShouldVerifyLocationSettings()) {
             if (validateProximityToStart()) {
 
                 GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeopoint();
-                if (raceViewComms.needToAnimateToStart(startPoint)) {
+                if (raceView.needToAnimateToPoint(startPoint)) {
                     Log.d(TAG, "waiting for animation to end to start race");
                     onMyLocationClicked(); // manually trigger animation to user's location
 
@@ -268,14 +268,14 @@ public class RaceVM extends BaseObservable {
     private boolean validateProximityToStart() {
         boolean validStart = false;
 
-        Location lastLocation = raceViewComms.getLastKnownLocation();
+        Location lastLocation = raceView.getLastKnownLocation();
         Location raceLocation = RaceHolder.getInstance().getCurrentRaceLocation();
 
         float distance = lastLocation.distanceTo(raceLocation);
 
         if (distance > Constants.MINIMUM_DISTANCE_TO_START_RACE) {
             Log.d(TAG, "User was " + distance + "m away from start. Too far by " + (distance - Constants.MINIMUM_DISTANCE_TO_START_RACE) + "m");
-            raceViewComms.toast("You are too far to start this race");
+            raceView.toast("You are too far to start this race");
         } else {
             Log.d(TAG, "User was " + distance + "m away from start. Inside by " + (Constants.MINIMUM_DISTANCE_TO_START_RACE - distance) + "m");
             validStart = true;
@@ -293,18 +293,18 @@ public class RaceVM extends BaseObservable {
         raceActive = true;
         changeVisibilitiesOnRaceState();
 
-        raceViewComms.focusOnRace(getOverlayItems());
+        raceView.focusOnRace(getOverlayItems());
 
         RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
         triggerNextGeofence(targetingCheckpoint);
 
-        raceViewComms.startChronometer(timeStart);
+        raceView.startChronometer(timeStart);
 
-        raceViewComms.toast("Race started");
+        raceView.toast("Race started");
     }
 
     public void onStopClicked() {
-        raceViewComms.askStopConfirmation();
+        raceView.askStopConfirmation();
     }
 
     public void onStopConfirmation() {
@@ -326,12 +326,12 @@ public class RaceVM extends BaseObservable {
             throw new IllegalStateException("Geofence was triggered but progressions are not synced");
         } // else continue
 
-        raceViewComms.removeLastGeofence();
+        raceView.removeLastGeofence();
 
         RaceHolder.getInstance().onGeofenceTriggered();
 
         RealmRiddle targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpointRiddle();
-        raceViewComms.askRiddle(targetingCheckpoint.toDTO());
+        raceView.askRiddle(targetingCheckpoint.toDTO());
     }
 
     /**
@@ -345,8 +345,8 @@ public class RaceVM extends BaseObservable {
         if (RaceHolder.getInstance().isCurrentRaceFinished()) {
             // trigger end
             RaceHolder.getInstance().stopRecording();
-            raceViewComms.stopChronometer();
-            raceViewComms.toast("Finished!");
+            raceView.stopChronometer();
+            raceView.toast("Finished!");
         } else {
             // trigger next
             RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
@@ -356,14 +356,14 @@ public class RaceVM extends BaseObservable {
     }
 
     /**
-     * Calls the {@link #raceViewComms} to add a geofence for the targeting checkpoint
+     * Calls the {@link #raceView} to add a geofence for the targeting checkpoint
      */
     private void triggerNextGeofence(RealmCheckpoint targetingCheckpoint) {
-        raceViewComms.addGeoFence(targetingCheckpoint);
+        raceView.addGeoFence(targetingCheckpoint);
     }
 
     private void revealNextCheckpoint(RealmCheckpoint targetingCheckpoint) {
-        raceViewComms.revealNextCheckpoint(targetingCheckpoint.toCustomOverlayItem());
+        raceView.revealNextCheckpoint(targetingCheckpoint.toCustomOverlayItem());
     }
 
 
@@ -394,7 +394,7 @@ public class RaceVM extends BaseObservable {
             changeVisibilitiesOnRaceState();
             resumeRace();
 
-            raceViewComms.focusOnRace(getOverlayItems());
+            raceView.focusOnRace(getOverlayItems());
             // no need to add geofence since the service should still be alive
         }
     }

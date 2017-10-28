@@ -17,8 +17,8 @@ import java.util.List;
 
 /**
  * Created by Master on 20/08/2017.
+ * This singleton class allows any instance to access the current race and the user's race record.
  */
-
 public class RaceHolder {
 
     private static final String TAG = RaceHolder.class.getSimpleName();
@@ -62,6 +62,7 @@ public class RaceHolder {
 
     /**
      * Creates the singleton instance
+     *
      * @param userId
      */
     public static synchronized void init(String userId) {
@@ -137,7 +138,6 @@ public class RaceHolder {
     }
 
     /**
-     *
      * @return A list of the race as {@link CustomOverlayItem} up to and including the targeting checkpoint according to {@link #currentRaceRecord}
      */
     public List<? extends CustomOverlayItem> raceToCustomOverlay() {
@@ -196,12 +196,12 @@ public class RaceHolder {
         if (isCurrentRaceFinished()) {
             setRaceRecordInProgress(false);
         } else {
-        Log.d(TAG, "deleting record" + currentRaceRecord.getId());
-        RealmHelper.getInstance(null).beginTransaction();
-        currentRaceRecord.deleteFromRealm();
-        RealmHelper.getInstance(null).commitTransaction();
+            Log.d(TAG, "deleting record" + currentRaceRecord.getId());
+            RealmHelper.getInstance(null).beginTransaction();
+            currentRaceRecord.deleteFromRealm();
+            RealmHelper.getInstance(null).commitTransaction();
 
-        currentRaceRecord = null;
+            currentRaceRecord = null;
         }
     }
 
@@ -243,6 +243,7 @@ public class RaceHolder {
 
     /**
      * Increments targeting progression if not on last one
+     *
      * @param answerIndex
      */
     public void onQuestionAnswered(int answerIndex) {
@@ -263,7 +264,6 @@ public class RaceHolder {
     }
 
     /**
-     *
      * @return if the last checkpoint that was answered correctly was the last checkpoint, i.e. the race is finished
      */
     public boolean isCurrentRaceFinished() {
@@ -288,7 +288,6 @@ public class RaceHolder {
     }
 
     /**
-     *
      * @return If {@link RealmRaceRecord#isInProgress()}
      */
     public boolean isRaceActive() {
