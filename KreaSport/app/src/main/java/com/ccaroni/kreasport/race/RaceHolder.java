@@ -171,7 +171,7 @@ public class RaceHolder {
     /**
      * @return A list of the race as {@link CustomOverlayItem} up to and including the targeting checkpoint according to {@link #currentRaceRecord}
      */
-    public List<? extends CustomOverlayItem> raceToCustomOverlay() {
+    public List<? extends CustomOverlayItem> currentRaceToCustomOverlay() {
         if (currentRace == null) {
             return new ArrayList<>();
         }
@@ -256,18 +256,18 @@ public class RaceHolder {
     }
 
     /**
-     * Makes sure the geofence progression is one index behind checkpoint progression
+     *
+     * @return if the geofence progression really is one step behind the targeting checkpoint
      */
-    public boolean verifyGeofenceProgression() {
-        Log.d(TAG, "progress check: geofence: " + currentRaceRecord.getGeofenceProgression() + ", checkpoint: " + currentRaceRecord.getTargetCheckpointIndex());
+    public boolean isGeofenceProgressionCorrect() {
+        Log.d(TAG, "progress check: geofence prog is: " + currentRaceRecord.getGeofenceProgression() + ", checkpoint is: " + currentRaceRecord.getTargetCheckpointIndex());
         return currentRaceRecord.getGeofenceProgression() == (currentRaceRecord.getTargetCheckpointIndex() - 1);
     }
 
     /**
-     * Increments or saves progression
+     * Increments geofence progression
      */
-    public void onGeofenceTriggered() {
-
+    public void incrementGeofenceProgression() {
         RealmHelper.getInstance(null).beginTransaction();
         currentRaceRecord.incrementGeofenceProgression();
         RealmHelper.getInstance(null).commitTransaction();
@@ -292,9 +292,9 @@ public class RaceHolder {
 
 
     /**
-     * Increments targeting progression if not on last one
+     * Verifies the correct answer, increments progression if NOT on last checkpoint
      *
-     * @param answerIndex
+     * @param answerIndex the answerIndex that the user inputted
      */
     public void onQuestionAnswered(int answerIndex) {
         if (getTargetingCheckpoint().getAnswerIndex() != answerIndex) {

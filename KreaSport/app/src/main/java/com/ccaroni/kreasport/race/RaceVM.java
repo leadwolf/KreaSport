@@ -118,7 +118,7 @@ public class RaceVM extends IRaceVM {
         }
     }
 
-    protected boolean validateProximityToStart() {
+    protected boolean isUserLocationAtRaceStart() {
         boolean validStart = false;
 
         Location lastLocation = raceView.getLastKnownLocation();
@@ -138,9 +138,7 @@ public class RaceVM extends IRaceVM {
     }
 
     protected void startRace() {
-
         final long timeStart = SystemClock.elapsedRealtime();
-
         RaceHolder.getInstance().startRace(timeStart);
 
         changeVisibilitiesOnRaceState();
@@ -155,10 +153,6 @@ public class RaceVM extends IRaceVM {
         raceView.toast("Race started");
     }
 
-
-    /**
-     * Calls the {@link #raceView} to add a geofence for the targeting checkpoint
-     */
     protected void triggerNextGeofence(RealmCheckpoint targetingCheckpoint) {
         raceView.addGeoFence(targetingCheckpoint);
     }

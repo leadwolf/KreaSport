@@ -530,7 +530,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
                 throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
             }
 
-            raceVM.onGeofenceTriggered(checkpointId);
+            raceVM.onGeofenceTriggered();
 
         }
     }

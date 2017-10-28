@@ -42,6 +42,46 @@ public abstract class IRaceVM extends BaseObservable {
 
     protected IRaceView raceView;
 
+    /* ABSTRACT METHODS */
+
+    /**
+     * Switch to update on a {@link CustomOverlayItem} selection. Calls the appropriate method for updating title & description according to the selectedItem.
+     *
+     * @param selectedItem the {@link CustomOverlayItem} that the user clicked
+     */
+    protected abstract void updateBottomSheetData(CustomOverlayItem selectedItem);
+
+    /**
+     * Updates the visibilities for the whole bottom sheet and fab. NOT the data in the bottom sheet
+     */
+    protected abstract void changeVisibilitiesOnRaceState();
+
+    /**
+     * Asks {@link #raceView} to reveal the next checkpoint
+     *
+     * @param targetingCheckpoint the checkpoint to reveal
+     */
+    protected abstract void revealNextCheckpoint(RealmCheckpoint targetingCheckpoint);
+
+    /**
+     * Asks {@link #raceView} to add the next geofence
+     *
+     * @param targetingCheckpoint the {@link RealmCheckpoint} corresponding to the new geofence
+     */
+    protected abstract void triggerNextGeofence(RealmCheckpoint targetingCheckpoint);
+
+    /**
+     * Update bottom sheet visiblities, asks {@link #raceView} to only display current race, triggers the checkpoint reveal and geofence, asks {@link #raceView} to start its
+     * chronometer
+     */
+    protected abstract void startRace();
+
+    /**
+     * @return if the user's location is close enough to the start of the selected race
+     */
+    protected abstract boolean isUserLocationAtRaceStart();
+
+    /* END ABSTRACT METHODS */
 
     /**
      * @return a listener that will update the bottom sheet when a marker is clicked
@@ -65,21 +105,13 @@ public abstract class IRaceVM extends BaseObservable {
     }
 
     /**
-     * Switch to update on a {@link CustomOverlayItem} selection. Calls the appropriate method for updating title & description according to the selectedItem.
-     *
-     * @param item
-     */
-    protected abstract void updateBottomSheetData(CustomOverlayItem item);
-
-
-    /**
      * @return A List of {@link CustomOverlayItem} representing the current race (and its progression with this VM) OR a list of all the races.
      */
     public List<CustomOverlayItem> getOverlayItems() {
         List<CustomOverlayItem> items = new ArrayList<>();
 
         if (isRaceActive()) {
-            items.addAll(RaceHolder.getInstance().raceToCustomOverlay());
+            items.addAll(RaceHolder.getInstance().currentRaceToCustomOverlay());
         } else {
             RealmResults<RealmRace> allRaces = RealmHelper.getInstance(null).getAllRaces(false);
             items.addAll(RealmRace.racesToOverlay(allRaces));
@@ -97,16 +129,10 @@ public abstract class IRaceVM extends BaseObservable {
             Log.d(TAG, "found an active raceRecord, will be resuming: " + RaceHolder.getInstance().getCurrentRaceRecordId());
             changeVisibilitiesOnRaceState();
             raceView.startChronometer(RaceHolder.getInstance().getTimeStart());
-
             raceView.focusOnRace(getOverlayItems());
             // no need to add geofence since the service should still be alive
         }
     }
-
-    /**
-     * Updates the visibilities for the whole bottom sheet and fab. NOT the data in the bottom sheet
-     */
-    protected abstract void changeVisibilitiesOnRaceState();
 
     /**
      * @return if a race is currently active
@@ -117,10 +143,9 @@ public abstract class IRaceVM extends BaseObservable {
 
     /**
      * Call when the user confirmed to completely stop the race.
-     * Stops the recording, updates visibilites with {@link #changeVisibilitiesOnRaceState()} and then calls {@link IRaceView#setDefaultMarkers()}
+     * Stops the recording, updates visibilities with {@link #changeVisibilitiesOnRaceState()} and then calls {@link IRaceView#setDefaultMarkers()}
      */
     public void onStopConfirmation() {
-
         RaceHolder.getInstance().stopRecording();
         changeVisibilitiesOnRaceState(); // TODO lead to a new screen if finished race
         raceView.setDefaultMarkers();
@@ -140,47 +165,63 @@ public abstract class IRaceVM extends BaseObservable {
     /**
      * Interfaces with {@link RaceHolder} to verify progression, removes the geofence since we will now trigger the riddle for the checkpoint
      *
-     * @param checkpointId
      */
-    public void onGeofenceTriggered(String checkpointId) {
-
-        if (!RaceHolder.getInstance().verifyGeofenceProgression()) {
+    public void onGeofenceTriggered() {
+        if (!RaceHolder.getInstance().isGeofenceProgressionCorrect()) {
             throw new IllegalStateException("Geofence was triggered but progressions are not synced");
-        } // else continue
+        }
 
         raceView.removeLastGeofence();
-
-        RaceHolder.getInstance().onGeofenceTriggered();
+        RaceHolder.getInstance().incrementGeofenceProgression();
 
         RealmRiddle targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpointRiddle();
         raceView.askRiddle(targetingCheckpoint.toDTO());
     }
 
     /**
-     * Interfaces with {@link RaceHolder} to increment targeting progression, triggeres the next checkpoint reveal and geofence
+     * Interfaces with {@link RaceHolder} to increment targeting progression, triggers the next checkpoint reveal and geofence
      *
-     * @param answerIndex
+     * @param answerIndex the answerIndex that the user inputted
      */
     public void onQuestionCorrectlyAnswered(int answerIndex) {
         RaceHolder.getInstance().onQuestionAnswered(answerIndex);
 
         if (RaceHolder.getInstance().isCurrentRaceFinished()) {
-            // trigger end
-            RaceHolder.getInstance().stopRecording();
-            raceView.stopChronometer();
-            raceView.toast("Finished!");
+            triggerRaceEnd();
         } else {
-            // trigger next
-            RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
-            triggerNextGeofence(targetingCheckpoint);
-            revealNextCheckpoint(targetingCheckpoint);
+            triggerNextCheckpoint();
         }
     }
 
-    protected abstract void revealNextCheckpoint(RealmCheckpoint targetingCheckpoint);
+    /**
+     * Stops the recording and chronometer
+     */
+    private void triggerRaceEnd() {
+        RaceHolder.getInstance().stopRecording();
+        raceView.stopChronometer();
+        raceView.toast("Finished!");
+    }
 
-    protected abstract void triggerNextGeofence(RealmCheckpoint targetingCheckpoint);
+    /**
+     * Triggers the next checkpoint reveal and geofence adding
+     */
+    private void triggerNextCheckpoint() {
+        RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
+        triggerNextGeofence(targetingCheckpoint);
+        revealNextCheckpoint(targetingCheckpoint);
+    }
 
+    /**
+     * Sets the description in the bottom sheet
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        RaceHolder.getInstance().setDescription(description);
+        notifyPropertyChanged(BR.description);
+    }
+
+    /* METHODS FOR BINDINGS */
 
     @Bindable
     public int getPassiveInfoVisibility() {
@@ -249,7 +290,7 @@ public abstract class IRaceVM extends BaseObservable {
         }
 
         if (raceView.userShouldVerifyLocationSettings()) {
-            if (validateProximityToStart()) {
+            if (isUserLocationAtRaceStart()) {
 
                 GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeopoint();
                 if (raceView.needToAnimateToPoint(startPoint)) {
@@ -270,16 +311,6 @@ public abstract class IRaceVM extends BaseObservable {
         }
     }
 
-    protected abstract void startRace();
-
-    protected abstract boolean validateProximityToStart();
-
-
-    public void setDescription(String description) {
-        RaceHolder.getInstance().setDescription(description);
-        notifyPropertyChanged(BR.description);
-    }
-
     public void onMyLocationClicked() {
         raceView.onMyLocationClicked();
     }
@@ -288,5 +319,6 @@ public abstract class IRaceVM extends BaseObservable {
         raceView.askStopConfirmation();
     }
 
+    /* END BINDINGS */
 
 }
