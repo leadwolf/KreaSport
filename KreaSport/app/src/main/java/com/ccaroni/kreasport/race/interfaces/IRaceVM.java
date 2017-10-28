@@ -2,6 +2,7 @@ package com.ccaroni.kreasport.race.interfaces;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.location.Location;
 import android.os.Handler;
 import android.util.Log;
 
@@ -319,5 +320,9 @@ public abstract class IRaceVM extends BaseObservable {
     }
 
     /* END BINDINGS */
+
+    public void saveLocation(Location location) {
+        RaceHolder.getInstance().saveLocation(location);
+    }
 
 }

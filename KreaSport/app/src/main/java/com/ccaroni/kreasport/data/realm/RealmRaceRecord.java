@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.data.realm;
 
+import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.RealmHelper;
@@ -9,6 +10,7 @@ import org.threeten.bp.OffsetDateTime;
 
 import java.util.UUID;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 
@@ -19,8 +21,7 @@ import io.realm.annotations.Ignore;
 public class RealmRaceRecord extends RealmObject {
 
     @Ignore
-    private static final String LOG = RealmRaceRecord.class.getSimpleName();
-
+    private static final String TAG = RealmRaceRecord.class.getSimpleName();
 
     private String id;
 
@@ -44,6 +45,8 @@ public class RealmRaceRecord extends RealmObject {
     private String dateTime;
 //    private OffsetDateTime dateTime;
 
+    private RealmList<RealmLocation> userPath;
+
     public RealmRaceRecord() {
         started = false;
         inProgress = false;
@@ -53,6 +56,7 @@ public class RealmRaceRecord extends RealmObject {
 
         id = UUID.randomUUID().toString();
         dateTime = OffsetDateTime.now().toString();
+        userPath = new RealmList<>();
     }
 
     public String getId() {
@@ -161,7 +165,7 @@ public class RealmRaceRecord extends RealmObject {
         if (realmRace == null) {
             throw new IllegalArgumentException("Cannot get checkpoint from a null race");
         }
-        Log.d(LOG, "finding checkpoint at index " + targetCheckpointIndex + " as current checkpoint for " + realmRace.getId());
+        Log.d(TAG, "finding checkpoint at index " + targetCheckpointIndex + " as current checkpoint for " + realmRace.getId());
         return realmRace.getRealmCheckpoints().get(targetCheckpointIndex);
     }
 
@@ -220,5 +224,11 @@ public class RealmRaceRecord extends RealmObject {
 
     public boolean isToDelete() {
         return toDelete;
+    }
+
+    public void addLocationRecord(Location record) {
+        RealmLocation realmLocation = RealmLocation.fromLocation(record);
+        userPath.add(realmLocation);
+        Log.d(TAG, "saved " + realmLocation.toString());
     }
 }

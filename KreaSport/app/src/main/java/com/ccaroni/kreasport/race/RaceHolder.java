@@ -338,4 +338,17 @@ public class RaceHolder {
     public String getCurrentRaceRecordId() {
         return currentRaceRecord.getId();
     }
+
+    /**
+     * Saves the location to the {@link #currentRaceRecord} if not null
+     *
+     * @param record the location to save
+     */
+    public void saveLocation(Location record) {
+        if (currentRaceRecord != null) {
+            RealmHelper.getInstance(null).beginTransaction();
+            currentRaceRecord.addLocationRecord(record);
+            RealmHelper.getInstance(null).commitTransaction();
+        }
+    }
 }

@@ -519,6 +519,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     public void onLocationChanged(Location location) {
         Log.d(LOG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
         updateLocationIcon(location);
+        raceVM.saveLocation(location);
     }
 
 

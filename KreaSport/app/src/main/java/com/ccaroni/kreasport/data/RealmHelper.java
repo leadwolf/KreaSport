@@ -1,10 +1,12 @@
 package com.ccaroni.kreasport.data;
 
 import android.app.Activity;
+import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.data.realm.RealmLocation;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 
