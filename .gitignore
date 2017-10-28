@@ -1,5 +1,9 @@
+### AndroidStudio Patch ###
+# Google Services plugin
+google-services.json
 
-# Created by https://www.gitignore.io/api/maven,intellij+iml,androidstudio
+
+# Created by https://www.gitignore.io/api/maven,intellij+all,androidstudio
 
 ### AndroidStudio ###
 # Covers files to be ignored for android development using Android Studio.
@@ -82,9 +86,6 @@ obj/
 .idea/dynamic.xml
 .idea/uiDesigner.xml
 
-# Keystore files
-*.jks
-
 # OS-specific files
 .DS_Store
 .DS_Store?
@@ -102,7 +103,6 @@ Thumbs.db
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -127,12 +127,10 @@ crashlytics-build.properties
 fabric.properties
 
 ### AndroidStudio Patch ###
-# Google Services plugin
-google-services.json
 
 !/gradle/wrapper/gradle-wrapper.jar
 
-### Intellij+iml ###
+### Intellij+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
@@ -172,12 +170,16 @@ cmake-build-debug/
 # Cursive Clojure plugin
 .idea/replstate.xml
 
+# Ruby plugin and RubyMine
+/.rakeTasks
+
 # Crashlytics plugin (for Android Studio and IntelliJ)
 
-### Intellij+iml Patch ###
-# Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-249601023
+### Intellij+all Patch ###
+# Ignores the whole idea folder
+# See https://github.com/joeblau/gitignore.io/issues/186 and https://github.com/joeblau/gitignore.io/issues/360
 
-modules.xml
+.idea/
 
 ### Maven ###
 target/
@@ -193,4 +195,4 @@ buildNumber.properties
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 
-# End of https://www.gitignore.io/api/maven,intellij+iml,androidstudio
+# End of https://www.gitignore.io/api/maven,intellij+all,androidstudio
