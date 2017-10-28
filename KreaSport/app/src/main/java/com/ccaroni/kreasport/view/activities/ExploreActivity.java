@@ -33,7 +33,6 @@ import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
 import com.ccaroni.kreasport.race.RaceViewComms;
-import com.ccaroni.kreasport.race.legacy.LEGACYRaceVM;
 import com.ccaroni.kreasport.background.RacingService;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
