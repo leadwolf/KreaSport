@@ -101,38 +101,69 @@ public class RaceHolder {
         this.userId = userId;
     }
 
+    /**
+     * @return -1 if no {@link RealmRaceRecord} exists, or the {@link RealmRaceRecord#getTargetCheckpointIndex()}
+     */
     public int getCheckpointProgression() {
         return currentRaceRecord == null ? -1 : currentRaceRecord.getTargetCheckpointIndex();
     }
 
+    /**
+     * @return -1 if no {@link RealmRace} exists, or {@link RealmRace#getNbCheckpoints()}
+     */
     public int getNumberCheckpoints() {
         return currentRace == null ? -1 : currentRace.getNbCheckpoints();
     }
 
+    /**
+     * @return if one of a race's markers has been selected as has info in the bottom sheet
+     */
     public boolean isRaceSelected() {
         return currentRace != null;
     }
 
+    /**
+     * @return "" if no {@link RealmRace} exists, or the title of the current race
+     */
     public String getCurrentRaceTitle() {
         return currentRace == null ? "" : currentRace.getTitle();
     }
 
+    /**
+     * @return "" if no {@link RealmRace} exists, or the description of the current race
+     */
     public String getCurrentRaceDescription() {
         return currentRace == null ? "" : currentRace.getDescription();
     }
 
+    /**
+     * @return "" if there is no current {@link RealmCheckpoint}, or the checkpoint's title
+     */
     public String getCurrentCheckpointTitle() {
         return currentCheckpoint == null ? "" : currentCheckpoint.getTitle();
     }
 
+    /**
+     * @return "" if there is no current {@link RealmCheckpoint}, or the checkpoint's title
+     */
     public String getCurrentCheckpointDescription() {
         return currentCheckpoint == null ? "" : currentCheckpoint.getDescription();
     }
 
+    /**
+     * Updates currentCheckpoint to the checkpoint corresponding to newCheckpointId.
+     *
+     * @param newCheckpointId the id of the checkpoint which should now be the current checkpoint. Must be a checkpoint belonging to currentRace
+     */
     public void updateCurrentCheckpoint(String newCheckpointId) {
         currentCheckpoint = currentRace.getCheckpointById(newCheckpointId);
     }
 
+    /**
+     * Sets the current race to the one with the id = raceId
+     *
+     * @param raceId the id of the new race
+     */
     public void updateCurrentRace(String raceId) {
         currentRace = RealmHelper.getInstance(null).findRaceById(raceId);
     }
@@ -147,11 +178,19 @@ public class RaceHolder {
         return currentRace.toCustomOverlayWithCheckpoints(currentRaceRecord.getTargetCheckpointIndex());
     }
 
+    /**
+     * Removes the current race and checkpoint
+     */
     public void removeWholeSelection() {
         currentRace = null;
         currentCheckpoint = null;
     }
 
+    /**
+     * Starts recording the current race in currentRaceRecord
+     *
+     * @param timeStart the time of the start of the race
+     */
     public void startRace(long timeStart) {
         RealmHelper.getInstance(null).beginTransaction();
 
@@ -175,14 +214,25 @@ public class RaceHolder {
 
     }
 
+    /**
+     * @return the location of the currentRace (i.e.: the first marker)
+     */
     public Location getCurrentRaceLocation() {
         return currentRace == null ? null : currentRace.getLocation();
     }
 
+    /**
+     * @return a {@link GeoPoint} of the first marker of the currentRace
+     */
     public GeoPoint getCurrentRaceAsGeopoint() {
         return currentRace == null ? new GeoPoint(0.0, 0.0) : new GeoPoint(currentRace.getLatitude(), currentRace.getLongitude());
     }
 
+    /**
+     * Sets the state of the currentRaceRecord
+     *
+     * @param raceRecordInProgress if this record is in progress or not
+     */
     private void setRaceRecordInProgress(boolean raceRecordInProgress) {
         RealmHelper.getInstance(null).beginTransaction();
         currentRaceRecord.setInProgress(raceRecordInProgress);

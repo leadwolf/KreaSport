@@ -225,6 +225,9 @@ public class RaceVM extends BaseObservable {
         return "" + progression + "/" + total;
     }
 
+    /**
+     * Removes visibility of all views related to the current race/checkpoint
+     */
     public void onMapBackgroundTouch() {
         if (!raceActive) {
             RaceHolder.getInstance().removeWholeSelection();
