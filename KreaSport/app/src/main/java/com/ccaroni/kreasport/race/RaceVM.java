@@ -1,6 +1,5 @@
 package com.ccaroni.kreasport.race;
 
-import android.content.Context;
 import android.location.Location;
 import android.os.SystemClock;
 import android.util.Log;
@@ -12,8 +11,6 @@ import com.ccaroni.kreasport.race.interfaces.IRaceVM;
 import com.ccaroni.kreasport.race.interfaces.IRaceView;
 import com.ccaroni.kreasport.utils.Constants;
 
-import java.util.List;
-
 /**
  * Created by Master on 20/08/2017.
  */
@@ -23,17 +20,8 @@ public class RaceVM extends IRaceVM {
     private static final String TAG = RaceVM.class.getSimpleName();
 
 
-    private List<CustomOverlayItem> overlayItems;
-
-
-    public RaceVM(Context context) {
-        if (context instanceof IRaceView) {
-            this.raceView = (IRaceView) context;
-        } else {
-            throw new RuntimeException(context + " must implement " + IRaceView.class.getSimpleName());
-        }
-
-        changeVisibilitiesOnRaceState();
+    public RaceVM(IRaceView raceView, String userId) {
+        super(raceView, userId);
     }
 
     protected void changeVisibilitiesOnRaceState() {

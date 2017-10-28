@@ -42,6 +42,13 @@ public abstract class IRaceVM extends BaseObservable {
 
     protected IRaceView raceView;
 
+    public IRaceVM(IRaceView raceView, String userId) {
+        this.raceView = raceView;
+        RaceHolder.init(userId);
+
+        changeVisibilitiesOnRaceState();
+    }
+
     /* ABSTRACT METHODS */
 
     /**
@@ -164,7 +171,6 @@ public abstract class IRaceVM extends BaseObservable {
 
     /**
      * Interfaces with {@link RaceHolder} to verify progression, removes the geofence since we will now trigger the riddle for the checkpoint
-     *
      */
     public void onGeofenceTriggered() {
         if (!RaceHolder.getInstance().isGeofenceProgressionCorrect()) {

@@ -22,6 +22,10 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.background.RacingService;
+import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.background.location.LocationUtils;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
@@ -30,14 +34,9 @@ import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.RaceHolder;
 import com.ccaroni.kreasport.race.RaceVM;
-import com.ccaroni.kreasport.race.interfaces.IRaceView;
-import com.ccaroni.kreasport.background.RacingService;
-import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
-import com.ccaroni.kreasport.background.location.LocationUtils;
 import com.ccaroni.kreasport.race.interfaces.IRaceVM;
+import com.ccaroni.kreasport.race.interfaces.IRaceView;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -147,9 +146,8 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
      */
     private void setupUI() {
         RealmHelper.getInstance(this);
-        RaceHolder.init(CredentialsManager.getUserId(this));
 
-        raceVM = new RaceVM(this);
+        raceVM = new RaceVM(this, CredentialsManager.getUserId(this));
         binding.setRaceVM(raceVM);
 
         setBindings();
