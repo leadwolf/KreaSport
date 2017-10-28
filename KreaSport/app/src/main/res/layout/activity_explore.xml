@@ -8,7 +8,7 @@
 
         <variable
             name="raceVM"
-            type="com.ccaroni.kreasport.race.RaceVM" />
+            type="com.ccaroni.kreasport.race.interfaces.IRaceVM" />
     </data>
 
     <android.support.v4.widget.DrawerLayout

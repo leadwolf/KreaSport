@@ -37,6 +37,7 @@ import com.ccaroni.kreasport.background.RacingService;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.location.LocationUtils;
+import com.ccaroni.kreasport.race.interfaces.IRaceVM;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -83,7 +84,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     private Chronometer chronometer;
     private ItemizedOverlayWithFocus raceListOverlay;
 
-    private RaceVM raceVM;
+    private IRaceVM raceVM;
 
     private GeofenceReceiver geofenceReceiver;
 

@@ -278,7 +278,7 @@ public class RaceHolder {
         }
     }
 
-    RealmCheckpoint getTargetingCheckpoint() {
+    public RealmCheckpoint getTargetingCheckpoint() {
         return currentRace.getCheckpointByProgression(currentRaceRecord.getTargetCheckpointIndex());
     }
 
