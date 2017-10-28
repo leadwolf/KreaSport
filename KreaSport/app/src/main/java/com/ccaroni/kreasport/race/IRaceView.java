@@ -95,4 +95,6 @@ public interface IRaceView {
      * @param overlayItemsList a list of {@link CustomOverlayItem} that correspond to one single race
      */
     void focusOnRace(List<CustomOverlayItem> overlayItemsList);
+
+    void setDefaultMarkers();
 }

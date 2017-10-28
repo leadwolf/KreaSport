@@ -52,6 +52,7 @@ import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -177,18 +178,24 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     }
 
     /**
-     * Creates an overlay of all the race(s) needing to be displayed with help from the {@link LEGACYRaceVM}.
+     * Creates an overlay of all the race(s) needing to be displayed with help from the {@link RaceVM}.
      * Either creates an overlay for all the races or full overlay of one race.
-     * The {@link LEGACYRaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
+     * The {@link RaceVM} is in charge of returning the relevant race with all its checkpoints or all the races.
      */
     private void initRaceOverlays() {
         ItemizedIconOverlay.OnItemGestureListener<CustomOverlayItem> itemGestureListener = raceVM.getIconGestureListener();
-        List<CustomOverlayItem> items = raceVM.getOverlayItems();
-
-        raceListOverlay = new ItemizedOverlayWithFocus<>(items, itemGestureListener, this);
-//        raceListOverlay.setFocusItemsOnTap(true);
+        raceListOverlay = new ItemizedOverlayWithFocus<>(new ArrayList<CustomOverlayItem>(), itemGestureListener, this);
 
         mMapView.getOverlays().add(raceListOverlay);
+
+        addRacesToOverlay();
+    }
+
+    private void addRacesToOverlay() {
+        List<CustomOverlayItem> items = raceVM.getOverlayItems();
+        raceListOverlay.addItems(items);
+//        raceListOverlay.setFocusItemsOnTap(true);
+
     }
 
     @Override
@@ -342,18 +349,20 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     public void onMyLocationClicked() {
         if (userShouldVerifyLocationSettings()) {
             final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
-            updateLocationIcon(lastKnownLocation);
+            if (lastKnownLocation != null) {
+                updateLocationIcon(lastKnownLocation);
 
-            final MapController mapController = (MapController) mMapView.getController();
-            mapController.animateTo(new GeoPoint(lastKnownLocation));
+                final MapController mapController = (MapController) mMapView.getController();
+                mapController.animateTo(new GeoPoint(lastKnownLocation));
 
-            // delay this otherwise it interrupts the animateTo animation
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mapController.zoomTo(Constants.AUTO_ZOOM_LEVEL);
-                }
-            }, 500);
+                // delay this otherwise it interrupts the animateTo animation
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mapController.zoomTo(Constants.AUTO_ZOOM_LEVEL);
+                    }
+                }, 500);
+            }
         }
     }
 
@@ -447,6 +456,14 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
         updateCheckpointIcons();
 
+        mMapView.invalidate();
+    }
+
+    @Override
+    public void setDefaultMarkers() {
+        Log.d(LOG, "clearing all markers and will show available races");
+        raceListOverlay.removeAllItems();
+        addRacesToOverlay();
         mMapView.invalidate();
     }
 

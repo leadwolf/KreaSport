@@ -310,10 +310,14 @@ public class RaceVM extends BaseObservable {
         raceView.askStopConfirmation();
     }
 
+    /**
+     * The user confirmed to completely stop the race
+     */
     public void onStopConfirmation() {
         this.raceActive = false;
 
         RaceHolder.getInstance().stopRecording();
+        raceView.setDefaultMarkers();
 
         changeVisibilitiesOnRaceState(); // TODO lead to a new screen if finished race
     }
