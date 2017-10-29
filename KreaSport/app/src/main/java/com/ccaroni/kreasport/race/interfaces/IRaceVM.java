@@ -39,6 +39,10 @@ public abstract class IRaceVM extends BaseObservable {
     protected int fabMyLocationAnchoredStartVisibility;
     protected int fabMyLocationAnchoredBottomSheetVisibility;
 
+    /*
+    NOTE: the real "model" data is contained by RaceHolder because of how many attrs we need. This also makes it available to any background racing service
+     */
+
     protected IRaceView raceView;
 
     public IRaceVM(IRaceView raceView, String userId) {
@@ -59,6 +63,7 @@ public abstract class IRaceVM extends BaseObservable {
 
     /**
      * Updates the visibilities for the whole bottom sheet and fab. NOT the data in the bottom sheet
+     *
      * @param notifyChange
      */
     protected abstract void changeVisibilitiesOnRaceState(boolean notifyChange);
@@ -280,29 +285,43 @@ public abstract class IRaceVM extends BaseObservable {
             throw new IllegalStateException("No race is currently selected");
         }
 
-        if (!raceView.userShouldVerifyLocationSettings()) {
-            if (isUserLocationAtRaceStart()) {
-
-                GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeoPoint();
-                if (raceView.needToAnimateToPoint(startPoint)) {
-                    Log.d(TAG, "waiting for animation to end to start race");
-                    onMyLocationClicked(); // manually trigger animation to user's location
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startRace();
-                        }
-                    }, 1500);
-                } else {
-                    Log.d(TAG, "no animation, starting race");
-                    startRace();
-                }
-            }
-        } else {
+        if (raceView.userShouldVerifyLocationSettings()) {
             Log.d(TAG, "cannot start race: user needs to resolve location settings");
             raceView.askResolveLocationSettings();
+        } else {
+            verifyProximityBeforeStart();
         }
+    }
+
+    /**
+     * Verifies the user's proximity to the start, and starts the race if close enough
+     */
+    private void verifyProximityBeforeStart() {
+        if (isUserLocationAtRaceStart()) {
+            GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeoPoint();
+            if (raceView.needToAnimateToPoint(startPoint)) {
+                animateBeforeStart();
+            } else {
+                Log.d(TAG, "no animation, starting race");
+                startRace();
+            }
+        }
+    }
+
+    /**
+     * Animates to the user's location before starting the race by manually calling {@link #onMyLocationClicked()}
+     */
+    private void animateBeforeStart() {
+        Log.d(TAG, "waiting for animation to end to start race");
+        onMyLocationClicked(); // manually trigger animation to user's location
+
+        // start the race after 1500ms, the time for onMyLocationClicked() to animate to the user's location
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startRace();
+            }
+        }, 1500);
     }
 
     public void onMyLocationClicked() {
