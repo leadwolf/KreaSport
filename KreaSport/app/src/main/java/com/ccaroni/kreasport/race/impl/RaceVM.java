@@ -123,7 +123,7 @@ public class RaceVM extends IRaceVM {
     protected void startRace() {
         final long timeStart = SystemClock.elapsedRealtime();
         RaceHolder.getInstance().setCurrentRaceToSelected();
-        RaceHolder.getInstance().startRace(timeStart);
+        RaceHolder.getInstance().startRecording(timeStart);
 
         changeVisibilitiesOnRaceState(true);
 

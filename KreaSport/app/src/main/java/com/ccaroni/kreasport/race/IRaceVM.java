@@ -335,7 +335,7 @@ public abstract class IRaceVM extends BaseObservable {
     /* END BINDINGS */
 
     public void saveLocation(Location location) {
-        RaceHolder.getInstance().saveLocation(location);
+        RaceHolder.getInstance().addLocationRecord(location);
     }
 
 }

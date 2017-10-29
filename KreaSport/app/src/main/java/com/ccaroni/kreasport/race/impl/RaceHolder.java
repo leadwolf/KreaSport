@@ -148,34 +148,6 @@ public class RaceHolder {
     }
 
     /**
-     * Starts recording the current race in {@link #currentRaceRecord}
-     *
-     * @param timeStart the time of the start of the race
-     */
-    public void startRace(long timeStart) {
-        RealmHelper.getInstance(null).beginTransaction();
-
-        currentRaceRecord = RealmHelper.getInstance(null).createRealmRaceRecord();
-        currentRaceRecord.setUserId(userId);
-
-        Log.d(TAG, "started recording " + currentRaceRecord.getId() + " for raceId " + currentRace.getId());
-        currentRaceRecord.setBaseTime(timeStart);
-
-        currentRaceRecord.setInProgress(true);
-        currentRaceRecord.setStarted(true);
-        currentRaceRecord.setRaceId(currentRace.getId());
-
-        RealmHelper.getInstance(null).commitTransaction();
-    }
-
-    /**
-     * Actually stops the race. To call upon the user's confirmation
-     */
-    public void stopRace() {
-
-    }
-
-    /**
      * @return the location of the currentRace (i.e.: the first marker)
      */
     public Location getCurrentRaceLocation() {
@@ -194,12 +166,32 @@ public class RaceHolder {
     }
 
     /**
+     * Starts recording the current race in {@link #currentRaceRecord}
+     *
+     * @param timeStart the time of the start of the race
+     */
+    public void startRecording(long timeStart) {
+        RealmHelper.getInstance(null).beginTransaction();
+
+        currentRaceRecord = RealmHelper.getInstance(null).createRealmRaceRecord();
+        currentRaceRecord.setUserId(userId);
+
+        Log.d(TAG, "started recording " + currentRaceRecord.getId() + " for raceId " + currentRace.getId());
+        currentRaceRecord.setBaseTime(timeStart);
+
+        currentRaceRecord.setInProgress(true);
+        currentRaceRecord.setRaceId(currentRace.getId());
+
+        RealmHelper.getInstance(null).commitTransaction();
+    }
+
+    /**
      * Stops the {@link RealmRaceRecord} and either deletes it if the race is unfinished or leaves it be
      */
     public void stopRecording() {
         RealmHelper.getInstance(null).beginTransaction();
         if (isCurrentRaceFinished()) {
-            currentRaceRecord.setInProgress(true);
+            currentRaceRecord.setInProgress(false);
         } else {
             Log.d(TAG, "deleting record" + currentRaceRecord.getId());
             currentRaceRecord.deleteFromRealm();
@@ -234,14 +226,9 @@ public class RaceHolder {
         return currentRace.getCheckpointByProgression(currentRaceRecord.getTargetCheckpointIndex());
     }
 
-    private RealmCheckpoint getLastVerifiedCheckpoint() {
-        return currentRace.getCheckpointByProgression(currentRaceRecord.getGeofenceProgression());
-    }
-
     public RealmRiddle getTargetingCheckpointRiddle() {
         return getTargetingCheckpoint().getRiddle();
     }
-
 
     /**
      * Verifies the correct answer, increments progression if NOT on last checkpoint
@@ -302,7 +289,7 @@ public class RaceHolder {
      *
      * @param record the location to save
      */
-    public void saveLocation(Location record) {
+    public void addLocationRecord(Location record) {
         if (currentRaceRecord != null) {
             RealmHelper.getInstance(null).beginTransaction();
             currentRaceRecord.addLocationRecord(record);

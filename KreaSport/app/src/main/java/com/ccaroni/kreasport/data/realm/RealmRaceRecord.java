@@ -28,7 +28,6 @@ public class RealmRaceRecord extends RealmObject {
     private String raceId;
     private String userId;
 
-    private boolean started;
     private boolean inProgress;
 
     private long baseTime;
@@ -48,7 +47,6 @@ public class RealmRaceRecord extends RealmObject {
     private RealmList<RealmLocation> userPath;
 
     public RealmRaceRecord() {
-        started = false;
         inProgress = false;
         toDelete = false;
 
@@ -84,18 +82,6 @@ public class RealmRaceRecord extends RealmObject {
     }
 
     /**
-     * @return if the user actually started recording. Use to differenciate between a default instance of {@link RealmRaceRecord} and a {@link RealmRaceRecord} that has started
-     * being used for recording.
-     */
-    public boolean isStarted() {
-        return started;
-    }
-
-    public void setStarted(boolean started) {
-        this.started = started;
-    }
-
-    /**
      * @return if this record is currently active (the user has started a race and not canceled)
      */
     public boolean isInProgress() {
@@ -116,7 +102,7 @@ public class RealmRaceRecord extends RealmObject {
 
     /**
      * @return the index of the targeting checkpoint. When the user reaches the checkpoint but hasnt yet answered the riddle, the two values will be the same. Otherwise, this
-     * should always be one increment ahead
+     * should always be one increment ahead of the geofence target index
      */
     public int getTargetCheckpointIndex() {
         return targetCheckpointIndex;
@@ -175,7 +161,6 @@ public class RealmRaceRecord extends RealmObject {
                 "id='" + id + '\'' +
                 ", raceId='" + raceId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", started=" + started +
                 ", inProgress=" + inProgress +
                 ", baseTime=" + baseTime +
                 ", timeExpired=" + timeExpired +
