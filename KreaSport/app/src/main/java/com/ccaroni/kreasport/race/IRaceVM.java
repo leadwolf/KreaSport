@@ -338,4 +338,8 @@ public abstract class IRaceVM extends BaseObservable {
         RaceHolder.getInstance().addLocationRecord(location);
     }
 
+
+    public List<Location> getUserLocations() {
+        return RaceHolder.getInstance().getUserLocations();
+    }
 }

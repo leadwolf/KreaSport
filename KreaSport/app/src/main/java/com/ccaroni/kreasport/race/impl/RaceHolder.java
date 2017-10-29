@@ -307,4 +307,8 @@ public class RaceHolder {
     public void setCurrentRaceToSelected() {
         currentRace = RealmHelper.getInstance(null).findRaceById(selectedItem.getId());
     }
+
+    public List<Location> getUserLocations() {
+        return currentRaceRecord.getUserPathAsSimpleList();
+    }
 }

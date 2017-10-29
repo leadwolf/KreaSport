@@ -12,7 +12,7 @@ import com.ccaroni.kreasport.data.dto.Race;
  * Created by Master on 30/03/2017.
  */
 
-public class Constants {
+public final class Constants {
 
     public static final String GEOFENCE_RECEIVER_ID = "com.ccaroni.kreasport.geofence_receiver";
 

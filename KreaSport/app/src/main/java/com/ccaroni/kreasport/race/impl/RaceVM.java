@@ -16,6 +16,9 @@ import com.ccaroni.kreasport.race.IRaceVM;
 import com.ccaroni.kreasport.race.IRaceView;
 import com.ccaroni.kreasport.utils.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Master on 20/08/2017.
  */

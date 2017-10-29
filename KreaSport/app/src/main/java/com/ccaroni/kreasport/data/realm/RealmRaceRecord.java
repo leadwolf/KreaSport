@@ -8,6 +8,8 @@ import com.ccaroni.kreasport.data.dto.RaceRecord;
 
 import org.threeten.bp.OffsetDateTime;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import io.realm.RealmList;
@@ -211,9 +213,28 @@ public class RealmRaceRecord extends RealmObject {
         return toDelete;
     }
 
+    public RealmList<RealmLocation> getUserPath() {
+        return userPath;
+    }
+
+    public void setUserPath(RealmList<RealmLocation> userPath) {
+        this.userPath = userPath;
+    }
+
     public void addLocationRecord(Location record) {
         RealmLocation realmLocation = RealmLocation.fromLocation(record);
         userPath.add(realmLocation);
         Log.d(TAG, "saved " + realmLocation.toString());
+    }
+
+    public List<Location> getUserPathAsSimpleList() {
+        List<Location> locations = new ArrayList<>();
+        for (RealmLocation realmLocation : userPath) {
+            Location location = new Location("user_path");
+            location.setLatitude(realmLocation.getLatitude());
+            location.setLongitude(realmLocation.getLongitude());
+            locations.add(location);
+        }
+        return locations;
     }
 }

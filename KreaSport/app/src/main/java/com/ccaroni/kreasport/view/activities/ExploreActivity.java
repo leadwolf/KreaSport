@@ -34,9 +34,9 @@ import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.impl.RaceVM;
 import com.ccaroni.kreasport.race.IRaceVM;
 import com.ccaroni.kreasport.race.IRaceView;
+import com.ccaroni.kreasport.race.impl.RaceVM;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -50,6 +50,7 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     private CustomMapView mMapView;
     private Chronometer chronometer;
     private ItemizedOverlayWithFocus raceListOverlay;
+    private Polyline userPath;
 
     private IRaceVM raceVM;
 
@@ -160,6 +162,17 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     }
 
     private void setupMap() {
+        initMap();
+        initRaceOverlays();
+        initUserPathOverlay();
+
+        binding.appBarMain.layoutExplore.frameLayoutMap.addView(mMapView);
+    }
+
+    /**
+     * Initializes {@link #mMapView}
+     */
+    private void initMap() {
         MapOptions mMapOptions = new MapOptions()
                 .setEnableLocationOverlay(true)
                 .setEnableMultiTouchControls(true)
@@ -169,11 +182,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
         // needs to be called before the MapView is created to enable hw acceleration
         Configuration.getInstance().setMapViewHardwareAccelerated(true);
-
         mMapView = new CustomMapView(this, mMapOptions, mMapDefaults);
-        initRaceOverlays();
-
-        binding.appBarMain.layoutExplore.frameLayoutMap.addView(mMapView);
     }
 
     /**
@@ -188,6 +197,11 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         mMapView.getOverlays().add(raceListOverlay);
 
         addRacesToOverlay();
+    }
+
+    private void initUserPathOverlay() {
+        userPath = new Polyline();
+        mMapView.getOverlays().add(userPath);
     }
 
     private void addRacesToOverlay() {
@@ -526,7 +540,22 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     public void onLocationChanged(Location location) {
         Log.d(TAG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
         updateLocationIcon(location);
-        raceVM.saveLocation(location);
+        if (raceVM.isRaceActive()) {
+            raceVM.saveLocation(location);
+            updateUserPath();
+        }
+    }
+
+    /**
+     * Adds the location to the path overlay
+     */
+    private void updateUserPath() {
+        List<GeoPoint> userLocations = new ArrayList<>();
+        for (Location location : raceVM.getUserLocations()) {
+            userLocations.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        }
+        userPath.setPoints(userLocations);
+        mMapView.invalidate();
     }
 
 
