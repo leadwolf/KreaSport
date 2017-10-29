@@ -1,9 +1,6 @@
 package com.ccaroni.kreasport.data.dto;
 
 import com.ccaroni.kreasport.data.realm.RealmRiddle;
-import com.ccaroni.kreasport.data.realm.RealmString;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -59,11 +56,9 @@ public class Riddle implements Serializable {
                 .setAnswerIndex(getAnswerIndex());
     }
 
-    public static RealmList<RealmString> answersToRealmList(List<String> answers) {
-        RealmList<RealmString> realmStrings = new RealmList<>();
-        for (String answer : answers) {
-            realmStrings.add(new RealmString(answer));
-        }
+    public static RealmList<String> answersToRealmList(List<String> answers) {
+        RealmList<String> realmStrings = new RealmList<String>();
+        realmStrings.addAll(answers);
         return realmStrings;
     }
 }

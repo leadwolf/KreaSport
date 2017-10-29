@@ -1,8 +1,9 @@
 package com.ccaroni.kreasport;
 
+import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
-import com.ccaroni.kreasport.data.dto.Checkpoint;
 
 import org.junit.Test;
 
@@ -35,11 +36,11 @@ public class RealmMapTest {
         checkpoint = new Checkpoint()
                 .setTitle(title2)
                 .setRiddle(new Riddle()
-                .setAnswers(answers));
+                        .setAnswers(answers));
 
         realmCheckpoint = checkpoint.toRealmCheckpoint(raceId);
         assertEquals(title2, realmCheckpoint.getTitle());
-        assertEquals(answers, realmCheckpoint.getPossibleAnswersAsStrings());
+        assertEquals(answers, RealmHelper.realmListToSimpleList(realmCheckpoint.getPossibleAnswers()));
     }
 
 }

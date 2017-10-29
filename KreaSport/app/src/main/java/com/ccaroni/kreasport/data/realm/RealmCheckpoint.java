@@ -4,9 +4,6 @@ import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.GeoPoint;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -75,7 +72,7 @@ public class RealmCheckpoint extends RealmObject {
     }
 
 
-    public RealmList<RealmString> getPossibleAnswers() {
+    public RealmList<String> getPossibleAnswers() {
         return riddle.getAnswers();
     }
 
@@ -121,18 +118,10 @@ public class RealmCheckpoint extends RealmObject {
     }
 
     public CustomOverlayItem toCustomOverlayItem() {
-        return new CustomOverlayItem(getTitle(), getDescription(), extrackGeoPoint(), getId(), getRaceId());
+        return new CustomOverlayItem(getTitle(), getDescription(), extractGeoPoint(), getId(), getRaceId());
     }
 
-    public List<String> getPossibleAnswersAsStrings() {
-        List<String> possibleAnswersAsStrings = new ArrayList<>();
-        for (RealmString realmString : riddle.getAnswers()) {
-            possibleAnswersAsStrings.add(realmString.getString());
-        }
-        return possibleAnswersAsStrings;
-    }
-
-    public GeoPoint extrackGeoPoint() {
+    public GeoPoint extractGeoPoint() {
         return new GeoPoint(latitude, longitude);
     }
 

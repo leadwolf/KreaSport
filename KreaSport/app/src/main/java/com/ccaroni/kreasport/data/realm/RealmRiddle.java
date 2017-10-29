@@ -15,11 +15,11 @@ import io.realm.RealmObject;
 public class RealmRiddle extends RealmObject {
 
     private String question;
-    private RealmList<RealmString> answers;
+    private RealmList<String> answers;
     private int answerIndex;
 
     public RealmRiddle() {
-        answers = new RealmList<>();
+        answers = new RealmList<String>();
     }
 
     public String getQuestion() {
@@ -31,11 +31,11 @@ public class RealmRiddle extends RealmObject {
         return this;
     }
 
-    public RealmList<RealmString> getAnswers() {
+    public RealmList<String> getAnswers() {
         return answers;
     }
 
-    public RealmRiddle setAnswers(RealmList<RealmString> answers) {
+    public RealmRiddle setAnswers(RealmList<String> answers) {
         this.answers = answers;
         return this;
     }
@@ -57,13 +57,9 @@ public class RealmRiddle extends RealmObject {
 
     }
 
-    private static List<String> answersToStringList(RealmList<RealmString> realmAnswers) {
+    private static List<String> answersToStringList(RealmList<String> realmAnswers) {
         List<String> answers = new ArrayList<>();
-
-        for (RealmString realmString : realmAnswers) {
-            answers.add(realmString.getString());
-        }
-
+        answers.addAll(realmAnswers);
         return answers;
     }
 }

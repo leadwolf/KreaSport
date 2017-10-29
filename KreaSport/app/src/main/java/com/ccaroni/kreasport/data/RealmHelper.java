@@ -1,19 +1,19 @@
 package com.ccaroni.kreasport.data;
 
 import android.app.Activity;
-import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
-import com.ccaroni.kreasport.data.realm.RealmLocation;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -207,6 +207,12 @@ public class RealmHelper {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("toDelete", true)
                 .findAll();
+    }
+
+    public static <T> List<T> realmListToSimpleList(RealmList<T> realmList) {
+        List<T> list = new ArrayList<>();
+        list.addAll(realmList);
+        return list;
     }
 
 }
