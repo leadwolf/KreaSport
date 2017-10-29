@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race;
+package com.ccaroni.kreasport.race.impl;
 
 import android.location.Location;
 import android.os.SystemClock;
@@ -12,8 +12,8 @@ import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.interfaces.IRaceVM;
-import com.ccaroni.kreasport.race.interfaces.IRaceView;
+import com.ccaroni.kreasport.race.IRaceVM;
+import com.ccaroni.kreasport.race.IRaceView;
 import com.ccaroni.kreasport.utils.Constants;
 
 /**

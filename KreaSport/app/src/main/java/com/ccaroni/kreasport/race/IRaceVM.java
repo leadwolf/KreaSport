@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race.interfaces;
+package com.ccaroni.kreasport.race;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
@@ -11,7 +11,7 @@ import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.RaceHolder;
+import com.ccaroni.kreasport.race.impl.RaceHolder;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;

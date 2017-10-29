@@ -1,11 +1,11 @@
-package com.ccaroni.kreasport.race.interfaces;
+package com.ccaroni.kreasport.race;
 
 import android.location.Location;
 
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.RaceVM;
+import com.ccaroni.kreasport.race.impl.RaceVM;
 
 import org.osmdroid.util.GeoPoint;
 

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race;
+package com.ccaroni.kreasport.race.impl;
 
 import android.location.Location;
 import android.util.Log;
@@ -10,7 +10,7 @@ import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
-import com.ccaroni.kreasport.race.interfaces.IRaceVM;
+import com.ccaroni.kreasport.race.IRaceVM;
 
 import org.osmdroid.util.GeoPoint;
 

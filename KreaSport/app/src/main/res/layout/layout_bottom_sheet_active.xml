@@ -7,7 +7,7 @@
 
         <variable
             name="raceVM"
-            type="com.ccaroni.kreasport.race.interfaces.IRaceVM" />
+            type="com.ccaroni.kreasport.race.IRaceVM" />
     </data>
 
     <LinearLayout
