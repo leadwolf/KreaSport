@@ -217,16 +217,6 @@ public abstract class IRaceVM extends BaseObservable {
         revealNextCheckpoint(targetingCheckpoint);
     }
 
-    /**
-     * Sets the description in the bottom sheet
-     *
-     * @param description the new description
-     */
-    public void setDescription(String description) {
-        RaceHolder.getInstance().setDescription(description);
-        notifyPropertyChanged(BR.description);
-    }
-
     /* METHODS FOR BINDINGS */
 
     @Bindable
@@ -269,9 +259,26 @@ public abstract class IRaceVM extends BaseObservable {
         return RaceHolder.getInstance().getCurrentTitle();
     }
 
+    /**
+     * Sets the title in the bottom sheet
+     *
+     * @param title the new title
+     */
+    @Deprecated
     public void setTitle(String title) {
         RaceHolder.getInstance().setTitle(title);
         notifyPropertyChanged(BR.title);
+    }
+
+    /**
+     * Sets the description in the bottom sheet
+     *
+     * @param description the new description
+     */
+    @Deprecated
+    public void setDescription(String description) {
+        RaceHolder.getInstance().setDescription(description);
+        notifyPropertyChanged(BR.description);
     }
 
     @Bindable

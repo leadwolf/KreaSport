@@ -9,6 +9,7 @@ import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRiddle;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.race.interfaces.IRaceVM;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * Created by Master on 20/08/2017.
  * This singleton class allows any instance to access the current race and the user's race record.
+ * This acts as the "Model" where the current race, checkpoint... are all assembled so that {@link IRaceVM} doesn't have to manually track all these objects.
  */
 public class RaceHolder {
 
@@ -46,8 +48,10 @@ public class RaceHolder {
      */
     private RealmRaceRecord currentRaceRecord;
 
+    @Deprecated
     private String currentTitle;
 
+    @Deprecated
     private String currentDescription;
 
     /**
@@ -155,6 +159,7 @@ public class RaceHolder {
      *
      * @param newCheckpointId the id of the checkpoint which should now be the current checkpoint. Must be a checkpoint belonging to currentRace
      */
+    @Deprecated
     public void updateCurrentCheckpoint(String newCheckpointId) {
         currentCheckpoint = currentRace.getCheckpointById(newCheckpointId);
     }
@@ -164,6 +169,7 @@ public class RaceHolder {
      *
      * @param raceId the id of the new race
      */
+    @Deprecated
     public void updateCurrentRace(String raceId) {
         currentRace = RealmHelper.getInstance(null).findRaceById(raceId);
     }
@@ -308,18 +314,22 @@ public class RaceHolder {
                 && currentRace.isOnLastCheckpoint(currentRaceRecord.getGeofenceProgression(), "geofence index");
     }
 
+    @Deprecated
     public String getCurrentTitle() {
         return currentTitle;
     }
 
+    @Deprecated
     public void setTitle(String title) {
         this.currentTitle = title;
     }
 
+    @Deprecated
     public String getCurrentDescription() {
         return currentDescription;
     }
 
+    @Deprecated
     public void setDescription(String description) {
         this.currentDescription = description;
     }

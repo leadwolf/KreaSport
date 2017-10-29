@@ -52,7 +52,7 @@ public class RaceVM extends IRaceVM {
     /**
      * Called only when raceActive
      *
-     * @param selectedItem
+     * @param selectedItem the selected item
      */
     private void updateFromActiveState(CustomOverlayItem selectedItem) {
         if (!isRaceActive()) {
@@ -74,7 +74,7 @@ public class RaceVM extends IRaceVM {
     /**
      * Called only when !raceActive
      *
-     * @param selectedItem
+     * @param selectedItem the selected item
      */
     private void updateFromInactiveState(CustomOverlayItem selectedItem) {
         if (isRaceActive()) {
