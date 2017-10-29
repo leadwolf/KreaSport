@@ -61,7 +61,7 @@ import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsInten
 
 public class ExploreActivity extends BaseActivity implements IRaceView, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
 
-    private static final String LOG = ExploreActivity.class.getSimpleName();
+    private static final String TAG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_CODE_RIDDLE_ANSWER = 100;
 
@@ -213,16 +213,16 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
-            Log.d(LOG, "Google Play Services not available!");
-            Log.d(LOG, "Error Code: " + resultCode + ", " + apiAvailability.getErrorString(resultCode));
+            Log.d(TAG, "Google Play Services not available!");
+            Log.d(TAG, "Error Code: " + resultCode + ", " + apiAvailability.getErrorString(resultCode));
 
             if (apiAvailability.isUserResolvableError(resultCode)) {
                 // WARNING even this may indicate that the user simply cannot use the app if he gets code "SERVICE_INVALID"
-                Log.d(LOG, "attempting user resolution");
+                Log.d(TAG, "attempting user resolution");
                 apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
                         .show();
             } else {
-                Log.d(LOG, "This device does not support Google Play Services and is not user resolvable");
+                Log.d(TAG, "This device does not support Google Play Services and is not user resolvable");
                 Toast.makeText(this, "Your device does not support Google Play Services.", Toast.LENGTH_LONG).show();
                 closeActivity();
             }
@@ -231,7 +231,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
             }
             return false;
         }
-        Log.d(LOG, "Google Play Services is available!");
+        Log.d(TAG, "Google Play Services is available!");
         return true;
     }
 
@@ -239,7 +239,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
      * Quits this activity and forces back to app home screen, or whatever was in the back stack
      */
     private void closeActivity() {
-        Log.d(LOG, "Device completely does not support Google Play Services. Forcing back to app home screen");
+        Log.d(TAG, "Device completely does not support Google Play Services. Forcing back to app home screen");
         // this finishes this activity and forces to go back to home screen since its in the back stack
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             finishAndRemoveTask();
@@ -346,7 +346,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
     @Override
     public void onMyLocationClicked() {
-        if (userShouldVerifyLocationSettings()) {
+        if (!userShouldVerifyLocationSettings()) {
             final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
             if (lastKnownLocation != null) {
                 updateLocationIcon(lastKnownLocation);
@@ -439,17 +439,23 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
      */
     @Override
     public boolean userShouldVerifyLocationSettings() {
+        Log.d(TAG, "user should resolve location settings: " + (locationSettingsPI != null));
+        return locationSettingsPI != null;
+    }
+
+    /**
+     * Asks the user to resolve the location problems.
+     */
+    @Override
+    public void askResolveLocationSettings() {
         if (locationSettingsPI != null) {
-            attemptLocationSetttingsResolution();
-            return false;
-        } else {
-            return true;
+            attemptLocationSettingsResolution();
         }
     }
 
     @Override
     public void focusOnRace(List<CustomOverlayItem> overlayItemsList) {
-        Log.d(LOG, "clearing all markers except current race");
+        Log.d(TAG, "clearing all markers except current race");
         raceListOverlay.removeAllItems();
         raceListOverlay.addItems(overlayItemsList);
 
@@ -460,7 +466,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
     @Override
     public void setDefaultMarkers() {
-        Log.d(LOG, "clearing all markers and will show available races");
+        Log.d(TAG, "clearing all markers and will show available races");
         raceListOverlay.removeAllItems();
         addRacesToOverlay();
         mMapView.invalidate();
@@ -481,7 +487,10 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         }
     }
 
-    private void attemptLocationSetttingsResolution() {
+    /**
+     * Asks the user to resolve the location settings and then sets {@link #locationSettingsPI} to null if resolved
+     */
+    private void attemptLocationSettingsResolution() {
         try {
             startIntentSenderForResult(locationSettingsPI.getIntentSender(), REQUEST_CHECK_SETTINGS, null, 0, 0, 0);
         } catch (IntentSender.SendIntentException e) {
@@ -491,7 +500,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
     @Override
     public void revealNextCheckpoint(CustomOverlayItem nextCheckpointOverlayItem) {
-        Log.d(LOG, "revealing next checkpoint: " + nextCheckpointOverlayItem);
+        Log.d(TAG, "revealing next checkpoint: " + nextCheckpointOverlayItem);
         raceListOverlay.addItem(nextCheckpointOverlayItem);
         updateCheckpointIcons();
 
@@ -515,7 +524,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
      */
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(LOG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
+        Log.d(TAG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
         updateLocationIcon(location);
         raceVM.saveLocation(location);
     }
@@ -538,7 +547,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         @Override
         public void onReceive(Context context, Intent intent) {
             locationSettingsPI = intent.getParcelableExtra(KEY_LOCATION_SETTINGS_PI);
-            attemptLocationSetttingsResolution();
+            attemptLocationSettingsResolution();
         }
     }
 
@@ -551,13 +560,13 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        Log.i(LOG, "User agreed to make required location settings changes.");
+                        Log.i(TAG, "User agreed to make required location settings changes.");
                         locationSettingsPI = null;
                         setupLocationAndGeofenceServices();
                         mLocationUtils.startLocationUpdates();
                         break;
                     case Activity.RESULT_CANCELED:
-                        Log.i(LOG, "User chose not to make required location settings changes.");
+                        Log.i(TAG, "User chose not to make required location settings changes.");
                         break;
                 }
                 break;

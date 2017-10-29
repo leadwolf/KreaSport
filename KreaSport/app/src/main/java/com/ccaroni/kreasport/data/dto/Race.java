@@ -17,9 +17,6 @@ public class Race extends BaseItem {
     @SerializedName("checkpoints")
     @Expose
     private List<Checkpoint> checkpoints = null;
-    @SerializedName("location")
-    @Expose
-    private List<Double> location = null;
 
     public Race() {
         super();
@@ -34,19 +31,15 @@ public class Race extends BaseItem {
         this.checkpoints = checkpoints;
     }
 
-    public List<Double> getLocation() {
-        return location;
-    }
-
-    public void setLocation(List<Double> location) {
-        this.location = location;
-    }
-
     @Override
     public String toString() {
         return "RealmRace{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 "checkpoints=" + checkpoints +
-                ", location=" + location +
                 '}';
     }
 

@@ -5,7 +5,12 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
+import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.BaseItem;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.interfaces.IRaceVM;
 import com.ccaroni.kreasport.race.interfaces.IRaceView;
@@ -24,7 +29,7 @@ public class RaceVM extends IRaceVM {
         super(raceView, userId);
     }
 
-    protected void changeVisibilitiesOnRaceState() {
+    protected void changeVisibilitiesOnRaceState(boolean shouldNotifyBindings) {
         passiveInfoVisibility = isRaceActive() ? View.GONE : View.VISIBLE;
         activeInfoVisibility = isRaceActive() ? View.VISIBLE : View.GONE;
 
@@ -36,68 +41,70 @@ public class RaceVM extends IRaceVM {
         fabMyLocationCornerVisibility = bottomSheetVisibility == View.GONE ? View.VISIBLE : View.GONE;
 
 
-        notifyChange();
+        if (shouldNotifyBindings) {
+            notifyChange();
+        }
     }
-
 
     @Override
     protected void updateBottomSheetData(CustomOverlayItem selectedItem) {
-        if (isRaceActive()) {
-            updateFromActiveState(selectedItem);
-        } else {
-            updateFromInactiveState(selectedItem);
+        Log.d(TAG, "selected: " + selectedItem.toString());
+
+        boolean bottomSheetWasVisible = bottomSheetVisibility == View.VISIBLE;
+
+        BaseItem baseItem = determineSpecificBaseItem(selectedItem);
+        RaceHolder.getInstance().setSelectedItem(baseItem);
+
+        if (!bottomSheetWasVisible) {
+            Log.d(TAG, "will reveal bottom sheet");
+            changeVisibilitiesOnRaceState(false);
         }
+        notifyChange();
     }
 
     /**
-     * Called only when raceActive
+     * The specific {@link BaseItem} associated to the selected item.
      *
      * @param selectedItem the selected item
+     * @return the specific implementation that corresponds to the selected item. ({@link Race}/{@link Checkpoint})
      */
-    private void updateFromActiveState(CustomOverlayItem selectedItem) {
-        if (!isRaceActive()) {
-            throw new IllegalStateException("This method is only supposed to be called from a raceActive state");
-        }
+    private BaseItem determineSpecificBaseItem(CustomOverlayItem selectedItem) {
+        BaseItem baseItem;
+        RealmRace realmRace = getRealmRaceFromSelectedItem(selectedItem);
 
         if (selectedItem.isPrimary()) {
-            Log.d(TAG, "selected the race marker of the ongoing race");
-            setTitle(RaceHolder.getInstance().getCurrentRaceTitle());
-            setDescription(RaceHolder.getInstance().getCurrentRaceDescription());
+            baseItem = realmRace.toDTO();
         } else {
-            Log.d(TAG, "selected checkpoint of same race");
-            RaceHolder.getInstance().updateCurrentCheckpoint(selectedItem.getId());
-            setTitle(RaceHolder.getInstance().getCurrentCheckpointTitle());
-            setDescription(RaceHolder.getInstance().getCurrentCheckpointDescription());
+            baseItem = realmRace.getCheckpointById(selectedItem.getId()).toDTO();
         }
+        return baseItem;
     }
 
     /**
-     * Called only when !raceActive
+     * Gets the {@link RealmRace} associated to the selected item.
      *
-     * @param selectedItem the selected item
+     * @param selectedItem the item selected
+     * @return the {@link RealmRace} where {@link RealmRace#id} = {@link CustomOverlayItem#id}
      */
-    private void updateFromInactiveState(CustomOverlayItem selectedItem) {
-        if (isRaceActive()) {
-            throw new IllegalStateException("This method is only supposed to be called from a !raceActive state");
-        }
-
-        if (RaceHolder.getInstance().getCurrentRaceId().equals(selectedItem.getRaceId())) {
-            Log.d(TAG, "selected same race");
+    private RealmRace getRealmRaceFromSelectedItem(CustomOverlayItem selectedItem) {
+        RealmRace realmRace;
+        if (selectedItem.isPrimary()) {
+            realmRace = RealmHelper.getInstance(null).findRaceById(selectedItem.getId());
         } else {
-            Log.d(TAG, "selected different race: " + selectedItem.getRaceId());
-
-            RaceHolder.getInstance().updateCurrentRace(selectedItem.getRaceId());
-            setTitle(RaceHolder.getInstance().getCurrentRaceTitle());
-            setDescription(RaceHolder.getInstance().getCurrentRaceDescription());
-
-            changeVisibilitiesOnRaceState(); // call this to restore the fab and bottom sheet if no item was previously selected
+            realmRace = RealmHelper.getInstance(null).findRaceById(selectedItem.getRaceId());
         }
+        return realmRace;
     }
 
     protected boolean isUserLocationAtRaceStart() {
         boolean validStart = false;
 
         Location lastLocation = raceView.getLastKnownLocation();
+        if (lastLocation == null) {
+            Log.d(TAG, "cannot calculate dist to user location: no location available");
+            return false;
+        }
+
         Location raceLocation = RaceHolder.getInstance().getCurrentRaceLocation();
 
         float distance = lastLocation.distanceTo(raceLocation);
@@ -115,9 +122,10 @@ public class RaceVM extends IRaceVM {
 
     protected void startRace() {
         final long timeStart = SystemClock.elapsedRealtime();
+        RaceHolder.getInstance().setCurrentRaceToSelected();
         RaceHolder.getInstance().startRace(timeStart);
 
-        changeVisibilitiesOnRaceState();
+        changeVisibilitiesOnRaceState(true);
 
         raceView.focusOnRace(getOverlayItems());
 

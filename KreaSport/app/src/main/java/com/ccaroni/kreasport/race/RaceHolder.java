@@ -4,6 +4,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.dto.BaseItem;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
@@ -34,30 +35,21 @@ public class RaceHolder {
     // Actual class attributes
 
     /**
-     * The selected race. Is null when a race hasn't yet been selected.
+     * The current race that is being timed.
      */
     private RealmRace currentRace;
-
-    /**
-     * The selected checkpoint, not necessarily the targeting one. Is null when there a checkpoint hasn't yet been selected.
-     */
-    private RealmCheckpoint currentCheckpoint;
 
     /**
      * The current record, it may not be in use as it is preloaded
      */
     private RealmRaceRecord currentRaceRecord;
 
-    @Deprecated
-    private String currentTitle;
-
-    @Deprecated
-    private String currentDescription;
-
     /**
      * The user id to tie to the race record.
      */
     private String userId;
+
+    private BaseItem selectedItem;
 
 
     private RaceHolder() {
@@ -90,12 +82,7 @@ public class RaceHolder {
     private static void init() {
         instance = new RaceHolder();
         instance.currentRace = null;
-        instance.currentCheckpoint = null;
         instance.currentRaceRecord = null;
-    }
-
-    public String getCurrentRaceId() {
-        return currentRace == null ? "" : currentRace.getId();
     }
 
     /**
@@ -123,7 +110,7 @@ public class RaceHolder {
      * @return if one of a race's markers has been selected as has info in the bottom sheet
      */
     public boolean isRaceSelected() {
-        return currentRace != null;
+        return selectedItem != null;
     }
 
     /**
@@ -131,37 +118,6 @@ public class RaceHolder {
      */
     public String getCurrentRaceTitle() {
         return currentRace == null ? "" : currentRace.getTitle();
-    }
-
-    /**
-     * @return "" if no {@link RealmRace} exists, or the description of the current race
-     */
-    public String getCurrentRaceDescription() {
-        return currentRace == null ? "" : currentRace.getDescription();
-    }
-
-    /**
-     * @return "" if there is no current {@link RealmCheckpoint}, or the checkpoint's title
-     */
-    public String getCurrentCheckpointTitle() {
-        return currentCheckpoint == null ? "" : currentCheckpoint.getTitle();
-    }
-
-    /**
-     * @return "" if there is no current {@link RealmCheckpoint}, or the checkpoint's title
-     */
-    public String getCurrentCheckpointDescription() {
-        return currentCheckpoint == null ? "" : currentCheckpoint.getDescription();
-    }
-
-    /**
-     * Updates {@link #currentCheckpoint} to the checkpoint corresponding to newCheckpointId.
-     *
-     * @param newCheckpointId the id of the checkpoint which should now be the current checkpoint. Must be a checkpoint belonging to currentRace
-     */
-    @Deprecated
-    public void updateCurrentCheckpoint(String newCheckpointId) {
-        currentCheckpoint = currentRace.getCheckpointById(newCheckpointId);
     }
 
     /**
@@ -185,11 +141,10 @@ public class RaceHolder {
     }
 
     /**
-     * Sets {@link #currentRace} and {@link #currentCheckpoint} to null
+     * Sets {@link #selectedItem} to null
      */
-    public void removeWholeSelection() {
-        currentRace = null;
-        currentCheckpoint = null;
+    public void resetSelection() {
+        selectedItem = null;
     }
 
     /**
@@ -224,7 +179,11 @@ public class RaceHolder {
      * @return the location of the currentRace (i.e.: the first marker)
      */
     public Location getCurrentRaceLocation() {
-        return currentRace == null ? null : currentRace.getLocation();
+        if (isRaceActive()) {
+            return currentRace.getLocation();
+        } else {
+            return selectedItem.getLocation();
+        }
     }
 
     /**
@@ -314,25 +273,14 @@ public class RaceHolder {
                 && currentRace.isOnLastCheckpoint(currentRaceRecord.getGeofenceProgression(), "geofence index");
     }
 
-    @Deprecated
     public String getCurrentTitle() {
-        return currentTitle;
+        return selectedItem == null ? "" : selectedItem.getTitle();
     }
 
-    @Deprecated
-    public void setTitle(String title) {
-        this.currentTitle = title;
-    }
-
-    @Deprecated
     public String getCurrentDescription() {
-        return currentDescription;
+        return selectedItem == null ? "" : selectedItem.getDescription();
     }
 
-    @Deprecated
-    public void setDescription(String description) {
-        this.currentDescription = description;
-    }
 
     /**
      * @return If {@link RealmRaceRecord#isInProgress()}
@@ -360,5 +308,16 @@ public class RaceHolder {
             currentRaceRecord.addLocationRecord(record);
             RealmHelper.getInstance(null).commitTransaction();
         }
+    }
+
+    public void setSelectedItem(BaseItem selectedItem) {
+        this.selectedItem = selectedItem;
+    }
+
+    /**
+     * Sets the current race to the one that corresponds to the currently selected item
+     */
+    public void setCurrentRaceToSelected() {
+        currentRace = RealmHelper.getInstance(null).findRaceById(selectedItem.getId());
     }
 }

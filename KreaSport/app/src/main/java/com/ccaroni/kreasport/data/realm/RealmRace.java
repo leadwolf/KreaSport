@@ -3,7 +3,9 @@ package com.ccaroni.kreasport.data.realm;
 import android.location.Location;
 import android.util.Log;
 
+import com.ccaroni.kreasport.data.dto.BaseItem;
 import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.dto.Race;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.BoundingBox;
@@ -208,4 +210,16 @@ public class RealmRace extends RealmObject {
     }
 
 
+    public BaseItem toDTO() {
+        Race race = new Race();
+        race.setId(getId());
+        race.setTitle(getTitle());
+        race.setDescription(getDescription());
+        race.setLongitude(getLongitude());
+        race.setLatitude(getLatitude());
+
+        race.setCheckpoints(RealmCheckpoint.toDTO(getRealmCheckpoints()));
+
+        return race;
+    }
 }

@@ -90,6 +90,8 @@ public interface IRaceView {
      */
     boolean userShouldVerifyLocationSettings();
 
+    void askResolveLocationSettings();
+
     /**
      * Clear all previous markers and add overlayItemsList to the map.
      *

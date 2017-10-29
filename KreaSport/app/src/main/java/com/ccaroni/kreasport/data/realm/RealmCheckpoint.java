@@ -1,9 +1,14 @@
 package com.ccaroni.kreasport.data.realm;
 
+import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -127,5 +132,27 @@ public class RealmCheckpoint extends RealmObject {
 
     public int getAnswerIndex() {
         return riddle.getAnswerIndex();
+    }
+
+    public static List<Checkpoint> toDTO(RealmList<RealmCheckpoint> realmCheckpoints) {
+        List<Checkpoint> checkpointList = new ArrayList<>();
+        for (RealmCheckpoint realmCheckpoint : realmCheckpoints) {
+            checkpointList.add(realmCheckpoint.toDTO());
+        }
+        return checkpointList;
+    }
+
+    public Checkpoint toDTO() {
+        Checkpoint checkpoint = new Checkpoint();
+        checkpoint.setId(getId());
+        checkpoint.setTitle(getTitle());
+        checkpoint.setDescription(getDescription());
+        checkpoint.setLongitude(getLongitude());
+        checkpoint.setLatitude(getLatitude());
+
+        checkpoint.setRiddle(getRiddle().toDTO());
+        checkpoint.setOrder(getOrder());
+
+        return checkpoint;
     }
 }

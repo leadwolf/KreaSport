@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.data.dto;
 
 import android.databinding.BaseObservable;
+import android.location.Location;
 
 import com.ccaroni.kreasport.BR;
 import com.google.gson.annotations.Expose;
@@ -15,16 +16,16 @@ public abstract class BaseItem extends BaseObservable {
     String id;
     @SerializedName("title")
     @Expose
-    private String title;
+    protected String title;
     @SerializedName("description")
     @Expose
-    private String description;
+    protected String description;
     @SerializedName("latitude")
     @Expose
-    private Double latitude;
+    protected Double latitude;
     @SerializedName("longitude")
     @Expose
-    private Double longitude;
+    protected Double longitude;
 
     public BaseItem() {
     }
@@ -93,5 +94,12 @@ public abstract class BaseItem extends BaseObservable {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
+    }
+
+    public Location getLocation() {
+        Location baseLocation = new Location("base_item");
+        baseLocation.setLatitude(latitude);
+        baseLocation.setLongitude(longitude);
+        return baseLocation;
     }
 }

@@ -6,7 +6,6 @@ import android.location.Location;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ccaroni.kreasport.BR;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.realm.RealmRace;
@@ -46,7 +45,7 @@ public abstract class IRaceVM extends BaseObservable {
         this.raceView = raceView;
         RaceHolder.init(userId);
 
-        changeVisibilitiesOnRaceState();
+        changeVisibilitiesOnRaceState(true);
     }
 
     /* ABSTRACT METHODS */
@@ -60,8 +59,9 @@ public abstract class IRaceVM extends BaseObservable {
 
     /**
      * Updates the visibilities for the whole bottom sheet and fab. NOT the data in the bottom sheet
+     * @param notifyChange
      */
-    protected abstract void changeVisibilitiesOnRaceState();
+    protected abstract void changeVisibilitiesOnRaceState(boolean notifyChange);
 
     /**
      * Asks {@link #raceView} to reveal the next checkpoint
@@ -134,7 +134,7 @@ public abstract class IRaceVM extends BaseObservable {
         Log.d(TAG, "checking for a previous race");
         if (isRaceActive()) {
             Log.d(TAG, "found an active raceRecord, will be resuming: " + RaceHolder.getInstance().getCurrentRaceRecordId());
-            changeVisibilitiesOnRaceState();
+            changeVisibilitiesOnRaceState(true);
             raceView.startChronometer(RaceHolder.getInstance().getTimeStart());
             raceView.focusOnRace(getOverlayItems());
             // no need to add geofence since the service should still be alive
@@ -150,11 +150,11 @@ public abstract class IRaceVM extends BaseObservable {
 
     /**
      * Call when the user confirmed to completely stop the race.
-     * Stops the recording, updates visibilities with {@link #changeVisibilitiesOnRaceState()} and then calls {@link IRaceView#setDefaultMarkers()}
+     * Stops the recording, updates visibilities with {@link #changeVisibilitiesOnRaceState(boolean)} and then calls {@link IRaceView#setDefaultMarkers()}
      */
     public void onStopConfirmation() {
         RaceHolder.getInstance().stopRecording();
-        changeVisibilitiesOnRaceState(); // TODO lead to a new screen if finished race
+        changeVisibilitiesOnRaceState(true); // TODO lead to a new screen if finished race
         raceView.setDefaultMarkers();
     }
 
@@ -163,8 +163,8 @@ public abstract class IRaceVM extends BaseObservable {
      */
     public void onMapBackgroundTouch() {
         if (!isRaceActive()) {
-            RaceHolder.getInstance().removeWholeSelection();
-            changeVisibilitiesOnRaceState();
+            RaceHolder.getInstance().resetSelection();
+            changeVisibilitiesOnRaceState(true);
         }
     }
 
@@ -259,28 +259,6 @@ public abstract class IRaceVM extends BaseObservable {
         return RaceHolder.getInstance().getCurrentTitle();
     }
 
-    /**
-     * Sets the title in the bottom sheet
-     *
-     * @param title the new title
-     */
-    @Deprecated
-    public void setTitle(String title) {
-        RaceHolder.getInstance().setTitle(title);
-        notifyPropertyChanged(BR.title);
-    }
-
-    /**
-     * Sets the description in the bottom sheet
-     *
-     * @param description the new description
-     */
-    @Deprecated
-    public void setDescription(String description) {
-        RaceHolder.getInstance().setDescription(description);
-        notifyPropertyChanged(BR.description);
-    }
-
     @Bindable
     public String getDescription() {
         return RaceHolder.getInstance().getCurrentDescription();
@@ -302,7 +280,7 @@ public abstract class IRaceVM extends BaseObservable {
             throw new IllegalStateException("No race is currently selected");
         }
 
-        if (raceView.userShouldVerifyLocationSettings()) {
+        if (!raceView.userShouldVerifyLocationSettings()) {
             if (isUserLocationAtRaceStart()) {
 
                 GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeoPoint();
@@ -321,6 +299,9 @@ public abstract class IRaceVM extends BaseObservable {
                     startRace();
                 }
             }
+        } else {
+            Log.d(TAG, "cannot start race: user needs to resolve location settings");
+            raceView.askResolveLocationSettings();
         }
     }
 
