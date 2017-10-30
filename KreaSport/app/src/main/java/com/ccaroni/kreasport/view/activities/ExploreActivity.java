@@ -490,6 +490,11 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         mMapView.invalidate();
     }
 
+    @Override
+    public void setStartOfPath(Location userStartLocation) {
+        updateUserPath(userStartLocation, true);
+    }
+
     private void updateCheckpointIcons() {
         int nbMarkers = raceListOverlay.size();
 
@@ -546,7 +551,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         updateLocationIcon(location, false);
         if (raceVM.isRaceActive()) {
             raceVM.saveLocation(location);
-            updateUserPath(false);
+            updateUserPath(location, false);
         }
         mMapView.invalidate();
     }
@@ -554,15 +559,15 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     /**
      * Adds the location to the path overlay
      */
-    private void updateUserPath(boolean updateMap) {
-        Location lastRecordedLocation = raceVM.getLastRecordedLocation();
-        userPath.addGeoPoint(new GeoPoint(lastRecordedLocation.getLatitude(), lastRecordedLocation.getLongitude()));
+    private void updateUserPath(Location location, boolean updateMap) {
+        if (location != null) {
+            userPath.addGeoPoint(new GeoPoint(location.getLatitude(), location.getLongitude()));
 
-        if (updateMap) {
-            mMapView.invalidate();
+            if (updateMap) {
+                mMapView.invalidate();
+            }
         }
     }
-
 
     private class GeofenceReceiver extends BroadcastReceiver {
         @Override

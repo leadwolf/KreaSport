@@ -83,10 +83,12 @@ public abstract class IRaceVM extends BaseObservable {
     protected abstract void triggerNextGeofence(RealmCheckpoint targetingCheckpoint);
 
     /**
-     * Update bottom sheet visiblities, asks {@link #raceView} to only display current race, triggers the checkpoint reveal and geofence, asks {@link #raceView} to start its
+     * Update bottom sheet visibilities, asks {@link #raceView} to only display current race, triggers the checkpoint reveal and geofence, asks {@link #raceView} to start its
      * chronometer
+     *
+     * @param userStartLocation the user's location when he pressed the start button
      */
-    protected abstract void startRace();
+    protected abstract void startRace(Location userStartLocation);
 
     /**
      * @return if the user's location is close enough to the start of the selected race
@@ -289,29 +291,33 @@ public abstract class IRaceVM extends BaseObservable {
             Log.d(TAG, "cannot start race: user needs to resolve location settings");
             raceView.askResolveLocationSettings();
         } else {
-            verifyProximityBeforeStart();
+            verifyProximityBeforeStart(raceView.getLastKnownLocation());
         }
     }
 
     /**
      * Verifies the user's proximity to the start, and starts the race if close enough
+     *
+     * @param userLocationAtStart the user's location when he pressed the start button
      */
-    private void verifyProximityBeforeStart() {
+    private void verifyProximityBeforeStart(final Location userLocationAtStart) {
         if (isUserLocationAtRaceStart()) {
             GeoPoint startPoint = RaceHolder.getInstance().getCurrentRaceAsGeoPoint();
             if (raceView.needToAnimateToPoint(startPoint)) {
-                animateBeforeStart();
+                animateBeforeStart(userLocationAtStart);
             } else {
                 Log.d(TAG, "no animation, starting race");
-                startRace();
+                startRace(userLocationAtStart);
             }
         }
     }
 
     /**
      * Animates to the user's location before starting the race by manually calling {@link #onMyLocationClicked()}
+     *
+     * @param userLocationAtStart the user's location when he pressed the start button
      */
-    private void animateBeforeStart() {
+    private void animateBeforeStart(final Location userLocationAtStart) {
         Log.d(TAG, "waiting for animation to end to start race");
         onMyLocationClicked(); // manually trigger animation to user's location
 
@@ -319,7 +325,7 @@ public abstract class IRaceVM extends BaseObservable {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startRace();
+                startRace(userLocationAtStart);
             }
         }, 1500);
     }

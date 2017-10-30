@@ -16,9 +16,6 @@ import com.ccaroni.kreasport.race.IRaceVM;
 import com.ccaroni.kreasport.race.IRaceView;
 import com.ccaroni.kreasport.utils.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Master on 20/08/2017.
  */
@@ -123,14 +120,16 @@ public class RaceVM extends IRaceVM {
         return validStart;
     }
 
-    protected void startRace() {
+    protected void startRace(Location userStartLocation) {
         final long timeStart = SystemClock.elapsedRealtime();
         RaceHolder.getInstance().setCurrentRaceToSelected();
         RaceHolder.getInstance().startRecording(timeStart);
+        RaceHolder.getInstance().addLocationRecord(userStartLocation);
 
         changeVisibilitiesOnRaceState(true);
 
         raceView.focusOnRace(getOverlayItems());
+        raceView.setStartOfPath(userStartLocation);
 
         RealmCheckpoint targetingCheckpoint = RaceHolder.getInstance().getTargetingCheckpoint();
         triggerNextGeofence(targetingCheckpoint);

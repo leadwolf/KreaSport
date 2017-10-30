@@ -100,4 +100,11 @@ public interface IRaceView {
     void focusOnRace(List<CustomOverlayItem> overlayItemsList);
 
     void setDefaultMarkers();
+
+    /**
+     * Sets the start of whatever represents the user's path
+     *
+     * @param userStartLocation the start location
+     */
+    void setStartOfPath(Location userStartLocation);
 }

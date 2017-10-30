@@ -1,7 +1,5 @@
 package com.ccaroni.kreasport.map.views;
 
-import android.util.Log;
-
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Polyline;
 
@@ -31,10 +29,8 @@ public class CustomPolyline extends Polyline {
      * @param geoPoint the new {@link GeoPoint} to add to the line
      */
     public void addGeoPoint(GeoPoint geoPoint) {
-        Log.d(TAG, "starting adding points");
         geoPoints.add(geoPoint);
         setPoints(geoPoints);
-        Log.d(TAG, "finished adding points");
     }
 
 }

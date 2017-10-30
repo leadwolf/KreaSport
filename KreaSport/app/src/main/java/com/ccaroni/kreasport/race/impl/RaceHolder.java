@@ -290,7 +290,7 @@ public class RaceHolder {
      * @param record the location to save
      */
     public void addLocationRecord(Location record) {
-        if (currentRaceRecord != null) {
+        if (currentRaceRecord != null && record != null) {
             RealmHelper.getInstance(null).beginTransaction();
             currentRaceRecord.addLocationRecord(record);
             RealmHelper.getInstance(null).commitTransaction();
