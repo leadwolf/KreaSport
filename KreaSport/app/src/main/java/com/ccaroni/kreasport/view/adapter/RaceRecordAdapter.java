@@ -97,7 +97,7 @@ public class RaceRecordAdapter extends ArrayAdapter<RealmRaceRecord> {
             GeoPoint center = new GeoPoint(realmRace.getLatitude(), realmRace.getLongitude());
 
             MapDefaults mMapDefaults = new MapDefaults(center, DEFAULT_ZOOM_MAP_ITEM);
-            MapView mMapView = new CustomMapView(, activity, null, mMapDefaults);
+                MapView mMapView = new CustomMapView(activity, null, null, mMapDefaults);
 
             mMapView.setMaxZoomLevel(DEFAULT_ZOOM_MAP_ITEM);
             mMapView.setMinZoomLevel(DEFAULT_ZOOM_MAP_ITEM);

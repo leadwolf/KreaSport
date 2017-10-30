@@ -34,6 +34,7 @@ import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.map.views.CustomPolyline;
 import com.ccaroni.kreasport.race.IRaceVM;
 import com.ccaroni.kreasport.race.IRaceView;
 import com.ccaroni.kreasport.race.impl.RaceVM;
@@ -50,7 +51,6 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     private CustomMapView mMapView;
     private Chronometer chronometer;
     private ItemizedOverlayWithFocus raceListOverlay;
-    private Polyline userPath;
+    private CustomPolyline userPath;
 
     private IRaceVM raceVM;
 
@@ -200,7 +200,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     }
 
     private void initUserPathOverlay() {
-        userPath = new Polyline();
+        userPath = new CustomPolyline();
         mMapView.getOverlays().add(userPath);
     }
 
@@ -265,9 +265,10 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     /**
      * Updates the location icon
      *
-     * @param location where the new location is
+     * @param location  where the new location is
+     * @param updateMap
      */
-    private void updateLocationIcon(Location location) {
+    private void updateLocationIcon(Location location, boolean updateMap) {
         //after the first fix, schedule the task to change the icon
 
         final DirectedLocationOverlay overlay = mMapView.getLocationOverlay();
@@ -298,7 +299,10 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         overlay.setBearing(location.getBearing());
         overlay.setAccuracy((int) location.getAccuracy());
         overlay.setLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
-        mMapView.invalidate();
+
+        if (updateMap) {
+            mMapView.invalidate();
+        }
     }
 
 
@@ -363,7 +367,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         if (!userShouldVerifyLocationSettings()) {
             final Location lastKnownLocation = mLocationUtils.getLastKnownLocation();
             if (lastKnownLocation != null) {
-                updateLocationIcon(lastKnownLocation);
+                updateLocationIcon(lastKnownLocation, false);
 
                 final MapController mapController = (MapController) mMapView.getController();
                 mapController.animateTo(new GeoPoint(lastKnownLocation));
@@ -539,23 +543,24 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
-        updateLocationIcon(location);
+        updateLocationIcon(location, false);
         if (raceVM.isRaceActive()) {
             raceVM.saveLocation(location);
-            updateUserPath();
+            updateUserPath(false);
         }
+        mMapView.invalidate();
     }
 
     /**
      * Adds the location to the path overlay
      */
-    private void updateUserPath() {
-        List<GeoPoint> userLocations = new ArrayList<>();
-        for (Location location : raceVM.getUserLocations()) {
-            userLocations.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
+    private void updateUserPath(boolean updateMap) {
+        Location lastRecordedLocation = raceVM.getLastRecordedLocation();
+        userPath.addGeoPoint(new GeoPoint(lastRecordedLocation.getLatitude(), lastRecordedLocation.getLongitude()));
+
+        if (updateMap) {
+            mMapView.invalidate();
         }
-        userPath.setPoints(userLocations);
-        mMapView.invalidate();
     }
 
 

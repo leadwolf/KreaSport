@@ -6,6 +6,7 @@ import android.util.Log;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.RaceRecord;
 
+import org.osmdroid.util.GeoPoint;
 import org.threeten.bp.OffsetDateTime;
 
 import java.util.ArrayList;
@@ -236,5 +237,10 @@ public class RealmRaceRecord extends RealmObject {
             locations.add(location);
         }
         return locations;
+    }
+
+    public Location getLastRecordedLocation() {
+        RealmLocation realmLocation = userPath.get(userPath.size() - 1);
+        return realmLocation.toLocation();
     }
 }

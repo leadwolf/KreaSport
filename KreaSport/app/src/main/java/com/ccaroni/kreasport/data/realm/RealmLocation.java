@@ -69,6 +69,14 @@ public class RealmLocation extends RealmObject {
         return this;
     }
 
+    public Location toLocation() {
+        Location location = new Location("realm_location");
+        location.setLongitude(getLongitude());
+        location.setLatitude(getLatitude());
+        location.setAltitude(getAltitude());
+        return location;
+    }
+
     @Override
     public String toString() {
         return "RealmLocation{" +
