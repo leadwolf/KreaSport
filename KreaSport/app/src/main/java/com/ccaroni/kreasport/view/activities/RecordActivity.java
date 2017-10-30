@@ -35,7 +35,7 @@ import retrofit2.Response;
 
 import static com.ccaroni.kreasport.utils.Constants.KEY_RECORD_ID;
 
-public class RecordActivity extends AppCompatActivity implements CustomMapView.MapViewCommunication {
+public class RecordActivity extends AppCompatActivity {
 
     private static final String LOG = RecordActivity.class.getSimpleName();
 
@@ -84,7 +84,7 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
             GeoPoint center = new GeoPoint(realmRace.getLatitude(), realmRace.getLongitude());
 
             MapDefaults mMapDefaults = new MapDefaults(center, Constants.DEFAULT_ZOOM_MAP_ITEM);
-            MapView mMapView = new CustomMapView(this, null, mMapDefaults);
+            MapView mMapView = new CustomMapView(this, null, null, mMapDefaults);
             mMapView.setClickable(false);
             binding.contentRecord.rlRaceMap.addView(mMapView);
         }
@@ -153,11 +153,6 @@ public class RecordActivity extends AppCompatActivity implements CustomMapView.M
                 }
             });
         }
-    }
-
-    @Override
-    public void onMapBackgroundTouch() {
-
     }
 
     /**

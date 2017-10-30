@@ -22,7 +22,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
 
-public class DownloadedAreaActivity extends AppCompatActivity implements CustomMapView.MapViewCommunication {
+public class DownloadedAreaActivity extends AppCompatActivity {
 
     private static final String LOG = DownloadedAreaActivity.class.getSimpleName();
 
@@ -67,7 +67,7 @@ public class DownloadedAreaActivity extends AppCompatActivity implements CustomM
         BoundingBox boundingBox = downloadedArea.getBoundingBox().toBareBoundingBox();
         MapDefaults mapDefaults = new MapDefaults(boundingBox.getCenter(), 13);
 
-        mMapView = new CustomMapView(this, null, mapDefaults);
+        mMapView = new CustomMapView(this, null, null, mapDefaults);
 
         binding.contentDownloadedArea.rlDownloadedAreaMap.addView(mMapView);
 
@@ -86,8 +86,4 @@ public class DownloadedAreaActivity extends AppCompatActivity implements CustomM
         });
     }
 
-    @Override
-    public void onMapBackgroundTouch() {
-
-    }
 }

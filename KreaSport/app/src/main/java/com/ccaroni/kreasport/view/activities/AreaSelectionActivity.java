@@ -32,7 +32,7 @@ import java.util.Locale;
 
 import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
 
-public class AreaSelectionActivity extends AppCompatActivity implements CustomMapView.MapViewCommunication {
+public class AreaSelectionActivity extends AppCompatActivity {
 
     private static final String LOG = AreaSelectionActivity.class.getSimpleName();
 
@@ -68,7 +68,7 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
         // needs to be called before the MapView is created to enable hw acceleration
         Configuration.getInstance().setMapViewHardwareAccelerated(true);
 
-        mMapView = new CustomMapView(this, mMapOptions, mMapDefaults);
+        mMapView = new CustomMapView(this, null, mMapOptions, mMapDefaults);
 
 
         mMapView.setMinZoomLevel(Constants.DOWNLOAD_MIN_ZOOM);
@@ -192,10 +192,5 @@ public class AreaSelectionActivity extends AppCompatActivity implements CustomMa
             e.printStackTrace();
         }
         return baseDirectoryString + outputName + extension;
-    }
-
-    @Override
-    public void onMapBackgroundTouch() {
-
     }
 }

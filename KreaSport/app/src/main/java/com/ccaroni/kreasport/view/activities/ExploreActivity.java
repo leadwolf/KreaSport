@@ -60,7 +60,7 @@ import java.util.TimerTask;
 
 import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
-public class ExploreActivity extends BaseActivity implements IRaceView, CustomMapView.MapViewCommunication, LocationUtils.LocationUtilsSubscriber {
+public class ExploreActivity extends BaseActivity implements IRaceView, CustomMapView.IMapActivity, LocationUtils.LocationUtilsSubscriber {
 
     private static final String TAG = ExploreActivity.class.getSimpleName();
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -182,7 +182,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
         // needs to be called before the MapView is created to enable hw acceleration
         Configuration.getInstance().setMapViewHardwareAccelerated(true);
-        mMapView = new CustomMapView(this, mMapOptions, mMapDefaults);
+        mMapView = new CustomMapView(this, this, mMapOptions, mMapDefaults);
     }
 
     /**

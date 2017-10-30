@@ -29,7 +29,7 @@ import retrofit2.Response;
 
 import static com.ccaroni.kreasport.utils.Constants.KEY_RECORD_ID;
 
-public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAdapter.RaceRecordCommunication, CustomMapView.MapViewCommunication {
+public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAdapter.RaceRecordCommunication {
 
     private static final String LOG = MyRecordsActivity.class.getSimpleName();
     public static final int REQUEST_CODE_RECORD_ID_TO_DELETE = 100;
@@ -178,11 +178,6 @@ public class MyRecordsActivity extends AppCompatActivity implements RaceRecordAd
 
             }
         }
-    }
-
-
-    @Override
-    public void onMapBackgroundTouch() {
     }
 
     private void setNumberOfRecords(int nb) {
