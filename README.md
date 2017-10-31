@@ -1,6 +1,6 @@
-# Kreasport
+# Kreasport<sup>1</sup>
 
-Android app for orienteering races with Spring server to host and manage the data. Created as part of an Erasmus project work. Read the [project report](doc/Kreasport%20Report.pdf) to learn more.
+Android app for orienteering races with Spring server to host and manage the data. Created as part of my studies at IUT A, Lille 1 Univeristy. I continued development on this project for my Erasmus project work at Glasgow Caledonian Univeristy. Read the [project report](doc/Kreasport%20Report.pdf) to learn more.
 
 ## Built With
 
@@ -27,3 +27,5 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
  - **kreasport-server**: contains the server handling request authenticated by the user session. Used by the admin to manage the database.
 
 The two servers are because of a Maven conflict with Auth0 dependencies.
+
+<sup>1</sup> **Copyright disclaimer**: I do not own "Kreasport" nor the logo associated with it. All use is from the original concept developement for [www.kreasport.com](www.kreasport.com) as part of my studies at Lille 1 University.
