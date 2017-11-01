@@ -14,7 +14,7 @@ import io.objectbox.annotation.Entity;
  */
 
 @Entity
-public abstract class AbstractRaceDAO<C extends AbstractCheckpointDAO<?>> extends AbstractBaseItemDAO<AbstractRaceDTO<?>> {
+public abstract class AbstractRaceDAO<C extends AbstractCheckpointDAO<AbstractCheckpointDTO>> extends AbstractBaseItemDAO<AbstractRaceDTO<AbstractCheckpointDTO<?>>> {
 
     private List<C> checkpoints;
 
@@ -32,5 +32,7 @@ public abstract class AbstractRaceDAO<C extends AbstractCheckpointDAO<?>> extend
     }
 
     @Override
-    public abstract AbstractRaceDTO<?> toDTO();
+    public abstract AbstractRaceDTO<AbstractCheckpointDTO<?>> toDTO();
+
+    protected abstract List<AbstractCheckpointDTO<?>> checkpointsToDTO();
 }
