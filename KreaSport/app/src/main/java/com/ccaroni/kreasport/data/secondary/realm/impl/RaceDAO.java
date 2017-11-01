@@ -1,40 +1,45 @@
-package com.ccaroni.kreasport.data.secondary.dto.impl;
+package com.ccaroni.kreasport.data.secondary.realm.impl;
 
-import com.ccaroni.kreasport.data.secondary.realm.ICheckpointDAO;
-import com.ccaroni.kreasport.data.secondary.realm.IRaceDAO;
-import com.ccaroni.kreasport.data.secondary.realm.impl.RaceDAO;
 import com.ccaroni.kreasport.data.secondary.dto.ICheckpointDTO;
 import com.ccaroni.kreasport.data.secondary.dto.IRaceDTO;
+import com.ccaroni.kreasport.data.secondary.dto.impl.RaceDTO;
+import com.ccaroni.kreasport.data.secondary.realm.ICheckpointDAO;
+import com.ccaroni.kreasport.data.secondary.realm.IRaceDAO;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.RealmList;
+import io.realm.RealmModel;
+import io.realm.RealmObject;
 
 /**
  * Created by Master on 01/11/2017.
  */
 
-public class RaceDTO<T extends ICheckpointDTO<?>> implements IRaceDTO<T> {
+public class RaceDAO<T extends ICheckpointDAO<ICheckpointDTO>> extends RealmObject implements IRaceDAO<T> {
 
-    protected String id;
+    protected String serverID;
     protected String title;
     protected String description;
     protected Double latitude;
     protected Double longitude;
     protected Double altitude;
 
-    private List<T> checkpoints;
+    private RealmList<T> checkpoints;
 
-    public RaceDTO() {
+    public RaceDAO() {
+        checkpoints = new RealmList<>();
     }
 
     @Override
-    public String getId() {
-        return id;
+    public String getServerID() {
+        return serverID;
     }
 
     @Override
-    public void setId(String id) {
-        this.id = id;
+    public void setServerID(String serverID) {
+        this.serverID = serverID;
     }
 
     @Override
@@ -88,37 +93,37 @@ public class RaceDTO<T extends ICheckpointDTO<?>> implements IRaceDTO<T> {
     }
 
     @Override
-    public List<T> getCheckpoints() {
+    public RealmList<T> getCheckpoints() {
         return checkpoints;
     }
 
     @Override
-    public void setCheckpoints(List<T> checkpoints) {
+    public void setCheckpoints(RealmList<T> checkpoints) {
         this.checkpoints = checkpoints;
     }
 
     @Override
-    public IRaceDAO<?> toDAO() {
-        IRaceDAO abstractRaceDAO = new RaceDAO();
-        abstractRaceDAO.setServerID(getId());
-        abstractRaceDAO.setTitle(getTitle());
-        abstractRaceDAO.setDescription(getDescription());
-        abstractRaceDAO.setLatitude(getLatitude());
-        abstractRaceDAO.setLongitude(getLongitude());
-        abstractRaceDAO.setAltitude(getAltitude());
+    public IRaceDTO<ICheckpointDTO<?>> toDTO() {
+        IRaceDTO<ICheckpointDTO<?>> raceDTO = new RaceDTO<>();
+        raceDTO.setId(getServerID());
+        raceDTO.setTitle(getTitle());
+        raceDTO.setDescription(getDescription());
+        raceDTO.setLatitude(getLatitude());
+        raceDTO.setLongitude(getLongitude());
+        raceDTO.setAltitude(getAltitude());
 
-        abstractRaceDAO.setCheckpoints(checkpointsToDTO());
+        raceDTO.setCheckpoints(checkpointsToDTO());
 
-        return abstractRaceDAO;
+        return raceDTO;
     }
 
     @Override
-    public List<ICheckpointDAO<?>> checkpointsToDTO() {
-        List<ICheckpointDAO<?>> checkpointDAOS = new ArrayList<>();
-        for (T checkpointDTO : getCheckpoints()) {
-            checkpointDAOS.add(checkpointDTO.toDAO());
+    public List<ICheckpointDTO<?>> checkpointsToDTO() {
+        List<ICheckpointDTO<?>> checkpointDTOS = new ArrayList<>();
+        for (T checkpointDAO : getCheckpoints()) {
+            checkpointDTOS.add(checkpointDAO.toDTO());
         }
-        return checkpointDAOS;
+        return checkpointDTOS;
     }
 
 }

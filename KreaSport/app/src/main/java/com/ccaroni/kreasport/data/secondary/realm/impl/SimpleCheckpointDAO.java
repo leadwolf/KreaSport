@@ -1,17 +1,17 @@
-package com.ccaroni.kreasport.data.secondary.dto.impl;
+package com.ccaroni.kreasport.data.secondary.realm.impl;
 
-import com.ccaroni.kreasport.data.secondary.realm.impl.RiddleCheckpointDAO;
-import com.ccaroni.kreasport.data.secondary.dto.ICheckpointDTO;
-import com.ccaroni.kreasport.data.secondary.dto.IRiddleDTO;
+import com.ccaroni.kreasport.data.secondary.realm.ICheckpointDAO;
+import com.ccaroni.kreasport.data.secondary.dto.impl.SimpleCheckpointDTO;
+
+import io.realm.RealmObject;
 
 /**
  * Created by Master on 01/11/2017.
  */
 
-public class RiddleCheckpointDTO implements ICheckpointDTO<RiddleCheckpointDAO> {
+public class SimpleCheckpointDAO extends RealmObject implements ICheckpointDAO<SimpleCheckpointDTO> {
 
-
-    protected String id;
+    protected String serverID;
     protected String title;
     protected String description;
     protected Double latitude;
@@ -21,20 +21,17 @@ public class RiddleCheckpointDTO implements ICheckpointDTO<RiddleCheckpointDAO> 
     protected String raceID;
     protected int order;
 
-    protected IRiddleDTO riddle;
-
-    public RiddleCheckpointDTO() {
-        riddle = new RiddleDTO();
+    public SimpleCheckpointDAO() {
     }
 
     @Override
-    public String getId() {
-        return id;
+    public String getServerID() {
+        return serverID;
     }
 
     @Override
-    public void setId(String id) {
-        this.id = id;
+    public void setServerID(String serverID) {
+        this.serverID = serverID;
     }
 
     @Override
@@ -107,27 +104,19 @@ public class RiddleCheckpointDTO implements ICheckpointDTO<RiddleCheckpointDAO> 
         this.order = order;
     }
 
-    public IRiddleDTO getRiddle() {
-        return riddle;
-    }
-
-    public void setRiddle(IRiddleDTO riddle) {
-        this.riddle = riddle;
-    }
-
     @Override
-    public RiddleCheckpointDAO toDAO() {
-        RiddleCheckpointDAO riddleCheckpointDAO = new RiddleCheckpointDAO();
-        riddleCheckpointDAO.setServerID(getId());
-        riddleCheckpointDAO.setRaceID(getRaceID());
-        riddleCheckpointDAO.setTitle(getTitle());
-        riddleCheckpointDAO.setDescription(getDescription());
-        riddleCheckpointDAO.setLatitude(getLatitude());
-        riddleCheckpointDAO.setLongitude(getLongitude());
-        riddleCheckpointDAO.setAltitude(getAltitude());
+    public SimpleCheckpointDTO toDTO() {
+        SimpleCheckpointDTO simpleCheckpoint = new SimpleCheckpointDTO();
+        simpleCheckpoint.setId(getServerID());
+        simpleCheckpoint.setRaceID(getRaceID());
+        simpleCheckpoint.setTitle(getTitle());
+        simpleCheckpoint.setDescription(getDescription());
+        simpleCheckpoint.setLatitude(getLatitude());
+        simpleCheckpoint.setLongitude(getLongitude());
+        simpleCheckpoint.setAltitude(getAltitude());
 
-        riddleCheckpointDAO.setRiddle(riddle.toDAO());
-
-        return riddleCheckpointDAO;
+        return simpleCheckpoint;
     }
+
+
 }

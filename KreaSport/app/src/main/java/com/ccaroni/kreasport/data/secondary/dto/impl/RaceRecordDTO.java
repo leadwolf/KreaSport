@@ -1,16 +1,71 @@
 package com.ccaroni.kreasport.data.secondary.dto.impl;
 
-import com.ccaroni.kreasport.data.secondary.dao.impl.RaceRecordDAO;
-import com.ccaroni.kreasport.data.secondary.dto.AbstractRaceRecordDTO;
+import com.ccaroni.kreasport.data.secondary.realm.impl.RaceRecordDAO;
+import com.ccaroni.kreasport.data.secondary.dto.IRaceRecordDTO;
 
 /**
  * Created by Master on 01/11/2017.
  */
 
-public class RaceRecordDTO extends AbstractRaceRecordDTO<RaceRecordDAO> {
+public class RaceRecordDTO implements IRaceRecordDTO<RaceRecordDAO> {
+
+    protected String id;
+    protected String raceId;
+    protected String userId;
+    protected long timeExpired;
+    protected String dateTime;
 
     public RaceRecordDTO() {
-        super();
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getRaceId() {
+        return raceId;
+    }
+
+    @Override
+    public void setRaceId(String raceId) {
+        this.raceId = raceId;
+    }
+
+    @Override
+    public String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public long getTimeExpired() {
+        return timeExpired;
+    }
+
+    @Override
+    public void setTimeExpired(long timeExpired) {
+        this.timeExpired = timeExpired;
+    }
+
+    @Override
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    @Override
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     @Override
