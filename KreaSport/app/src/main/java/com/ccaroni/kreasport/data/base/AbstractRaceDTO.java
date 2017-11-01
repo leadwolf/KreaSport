@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Master on 01/11/2017.
  */
 
-public abstract class AbstractRaceDTO<T extends AbstractCheckpointDTO> extends AbstractBaseItemDTO<AbstractRaceDAO> {
+public abstract class AbstractRaceDTO<T extends AbstractCheckpointDTO<?>> extends AbstractBaseItemDTO<AbstractRaceDAO<?>> {
 
     private List<T> checkpoints;
 
@@ -28,5 +28,5 @@ public abstract class AbstractRaceDTO<T extends AbstractCheckpointDTO> extends A
     }
 
     @Override
-    public abstract AbstractRaceDAO toDAO();
+    public abstract AbstractRaceDAO<?> toDAO();
 }
