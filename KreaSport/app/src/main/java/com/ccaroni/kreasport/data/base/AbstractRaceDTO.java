@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.data.base;
 
 
+import com.ccaroni.kreasport.data.dao.AbstractCheckpointDAO;
 import com.ccaroni.kreasport.data.dao.AbstractRaceDAO;
 
 import java.util.ArrayList;
@@ -29,4 +30,6 @@ public abstract class AbstractRaceDTO<T extends AbstractCheckpointDTO<?>> extend
 
     @Override
     public abstract AbstractRaceDAO<?> toDAO();
+
+    protected abstract List<AbstractCheckpointDAO<?>> checkpointsToDTO();
 }
