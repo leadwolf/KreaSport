@@ -11,7 +11,7 @@ import io.objectbox.annotation.Entity;
 @Entity
 public abstract class AbstractRaceRecordDAO<T extends AbstractRaceRecordDTO> implements BaseDAO<T> {
 
-    protected String id;
+    protected String serverID;
     protected String raceId;
     protected String userId;
     protected long timeExpired;
@@ -20,12 +20,12 @@ public abstract class AbstractRaceRecordDAO<T extends AbstractRaceRecordDTO> imp
     public AbstractRaceRecordDAO() {
     }
 
-    public String getId() {
-        return id;
+    public String getServerID() {
+        return serverID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setServerID(String serverID) {
+        this.serverID = serverID;
     }
 
     public String getRaceId() {

@@ -15,6 +15,13 @@ public class RaceRecordDAO extends AbstractRaceRecordDAO<RaceRecordDTO> {
 
     @Override
     public RaceRecordDTO toDTO() {
-        return null;
+        RaceRecordDTO raceRecordDTO = new RaceRecordDTO();
+        raceRecordDTO.setId(getServerID());
+        raceRecordDTO.setUserId(getUserId());
+        raceRecordDTO.setRaceId(getRaceId());
+        raceRecordDTO.setDateTime(getDateTime());
+        raceRecordDTO.setTimeExpired(getTimeExpired());
+
+        return raceRecordDTO;
     }
 }
