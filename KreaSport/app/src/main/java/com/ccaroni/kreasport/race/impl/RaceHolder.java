@@ -3,7 +3,7 @@ package com.ccaroni.kreasport.race.impl;
 import android.location.Location;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.dto.BaseItem;
 import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.legacy.realm.RealmRace;

@@ -26,7 +26,7 @@ import com.ccaroni.kreasport.background.RacingService;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.location.LocationUtils;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.dto.Riddle;
 import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.databinding.ActivityExploreBinding;

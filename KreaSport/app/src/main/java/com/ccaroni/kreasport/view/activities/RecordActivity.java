@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.dto.RaceRecord;
 import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
 import com.ccaroni.kreasport.data.legacy.realm.RealmRaceRecord;

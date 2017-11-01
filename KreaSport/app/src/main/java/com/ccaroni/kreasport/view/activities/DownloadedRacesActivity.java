@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
 import com.ccaroni.kreasport.databinding.ActivityDownloadedRacesBinding;
 import com.ccaroni.kreasport.view.adapter.DownloadedRaceAdapter;

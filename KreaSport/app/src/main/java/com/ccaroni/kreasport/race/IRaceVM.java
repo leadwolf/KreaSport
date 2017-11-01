@@ -6,7 +6,7 @@ import android.location.Location;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
 import com.ccaroni.kreasport.data.legacy.realm.RealmRiddle;

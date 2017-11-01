@@ -5,7 +5,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.dto.BaseItem;
 import com.ccaroni.kreasport.data.legacy.dto.Checkpoint;
 import com.ccaroni.kreasport.data.legacy.dto.Race;

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data;
+package com.ccaroni.kreasport.data.legacy;
 
 import android.app.Activity;
 import android.util.Log;

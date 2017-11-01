@@ -9,7 +9,7 @@ import android.text.format.Formatter;
 import android.view.View;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.realm.DownloadedArea;
 import com.ccaroni.kreasport.databinding.ActivityDownloadedAreaBinding;
 import com.ccaroni.kreasport.map.MapDefaults;

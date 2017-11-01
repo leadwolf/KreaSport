@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.dto.RaceRecord;
 import com.ccaroni.kreasport.data.legacy.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityMyRecordsBinding;

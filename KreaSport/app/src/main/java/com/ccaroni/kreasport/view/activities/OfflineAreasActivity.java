@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.realm.DownloadedArea;
 import com.ccaroni.kreasport.utils.CacheManagerCallback;
 import com.ccaroni.kreasport.utils.Constants;

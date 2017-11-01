@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.network.KreasportAPI;
 import com.ccaroni.kreasport.view.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.legacy.dto.Race;

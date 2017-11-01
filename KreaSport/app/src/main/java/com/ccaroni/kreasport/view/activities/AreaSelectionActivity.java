@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.RealmHelper;
+import com.ccaroni.kreasport.data.legacy.RealmHelper;
 import com.ccaroni.kreasport.data.legacy.realm.DownloadedArea;
 import com.ccaroni.kreasport.data.legacy.realm.RealmBoundingBox;
 import com.ccaroni.kreasport.map.MapOptions;
