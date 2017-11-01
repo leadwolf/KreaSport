@@ -2,8 +2,8 @@ package com.ccaroni.kreasport.race;
 
 import android.location.Location;
 
-import com.ccaroni.kreasport.data.dto.Riddle;
-import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.legacy.dto.Riddle;
+import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.impl.RaceVM;
 

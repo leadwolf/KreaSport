@@ -1,14 +1,11 @@
-package com.ccaroni.kreasport.data.dto;
+package com.ccaroni.kreasport.data.legacy.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ccaroni.kreasport.data.realm.RealmRace;
-import com.ccaroni.kreasport.map.views.CustomOverlayItem;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import org.osmdroid.util.GeoPoint;
 
 import io.realm.RealmList;
 

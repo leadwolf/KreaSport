@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.data.realm;
+package com.ccaroni.kreasport.data.legacy.realm;
 
-import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.legacy.dto.Checkpoint;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.GeoPoint;
@@ -8,7 +8,6 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

@@ -6,11 +6,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.BaseItem;
-import com.ccaroni.kreasport.data.dto.Checkpoint;
-import com.ccaroni.kreasport.data.dto.Race;
-import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
-import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.data.legacy.dto.BaseItem;
+import com.ccaroni.kreasport.data.legacy.dto.Checkpoint;
+import com.ccaroni.kreasport.data.legacy.dto.Race;
+import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 import com.ccaroni.kreasport.race.IRaceVM;
 import com.ccaroni.kreasport.race.IRaceView;

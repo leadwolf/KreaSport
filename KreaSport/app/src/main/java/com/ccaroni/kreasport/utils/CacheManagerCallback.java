@@ -2,10 +2,9 @@ package com.ccaroni.kreasport.utils;
 
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.data.legacy.realm.DownloadedArea;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;

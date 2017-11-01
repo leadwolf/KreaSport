@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.utils.Constants;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;

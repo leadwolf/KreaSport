@@ -3,7 +3,6 @@ package com.ccaroni.kreasport.view.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
 
 import io.realm.RealmResults;
 

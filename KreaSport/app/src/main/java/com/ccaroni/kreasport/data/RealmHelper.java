@@ -3,10 +3,10 @@ package com.ccaroni.kreasport.data;
 import android.app.Activity;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dto.Race;
-import com.ccaroni.kreasport.data.realm.DownloadedArea;
-import com.ccaroni.kreasport.data.realm.RealmRace;
-import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
+import com.ccaroni.kreasport.data.legacy.dto.Race;
+import com.ccaroni.kreasport.data.legacy.realm.DownloadedArea;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRaceRecord;
 
 import java.util.ArrayList;
 import java.util.List;

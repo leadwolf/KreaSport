@@ -17,13 +17,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.data.legacy.realm.DownloadedArea;
 import com.ccaroni.kreasport.view.activities.DownloadedAreaActivity;
 import com.ccaroni.kreasport.view.activities.OfflineAreasActivity;
 
 import java.util.List;
-
-import io.realm.RealmResults;
 
 import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
 

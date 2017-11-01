@@ -1,11 +1,11 @@
-package com.ccaroni.kreasport.data.realm;
+package com.ccaroni.kreasport.data.legacy.realm;
 
 import android.location.Location;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dto.BaseItem;
-import com.ccaroni.kreasport.data.dto.Checkpoint;
-import com.ccaroni.kreasport.data.dto.Race;
+import com.ccaroni.kreasport.data.legacy.dto.BaseItem;
+import com.ccaroni.kreasport.data.legacy.dto.Checkpoint;
+import com.ccaroni.kreasport.data.legacy.dto.Race;
 import com.ccaroni.kreasport.map.views.CustomOverlayItem;
 
 import org.osmdroid.util.BoundingBox;

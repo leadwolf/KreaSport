@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.dto;
+package com.ccaroni.kreasport.data.legacy.dto;
 
 import android.databinding.BaseObservable;
 import android.location.Location;

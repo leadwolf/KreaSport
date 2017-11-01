@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.realm;
+package com.ccaroni.kreasport.data.legacy.realm;
 
 import android.location.Location;
 

@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.dto.Riddle;
+import com.ccaroni.kreasport.data.legacy.dto.Riddle;
 import com.ccaroni.kreasport.databinding.ActivityRiddleBinding;
 import com.google.gson.Gson;
 

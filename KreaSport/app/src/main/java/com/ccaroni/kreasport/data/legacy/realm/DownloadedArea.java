@@ -1,6 +1,4 @@
-package com.ccaroni.kreasport.data.realm;
-
-import org.osmdroid.util.BoundingBox;
+package com.ccaroni.kreasport.data.legacy.realm;
 
 import java.util.UUID;
 

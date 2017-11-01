@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.data.dto;
+package com.ccaroni.kreasport.data.legacy.dto;
 
-import com.ccaroni.kreasport.data.realm.RealmRiddle;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRiddle;
 
 import java.io.Serializable;
 import java.util.ArrayList;

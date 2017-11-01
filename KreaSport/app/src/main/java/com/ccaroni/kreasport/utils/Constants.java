@@ -1,13 +1,5 @@
 package com.ccaroni.kreasport.utils;
 
-import com.ccaroni.kreasport.view.activities.AreaSelectionActivity;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-
-import com.ccaroni.kreasport.data.dto.Race;
-
 /**
  * Created by Master on 30/03/2017.
  */

@@ -2,15 +2,12 @@ package com.ccaroni.kreasport.view.activities;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.realm.RealmRace;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
 import com.ccaroni.kreasport.databinding.ActivityDownloadedRacesBinding;
 import com.ccaroni.kreasport.view.adapter.DownloadedRaceAdapter;
 

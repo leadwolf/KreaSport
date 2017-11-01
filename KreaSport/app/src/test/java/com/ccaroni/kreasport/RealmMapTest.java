@@ -1,9 +1,9 @@
 package com.ccaroni.kreasport;
 
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.Checkpoint;
-import com.ccaroni.kreasport.data.dto.Riddle;
-import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.legacy.dto.Checkpoint;
+import com.ccaroni.kreasport.data.legacy.dto.Riddle;
+import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
 
 import org.junit.Test;
 

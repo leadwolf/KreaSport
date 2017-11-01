@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.dto;
+package com.ccaroni.kreasport.data.legacy.dto;
 
 /**
  * Created by Master on 30/05/2017.

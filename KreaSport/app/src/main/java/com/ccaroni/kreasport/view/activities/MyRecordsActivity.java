@@ -9,10 +9,9 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.RaceRecord;
-import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
+import com.ccaroni.kreasport.data.legacy.dto.RaceRecord;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityMyRecordsBinding;
-import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.network.RetrofitService;
 import com.ccaroni.kreasport.network.KreasportAPI;
 import com.ccaroni.kreasport.utils.Constants;

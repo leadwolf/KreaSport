@@ -1,12 +1,11 @@
-package com.ccaroni.kreasport.data.realm;
+package com.ccaroni.kreasport.data.legacy.realm;
 
 import android.location.Location;
 import android.util.Log;
 
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.dto.RaceRecord;
+import com.ccaroni.kreasport.data.legacy.dto.RaceRecord;
 
-import org.osmdroid.util.GeoPoint;
 import org.threeten.bp.OffsetDateTime;
 
 import java.util.ArrayList;

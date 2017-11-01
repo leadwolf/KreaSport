@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.data.realm.RealmRace;
-import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRace;
+import com.ccaroni.kreasport.data.legacy.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 

@@ -1,7 +1,7 @@
-package com.ccaroni.kreasport.data.dto;
+package com.ccaroni.kreasport.data.legacy.dto;
 
 import com.ccaroni.kreasport.BR;
-import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
+import com.ccaroni.kreasport.data.legacy.realm.RealmCheckpoint;
 
 public class Checkpoint extends BaseItem {
 

@@ -1,7 +1,7 @@
 package com.ccaroni.kreasport.network;
 
-import com.ccaroni.kreasport.data.dto.Race;
-import com.ccaroni.kreasport.data.dto.RaceRecord;
+import com.ccaroni.kreasport.data.legacy.dto.Race;
+import com.ccaroni.kreasport.data.legacy.dto.RaceRecord;
 
 import java.util.List;
 
