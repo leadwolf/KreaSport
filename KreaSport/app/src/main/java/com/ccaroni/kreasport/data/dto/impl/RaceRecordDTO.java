@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.data.base.impl;
+package com.ccaroni.kreasport.data.dto.impl;
 
-import com.ccaroni.kreasport.data.base.AbstractRaceRecordDTO;
+import com.ccaroni.kreasport.data.dto.AbstractRaceRecordDTO;
 import com.ccaroni.kreasport.data.dao.impl.RaceRecordDAO;
 
 /**

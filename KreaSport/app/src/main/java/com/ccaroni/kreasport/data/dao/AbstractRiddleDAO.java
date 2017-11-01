@@ -1,6 +1,6 @@
 package com.ccaroni.kreasport.data.dao;
 
-import com.ccaroni.kreasport.data.base.AbstractRiddleDTO;
+import com.ccaroni.kreasport.data.dto.AbstractRiddleDTO;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.ccaroni.kreasport.data.dao;
 
-import com.ccaroni.kreasport.data.base.AbstractBaseItemDTO;
+import com.ccaroni.kreasport.data.dto.AbstractBaseItemDTO;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Index;

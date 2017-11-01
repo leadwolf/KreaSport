@@ -1,6 +1,6 @@
 package com.ccaroni.kreasport.data.dao;
 
-import com.ccaroni.kreasport.data.base.AbstractCheckpointDTO;
+import com.ccaroni.kreasport.data.dto.AbstractCheckpointDTO;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Index;

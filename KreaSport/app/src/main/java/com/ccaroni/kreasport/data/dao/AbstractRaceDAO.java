@@ -1,8 +1,8 @@
 package com.ccaroni.kreasport.data.dao;
 
 
-import com.ccaroni.kreasport.data.base.AbstractCheckpointDTO;
-import com.ccaroni.kreasport.data.base.AbstractRaceDTO;
+import com.ccaroni.kreasport.data.dto.AbstractCheckpointDTO;
+import com.ccaroni.kreasport.data.dto.AbstractRaceDTO;
 
 import java.util.ArrayList;
 import java.util.List;

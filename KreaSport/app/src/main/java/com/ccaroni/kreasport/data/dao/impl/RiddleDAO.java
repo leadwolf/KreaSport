@@ -1,6 +1,6 @@
 package com.ccaroni.kreasport.data.dao.impl;
 
-import com.ccaroni.kreasport.data.base.impl.RiddleDTO;
+import com.ccaroni.kreasport.data.dto.impl.RiddleDTO;
 import com.ccaroni.kreasport.data.dao.AbstractRiddleDAO;
 
 /**

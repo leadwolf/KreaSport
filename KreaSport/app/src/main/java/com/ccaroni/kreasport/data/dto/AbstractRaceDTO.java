@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.base;
+package com.ccaroni.kreasport.data.dto;
 
 
 import com.ccaroni.kreasport.data.dao.AbstractCheckpointDAO;

@@ -1,6 +1,6 @@
 package com.ccaroni.kreasport.data.dao;
 
-import com.ccaroni.kreasport.data.base.AbstractRaceRecordDTO;
+import com.ccaroni.kreasport.data.dto.AbstractRaceRecordDTO;
 
 import io.objectbox.annotation.Entity;
 
