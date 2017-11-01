@@ -26,4 +26,7 @@ public abstract class AbstractRaceDTO<T extends AbstractCheckpointDTO> extends A
     public void setCheckpoints(List<T> checkpoints) {
         this.checkpoints = checkpoints;
     }
+
+    @Override
+    public abstract AbstractRaceDAO toDAO();
 }

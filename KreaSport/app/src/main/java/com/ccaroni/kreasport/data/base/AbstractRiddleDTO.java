@@ -1,12 +1,14 @@
 package com.ccaroni.kreasport.data.base;
 
+import com.ccaroni.kreasport.data.dao.AbstractRiddleDAO;
+
 import java.util.List;
 
 /**
  * Created by Master on 01/11/2017.
  */
 
-public abstract class AbstractRiddleDTO implements BaseDTO {
+public abstract class AbstractRiddleDTO<T extends AbstractRiddleDAO> implements BaseDTO<T> {
 
     protected String question;
     protected List<String> possibleAnswers;
@@ -38,4 +40,7 @@ public abstract class AbstractRiddleDTO implements BaseDTO {
     public void setCorrectAnswerIndex(int correctAnswerIndex) {
         this.correctAnswerIndex = correctAnswerIndex;
     }
+
+    @Override
+    public abstract T toDAO();
 }

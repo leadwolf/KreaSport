@@ -1,12 +1,13 @@
 package com.ccaroni.kreasport.data.base.impl;
 
+import com.ccaroni.kreasport.data.base.AbstractCheckpointDTO;
 import com.ccaroni.kreasport.data.base.AbstractRiddleDTO;
 
 /**
  * Created by Master on 01/11/2017.
  */
 
-public class RiddleCheckpointDTO extends SimpleCheckpointDTO {
+public class RiddleCheckpointDTO extends AbstractCheckpointDTO {
 
     protected AbstractRiddleDTO riddle;
 

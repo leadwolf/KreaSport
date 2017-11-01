@@ -1,10 +1,12 @@
 package com.ccaroni.kreasport.data.base;
 
+import com.ccaroni.kreasport.data.dao.AbstractCheckpointDAO;
+
 /**
  * Created by Master on 01/11/2017.
  */
 
-public abstract class AbstractCheckpointDTO extends AbstractBaseItemDTO {
+public abstract class AbstractCheckpointDTO<T extends AbstractCheckpointDAO> extends AbstractBaseItemDTO<T> {
 
     protected String raceID;
     protected int order;
@@ -28,4 +30,7 @@ public abstract class AbstractCheckpointDTO extends AbstractBaseItemDTO {
     public void setOrder(int order) {
         this.order = order;
     }
+
+    @Override
+    public abstract T toDAO();
 }

@@ -6,7 +6,7 @@ import com.ccaroni.kreasport.data.dao.AbstractBaseItemDAO;
  * Created by Master on 01/11/2017.
  */
 
-public abstract class AbstractBaseItemDTO<T extends AbstractBaseItemDAO> implements BaseDTO {
+public abstract class AbstractBaseItemDTO<T extends AbstractBaseItemDAO> implements BaseDTO<T> {
 
     protected String id;
     protected String title;
@@ -65,4 +65,7 @@ public abstract class AbstractBaseItemDTO<T extends AbstractBaseItemDAO> impleme
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
     }
+
+    @Override
+    public abstract T toDAO();
 }

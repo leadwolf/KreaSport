@@ -1,10 +1,12 @@
 package com.ccaroni.kreasport.data.base;
 
+import com.ccaroni.kreasport.data.dao.AbstractRaceRecordDAO;
+
 /**
  * Created by Master on 01/11/2017.
  */
 
-public abstract class AbstractRaceRecordDTO implements BaseDTO {
+public abstract class AbstractRaceRecordDTO<T extends AbstractRaceRecordDAO> implements BaseDTO<T> {
 
     protected String id;
     protected String raceId;
@@ -54,4 +56,7 @@ public abstract class AbstractRaceRecordDTO implements BaseDTO {
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
+
+    @Override
+    public abstract T toDAO();
 }
