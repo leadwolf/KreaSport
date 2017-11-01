@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.data.dao;
 
+import com.ccaroni.kreasport.data.base.AbstractBaseItemDTO;
+
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Index;
 
@@ -8,7 +10,7 @@ import io.objectbox.annotation.Index;
  */
 
 @Entity
-public abstract class AbstractBaseItemDAO {
+public abstract class AbstractBaseItemDAO<T extends AbstractBaseItemDTO> implements BaseDAO<T> {
 
     @Index
     protected String serverID;
@@ -68,4 +70,7 @@ public abstract class AbstractBaseItemDAO {
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
     }
+
+    @Override
+    public abstract T toDTO();
 }

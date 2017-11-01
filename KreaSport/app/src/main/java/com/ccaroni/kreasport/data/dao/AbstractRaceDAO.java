@@ -1,6 +1,9 @@
 package com.ccaroni.kreasport.data.dao;
 
 
+import com.ccaroni.kreasport.data.base.AbstractCheckpointDTO;
+import com.ccaroni.kreasport.data.base.AbstractRaceDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,20 +14,23 @@ import io.objectbox.annotation.Entity;
  */
 
 @Entity
-public abstract class AbstractRaceDAO<T extends AbstractCheckpointDAO> extends AbstractBaseItemDAO {
+public abstract class AbstractRaceDAO<C extends AbstractCheckpointDAO<?>> extends AbstractBaseItemDAO<AbstractRaceDTO<?>> {
 
-    private List<T> checkpoints;
+    private List<C> checkpoints;
 
     public AbstractRaceDAO() {
         super();
         checkpoints = new ArrayList<>();
     }
 
-    public List<T> getCheckpoints() {
+    public List<C> getCheckpoints() {
         return checkpoints;
     }
 
-    public void setCheckpoints(List<T> checkpoints) {
+    public void setCheckpoints(List<C> checkpoints) {
         this.checkpoints = checkpoints;
     }
+
+    @Override
+    public abstract AbstractRaceDTO<?> toDTO();
 }

@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.data.dao;
 
+import com.ccaroni.kreasport.data.base.AbstractRaceRecordDTO;
+
 import io.objectbox.annotation.Entity;
 
 /**
@@ -7,7 +9,7 @@ import io.objectbox.annotation.Entity;
  */
 
 @Entity
-public abstract class AbstractRaceRecordDAO {
+public abstract class AbstractRaceRecordDAO<T extends AbstractRaceRecordDTO> implements BaseDAO<T> {
 
     protected String id;
     protected String raceId;
@@ -57,4 +59,7 @@ public abstract class AbstractRaceRecordDAO {
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
+
+    @Override
+    public abstract T toDTO();
 }

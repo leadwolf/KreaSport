@@ -6,11 +6,11 @@ import com.ccaroni.kreasport.data.base.AbstractRiddleDTO;
  * Created by Master on 01/11/2017.
  */
 
-public class RiddleCheckpoint extends SimpleCheckpointDTO {
+public class RiddleCheckpointDTO extends SimpleCheckpointDTO {
 
     protected AbstractRiddleDTO riddle;
 
-    public RiddleCheckpoint() {
+    public RiddleCheckpointDTO() {
         super();
         riddle = new RiddleDTO();
     }

@@ -4,7 +4,7 @@ package com.ccaroni.kreasport.data.base;
  * Created by Master on 01/11/2017.
  */
 
-public abstract class AbstractRaceRecordDTO {
+public abstract class AbstractRaceRecordDTO implements BaseDTO {
 
     protected String id;
     protected String raceId;

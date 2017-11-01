@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.data.dao;
 
+import com.ccaroni.kreasport.data.base.AbstractRiddleDTO;
+
 import java.util.List;
 
 import io.objectbox.annotation.Entity;
@@ -9,7 +11,7 @@ import io.objectbox.annotation.Entity;
  */
 
 @Entity
-public abstract class AbstractRiddleDAO {
+public abstract class AbstractRiddleDAO<T extends AbstractRiddleDTO> implements BaseDAO<T> {
 
     protected String question;
     protected List<String> possibleAnswers;
@@ -41,4 +43,7 @@ public abstract class AbstractRiddleDAO {
     public void setCorrectAnswerIndex(int correctAnswerIndex) {
         this.correctAnswerIndex = correctAnswerIndex;
     }
+
+    @Override
+    public abstract T toDTO();
 }

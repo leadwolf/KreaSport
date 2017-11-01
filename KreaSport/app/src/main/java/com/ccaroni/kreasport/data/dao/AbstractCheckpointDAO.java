@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.data.dao;
 
+import com.ccaroni.kreasport.data.base.AbstractCheckpointDTO;
+
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Index;
 
@@ -8,7 +10,7 @@ import io.objectbox.annotation.Index;
  */
 
 @Entity
-public abstract class AbstractCheckpointDAO extends AbstractBaseItemDAO {
+public abstract class AbstractCheckpointDAO<T extends AbstractCheckpointDTO> extends AbstractBaseItemDAO<T> {
 
     @Index
     protected String raceID;
@@ -33,4 +35,7 @@ public abstract class AbstractCheckpointDAO extends AbstractBaseItemDAO {
     public void setOrder(int order) {
         this.order = order;
     }
+
+    @Override
+    public abstract T toDTO();
 }

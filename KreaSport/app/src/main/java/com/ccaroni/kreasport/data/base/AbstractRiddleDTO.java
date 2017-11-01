@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Master on 01/11/2017.
  */
 
-public abstract class AbstractRiddleDTO {
+public abstract class AbstractRiddleDTO implements BaseDTO {
 
     protected String question;
     protected List<String> possibleAnswers;
