@@ -19,5 +19,5 @@ public interface IRaceDTO<T extends ICheckpointDTO<?>> extends IBaseItemDTO<IRac
     @Override
     IRaceDAO<?> toDAO();
 
-    List<ICheckpointDAO<?>> checkpointsToDTO();
+    List<ICheckpointDAO<?>> checkpointsToDAO();
 }

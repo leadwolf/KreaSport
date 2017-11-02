@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.data.secondary.realm.impl;
 
+import com.ccaroni.kreasport.data.realm.RealmLocation;
 import com.ccaroni.kreasport.data.secondary.dto.impl.RaceRecordDTO;
 import com.ccaroni.kreasport.data.secondary.realm.IRaceRecordDAO;
 

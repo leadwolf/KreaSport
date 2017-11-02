@@ -9,6 +9,8 @@ import com.ccaroni.kreasport.data.secondary.realm.impl.RaceDAO;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.RealmList;
+
 /**
  * Created by Master on 01/11/2017.
  */
@@ -107,18 +109,24 @@ public class RaceDTO<T extends ICheckpointDTO<?>> implements IRaceDTO<T> {
         abstractRaceDAO.setLongitude(getLongitude());
         abstractRaceDAO.setAltitude(getAltitude());
 
-        abstractRaceDAO.setCheckpoints(checkpointsToDTO());
+        abstractRaceDAO.setCheckpoints(checkpointsToDAOList(checkpointsToDAO()));
 
         return abstractRaceDAO;
     }
 
     @Override
-    public List<ICheckpointDAO<?>> checkpointsToDTO() {
+    public List<ICheckpointDAO<?>> checkpointsToDAO() {
         List<ICheckpointDAO<?>> checkpointDAOS = new ArrayList<>();
         for (T checkpointDTO : getCheckpoints()) {
             checkpointDAOS.add(checkpointDTO.toDAO());
         }
         return checkpointDAOS;
+    }
+
+    public RealmList<ICheckpointDAO<?>> checkpointsToDAOList(List<ICheckpointDAO<?>> iCheckpointDAOS) {
+        RealmList<ICheckpointDAO<?>> checkpointDAOSList = new RealmList<>();
+        checkpointDAOSList.addAll(iCheckpointDAOS);
+        return checkpointDAOSList;
     }
 
 }
