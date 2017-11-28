@@ -23,7 +23,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 ## Project structure
 
  - **KreaSport**: This folder contains the Android app
- - **sserver**: git submodule to [the separate project](https://github.com/Christopher-Caroni/kreasport-server) for the backend and frontend servers.
+ - **servers**: git submodule to [the separate project](https://github.com/Christopher-Caroni/kreasport-server) for the backend and frontend servers.
 
 The two servers are because of a Maven conflict with Auth0 dependencies.
 
