@@ -23,8 +23,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 ## Project structure
 
  - **KreaSport**: This folder contains the Android app
- - **kreasport-backend-server**: contains the server handling request with JWTs for trusted clients such as the Android app. Interacts directly with the database.
- - **kreasport-server**: contains the server handling request authenticated by the user session. Used by the admin to manage the database.
+ - **sserver**: git submodule to [the separate project](https://github.com/Christopher-Caroni/kreasport-server) for the backend and frontend servers.
 
 The two servers are because of a Maven conflict with Auth0 dependencies.
 
