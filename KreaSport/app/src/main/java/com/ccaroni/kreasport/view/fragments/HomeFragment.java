@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.view.activities.BaseActivity;
 import com.ccaroni.kreasport.databinding.FragmentHomeBinding;
+import com.ccaroni.kreasport.view.activities.BaseActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -23,12 +23,12 @@ public class HomeFragment extends Fragment {
 
     public static final String DOWNLOAD_PRIVATE_RACE = "kreasport.frag_request_code.download_private_race";
     public static final String DOWNLOAD_PRIVATE_RACE_KEY = "kreasport.frag_request_code.download_private_race_key";
+    public static final String DOWNLOAD_LOCAL_HOST = "kreasport.frag_request_code.download_localhost";
 
 
     private FragmentHomeBinding binding;
 
     EditText etKey;
-
 
 
     private HomeInteractionListener mListener;
@@ -72,18 +72,39 @@ public class HomeFragment extends Fragment {
         binding.fragmentHomeTvDownloadPublicRaces.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                downloadRace(false);
+                downloadPublicRace(false);
+            }
+        });
+        binding.fragmentHomeTvDownloadPublicRacesLocalServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downloadPublicRace(true);
             }
         });
         binding.fragmentHomeButtonDownloadFromKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                downloadRace(true);
+                downloadPrivateRace();
             }
         });
     }
 
-    private void downloadRace(boolean privateRace) {
+    private void downloadPrivateRace() {
+        Intent downloadIntent = createDownloadIntent(true);
+        if (downloadIntent != null) {
+            mListener.onHomeInteraction(downloadIntent);
+        }
+    }
+
+    private void downloadPublicRace(boolean local) {
+        Intent downloadIntent = createDownloadIntent(false);
+        if (downloadIntent != null) {
+            downloadIntent.putExtra(DOWNLOAD_LOCAL_HOST, local);
+            mListener.onHomeInteraction(downloadIntent);
+        }
+    }
+
+    private Intent createDownloadIntent(boolean privateRace) {
         if (mListener != null) {
 
             Intent intent = new Intent();
@@ -95,16 +116,17 @@ public class HomeFragment extends Fragment {
                     intent.putExtra(DOWNLOAD_PRIVATE_RACE, true);
                     intent.putExtra(DOWNLOAD_PRIVATE_RACE_KEY, etKey.getText().toString());
                 } else {
-                    return;
+                    Log.d(LOG, "could create private download intent because key was not valid");
+                    return intent;
                 }
-            } else if (!privateRace) {
+            } else {
                 intent.putExtra(DOWNLOAD_PRIVATE_RACE, false);
             }
-
-            mListener.onHomeInteraction(intent);
+            return intent;
         } else {
             Log.d(LOG, "could not send download request as mListener was null");
         }
+        return null;
     }
 
     private boolean validatePrivateKey() {

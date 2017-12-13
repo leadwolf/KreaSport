@@ -95,6 +95,24 @@
                 android:textSize="16dip"/>
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/fragment_home_tv_download_public_races_local_server"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:text="Download from local server (debug)"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="16dip"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 </layout>

@@ -11,17 +11,18 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
-import com.ccaroni.kreasport.network.KreasportAPI;
-import com.ccaroni.kreasport.view.fragments.HomeFragment;
 import com.ccaroni.kreasport.data.dto.Race;
+import com.ccaroni.kreasport.network.KreasportAPI;
 import com.ccaroni.kreasport.network.RetrofitService;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.utils.PreferenceManager;
+import com.ccaroni.kreasport.view.fragments.HomeFragment;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Master on 02/04/2017.
@@ -34,6 +35,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
     private PreferenceManager preferenceManager;
 
     private KreasportAPI raceAPI;
+    private KreasportAPI localRaceAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,9 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
         setupFragments();
 
         String accessToken = CredentialsManager.getCredentials(this).getAccessToken();
-        raceAPI = RetrofitService.getKreasportAPI(true, accessToken);
+        raceAPI = RetrofitService.getKreasportAPI(false, accessToken);
+        localRaceAPI = RetrofitService.getKreasportAPI(true, accessToken);
+
         preferenceManager = new PreferenceManager(this, HomeActivity.class.getSimpleName());
     }
 
@@ -68,6 +72,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
 
         final boolean requestPrivate = intent.getBooleanExtra(HomeFragment.DOWNLOAD_PRIVATE_RACE, false);
         String key = intent.getStringExtra(HomeFragment.DOWNLOAD_PRIVATE_RACE_KEY);
+        boolean local = intent.getBooleanExtra(HomeFragment.DOWNLOAD_LOCAL_HOST, false);
 
         if (requestPrivate && TextUtils.isEmpty(key)) {
             Log.d(LOG, "received private download request but key was empty");
@@ -81,14 +86,15 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
         if (requestPrivate) {
             downloadPrivateRace(progressDialog);
         } else {
-            downloadPublicRaces(progressDialog);
+            downloadPublicRaces(progressDialog, local);
         }
     }
 
-    private void downloadPublicRaces(final ProgressDialog progressDialog) {
-        raceAPI.getPublicRaces().enqueue(new Callback<List<Race>>() {
+    private void downloadPublicRaces(final ProgressDialog progressDialog, boolean local) {
+
+        Callback<List<Race>> downloadCallback = new Callback<List<Race>>() {
             @Override
-            public void onResponse(Call<List<Race>> call, retrofit2.Response<List<Race>> response) {
+            public void onResponse(Call<List<Race>> call, Response<List<Race>> response) {
                 progressDialog.dismiss();
                 if (response.isSuccessful()) {
                     Log.d(LOG, "downloaded \n " + response.body());
@@ -108,7 +114,15 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
                 progressDialog.dismiss();
                 showNoRaceFoundDialog(true, false);
             }
-        });
+        };
+
+        if (local) {
+            Log.d(LOG, "downloading from localhost server");
+            localRaceAPI.getPublicRaces().enqueue(downloadCallback);
+        } else {
+            Log.d(LOG, "downloading from remote server");
+            raceAPI.getPublicRaces().enqueue(downloadCallback);
+        }
     }
 
     private void downloadPrivateRace(final ProgressDialog progressDialog) {
@@ -154,6 +168,7 @@ public class HomeActivity extends BaseActivity implements HomeFragment.HomeInter
 
     /**
      * Called on interaction in {@link HomeFragment} needing to be handled inside the activity.
+     *
      * @param requestIntent
      */
     @Override

@@ -20,15 +20,17 @@ public class RetrofitService {
 
     private static final String LOG = RetrofitService.class.getSimpleName();
 
-    public static final String BASE_URL = "http://kreasport.herokuapp.com/";
-    public static final String DEBUG_URL = "http://10.0.2.2:8080/";
+    public static final String REMOTE_URL = "http://kreasport.herokuapp.com/";
+    public static final String LOCAL_URL = "http://10.0.2.2:8080/";
 
-    private static Retrofit retrofit = null;
-
-    public static KreasportAPI getKreasportAPI(boolean debug, String accessToken) {
-        if (debug)
-            return getClient(DEBUG_URL, accessToken).create(KreasportAPI.class);
-        return getClient(BASE_URL, accessToken).create(KreasportAPI.class);
+    public static KreasportAPI getKreasportAPI(boolean useLocalhost, String accessToken) {
+        if (useLocalhost) {
+            Log.d(LOG, "using localhost server for requests");
+            return getClient(LOCAL_URL, accessToken).create(KreasportAPI.class);
+        } else {
+            Log.d(LOG, "using remote server for requests");
+            return getClient(REMOTE_URL, accessToken).create(KreasportAPI.class);
+        }
     }
 
     /**
@@ -37,14 +39,11 @@ public class RetrofitService {
      * @return the {@link Retrofit} object that will serve to create an implemetation of our API
      */
     private static Retrofit getClient(String baseUrl, String accessToken) {
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .client(getOkHttpClient(accessToken))
-                    .baseUrl(baseUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
-        return retrofit;
+        return new Retrofit.Builder()
+                .client(getOkHttpClient(accessToken))
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     /**
