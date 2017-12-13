@@ -145,12 +145,11 @@ public class RealmHelper {
 
     /**
      * @param userId
-     * @return records that have been started (because we pre load record objects in {@link LEGACYRaceVM} and that are <b>NOT</b> marked for deletion
+     * @return records that are <b>NOT</b> marked for deletion
      */
     public RealmResults<RealmRaceRecord> getMyRecords(String userId) {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("userId", userId)
-                .equalTo("started", true)
                 .equalTo("inProgress", false)
                 .equalTo("toDelete", false)
                 .findAll();
@@ -160,14 +159,12 @@ public class RealmHelper {
      * @param userId
      * @return records that respond to the folliwing criteria<br>
      * = userId<br>
-     * started = true<br>
      * toDelete = false<br>
      * synced = false
      */
     public RealmResults<RealmRaceRecord> getMyRecordsToUpload(String userId) {
         return realm.where(RealmRaceRecord.class)
                 .equalTo("userId", userId)
-                .equalTo("started", true)
                 .equalTo("toDelete", false)
                 .equalTo("synced", false)
                 .findAll();
