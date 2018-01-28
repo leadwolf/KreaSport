@@ -45,8 +45,9 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     private NotificationManager mNotificationManager;
 
     private Handler mHandler;
+
     // Timer to update the ongoing notification
-    private final long mFrequency = 100;    // milliseconds
+    private final long NOTIF_UPDATE_FREQ = 100;    // milliseconds
     private final int TICK_WHAT = 2;
 
     // PendingIntents for the notification
@@ -73,7 +74,7 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
 
         initAsForegroundService();
 
-        mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), mFrequency);
+        mHandler.sendMessageDelayed(Message.obtain(mHandler, TICK_WHAT), NOTIF_UPDATE_FREQ);
 
         initGeofenceReceiver();
 
@@ -87,25 +88,27 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
         mHandler = new Handler() {
             public void handleMessage(Message m) {
                 updateNotification();
-                sendMessageDelayed(Message.obtain(this, TICK_WHAT), mFrequency);
+                sendMessageDelayed(Message.obtain(this, TICK_WHAT), NOTIF_UPDATE_FREQ);
             }
         };
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
+    /**
+     * Creates a new notification and posts it to the status bar.
+     */
     private void updateNotification() {
         Notification notification = createNotification();
         mNotificationManager.notify(ONGOING_NOTIFICATION_ID, notification);
     }
 
     /**
-     * Creates the notification and uses it to call {@link #startForeground(int, Notification)}.
+     * Creates the notification and uses it to start this service as a foreground service with.
      */
     private void initAsForegroundService() {
         Notification notification = createNotification();
         startForeground(ONGOING_NOTIFICATION_ID, notification);
-
     }
 
     /**
@@ -143,7 +146,7 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     }
 
     /**
-     * Creates PendingIntents for the notification. These will stay the same even if the notification is updateded, therefore we initialise them once here.
+     * Creates PendingIntents for the button actions in the notification. These will stay the same even if the notification is updated, therefore we initialise them once here.
      */
     private void initPendingIntentsForNotification() {
         // setup on notification click
@@ -156,6 +159,10 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
         piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
     }
 
+    /**
+     * Sets up {@link #mLocationUtils} to receive callbacks, {@link #mGeofenceUtils} to create/delete new geofences
+     * and {@link #geofenceReceiver} to receive broadcasts sent out with {@link GeofenceTransitionsIntentService#GEOFENCE_TRIGGERED}
+     */
     private void initGeofenceReceiver() {
         mLocationUtils = new LocationUtils(this);
         // don't need to call start since it was already started in ExploreActivity
@@ -219,6 +226,9 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
         // TODO
     }
 
+    /**
+     * Custom BroadcastReceiver to act upon the reception of a broadcast from {@link GeofenceTransitionsIntentService#GEOFENCE_TRIGGERED}
+     */
     class GeofenceReceiver extends BroadcastReceiver {
 
         @Override
@@ -234,6 +244,9 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
         }
     }
 
+    /**
+     * Kills {@link #mHandler} and unregisters {@link #geofenceReceiver} to avoid memory leaks.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();

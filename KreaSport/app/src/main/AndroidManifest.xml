@@ -65,7 +65,6 @@
             android:name=".view.activities.ExploreActivity"
             android:parentActivityName=".view.activities.HomeActivity"
             android:theme="@style/AppTheme.Dark">
-            tools:targetApi="jelly_bean">
 
             <!-- The meta-data element is needed for versions lower than 4.1 -->
             <meta-data
