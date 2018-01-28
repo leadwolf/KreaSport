@@ -1,17 +1,22 @@
 package com.ccaroni.kreasport.race2;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.location.Location;
 
 /**
  * Created by Master on 28/01/2018.
- * Custom context that will receive all data through {@link AbstractRacingService}
+ * Wrapper for the context that will receive all data through {@link AbstractRacingService}
  */
-public abstract class RaceContext extends ContextWrapper {
+public abstract class RaceContext {
 
-    public RaceContext(Context base) {
-        super(base);
+    private Context context;
+
+    public RaceContext(Context context) {
+        this.context = context;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     /**

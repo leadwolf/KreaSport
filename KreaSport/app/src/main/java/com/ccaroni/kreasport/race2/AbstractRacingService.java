@@ -26,6 +26,7 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
     private LocationUtils mLocationUtils;
     private GeofenceUtils mGeofenceUtils;
     private GeofenceReceiver geofenceReceiver;
+
     private RaceContext context;
 
     /**
@@ -41,15 +42,15 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
      * and {@link #geofenceReceiver} to receive broadcasts sent out with {@link GeofenceTransitionsIntentService#GEOFENCE_TRIGGERED}
      */
     private void initLocationActions() {
-        mLocationUtils = new LocationUtils(this.context);
+        mLocationUtils = new LocationUtils(this.context.getContext());
         // don't need to call start since it was already started in ExploreActivity
 
 
         // TODO make sure we can cancel geofences created in ExploreActivity from this instance
-        mGeofenceUtils = new GeofenceUtils(this.context);
+        mGeofenceUtils = new GeofenceUtils(this.context.getContext());
 
         geofenceReceiver = new GeofenceReceiver();
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
+        LocalBroadcastManager.getInstance(this.context.getContext()).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
     }
 
     /**
