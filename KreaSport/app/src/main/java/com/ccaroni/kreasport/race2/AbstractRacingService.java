@@ -27,13 +27,13 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
     private GeofenceUtils mGeofenceUtils;
     private GeofenceReceiver geofenceReceiver;
 
-    private RaceContext context;
+    private RaceContext raceContext;
 
     /**
-     * @param context the context all utilities may subscribe onto
+     * @param raceContext the raceContext all utilities may subscribe onto
      */
-    public AbstractRacingService(RaceContext context) {
-        this.context = context;
+    public AbstractRacingService(RaceContext raceContext) {
+        this.raceContext = raceContext;
         this.initLocationActions();
     }
 
@@ -42,15 +42,15 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
      * and {@link #geofenceReceiver} to receive broadcasts sent out with {@link GeofenceTransitionsIntentService#GEOFENCE_TRIGGERED}
      */
     private void initLocationActions() {
-        mLocationUtils = new LocationUtils(this.context.getContext());
+        mLocationUtils = new LocationUtils(this.raceContext.getContext());
         // don't need to call start since it was already started in ExploreActivity
 
 
         // TODO make sure we can cancel geofences created in ExploreActivity from this instance
-        mGeofenceUtils = new GeofenceUtils(this.context.getContext());
+        mGeofenceUtils = new GeofenceUtils(this.raceContext.getContext());
 
         geofenceReceiver = new GeofenceReceiver();
-        LocalBroadcastManager.getInstance(this.context.getContext()).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
+        LocalBroadcastManager.getInstance(this.raceContext.getContext()).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
     }
 
     /**
@@ -63,7 +63,11 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
         Log.d(TAG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
         // TODO save new location
 
-        this.context.onLocationChanged(location);
+        this.raceContext.onLocationChanged(location);
+    }
+
+    public void destroy() {
+        LocalBroadcastManager.getInstance(this.raceContext.getContext()).unregisterReceiver(geofenceReceiver);
     }
 
     /**
@@ -78,10 +82,18 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
                 throw new IllegalArgumentException("Received intent for geofenceReceiver with no checkpoint associated");
             }
 
-            Log.d(TAG, "received geofence broadcast for checkpoint: " + checkpointId);
-
-            // TODO
+//            Log.d(TAG, "received geofence broadcast for checkpoint: " + checkpointId);
+            raceContext.onGeofenceTriggered(checkpointId);
         }
+    }
+
+    public void replaceRaceContext(RaceContext raceContext) {
+        if (raceContext == null) {
+            throw new IllegalArgumentException("Cannot accept null context");
+        }
+        this.destroy();
+        this.raceContext = raceContext;
+        this.initLocationActions();
     }
 
 }
