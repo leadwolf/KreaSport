@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.background;
+package com.ccaroni.kreasport.race2;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,12 +26,12 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
     private LocationUtils mLocationUtils;
     private GeofenceUtils mGeofenceUtils;
     private GeofenceReceiver geofenceReceiver;
-    private Context context;
+    private RaceContext context;
 
     /**
      * @param context the context all utilities may subscribe onto
      */
-    public AbstractRacingService(Context context) {
+    public AbstractRacingService(RaceContext context) {
         this.context = context;
         this.initLocationActions();
     }
@@ -62,7 +62,7 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
         Log.d(TAG, "received location from " + LocationUtils.class.getSimpleName() + ": " + location);
         // TODO save new location
 
-        // Override example: the activity may update the user's location on the map
+        this.context.onLocationChanged(location);
     }
 
     /**

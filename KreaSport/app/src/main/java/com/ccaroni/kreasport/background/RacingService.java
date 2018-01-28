@@ -25,6 +25,10 @@ import com.ccaroni.kreasport.background.location.LocationUtils;
 import com.ccaroni.kreasport.race.impl.RaceHolder;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
 /**
@@ -175,50 +179,12 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
         LocalBroadcastManager.getInstance(this).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
     }
 
-    /***
-     * Given the time elapsed in tenths of seconds, returns the string
-     * representation of that time.
-     *
-     * @param now, the current time in tenths of seconds
-     * @return String with the current time in the format MM:SS.T or
-     * 			HH:MM:SS.T, depending on elapsed time.
-     */
-    private String formatElapsedTime(long now) {
-        long hours = 0, minutes = 0, seconds = 0, tenths = 0;
-        StringBuilder sb = new StringBuilder();
+    private static String formatElapsedTime(long millis) {
+        long second = (millis / 1000) % 60;
+        long minute = (millis / (1000 * 60)) % 60;
+        long hour = (millis / (1000 * 60 * 60)) % 24;
 
-        if (now < 1000) {
-            tenths = now / 100;
-        } else if (now < 60000) {
-            seconds = now / 1000;
-            now -= seconds * 1000;
-            tenths = (now / 100);
-        } else if (now < 3600000) {
-            hours = now / 3600000;
-            now -= hours * 3600000;
-            minutes = now / 60000;
-            now -= minutes * 60000;
-            seconds = now / 1000;
-            now -= seconds * 1000;
-            tenths = (now / 100);
-        }
-
-        if (hours > 0) {
-            sb.append(hours).append(":")
-                    .append(formatDigits(minutes)).append(":")
-                    .append(formatDigits(seconds)).append(".")
-                    .append(tenths);
-        } else {
-            sb.append(formatDigits(minutes)).append(":")
-                    .append(formatDigits(seconds)).append(".")
-                    .append(tenths);
-        }
-
-        return sb.toString();
-    }
-
-    private String formatDigits(long num) {
-        return (num < 10) ? "0" + num : new Long(num).toString();
+        return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
     @Override
