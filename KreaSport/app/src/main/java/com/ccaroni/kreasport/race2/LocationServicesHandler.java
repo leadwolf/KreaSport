@@ -16,11 +16,11 @@ import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsInten
 
 /**
  * Created by Master on 28/01/2018.
- * This class will handle all the actual racing
+ * This class will handle all tasks related to location and geofence updates. That way, we can seemlessly switch between a Service and an Activity
  */
-public class AbstractRacingService implements LocationUtils.LocationUtilsSubscriber {
+public class LocationServicesHandler implements LocationUtils.LocationUtilsSubscriber, GeofenceUtils.GeofenceUtilsSubscriber {
 
-    private static final String TAG = AbstractRacingService.class.getSimpleName();
+    private static final String TAG = LocationServicesHandler.class.getSimpleName();
 
 
     private LocationUtils mLocationUtils;
@@ -32,7 +32,7 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
     /**
      * @param raceContext the raceContext all utilities may subscribe onto
      */
-    public AbstractRacingService(RaceContext raceContext) {
+    public LocationServicesHandler(RaceContext raceContext) {
         this.raceContext = raceContext;
         this.initLocationActions();
     }
@@ -42,12 +42,12 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
      * and {@link #geofenceReceiver} to receive broadcasts sent out with {@link GeofenceTransitionsIntentService#GEOFENCE_TRIGGERED}
      */
     private void initLocationActions() {
-        mLocationUtils = new LocationUtils(this.raceContext.getContext());
+        mLocationUtils = new LocationUtils(this);
         // don't need to call start since it was already started in ExploreActivity
 
 
         // TODO make sure we can cancel geofences created in ExploreActivity from this instance
-        mGeofenceUtils = new GeofenceUtils(this.raceContext.getContext());
+        mGeofenceUtils = new GeofenceUtils(this);
 
         geofenceReceiver = new GeofenceReceiver();
         LocalBroadcastManager.getInstance(this.raceContext.getContext()).registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
@@ -64,6 +64,10 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
         // TODO save new location
 
         this.raceContext.onLocationChanged(location);
+    }
+
+    public Context getAssociatedContext() {
+        return raceContext.getContext();
     }
 
     public void destroy() {
@@ -93,7 +97,12 @@ public class AbstractRacingService implements LocationUtils.LocationUtilsSubscri
         }
         this.destroy();
         this.raceContext = raceContext;
-        this.initLocationActions();
+        this.restartLocationActions();
+    }
+
+    private void restartLocationActions() {
+        mLocationUtils.restart();
+        mGeofenceUtils.restart();
     }
 
 }

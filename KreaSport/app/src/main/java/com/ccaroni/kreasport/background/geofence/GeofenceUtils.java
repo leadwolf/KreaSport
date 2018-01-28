@@ -3,9 +3,11 @@ package com.ccaroni.kreasport.background.geofence;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.ccaroni.kreasport.background.location.LocationUtils;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.utils.Constants;
 import com.google.android.gms.location.Geofence;
@@ -39,18 +41,23 @@ public class GeofenceUtils implements OnCompleteListener<Void> {
      * Used when requesting to add or remove geofences.
      */
     private PendingIntent mGeofencePendingIntent;
+    private GeofenceUtilsSubscriber subscriber;
 
-    private Context context;
 
-    public GeofenceUtils(Context context) {
-        this.context = context;
+    public GeofenceUtils(GeofenceUtilsSubscriber geofenceUtilsSubscriber) {
+        this.subscriber = geofenceUtilsSubscriber;
+
         // Empty list for storing geofences.
         mGeofenceList = new ArrayList<>();
 
         // Initially set the PendingIntent used in addGeofences() and removeGeofences() to null.
         mGeofencePendingIntent = null;
 
-        mGeofencingClient = LocationServices.getGeofencingClient(context);
+        initGeofencingClient();
+    }
+
+    private void initGeofencingClient() {
+        mGeofencingClient = LocationServices.getGeofencingClient(subscriber.getAssociatedContext());
     }
 
 
@@ -118,7 +125,7 @@ public class GeofenceUtils implements OnCompleteListener<Void> {
             Log.d(TAG, "geofence addition/removal success!");
         } else {
             // Get the status code for the error and log it using a user-friendly message.
-            String errorMessage = GeofenceErrorMessages.getErrorString(context, task.getException());
+            String errorMessage = GeofenceErrorMessages.getErrorString(subscriber.getAssociatedContext(), task.getException());
             Log.w(TAG, errorMessage);
         }
     }
@@ -135,10 +142,10 @@ public class GeofenceUtils implements OnCompleteListener<Void> {
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(context, GeofenceTransitionsIntentService.class);
+        Intent intent = new Intent(subscriber.getAssociatedContext(), GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
         // addGeofences() and removeGeofences().
-        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(subscriber.getAssociatedContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     /**
@@ -154,5 +161,21 @@ public class GeofenceUtils implements OnCompleteListener<Void> {
          * removes all previous geofences since {@link #getGeofencePendingIntent()} uses {@link PendingIntent.FLAG_UPDATE_CURRENT}
          */
         mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
+    }
+
+    public void restart() {
+        initGeofencingClient();
+    }
+
+
+    /**
+     * This is the context that is using an instance of the class {@link LocationUtils}.
+     */
+    public interface GeofenceUtilsSubscriber {
+
+        /**
+         * @return the context to register services with
+         */
+        Context getAssociatedContext();
     }
 }

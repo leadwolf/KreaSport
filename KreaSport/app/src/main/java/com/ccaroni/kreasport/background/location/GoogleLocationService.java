@@ -105,6 +105,7 @@ public class GoogleLocationService extends BaseLocationService {
                 .build();
     }
 
+    @SuppressWarnings({"MissingPermission"})
     private void verifyLocationSettings() {
         // Begin by checking if the device has the necessary location settings.
         Log.d(TAG, "checking if google play services is compatible with our location request");

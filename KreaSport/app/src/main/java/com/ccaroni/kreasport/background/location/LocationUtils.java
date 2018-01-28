@@ -21,8 +21,6 @@ public class LocationUtils {
 
     private final LocationUtilsSubscriber locationUtilsSubscriber;
 
-    private Context context;
-
     private SharedPreferences locationPrefs;
     private Gson gson;
 
@@ -33,18 +31,12 @@ public class LocationUtils {
      * Attaches the context to a {@link LocationUtilsSubscriber} field and sets up an {@link android.content.SharedPreferences.OnSharedPreferenceChangeListener} to listen to
      * location updates written by {@link GoogleLocationService}
      *
-     * @param context the context that will becoime a {@link LocationUtilsSubscriber}
+     * @param locationUtilsSubscriber the subscriber
      */
-    public LocationUtils(Context context) {
-        this.context = context;
+    public LocationUtils(LocationUtilsSubscriber locationUtilsSubscriber) {
+        this.locationUtilsSubscriber = locationUtilsSubscriber;
 
-        if (context instanceof LocationUtilsSubscriber) {
-            this.locationUtilsSubscriber = (LocationUtilsSubscriber) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement " + LocationUtilsSubscriber.class.getSimpleName());
-        }
-
-        locationPrefs = context.getSharedPreferences(locationPrefsFilename, MODE_PRIVATE);
+        locationPrefs = this.locationUtilsSubscriber.getAssociatedContext().getSharedPreferences(locationPrefsFilename, MODE_PRIVATE);
 
         gson = new Gson();
 
@@ -52,19 +44,19 @@ public class LocationUtils {
     }
 
     /**
-     * Request location updates. For now usses {@link GoogleLocationService}
+     * Request location updates. For now uses {@link GoogleLocationService}
      */
     public void startLocationUpdates() {
         Log.d(TAG, "request to start location updates. Using " + GoogleLocationService.class.getSimpleName());
-        Intent locationServiceIntent = new Intent(context, GoogleLocationService.class);
+        Intent locationServiceIntent = new Intent(this.locationUtilsSubscriber.getAssociatedContext(), GoogleLocationService.class);
         locationServiceIntent.putExtra(KEY_LOCATION_PREFS_FILENAME, locationPrefsFilename);
-        context.startService(locationServiceIntent);
+        this.locationUtilsSubscriber.getAssociatedContext().startService(locationServiceIntent);
     }
 
     public void stopLocationUpdates() {
         Log.d(TAG, "stopping location updates");
 
-        context.stopService(new Intent(context, GoogleLocationService.class));
+        this.locationUtilsSubscriber.getAssociatedContext().stopService(new Intent(this.locationUtilsSubscriber.getAssociatedContext(), GoogleLocationService.class));
     }
 
     private void setupLocationPrefsListener() {
@@ -72,19 +64,17 @@ public class LocationUtils {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 String data = sharedPreferences.getString(key, "");
-
                 if (!data.equals("")) {
 //                    Log.d(TAG, "received from location prefs: " + data);
-
                     Location location = gson.fromJson(data, Location.class);
-
                     locationUtilsSubscriber.onLocationChanged(location);
                 }
-
             }
         };
 
-        context.getSharedPreferences(locationPrefsFilename, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(locationPrefsListener);
+        this.locationUtilsSubscriber.getAssociatedContext()
+                .getSharedPreferences(locationPrefsFilename, MODE_PRIVATE)
+                .registerOnSharedPreferenceChangeListener(locationPrefsListener);
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -100,16 +90,30 @@ public class LocationUtils {
     }
 
     /**
+     * Stops all tasks linked to the previous context and restarts them with the new context from {@link #locationUtilsSubscriber}
+     */
+    public void restart() {
+        stopLocationUpdates();
+        setupLocationPrefsListener();
+        startLocationUpdates();
+    }
+
+    /**
      * This is the context that is using an instance of the class {@link LocationUtils}.
      */
     public interface LocationUtilsSubscriber {
 
         /**
-         * Notifiy the subscriber that location has been updated
+         * Notify the subscriber that location has been updated
          *
          * @param location the new location
          */
         void onLocationChanged(Location location);
+
+        /**
+         * @return the context to register services with
+         */
+        Context getAssociatedContext();
     }
 
 }

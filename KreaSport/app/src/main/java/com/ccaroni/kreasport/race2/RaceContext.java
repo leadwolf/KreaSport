@@ -5,7 +5,7 @@ import android.location.Location;
 
 /**
  * Created by Master on 28/01/2018.
- * Wrapper for the context that will receive all data through {@link AbstractRacingService}
+ * Wrapper for the context that will receive all data through {@link LocationServicesHandler}
  */
 public interface RaceContext {
 
@@ -13,14 +13,14 @@ public interface RaceContext {
     Context getContext();
 
     /**
-     * Receives location through {@link AbstractRacingService}.
+     * Receives location through {@link LocationServicesHandler}.
      *
      * @param location the new location
      */
     void onLocationChanged(Location location);
 
     /**
-     * Is triggered by {@link AbstractRacingService}
+     * Is triggered by {@link LocationServicesHandler}
      *
      * @param checkpointId the checkpoint associated to the geofence
      */

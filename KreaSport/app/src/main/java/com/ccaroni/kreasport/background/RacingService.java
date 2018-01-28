@@ -17,14 +17,14 @@ import android.support.v4.app.NotificationCompat;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.background.location.LocationUtils;
 import com.ccaroni.kreasport.race.impl.RaceHolder;
-import com.ccaroni.kreasport.race2.AbstractRacingService;
+import com.ccaroni.kreasport.race2.LocationServicesHandler;
 import com.ccaroni.kreasport.race2.RaceContext;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
 
 /**
  * Created by Master on 19/08/2017.
+ * Foreground service to keep the location and geofence request alive.
  */
-
 public class RacingService extends Service implements LocationUtils.LocationUtilsSubscriber, RaceContext {
 
     private static final String TAG = RacingService.class.getSimpleName();
@@ -32,7 +32,7 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     private static final int ONGOING_NOTIFICATION_ID = 42;
 
 
-    private AbstractRacingService abstractRacingService;
+    private LocationServicesHandler locationServicesHandler;
 
     private NotificationManager mNotificationManager;
     private Handler mHandler;
@@ -59,7 +59,7 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     public void onCreate() {
         super.onCreate();
 
-        abstractRacingService = new AbstractRacingService(this);
+        locationServicesHandler = new LocationServicesHandler(this);
 
         initHandler();
         initPendingIntentsForNotification();
@@ -159,7 +159,7 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
     }
 
     @Override
-    public Context getContext() {
+    public Context getAssociatedContext() {
         return this;
     }
 
@@ -175,13 +175,13 @@ public class RacingService extends Service implements LocationUtils.LocationUtil
 
 
     /**
-     * Kills {@link #mHandler} and calls {@link AbstractRacingService#destroy()}
+     * Kills {@link #mHandler} and calls {@link LocationServicesHandler#destroy()}
      */
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        this.abstractRacingService.destroy();
+        this.locationServicesHandler.destroy();
         mHandler.removeMessages(TICK_WHAT);
     }
 }
