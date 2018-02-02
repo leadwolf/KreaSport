@@ -28,11 +28,11 @@ import com.ccaroni.kreasport.view.activities.ExploreActivity;
  * Created by Master on 02/02/2018.
  */
 
-public class RacingService extends Service implements IRaceService {
+public class RaceService extends Service implements IRaceService {
 
     private static final int ONGOING_NOTIFICATION_ID = 42;
 
-    private static final String TAG = RacingService.class.getSimpleName();
+    private static final String TAG = RaceService.class.getSimpleName();
     private final long NOTIF_UPDATE_FREQ = 1000;    // milliseconds
     private final int HANDLER_MESSAGE = 2;
 
@@ -100,7 +100,7 @@ public class RacingService extends Service implements IRaceService {
         piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
 
         // setup stop race button
-        Intent stopRaceIntent = new Intent(this, RacingService.class);
+        Intent stopRaceIntent = new Intent(this, RaceService.class);
         stopRaceIntent.setAction("STOP");
         piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
     }

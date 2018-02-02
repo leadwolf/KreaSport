@@ -22,7 +22,7 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.background.rebuild.RacingService;
+import com.ccaroni.kreasport.background.rebuild.RaceService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
@@ -324,7 +324,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
         // reset this so we can start the background service if needed
         askingRiddle = false;
-        Intent racingServiceIntent = new Intent(this, RacingService.class);
+        Intent racingServiceIntent = new Intent(this, RaceService.class);
         stopService(racingServiceIntent);
     }
 
@@ -344,7 +344,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
         // we don't need to stop location updates when stopping this activity while a race is active in the background because the service handling the location updates will
         // continue to run update the SharedPrefs. Even if we do call LocationUtils#startLocationUpdates the android system will handle it
-        // we just need to create a new instance in the RacingService to receive the location updates via SharedPrefs
+        // we just need to create a new instance in the RaceService to receive the location updates via SharedPrefs
 
         // TODO verify is we can just create a new instance, since the pending intent uses static variables
         // but we do need to stop the #mGeofenceUtils because that instance contains the pending intent for previous geofences
@@ -354,7 +354,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
 
         if (raceVM.isRaceActive() && !askingRiddle) {
-            Intent racingServiceIntent = new Intent(this, RacingService.class);
+            Intent racingServiceIntent = new Intent(this, RaceService.class);
             startService(racingServiceIntent);
         }
     }
