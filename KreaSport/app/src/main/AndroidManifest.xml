@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".background.geofence.GeofenceTransitionsIntentService"/>
+        <service android:name=".background.rebuild.geofence.GeofenceTransitionsIntentService"/>
         <service android:name=".background.RacingService"/>
         <service
             android:name=".background.rebuild.location.GoogleLocationService"

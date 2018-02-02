@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.background.geofence;
+package com.ccaroni.kreasport.background.rebuild.geofence;
 
 import android.app.PendingIntent;
 import android.content.Context;

@@ -23,8 +23,8 @@ import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.background.RacingService;
-import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.Riddle;
@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+import static com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
 public class ExploreActivity extends BaseActivity implements IRaceView, CustomMapView.IMapActivity, LocationUtils.LocationUtilsSubscriber {
 

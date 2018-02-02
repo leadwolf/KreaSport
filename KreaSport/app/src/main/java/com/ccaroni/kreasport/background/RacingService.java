@@ -19,13 +19,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
+import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
 import com.ccaroni.kreasport.race.impl.RaceHolder;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
 
-import static com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+import static com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
 
 /**
  * Created by Master on 19/08/2017.
