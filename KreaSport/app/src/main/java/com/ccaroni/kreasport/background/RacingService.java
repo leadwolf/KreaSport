@@ -21,7 +21,7 @@ import android.util.Log;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
-import com.ccaroni.kreasport.background.location.LocationUtils;
+import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
 import com.ccaroni.kreasport.race.impl.RaceHolder;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
 

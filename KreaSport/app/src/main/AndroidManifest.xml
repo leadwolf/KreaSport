@@ -19,7 +19,7 @@
         <service android:name=".background.geofence.GeofenceTransitionsIntentService"/>
         <service android:name=".background.RacingService"/>
         <service
-            android:name=".background.location.GoogleLocationService"
+            android:name=".background.rebuild.location.GoogleLocationService"
             android:icon="@drawable/ic_kreasport_logo_no_bg"
             android:label="@string/location_service_name"/>
 

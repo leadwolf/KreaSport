@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.background.location;
+package com.ccaroni.kreasport.background.rebuild.location;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,8 +21,6 @@ public class LocationUtils {
 
     private final LocationUtilsSubscriber locationUtilsSubscriber;
 
-    private Context context;
-
     private SharedPreferences locationPrefs;
     private Gson gson;
 
@@ -33,18 +31,12 @@ public class LocationUtils {
      * Attaches the context to a {@link LocationUtilsSubscriber} field and sets up an {@link android.content.SharedPreferences.OnSharedPreferenceChangeListener} to listen to
      * location updates written by {@link GoogleLocationService}
      *
-     * @param context the context that will becoime a {@link LocationUtilsSubscriber}
+     * @param locationUtilsSubscriber the subscriber
      */
-    public LocationUtils(Context context) {
-        this.context = context;
+    public LocationUtils(LocationUtilsSubscriber locationUtilsSubscriber) {
+        this.locationUtilsSubscriber = locationUtilsSubscriber;
 
-        if (context instanceof LocationUtilsSubscriber) {
-            this.locationUtilsSubscriber = (LocationUtilsSubscriber) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement " + LocationUtilsSubscriber.class.getSimpleName());
-        }
-
-        locationPrefs = context.getSharedPreferences(locationPrefsFilename, MODE_PRIVATE);
+        locationPrefs = locationUtilsSubscriber.getContext().getSharedPreferences(locationPrefsFilename, MODE_PRIVATE);
 
         gson = new Gson();
 
@@ -56,15 +48,15 @@ public class LocationUtils {
      */
     public void startLocationUpdates() {
         Log.d(TAG, "request to start location updates. Using " + GoogleLocationService.class.getSimpleName());
-        Intent locationServiceIntent = new Intent(context, GoogleLocationService.class);
+        Intent locationServiceIntent = new Intent(locationUtilsSubscriber.getContext(), GoogleLocationService.class);
         locationServiceIntent.putExtra(KEY_LOCATION_PREFS_FILENAME, locationPrefsFilename);
-        context.startService(locationServiceIntent);
+        locationUtilsSubscriber.getContext().startService(locationServiceIntent);
     }
 
     public void stopLocationUpdates() {
         Log.d(TAG, "stopping location updates");
 
-        context.stopService(new Intent(context, GoogleLocationService.class));
+        locationUtilsSubscriber.getContext().stopService(new Intent(locationUtilsSubscriber.getContext(), GoogleLocationService.class));
     }
 
     private void setupLocationPrefsListener() {
@@ -84,7 +76,7 @@ public class LocationUtils {
             }
         };
 
-        context.getSharedPreferences(locationPrefsFilename, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(locationPrefsListener);
+        locationUtilsSubscriber.getContext().getSharedPreferences(locationPrefsFilename, MODE_PRIVATE).registerOnSharedPreferenceChangeListener(locationPrefsListener);
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -110,6 +102,8 @@ public class LocationUtils {
          * @param location the new location
          */
         void onLocationChanged(Location location);
+
+        Context getContext();
     }
 
 }

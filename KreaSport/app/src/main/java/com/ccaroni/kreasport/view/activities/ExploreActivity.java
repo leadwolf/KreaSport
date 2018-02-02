@@ -25,7 +25,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.background.RacingService;
 import com.ccaroni.kreasport.background.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.geofence.GeofenceUtils;
-import com.ccaroni.kreasport.background.location.LocationUtils;
+import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.data.realm.RealmCheckpoint;
