@@ -22,6 +22,7 @@ import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsInte
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
 import com.ccaroni.kreasport.race.impl.RaceHolder;
+import com.ccaroni.kreasport.utils.NotificationUtil;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
 
 /**
@@ -30,8 +31,8 @@ import com.ccaroni.kreasport.view.activities.ExploreActivity;
 
 public class RaceService extends Service implements IRaceService {
 
+    public static final String NOTIFICATION_CHANNEL_ID_RACE = "com.ccaroni.kreasport.NOTIF_CHANNEL";
     private static final int ONGOING_NOTIFICATION_ID = 42;
-
     private static final String TAG = RaceService.class.getSimpleName();
     private final long NOTIF_UPDATE_FREQ = 1000;    // milliseconds
     private final int HANDLER_MESSAGE = 2;
@@ -109,18 +110,12 @@ public class RaceService extends Service implements IRaceService {
         String raceTitle = RaceHolder.getInstance().getCurrentRaceTitle();
 
         mNotifyBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_kreasport_notification_icon)
-                        .setContentIntent(piOnClick)
+                new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_RACE)
                         .setContentTitle(raceTitle) // race name
                         .setContentText("") // elapsed time
-                        /*
-                         * Sets the big view "big text" style and supplies the
-                         * text (the user's reminder message) that will be displayed
-                         * in the detail area of the expanded notification.
-                         * These calls are ignored by the support library for
-                         * pre-4.1 devices.
-                         */
+                        .setSmallIcon(R.drawable.ic_kreasport_notification_icon)
+                        .setChannelId(NOTIFICATION_CHANNEL_ID_RACE)
+                        .setContentIntent(piOnClick)
                         .setStyle(new NotificationCompat.InboxStyle()
                                 .setBigContentTitle(raceTitle) // race name
                                 .addLine("")
@@ -151,6 +146,9 @@ public class RaceService extends Service implements IRaceService {
         String timeString = getElapsedTime();
 
         this.mNotifyBuilder
+                .setContentTitle(raceTitle) // race name
+                .setSmallIcon(R.drawable.ic_kreasport_notification_icon)
+                .setChannelId(NOTIFICATION_CHANNEL_ID_RACE)
                 .setContentText(timeString) // elapsed time
                 .setStyle(new NotificationCompat.InboxStyle()
                         .setBigContentTitle(raceTitle) // race name, have to set it again?
@@ -210,7 +208,9 @@ public class RaceService extends Service implements IRaceService {
 
 
         initPendingIntentsForNotification();
+        NotificationUtil.registerRaceNotificationChannel(this, NOTIFICATION_CHANNEL_ID_RACE);
         initNotificationBuilder();
+
         Notification notification = updateRelevantNotificationFields();
         startForeground(ONGOING_NOTIFICATION_ID, notification);
 
