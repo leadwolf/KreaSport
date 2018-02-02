@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.background.rebuild;
 
+import android.app.Notification;
 import android.location.Location;
 
 /**
@@ -15,5 +16,9 @@ public interface IRaceService {
     void addGeofence(Location location);
 
     void removeAllGeofences();
+
+    Notification createNotification();
+
+    void updateNotification();
 
 }
