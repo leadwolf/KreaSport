@@ -17,7 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".background.rebuild.geofence.GeofenceTransitionsIntentService"/>
-        <service android:name=".background.RacingService"/>
         <service
             android:name=".background.rebuild.location.GoogleLocationService"
             android:icon="@drawable/ic_kreasport_logo_no_bg"

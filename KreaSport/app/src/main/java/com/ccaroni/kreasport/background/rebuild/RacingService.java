@@ -100,7 +100,7 @@ public class RacingService extends Service implements IRaceService {
         piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
 
         // setup stop race button
-        Intent stopRaceIntent = new Intent(this, com.ccaroni.kreasport.background.RacingService.class);
+        Intent stopRaceIntent = new Intent(this, RacingService.class);
         stopRaceIntent.setAction("STOP");
         piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
     }

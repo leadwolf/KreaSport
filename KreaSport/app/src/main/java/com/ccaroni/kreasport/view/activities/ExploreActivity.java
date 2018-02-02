@@ -22,7 +22,7 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.background.RacingService;
+import com.ccaroni.kreasport.background.rebuild.RacingService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
@@ -556,6 +556,11 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         mMapView.invalidate();
     }
 
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
     /**
      * Adds the location to the path overlay
      */
@@ -566,27 +571,6 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
             if (updateMap) {
                 mMapView.invalidate();
             }
-        }
-    }
-
-    private class GeofenceReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
-            if (checkpointId == null) {
-                throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
-            }
-
-            raceVM.onGeofenceTriggered();
-
-        }
-    }
-
-    private class LocationSettingsReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            locationSettingsPI = intent.getParcelableExtra(KEY_LOCATION_SETTINGS_PI);
-            attemptLocationSettingsResolution();
         }
     }
 
@@ -624,5 +608,26 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
                 break;
         }
 
+    }
+
+    private class GeofenceReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
+            if (checkpointId == null) {
+                throw new IllegalArgumentException("Received intent for geofence with no checkpoint associated");
+            }
+
+            raceVM.onGeofenceTriggered();
+
+        }
+    }
+
+    private class LocationSettingsReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            locationSettingsPI = intent.getParcelableExtra(KEY_LOCATION_SETTINGS_PI);
+            attemptLocationSettingsResolution();
+        }
     }
 }
