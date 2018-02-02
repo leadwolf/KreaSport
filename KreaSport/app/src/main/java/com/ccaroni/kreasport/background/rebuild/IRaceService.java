@@ -17,8 +17,8 @@ public interface IRaceService {
 
     void removeAllGeofences();
 
-    Notification createNotification();
+    Notification updateRelevantNotificationFields();
 
-    void updateNotification();
+    void sendUpdatedNotification();
 
 }

@@ -45,10 +45,11 @@ public class RacingService extends Service implements IRaceService {
     // PendingIntents for the notification
     private PendingIntent piOnClick;
     private PendingIntent piStopRace;
+
     /**
-     * The single notification instance that we'll keep modifying instead of creating new notifications.
+     * The builder that will constantly modify to create updated notifications
      */
-    private Notification notification;
+    private NotificationCompat.Builder mNotifyBuilder;
     /**
      * The manager that will send out our notification
      */
@@ -104,20 +105,15 @@ public class RacingService extends Service implements IRaceService {
         piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
     }
 
-    @Override
-    public Notification createNotification() {
+    private void initNotificationBuilder() {
         String raceTitle = RaceHolder.getInstance().getCurrentRaceTitle();
-        String geofenceProgression = "Progression " + RaceHolder.getInstance().getCheckpointProgression() + "/" + RaceHolder.getInstance().getNumberCheckpoints();
 
-        final long elapsedTime = SystemClock.elapsedRealtime() - RaceHolder.getInstance().getTimeStart();
-        String timeString = formatElapsedTime(elapsedTime);
-
-        NotificationCompat.Builder builder =
+        mNotifyBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_kreasport_notification_icon)
                         .setContentIntent(piOnClick)
                         .setContentTitle(raceTitle) // race name
-                        .setContentText(timeString) // elapsed time
+                        .setContentText("") // elapsed time
                         /*
                          * Sets the big view "big text" style and supplies the
                          * text (the user's reminder message) that will be displayed
@@ -127,19 +123,47 @@ public class RacingService extends Service implements IRaceService {
                          */
                         .setStyle(new NotificationCompat.InboxStyle()
                                 .setBigContentTitle(raceTitle) // race name
-                                .addLine(timeString)
-                                .addLine(geofenceProgression) // geofence progression
+                                .addLine("")
+                                .addLine("") // geofence progression
                                 .setSummaryText("Race active")) // Useful ?
                         .addAction(R.drawable.ic_stop_grey_600_24dp,
                                 "Stop race", piStopRace);
-        return builder.build();
     }
 
     @Override
-    public void updateNotification() {
-        // TODO
+    public void sendUpdatedNotification() {
+        Notification notification = this.updateRelevantNotificationFields();
         mNotificationManager.notify(ONGOING_NOTIFICATION_ID, notification);
+    }
 
+    /**
+     * Updates the pre-generated {@link #mNotifyBuilder} to the current time and progression
+     *
+     * @return the updated notification
+     */
+    @Override
+    public Notification updateRelevantNotificationFields() {
+        String raceTitle = RaceHolder.getInstance().getCurrentRaceTitle();
+
+        // TODO use xml to format this
+        String geofenceProgression = "Progression " + RaceHolder.getInstance().getCheckpointProgression() + "/" + RaceHolder.getInstance().getNumberCheckpoints();
+
+        String timeString = getElapsedTime();
+
+        this.mNotifyBuilder
+                .setContentText(timeString) // elapsed time
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .setBigContentTitle(raceTitle) // race name, have to set it again?
+                        .addLine(timeString)
+                        .addLine(geofenceProgression) // geofence progression
+                        .setSummaryText("Race active")); // Useful ?
+
+        return mNotifyBuilder.build();
+    }
+
+    private String getElapsedTime() {
+        final long elapsedTime = SystemClock.elapsedRealtime() - RaceHolder.getInstance().getTimeStart();
+        return formatElapsedTime(elapsedTime);
     }
 
     /**
@@ -149,7 +173,7 @@ public class RacingService extends Service implements IRaceService {
         this.mHandler = new Handler() {
             public void handleMessage(Message m) {
                 // update then notification
-                updateNotification();
+                sendUpdatedNotification();
                 // send the same message again to repeat this action
                 sendMessageDelayed(Message.obtain(this, HANDLER_MESSAGE), NOTIF_UPDATE_FREQ);
             }
@@ -186,7 +210,8 @@ public class RacingService extends Service implements IRaceService {
 
 
         initPendingIntentsForNotification();
-        this.notification = createNotification();
+        initNotificationBuilder();
+        Notification notification = updateRelevantNotificationFields();
         startForeground(ONGOING_NOTIFICATION_ID, notification);
 
         initHandler();
