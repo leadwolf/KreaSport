@@ -17,8 +17,14 @@ public interface IRaceService {
 
     void removeAllGeofences();
 
+    /**
+     * @return the updated notification
+     */
     Notification updateRelevantNotificationFields();
 
+    /**
+     * Creates a new notification and sends it out
+     */
     void sendUpdatedNotification();
 
 }
