@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.downloads;
 
 import android.content.Intent;
 import android.location.Address;
@@ -20,6 +20,7 @@ import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.utils.Constants;
+import com.ccaroni.kreasport.view.activities.old.OfflineAreasActivity;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.BoundingBox;

@@ -48,7 +48,7 @@
         <!-- Auth0 Lock End -->
 
         <activity
-            android:name=".view.activities.WelcomeActivity"
+            android:name=".view.activities.entry.WelcomeActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -57,99 +57,97 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activities.HomeActivity"
+            android:name=".view.activities.old.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.Dark">
         </activity>
         <activity
-            android:name=".view.activities.ExploreActivity"
-            android:parentActivityName=".view.activities.HomeActivity"
+            android:name=".view.activities.old.ExploreActivity"
+            android:parentActivityName=".view.activities.old.HomeActivity"
             android:theme="@style/AppTheme.Dark">
 
             <!-- The meta-data element is needed for versions lower than 4.1 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.HomeActivity"/>
+                android:value=".view.activities.old.HomeActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.LoginActivity"
+            android:name=".view.activities.entry.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".view.activities.ProfileActivity"
+            android:name=".view.activities.old.ProfileActivity"
             android:label="@string/title_activity_scrolling"
-            android:parentActivityName=".view.activities.HomeActivity"
+            android:parentActivityName=".view.activities.old.HomeActivity"
             android:theme="@style/AppTheme.Dark">
 
             <!-- Parent Activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.HomeActivity"/>
+                android:value=".view.activities.old.HomeActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.DownloadedRacesActivity"
+            android:name=".view.activities.downloads.DownloadedRacesActivity"
             android:label="@string/title_activity_downloaded_races"
-            android:parentActivityName=".view.activities.ProfileActivity"
+            android:parentActivityName=".view.activities.old.ProfileActivity"
             android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
+                android:value="com.ccaroni.kreasport.view.activities.old.ProfileActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.RiddleActivity"
+            android:name=".view.activities.race.RiddleActivity"
             android:label="@string/title_activity_riddle"
-            android:parentActivityName=".view.activities.ExploreActivity"
+            android:parentActivityName=".view.activities.old.ExploreActivity"
             android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ccaroni.kreasport.view.activities.ExploreActivity"/>
+                android:value="com.ccaroni.kreasport.view.activities.old.ExploreActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.MyRecordsActivity"
+            android:name=".view.activities.records.MyRecordsActivity"
             android:label="@string/title_activity_my_records"
-            android:parentActivityName=".view.activities.ProfileActivity"
+            android:parentActivityName=".view.activities.old.ProfileActivity"
             android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ccaroni.kreasport.view.activities.ProfileActivity"/>
+                android:value="com.ccaroni.kreasport.view.activities.old.ProfileActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.OfflineAreasActivity"
+            android:name=".view.activities.old.OfflineAreasActivity"
             android:label="@string/title_activity_offline_areas"
-            android:parentActivityName=".view.activities.HomeActivity"
+            android:parentActivityName=".view.activities.old.HomeActivity"
             android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ccaroni.kreasport.view.activities.HomeActivity"/>
+                android:value="com.ccaroni.kreasport.view.activities.old.HomeActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.AreaSelectionActivity"
+            android:name=".view.activities.downloads.AreaSelectionActivity"
             android:label="@string/title_activity_dummy"
-            android:parentActivityName=".view.activities.OfflineAreasActivity"
+            android:parentActivityName=".view.activities.old.OfflineAreasActivity"
             android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ccaroni.kreasport.view.activities.OfflineAreasActivity"/>
-        </activity>
-        <activity android:name=".view.activities.ThreadsLifecycleActivity">
+                android:value="com.ccaroni.kreasport.view.activities.old.OfflineAreasActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.DownloadedAreaActivity"
+            android:name=".view.activities.downloads.DownloadedAreaActivity"
             android:label="@string/title_activity_downloaded_area"
-            android:parentActivityName=".view.activities.OfflineAreasActivity"
+            android:parentActivityName=".view.activities.old.OfflineAreasActivity"
             android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ccaroni.kreasport.view.activities.OfflineAreasActivity"/>
+                android:value="com.ccaroni.kreasport.view.activities.old.OfflineAreasActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.RecordActivity"
+            android:name=".view.activities.records.RecordActivity"
             android:label="@string/title_activity_record"
-            android:parentActivityName=".view.activities.MyRecordsActivity"
+            android:parentActivityName=".view.activities.records.MyRecordsActivity"
             android:theme="@style/AppTheme.Dark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ccaroni.kreasport.view.activities.MyRecordsActivity"/>
+                android:value="com.ccaroni.kreasport.view.activities.records.MyRecordsActivity"/>
         </activity>
     </application>
 

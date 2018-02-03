@@ -1,15 +1,12 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.old;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.RealmHelper;
@@ -17,6 +14,7 @@ import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.utils.CacheManagerCallback;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.impl.CacheManagerCallbackImpl;
+import com.ccaroni.kreasport.view.activities.downloads.AreaSelectionActivity;
 import com.ccaroni.kreasport.view.adapter.DownloadedAreaAdapter;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
@@ -31,7 +29,6 @@ import java.util.List;
 
 import io.realm.RealmResults;
 
-import static android.text.format.Formatter.formatShortFileSize;
 import static com.ccaroni.kreasport.utils.Constants.KEY_AREA_ID;
 
 public class OfflineAreasActivity extends BaseActivity implements CacheManagerCallbackImpl.CacheCommunicationInterface {
@@ -137,10 +134,6 @@ public class OfflineAreasActivity extends BaseActivity implements CacheManagerCa
 
     public void downloadCustomArea(View view) {
         startActivityForResult(new Intent(OfflineAreasActivity.this, AreaSelectionActivity.class), REQUEST_CODE_CUSTOM_AREA);
-    }
-
-    public void asyncActivity(View view) {
-        startActivity(new Intent(this, ThreadsLifecycleActivity.class));
     }
 
     /**

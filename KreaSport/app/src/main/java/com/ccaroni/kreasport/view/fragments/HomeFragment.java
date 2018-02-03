@@ -13,7 +13,7 @@ import android.widget.EditText;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.FragmentHomeBinding;
-import com.ccaroni.kreasport.view.activities.BaseActivity;
+import com.ccaroni.kreasport.view.activities.old.BaseActivity;
 
 public class HomeFragment extends Fragment {
 

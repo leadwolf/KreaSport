@@ -1,12 +1,10 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.old;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +25,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.ActivityProfileBinding;
 import com.ccaroni.kreasport.utils.CredentialsManager;
+import com.ccaroni.kreasport.view.activities.downloads.DownloadedRacesActivity;
+import com.ccaroni.kreasport.view.activities.records.MyRecordsActivity;
 
 public class ProfileActivity extends BaseActivity {
 

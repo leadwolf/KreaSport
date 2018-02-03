@@ -17,7 +17,7 @@ import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.background.rebuild.impl.RaceService;
 import com.ccaroni.kreasport.race.impl.RaceHolder;
 import com.ccaroni.kreasport.utils.NotificationUtil;
-import com.ccaroni.kreasport.view.activities.ExploreActivity;
+import com.ccaroni.kreasport.view.activities.old.ExploreActivity;
 
 /**
  * Created by Master on 03/02/2018.

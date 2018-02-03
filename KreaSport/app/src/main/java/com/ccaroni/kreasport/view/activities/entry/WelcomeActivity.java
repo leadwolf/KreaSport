@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.entry;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

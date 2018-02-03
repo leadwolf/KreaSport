@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.records;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -12,7 +12,6 @@ import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.RaceRecord;
 import com.ccaroni.kreasport.data.realm.RealmRaceRecord;
 import com.ccaroni.kreasport.databinding.ActivityMyRecordsBinding;
-import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.network.RetrofitService;
 import com.ccaroni.kreasport.network.KreasportAPI;
 import com.ccaroni.kreasport.utils.Constants;

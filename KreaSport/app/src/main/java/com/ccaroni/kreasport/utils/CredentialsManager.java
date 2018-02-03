@@ -15,7 +15,7 @@ import com.auth0.android.management.UsersAPIClient;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.view.activities.LoginActivity;
+import com.ccaroni.kreasport.view.activities.entry.LoginActivity;
 import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;

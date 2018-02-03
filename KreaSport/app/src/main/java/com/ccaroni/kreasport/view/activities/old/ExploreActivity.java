@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.old;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -40,6 +40,7 @@ import com.ccaroni.kreasport.race.IRaceView;
 import com.ccaroni.kreasport.race.impl.RaceVM;
 import com.ccaroni.kreasport.utils.Constants;
 import com.ccaroni.kreasport.utils.CredentialsManager;
+import com.ccaroni.kreasport.view.activities.race.RiddleActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;

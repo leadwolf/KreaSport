@@ -17,7 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.view.activities.ExploreActivity;
+import com.ccaroni.kreasport.view.activities.old.ExploreActivity;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 

@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.downloads;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;

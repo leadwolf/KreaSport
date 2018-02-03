@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.old;
 
 import android.app.Activity;
 import android.content.Context;

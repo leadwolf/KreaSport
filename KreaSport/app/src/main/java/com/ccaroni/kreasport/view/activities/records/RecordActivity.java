@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.records;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;

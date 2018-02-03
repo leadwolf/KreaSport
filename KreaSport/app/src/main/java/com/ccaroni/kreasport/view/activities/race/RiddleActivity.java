@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities;
+package com.ccaroni.kreasport.view.activities.race;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.dto.Riddle;
 import com.ccaroni.kreasport.databinding.ActivityRiddleBinding;
+import com.ccaroni.kreasport.view.activities.old.ExploreActivity;
 import com.google.gson.Gson;
 
 public class RiddleActivity extends AppCompatActivity {

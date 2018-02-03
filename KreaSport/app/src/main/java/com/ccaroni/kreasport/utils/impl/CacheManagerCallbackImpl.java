@@ -1,7 +1,6 @@
 package com.ccaroni.kreasport.utils.impl;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v4.app.TaskStackBuilder;
@@ -11,12 +10,9 @@ import android.util.Log;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.utils.CacheManagerCallback;
-import com.ccaroni.kreasport.view.activities.OfflineAreasActivity;
+import com.ccaroni.kreasport.view.activities.old.OfflineAreasActivity;
 
-import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Master on 01/06/2017.
