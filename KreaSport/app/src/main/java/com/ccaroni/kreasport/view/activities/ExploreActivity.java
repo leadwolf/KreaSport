@@ -22,9 +22,9 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.background.rebuild.geofence.impl.GeofenceUtil;
 import com.ccaroni.kreasport.background.rebuild.impl.RaceService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
 import com.ccaroni.kreasport.data.RealmHelper;
 import com.ccaroni.kreasport.data.dto.Riddle;
@@ -59,8 +59,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
-import static com.ccaroni.kreasport.background.rebuild.location.GoogleLocationService.KEY_LOCATION_SETTINGS__RESOLUTION_PI;
-import static com.ccaroni.kreasport.background.rebuild.location.GoogleLocationService.REQUIRES_LOCATION_SETTINGS_PROMPT;
+import static com.ccaroni.kreasport.background.rebuild.location.impl.GoogleLocationService.KEY_LOCATION_SETTINGS__RESOLUTION_PI;
+import static com.ccaroni.kreasport.background.rebuild.location.impl.GoogleLocationService.REQUIRES_LOCATION_SETTINGS_PROMPT;
 
 public class ExploreActivity extends BaseActivity implements IRaceView, CustomMapView.IMapActivity, LocationUtils.LocationUtilsSubscriber {
 
@@ -101,7 +101,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     private boolean hasFix;
 
     private LocationUtils mLocationUtils;
-    private GeofenceUtils mGeofenceUtils;
+    private GeofenceUtil mGeofenceUtil;
 
     /**
      * If this activity will be launching {@link RiddleActivity}
@@ -135,7 +135,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
 
         mLocationUtils = new LocationUtils(this);
-        mGeofenceUtils = new GeofenceUtils(this);
+        mGeofenceUtil = new GeofenceUtil(this);
 
         // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
         geofenceReceiver = new GeofenceReceiver();
@@ -336,9 +336,9 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         if (!raceVM.isRaceActive() && mLocationUtils != null) {
             mLocationUtils.stopLocationUpdates();
         }
-        if (!raceVM.isRaceActive() && mGeofenceUtils != null) {
+        if (!raceVM.isRaceActive() && mGeofenceUtil != null) {
             // in case of force close
-            mGeofenceUtils.removePreviousGeofences();
+            mGeofenceUtil.removePreviousGeofences();
         }
 
         // we don't need to stop location updates when stopping this activity while a race is active in the background because the service handling the location updates will
@@ -346,7 +346,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
         // we just need to create a new instance in the RaceService to receive the location updates via SharedPrefs
 
         // TODO verify is we can just create a new instance, since the pending intent uses static variables
-        // but we do need to stop the #mGeofenceUtils because that instance contains the pending intent for previous geofences
+        // but we do need to stop the #mGeofenceUtil because that instance contains the pending intent for previous geofences
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(locationSettingsReceiver);
@@ -440,12 +440,12 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
     @Override
     public void addGeoFence(RealmCheckpoint targetingCheckpoint) {
-        mGeofenceUtils.addGeofences(targetingCheckpoint);
+        mGeofenceUtil.addGeofence(targetingCheckpoint);
     }
 
     @Override
     public void removeLastGeofence() {
-        mGeofenceUtils.removePreviousGeofences();
+        mGeofenceUtil.removePreviousGeofences();
     }
 
 

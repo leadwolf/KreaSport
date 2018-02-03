@@ -44,7 +44,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
     /**
      * Handles incoming intents when a geofence is triggered.
      *
-     * @param intent sent by Location Services. This Intent is provided to Location Services (inside a PendingIntent) when addGeofences() is called.
+     * @param intent sent by Location Services. This Intent is provided to Location Services (inside a PendingIntent) when addGeofence() is called.
      */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {

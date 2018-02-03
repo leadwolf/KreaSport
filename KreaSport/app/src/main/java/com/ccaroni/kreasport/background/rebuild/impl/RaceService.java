@@ -9,9 +9,9 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.background.rebuild.AbstractRaceService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
-import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
+import com.ccaroni.kreasport.background.rebuild.geofence.impl.GeofenceUtil;
 import com.ccaroni.kreasport.background.rebuild.location.BaseLocationService;
-import com.ccaroni.kreasport.background.rebuild.location.GoogleLocationService;
+import com.ccaroni.kreasport.background.rebuild.location.impl.GoogleLocationService;
 
 /**
  * Created by Master on 02/02/2018.
@@ -22,7 +22,7 @@ public class RaceService extends AbstractRaceService implements BaseLocationServ
     private static final String TAG = RaceService.class.getSimpleName();
 
 
-    private GeofenceUtils mGeofenceUtils;
+    private GeofenceUtil mGeofenceUtil;
     private GeofenceReceiver geofenceReceiver;
 
     /**

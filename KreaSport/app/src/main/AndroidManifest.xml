@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
         <service android:name=".background.rebuild.geofence.GeofenceTransitionsIntentService"/>
         <service
-            android:name=".background.rebuild.location.GoogleLocationService"
+            android:name=".background.rebuild.location.impl.GoogleLocationService"
             android:icon="@drawable/ic_kreasport_logo_no_bg"
             android:label="@string/location_service_name"/>
         <service android:name=".background.rebuild.impl.RaceService"/>

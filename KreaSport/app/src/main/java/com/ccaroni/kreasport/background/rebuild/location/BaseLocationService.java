@@ -11,8 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.ccaroni.kreasport.background.rebuild.impl.RaceService;
-
 import static com.ccaroni.kreasport.utils.Constants.APP_PACKAGE;
 
 /**

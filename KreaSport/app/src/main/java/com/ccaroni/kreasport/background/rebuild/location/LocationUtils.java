@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
 
+import com.ccaroni.kreasport.background.rebuild.location.impl.GoogleLocationService;
 import com.google.gson.Gson;
 
 import static android.content.Context.MODE_PRIVATE;

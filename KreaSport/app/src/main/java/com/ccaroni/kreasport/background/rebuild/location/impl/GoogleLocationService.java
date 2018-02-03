@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.background.rebuild.location;
+package com.ccaroni.kreasport.background.rebuild.location.impl;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.ccaroni.kreasport.background.rebuild.location.BaseLocationService;
 import com.ccaroni.kreasport.utils.Constants;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
