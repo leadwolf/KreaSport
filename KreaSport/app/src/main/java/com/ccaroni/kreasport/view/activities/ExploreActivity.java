@@ -59,6 +59,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+import static com.ccaroni.kreasport.background.rebuild.location.GoogleLocationService.KEY_LOCATION_SETTINGS__RESOLUTION_PI;
+import static com.ccaroni.kreasport.background.rebuild.location.GoogleLocationService.REQUIRES_LOCATION_SETTINGS_PROMPT;
 
 public class ExploreActivity extends BaseActivity implements IRaceView, CustomMapView.IMapActivity, LocationUtils.LocationUtilsSubscriber {
 
@@ -73,9 +75,6 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
     private static final String KEY_BASE = "com.ccaroni.kreasport." + ExploreActivity.class.getSimpleName() + ".key.";
     public static final String KEY_RIDDLE = KEY_BASE + ".riddle";
-
-    public static final String KEY_LOCATION_SETTINGS_PI = KEY_BASE + "location_settings_request_pending_intent";
-    public static final String REQUIRES_LOCATION_SETTINGS_PROMPT = KEY_BASE + "requires_location_settings_prompt";
 
 
     private ActivityExploreBinding binding;
@@ -626,7 +625,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
     private class LocationSettingsReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            locationSettingsPI = intent.getParcelableExtra(KEY_LOCATION_SETTINGS_PI);
+            locationSettingsPI = intent.getParcelableExtra(KEY_LOCATION_SETTINGS__RESOLUTION_PI);
             attemptLocationSettingsResolution();
         }
     }

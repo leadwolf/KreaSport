@@ -23,16 +23,18 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import static com.ccaroni.kreasport.view.activities.ExploreActivity.KEY_LOCATION_SETTINGS_PI;
-import static com.ccaroni.kreasport.view.activities.ExploreActivity.REQUIRES_LOCATION_SETTINGS_PROMPT;
-
 /**
  * Created by Master on 02/07/2017.
  */
 
 public class GoogleLocationService extends BaseLocationService {
 
+    public static final String REQUIRES_LOCATION_SETTINGS_PROMPT = KEY_BASE + "requires_location_settings_prompt";
+    public static final String KEY_LOCATION_SETTINGS__RESOLUTION_PI = KEY_BASE + "location_settings_request_pending_intent";
+
     private static final String TAG = GoogleLocationService.class.getSimpleName();
+
+    
     private FusedLocationProviderClient mFusedLocationClient;
 
     private SettingsClient mSettingsClient;
@@ -45,23 +47,10 @@ public class GoogleLocationService extends BaseLocationService {
     @SuppressWarnings({"MissingPermission"})
     @Override
     protected void startLocationUpdates() {
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mSettingsClient = LocationServices.getSettingsClient(this);
-
-        // Kick off the process of building the LocationCallback, LocationRequest, and
-        // LocationSettingsRequest objects.
-        createLocationCallback();
-        createLocationRequest();
-        buildLocationSettingsRequest();
-
+        buildRequest();
         verifyLocationSettings();
 
-        // Using the new 11.0.0 location api without a GoogleApiClient
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null)
+        this.mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -75,11 +64,28 @@ public class GoogleLocationService extends BaseLocationService {
                         Log.d(TAG, e.toString());
                     }
                 });
-
     }
 
+    /**
+     * Builds the location requests, callbacks and settings verifications
+     */
+    private void buildRequest() {
+        // Using the new 11.0.0 location api without a GoogleApiClient
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        this.mSettingsClient = LocationServices.getSettingsClient(this);
+
+        // Kick off the process of building the LocationCallback, LocationRequest, and
+        // LocationSettingsRequest objects.
+        createLocationCallback();
+        createLocationRequest();
+        buildLocationSettingsRequest();
+    }
+
+    /**
+     * Builds {@link #mLocationCallback} to receive the location updates
+     */
     private void createLocationCallback() {
-        mLocationCallback = new LocationCallback() {
+        this.mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
@@ -91,65 +97,108 @@ public class GoogleLocationService extends BaseLocationService {
         };
     }
 
+    /**
+     * Builds {@link #mLocationRequest} to request location updates
+     */
     private void createLocationRequest() {
-        mLocationRequest = LocationRequest.create()
+        this.mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(Constants.GEOLOCATION_UPDATE_INTERVAL)
                 .setFastestInterval(Constants.GEOLOCATION_UPDATE_FASTEST_INTERVAL);
 
     }
 
+    /**
+     * Builds {@link #mLocationSettingsRequest} to request the necessary permissions to execute {@link #mLocationRequest}
+     */
     private void buildLocationSettingsRequest() {
-        mLocationSettingsRequest = new LocationSettingsRequest.Builder()
+        this.mLocationSettingsRequest = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest)
                 .build();
     }
 
+    /**
+     * Verifies that the user has given us the appropriate permissions for our {@link #mLocationRequest}
+     */
+    @SuppressWarnings({"MissingPermission"})
     private void verifyLocationSettings() {
         // Begin by checking if the device has the necessary location settings.
         Log.d(TAG, "checking if google play services is compatible with our location request");
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
-                    @Override
-                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                        Log.i(TAG, "All location settings are satisfied.");
-
-                        //noinspection MissingPermission
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                                mLocationCallback, Looper.myLooper());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        int statusCode = ((ApiException) e).getStatusCode();
-                        switch (statusCode) {
-                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-                                        "location settings ");
-                                // Show the dialog by calling startResolutionForResult(), and check the
-                                // result in onActivityResult().
-                                ResolvableApiException rae = (ResolvableApiException) e;
-                                PendingIntent settingsRequestPI = rae.getResolution();
-
-                                Intent parentIntent = new Intent(REQUIRES_LOCATION_SETTINGS_PROMPT)
-                                        .putExtra(KEY_LOCATION_SETTINGS_PI, settingsRequestPI);
-
-                                Log.d(TAG, "broadcasting location settings error");
-
-                                LocalBroadcastManager.getInstance(GoogleLocationService.this).sendBroadcast(parentIntent);
-
-                                break;
-                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                String errorMessage = "Location settings are inadequate, and cannot be " +
-                                        "fixed here. Fix in Settings.";
-                                Log.e(TAG, errorMessage);
-//                                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                .addOnSuccessListener(getOnSuccessListener())
+                .addOnFailureListener(getOnFailureListener());
     }
 
+    /**
+     * @return the listener that will start the location updates once the necessary settings have been verified as available
+     */
+    @SuppressWarnings({"MissingPermission"})
+    @NonNull
+    private OnSuccessListener<LocationSettingsResponse> getOnSuccessListener() {
+        return new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                Log.i(TAG, "All location settings are satisfied, starting updates");
+
+                //noinspection MissingPermission
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                        mLocationCallback, Looper.myLooper());
+            }
+        };
+    }
+
+    /**
+     * @return the listener that will attempt to resolve the settings error
+     */
+    @NonNull
+    private OnFailureListener getOnFailureListener() {
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                int statusCode = ((ApiException) e).getStatusCode();
+                switch (statusCode) {
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        attemptResolution((ResolvableApiException) e);
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        onLocationSettingsNonResolvable();
+                }
+            }
+        };
+    }
+
+    /**
+     * Broadcasts the request to modify the user settings with the action: {@link #REQUIRES_LOCATION_SETTINGS_PROMPT} and key {@link #KEY_LOCATION_SETTINGS__RESOLUTION_PI}
+     *
+     * @param resolvableException the exception that contains the possible resolutions
+     */
+    private void attemptResolution(@NonNull ResolvableApiException resolvableException) {
+        Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
+                "location settings ");
+        // Show the dialog by calling startResolutionForResult(), and check the
+        // result in onActivityResult().
+        PendingIntent settingsRequestPI = resolvableException.getResolution();
+
+        Intent parentIntent = new Intent(REQUIRES_LOCATION_SETTINGS_PROMPT)
+                .putExtra(KEY_LOCATION_SETTINGS__RESOLUTION_PI, settingsRequestPI);
+
+        Log.d(TAG, "broadcasting location settings error");
+        LocalBroadcastManager.getInstance(GoogleLocationService.this).sendBroadcast(parentIntent);
+    }
+
+    /**
+     * Logs the non resolvable error
+     */
+    private void onLocationSettingsNonResolvable() {
+        String errorMessage = "Location settings are inadequate, and cannot be " +
+                "fixed here. Fix in Settings.";
+        Log.e(TAG, errorMessage);
+//                                Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Stops the location updates
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
