@@ -1,11 +1,8 @@
 package com.ccaroni.kreasport.background.rebuild.impl;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.ccaroni.kreasport.background.rebuild.AbstractRaceService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
@@ -17,13 +14,13 @@ import com.ccaroni.kreasport.background.rebuild.location.impl.GoogleLocationServ
  * Created by Master on 02/02/2018.
  */
 
-public class RaceService extends AbstractRaceService implements BaseLocationService.LocationListener {
+public class RaceService extends AbstractRaceService implements BaseLocationService.LocationListener, GeofenceTransitionsIntentService.GeofenceListener {
 
     private static final String TAG = RaceService.class.getSimpleName();
 
 
     private GeofenceUtil mGeofenceUtil;
-    private GeofenceReceiver geofenceReceiver;
+    private GeofenceTransitionsIntentService.GeofenceReceiver geofenceReceiver;
 
     /**
      * The intent bound to start/stop {@link GoogleLocationService}
@@ -77,8 +74,9 @@ public class RaceService extends AbstractRaceService implements BaseLocationServ
 
     @Override
     protected void initGeofenceServices() {
-        // TODO
+        this.mGeofenceUtil = new GeofenceUtil(this);
 
+        this.geofenceReceiver = GeofenceTransitionsIntentService.getLocationReceiver(this);
     }
 
     /**
@@ -88,7 +86,7 @@ public class RaceService extends AbstractRaceService implements BaseLocationServ
     public void onDestroy() {
         super.onDestroy();
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
+        this.geofenceReceiver.unregisterFromLocalBroadcastManager(this);
 
         this.stopLocationUpdates();
         this.locationReceiver.unregisterFromLocalBroadcastManager(this);
@@ -100,25 +98,14 @@ public class RaceService extends AbstractRaceService implements BaseLocationServ
     }
 
     @Override
+    public void onGeofenceTriggered(String geofenceID) {
+        // TODO
+
+    }
+
+    @Override
     public Context getContext() {
         return this;
     }
 
-    /**
-     * Custom BroadcastReceiver to act upon the reception of a broadcast from {@link GeofenceTransitionsIntentService#GEOFENCE_TRIGGERED}
-     */
-    class GeofenceReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String checkpointId = intent.getStringExtra(GeofenceTransitionsIntentService.KEY_GEOFENCE_ID);
-            if (checkpointId == null) {
-                throw new IllegalArgumentException("Received intent for geofenceReceiver with no checkpoint associated");
-            }
-
-            Log.d(TAG, "received geofence broadcast for checkpoint: " + checkpointId);
-
-            // TODO
-        }
-    }
 }

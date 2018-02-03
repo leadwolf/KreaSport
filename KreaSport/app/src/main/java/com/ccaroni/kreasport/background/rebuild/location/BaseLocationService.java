@@ -104,7 +104,7 @@ public abstract class BaseLocationService extends Service {
          *
          * @param context the context to get the {@link LocalBroadcastManager} with
          */
-        private void registerWithLocalBroadcastManager(Context context) {
+        public void registerWithLocalBroadcastManager(Context context) {
             LocalBroadcastManager.getInstance(context).registerReceiver(this, new IntentFilter(ACTION_LOCATION_UPDATED));
         }
 

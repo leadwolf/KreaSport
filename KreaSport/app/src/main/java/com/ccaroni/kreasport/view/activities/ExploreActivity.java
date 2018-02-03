@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService.GEOFENCE_TRIGGERED;
+import static com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService.ACTION_GEOFENCE_TRIGGERED;
 import static com.ccaroni.kreasport.background.rebuild.location.impl.GoogleLocationService.KEY_LOCATION_SETTINGS__RESOLUTION_PI;
 import static com.ccaroni.kreasport.background.rebuild.location.impl.GoogleLocationService.REQUIRES_LOCATION_SETTINGS_PROMPT;
 
@@ -139,7 +139,7 @@ public class ExploreActivity extends BaseActivity implements IRaceView, CustomMa
 
         // GeofenceReceiver will receive the geofence results once validated by GeofenceTransitionsIntentService
         geofenceReceiver = new GeofenceReceiver();
-        lbc.registerReceiver(geofenceReceiver, new IntentFilter(GEOFENCE_TRIGGERED));
+        lbc.registerReceiver(geofenceReceiver, new IntentFilter(ACTION_GEOFENCE_TRIGGERED));
     }
 
     /**

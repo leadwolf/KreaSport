@@ -3,8 +3,10 @@ package com.ccaroni.kreasport.background.rebuild.geofence;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
@@ -24,7 +26,7 @@ import java.util.List;
 
 /**
  * Created by Master on 19/08/2017.
- * This intent service is always running and receives the intents triggered by the geofences. It then rebroadcasts them using the {@link #GEOFENCE_TRIGGERED} id.
+ * This intent service is always running and receives the intents triggered by the geofences. It then rebroadcasts them using the {@link #ACTION_GEOFENCE_TRIGGERED} id.
  */
 public class GeofenceTransitionsIntentService extends IntentService {
 
@@ -35,10 +37,21 @@ public class GeofenceTransitionsIntentService extends IntentService {
     /**
      * The action that we send the geofence to
      */
-    public static final String GEOFENCE_TRIGGERED = KEY_BASE + "geofence_triggered";
+    public static final String ACTION_GEOFENCE_TRIGGERED = KEY_BASE + "geofence_triggered";
 
     public GeofenceTransitionsIntentService() {
         super(TAG);
+    }
+
+    /**
+     * @param geofenceListener the instance that will receive geofence trigger callbacks and provide the {@link LocalBroadcastManager}
+     * @return a {@link GeofenceListener} that is registered with {@link LocalBroadcastManager} (from the context of locationListener) that will callback with the IDs of the
+     * triggered geofences
+     */
+    public static GeofenceReceiver getLocationReceiver(GeofenceListener geofenceListener) {
+        GeofenceReceiver geofenceReceiver = new GeofenceReceiver(geofenceListener);
+        geofenceReceiver.registerWithLocalBroadcastManager(geofenceListener.getContext());
+        return geofenceReceiver;
     }
 
     /**
@@ -79,7 +92,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         for (Geofence geofence : triggeringGeofences) {
             Log.d(TAG, "sending geofence to " + ExploreActivity.class.getSimpleName() + " : " + geofence.getRequestId());
 
-            Intent resendIntent = new Intent(GEOFENCE_TRIGGERED); //Send to the receiver listening for this in ExploreActivity
+            Intent resendIntent = new Intent(ACTION_GEOFENCE_TRIGGERED); //Send to the receiver listening for this in ExploreActivity
             resendIntent.putExtra(KEY_GEOFENCE_ID, geofence.getRequestId());
             LocalBroadcastManager.getInstance(this).sendBroadcast(resendIntent);
         }
@@ -168,6 +181,50 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 return getString(R.string.geofence_transition_exited);
             default:
                 return getString(R.string.unknown_geofence_transition);
+        }
+    }
+
+    public interface GeofenceListener {
+        void onGeofenceTriggered(String geofenceID);
+
+        Context getContext();
+    }
+
+    public static class GeofenceReceiver extends BroadcastReceiver {
+
+        private GeofenceListener geofenceListener;
+
+        public GeofenceReceiver(GeofenceListener geofenceListener) {
+            this.geofenceListener = geofenceListener;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String geofenceID = intent.getStringExtra(KEY_GEOFENCE_ID);
+            if (geofenceID == null) {
+                Log.d(TAG, "received geofence triggered broadcast but id was null");
+                return;
+            }
+
+            this.geofenceListener.onGeofenceTriggered(geofenceID);
+        }
+
+        /**
+         * Registers this instance with the {@link LocalBroadcastManager}
+         *
+         * @param context the context to get the {@link LocalBroadcastManager} with
+         */
+        public void registerWithLocalBroadcastManager(Context context) {
+            LocalBroadcastManager.getInstance(context).registerReceiver(this, new IntentFilter(ACTION_GEOFENCE_TRIGGERED));
+        }
+
+        /**
+         * Unregisters this instance from the LBC to avoid memory leaks
+         *
+         * @param geofenceListener the listener that will provide the context to access the LBC
+         */
+        public void unregisterFromLocalBroadcastManager(GeofenceListener geofenceListener) {
+            LocalBroadcastManager.getInstance(geofenceListener.getContext()).unregisterReceiver(this);
         }
     }
 }

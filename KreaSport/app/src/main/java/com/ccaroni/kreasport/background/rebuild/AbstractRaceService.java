@@ -179,7 +179,6 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
 
         initAsForegroundService();
 
-        // TODO
         // init location service
         initLocationUpdates();
         // init geofence service
