@@ -10,31 +10,44 @@ import android.util.Log;
 import com.ccaroni.kreasport.background.rebuild.AbstractRaceService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
-import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
+import com.ccaroni.kreasport.background.rebuild.location.BaseLocationService;
+import com.ccaroni.kreasport.background.rebuild.location.GoogleLocationService;
 
 /**
  * Created by Master on 02/02/2018.
  */
 
-public class RaceService extends AbstractRaceService {
+public class RaceService extends AbstractRaceService implements BaseLocationService.LocationListener {
 
     private static final String TAG = RaceService.class.getSimpleName();
 
 
-    private LocationUtils mLocationUtils;
     private GeofenceUtils mGeofenceUtils;
     private GeofenceReceiver geofenceReceiver;
 
+    /**
+     * The intent bound to start/stop {@link GoogleLocationService}
+     */
+    private Intent locationServiceIntent;
 
+    // Global to avoid GC
+    private BaseLocationService.LocationReceiver locationReceiver;
+
+
+    /**
+     * Starts the service with {@link #locationServiceIntent}
+     */
     @Override
     public void startLocationUpdates() {
-        // TODO
-
+        startService(this.locationServiceIntent);
     }
 
+    /**
+     * Stops the service with {@link #locationServiceIntent}
+     */
     @Override
     public void stopLocationUpdates() {
-        // TODO
+        stopService(this.locationServiceIntent);
 
     }
 
@@ -50,10 +63,16 @@ public class RaceService extends AbstractRaceService {
 
     }
 
+
+    /**
+     * Registers {@link #locationReceiver} and calls {@link #startLocationUpdates()}
+     */
     @Override
     protected void initLocationUpdates() {
-        // TODO
+        this.locationReceiver = BaseLocationService.getLocationReceiver(this);
 
+        this.locationServiceIntent = new Intent(this, GoogleLocationService.class);
+        startLocationUpdates();
     }
 
     @Override
@@ -70,6 +89,19 @@ public class RaceService extends AbstractRaceService {
         super.onDestroy();
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(geofenceReceiver);
+
+        this.stopLocationUpdates();
+        this.locationReceiver.unregisterFromLocalBroadcastManager(this);
+    }
+
+    @Override
+    public void onLocationReceived(Location location) {
+        // TODO
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
     /**
