@@ -34,7 +34,7 @@ public class GoogleLocationService extends BaseLocationService {
 
     private static final String TAG = GoogleLocationService.class.getSimpleName();
 
-    
+
     private FusedLocationProviderClient mFusedLocationClient;
 
     private SettingsClient mSettingsClient;
@@ -91,7 +91,7 @@ public class GoogleLocationService extends BaseLocationService {
                 for (Location location : locationResult.getLocations()) {
                     Log.d(TAG, "got location result: " + location.toString());
 
-                    writeLocation(location);
+                    broadcastLocation(location);
                 }
             }
         };

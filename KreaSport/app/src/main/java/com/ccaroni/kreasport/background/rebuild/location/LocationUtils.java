@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 
 import static android.content.Context.MODE_PRIVATE;
 
+@Deprecated
 public class LocationUtils {
 
     private static final String TAG = LocationUtils.class.getSimpleName();
