@@ -22,7 +22,7 @@ import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.background.rebuild.RaceService;
+import com.ccaroni.kreasport.background.rebuild.impl.RaceService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;

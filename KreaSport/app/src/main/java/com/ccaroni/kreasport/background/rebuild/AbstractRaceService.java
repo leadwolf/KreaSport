@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.background.rebuild.impl.RaceService;
 import com.ccaroni.kreasport.race.impl.RaceHolder;
 import com.ccaroni.kreasport.utils.NotificationUtil;
 import com.ccaroni.kreasport.view.activities.ExploreActivity;
@@ -24,7 +25,7 @@ import com.ccaroni.kreasport.view.activities.ExploreActivity;
  * <p>
  * Location and geofence services should be handled by subclasses.
  */
-abstract class AbstractRaceService extends Service implements IRaceService {
+public abstract class AbstractRaceService extends Service implements IRaceService {
 
     public static final String NOTIFICATION_CHANNEL_ID_RACE = "com.ccaroni.kreasport.NOTIF_CHANNEL";
     private static final int ONGOING_NOTIFICATION_ID = 42;

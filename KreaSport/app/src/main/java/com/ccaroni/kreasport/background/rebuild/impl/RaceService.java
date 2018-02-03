@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.background.rebuild;
+package com.ccaroni.kreasport.background.rebuild.impl;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.ccaroni.kreasport.background.rebuild.AbstractRaceService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.background.rebuild.geofence.GeofenceUtils;
 import com.ccaroni.kreasport.background.rebuild.location.LocationUtils;
