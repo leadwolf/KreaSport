@@ -2,6 +2,9 @@
 
 Android app for orienteering races with Spring server to host and manage the data. Created as part of my studies at IUT A, Lille 1 Univeristy. I continued development on this project for my Erasmus project work at Glasgow Caledonian Univeristy. Read the [project report](doc/Kreasport%20Report.pdf) to learn more.
 
+## Screenshots
+![image](screens/preview.png)
+
 ## Built With
 
 * [Spring](https://spring.io/) - The web framework used for security, data and authentication.
