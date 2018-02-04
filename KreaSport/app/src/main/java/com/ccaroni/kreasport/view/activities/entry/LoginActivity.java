@@ -19,6 +19,7 @@ import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.view.activities.old.HomeActivity;
+import com.ccaroni.kreasport.view.activities.rebuild.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -140,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
 
         CredentialsManager.downloadUserId(this);
 
-        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
