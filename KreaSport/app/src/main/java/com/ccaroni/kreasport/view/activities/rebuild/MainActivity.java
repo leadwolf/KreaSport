@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,9 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final long ID_FIRST_SELECTED_ITEM = 1;
+
 
     private ActivityMainBinding binding;
     private Drawer drawer;
+
+    private String[] fragmentTAGS;
+    private Fragment[] fragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +56,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        this.initFragments();
+
         // this activity always launches the home fragment
-        this.selectDrawerItem(1);
+        this.selectDrawerItem(ID_FIRST_SELECTED_ITEM, (int) (ID_FIRST_SELECTED_ITEM - 1));
+    }
+
+    private void initFragments() {
+        HomeFragment fragment1 = new HomeFragment();
+        ExploreFragment fragment2 = new ExploreFragment();
+        ProfileFragment fragment3 = new ProfileFragment();
+        OfflineAreasFragment fragment4 = new OfflineAreasFragment();
+
+        this.fragments = new Fragment[]{fragment1, fragment2, fragment3, fragment4};
+        this.fragmentTAGS = new String[]{"fragment0_tag", "fragment1_tag", "fragment2_tag", "fragment3_tag"};
     }
 
     private void setDrawer() {
@@ -71,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         PrimaryDrawerItem drawerItemHome = new PrimaryDrawerItem()
-                .withIdentifier(1)
+                .withIdentifier(ID_FIRST_SELECTED_ITEM)
                 .withName("Home")
                 .withIcon(R.drawable.ic_home_black_24dp);
 
@@ -103,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 .withActionBarDrawerToggle(true)
                 .withActionBarDrawerToggleAnimated(true)
                 .withCloseOnClick(true)
-                .withSelectedItem(1)
+                .withSelectedItem(ID_FIRST_SELECTED_ITEM)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
                         drawerItemHome,
@@ -116,48 +134,40 @@ public class MainActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        return MainActivity.this.selectDrawerItem(position);
+                        return MainActivity.this.selectDrawerItem(position, position - 1);
                     }
                 })
                 .build();
     }
 
-    private boolean selectDrawerItem(int position) {
-        Log.d(TAG, "selected item " + position);
+    private boolean selectDrawerItem(long id, int realPosition) {
+        Log.d(TAG, "selected item position: " + realPosition);
 
 
-        Fragment fragment = null;
-        Class fragmentClass;
-        switch (position) {
-            case 1:
-                fragmentClass = HomeFragment.class;
-                break;
-            case 2:
-                fragmentClass = ExploreFragment.class;
-                break;
-            case 3:
-                fragmentClass = ProfileFragment.class;
-                break;
-            case 4:
-                fragmentClass = OfflineAreasFragment.class;
-                break;
-            default:
-                fragmentClass = HomeFragment.class;
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+
+        // Add the fragments only once if array haven't fragment
+        if (supportFragmentManager.findFragmentByTag(fragmentTAGS[realPosition]) == null) {
+            fragmentTransaction.add(R.id.flContent, fragments[realPosition], fragmentTAGS[realPosition])
+                    .addToBackStack(fragmentTAGS[realPosition]);
         }
 
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        // Hiding & Showing fragments
+        for (int fragIdx = 0; fragIdx < fragments.length; fragIdx++) {
+            if (fragIdx == realPosition) {
+                fragmentTransaction.show(fragments[fragIdx]);
+            } else {
+                // Check if the fragment is added and then hide it
+                if (supportFragmentManager.findFragmentByTag(fragmentTAGS[fragIdx]) != null) {
+                    fragmentTransaction.hide(fragments[fragIdx]);
+                    Log.d(TAG, "hiding frag at position: " + fragIdx + " " + fragmentTAGS[fragIdx]);
+                }
+            }
         }
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-
+        fragmentTransaction.commit();
+        this.drawer.setSelection(id, false);
         return false;
     }
 
