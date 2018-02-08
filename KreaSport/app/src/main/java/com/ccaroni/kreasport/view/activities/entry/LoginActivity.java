@@ -19,7 +19,7 @@ import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 import com.ccaroni.kreasport.view.activities.old.HomeActivity;
-import com.ccaroni.kreasport.view.activities.rebuild.MainActivity;
+import com.ccaroni.kreasport.view.rebuild.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
 

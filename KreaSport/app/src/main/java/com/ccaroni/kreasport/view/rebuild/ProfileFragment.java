@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.view.activities.rebuild;
+package com.ccaroni.kreasport.view.rebuild;
 
 
 import android.os.Bundle;
@@ -9,16 +9,22 @@ import android.view.ViewGroup;
 
 import com.ccaroni.kreasport.R;
 
-public class OfflineAreasFragment extends Fragment {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class ProfileFragment extends Fragment {
 
-    public OfflineAreasFragment() {
+
+    public ProfileFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_offline_areas, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
 }

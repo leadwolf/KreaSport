@@ -1,25 +1,24 @@
-package com.ccaroni.kreasport.view.activities.rebuild;
+package com.ccaroni.kreasport.view.rebuild;
 
-import android.support.v4.app.Fragment;
+
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ccaroni.kreasport.R;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class HomeFragment extends Fragment {
+public class OfflineAreasFragment extends Fragment {
 
-    public HomeFragment() {
+    public OfflineAreasFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_rebuild, container, false);
+        return inflater.inflate(R.layout.fragment_offline_areas, container, false);
     }
+
 }

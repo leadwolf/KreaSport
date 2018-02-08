@@ -150,7 +150,7 @@
                 android:value="com.ccaroni.kreasport.view.activities.records.MyRecordsActivity"/>
         </activity>
         <activity
-            android:name=".view.activities.rebuild.MainActivity"
+            android:name=".view.rebuild.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
