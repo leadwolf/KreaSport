@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:originActivity="com.ccaroni.kreasport.view.activities.old.ExploreActivity">
+            tools:originActivity="com.ccaroni.kreasport.legacy.view.activities.menu.ExploreActivity">
 
             <include
                 android:id="@+id/layout_explore"

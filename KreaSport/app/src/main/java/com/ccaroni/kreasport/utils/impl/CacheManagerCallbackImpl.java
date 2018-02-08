@@ -8,9 +8,9 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.legacy.data.realm.DownloadedArea;
 import com.ccaroni.kreasport.utils.CacheManagerCallback;
-import com.ccaroni.kreasport.view.activities.old.OfflineAreasActivity;
+import com.ccaroni.kreasport.legacy.view.activities.menu.OfflineAreasActivity;
 
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 
