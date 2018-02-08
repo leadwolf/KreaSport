@@ -141,32 +141,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean selectDrawerItem(long id, int realPosition) {
-        Log.d(TAG, "selected item position: " + realPosition);
-
-
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
 
-        // Add the fragments only once if array haven't fragment
-        if (supportFragmentManager.findFragmentByTag(fragmentTAGS[realPosition]) == null) {
-            fragmentTransaction.add(R.id.flContent, fragments[realPosition], fragmentTAGS[realPosition])
-                    .addToBackStack(fragmentTAGS[realPosition]);
+        if (realPosition == 0) {
+            supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
-
-        // Hiding & Showing fragments
-        for (int fragIdx = 0; fragIdx < fragments.length; fragIdx++) {
-            if (fragIdx == realPosition) {
-                fragmentTransaction.show(fragments[fragIdx]);
-            } else {
-                // Check if the fragment is added and then hide it
-                if (supportFragmentManager.findFragmentByTag(fragmentTAGS[fragIdx]) != null) {
-                    fragmentTransaction.hide(fragments[fragIdx]);
-                    Log.d(TAG, "hiding frag at position: " + fragIdx + " " + fragmentTAGS[fragIdx]);
-                }
-            }
+        fragmentTransaction.replace(R.id.flContent, fragments[realPosition], fragmentTAGS[realPosition]);
+        if (realPosition != 0) {
+            fragmentTransaction.addToBackStack(fragmentTAGS[realPosition]);
         }
 
         fragmentTransaction.commit();
+
         this.drawer.setSelection(id, false);
         return false;
     }
