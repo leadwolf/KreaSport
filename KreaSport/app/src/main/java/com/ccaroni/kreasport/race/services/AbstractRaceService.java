@@ -14,11 +14,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.legacy.race.impl.RaceHolder;
-import com.ccaroni.kreasport.legacy.view.activities.menu.ExploreActivity;
 import com.ccaroni.kreasport.race.events.GeofenceTriggered;
 import com.ccaroni.kreasport.race.events.LocationChanged;
 import com.ccaroni.kreasport.race.services.impl.RaceService;
+import com.ccaroni.kreasport.race.view.activity.MainActivity;
 import com.ccaroni.kreasport.utils.NotificationUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,7 +107,9 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
      */
     private void initPendingIntentsForNotification() {
         // setup on notification click
-        Intent onClickIntent = new Intent(this, ExploreActivity.class);
+        Intent onClickIntent = new Intent(this, MainActivity.class);
+        // TODO add intent go to fragment explore
+
         piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
 
         // setup stop race button
@@ -121,7 +122,8 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
      * Initializes {@link #mNotifyBuilder} with the proper styles, notification channels
      */
     private void initNotificationBuilder() {
-        String raceTitle = RaceHolder.getInstance().getCurrentRaceTitle();
+        String raceTitle = "";
+        // TODO get from DAO
 
         mNotifyBuilder =
                 new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_RACE)
@@ -150,10 +152,12 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
      * @return the updated notification
      */
     public Notification updateRelevantNotificationFields() {
-        String raceTitle = RaceHolder.getInstance().getCurrentRaceTitle();
+        String raceTitle = "";
+        // TODO get from DAO
 
         // TODO use xml to format this
-        String geofenceProgression = "Progression " + RaceHolder.getInstance().getCheckpointProgression() + "/" + RaceHolder.getInstance().getNumberCheckpoints();
+        String geofenceProgression = "Progression ";
+        // TODO get progression from race holder
 
         String timeString = getElapsedTime();
 
@@ -172,7 +176,10 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
     }
 
     private String getElapsedTime() {
-        final long elapsedTime = SystemClock.elapsedRealtime() - RaceHolder.getInstance().getTimeStart();
+//        final long elapsedTime = SystemClock.elapsedRealtime() - RaceHolder.getInstance().getTimeStart();
+        final long elapsedTime = SystemClock.elapsedRealtime();
+        // TODO get start time of current race
+
         return formatElapsedTime(elapsedTime);
     }
 

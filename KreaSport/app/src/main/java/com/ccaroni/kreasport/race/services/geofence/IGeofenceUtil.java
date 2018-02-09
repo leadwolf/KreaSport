@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.race.services.geofence;
 
-import com.ccaroni.kreasport.legacy.data.realm.RealmCheckpoint;
+
+import com.ccaroni.kreasport.race.dao.DummyCheckpoint;
 
 /**
  * Created by Master on 03/02/2018.
@@ -11,10 +12,10 @@ public interface IGeofenceUtil {
     /**
      * Adds a geofence to the location from the checkpoint
      *
-     * @param checkpoint
+     * @param dummyCheckpoint
      */
     @SuppressWarnings({"MissingPermission"})
-    void addGeofence(RealmCheckpoint checkpoint);
+    void addGeofence(DummyCheckpoint dummyCheckpoint);
 
     /**
      * Removes all previous geofences

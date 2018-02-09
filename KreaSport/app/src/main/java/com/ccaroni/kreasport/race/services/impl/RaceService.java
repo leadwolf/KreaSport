@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.race.services.impl;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.util.Log;
 
 import com.ccaroni.kreasport.race.events.GeofenceTriggered;
 import com.ccaroni.kreasport.race.events.LocationChanged;
@@ -88,6 +89,7 @@ public class RaceService extends AbstractRaceService {
     @Override
     protected void onLocationChanged(LocationChanged locationChanged) {
         // TODO
+        Log.d(TAG, "onLocationChanged: received new location");
 
     }
 
@@ -95,7 +97,7 @@ public class RaceService extends AbstractRaceService {
     @Override
     protected void onGeofenceTriggered(GeofenceTriggered geofenceTriggered) {
         // TODO
-
+        Log.d(TAG, "onGeofenceTriggered: received geofence trigger");
     }
 
 }

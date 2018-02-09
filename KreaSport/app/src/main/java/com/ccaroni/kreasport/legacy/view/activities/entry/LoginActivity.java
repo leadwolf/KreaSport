@@ -1,8 +1,8 @@
 package com.ccaroni.kreasport.legacy.view.activities.entry;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,17 +17,36 @@ import com.auth0.android.lock.utils.LockException;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.utils.CredentialsManager;
-import com.ccaroni.kreasport.legacy.view.activities.menu.HomeActivity;
 import com.ccaroni.kreasport.race.view.activity.MainActivity;
+import com.ccaroni.kreasport.utils.CredentialsManager;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final String LOG = LoginActivity.class.getSimpleName();
+    private final LockCallback mCallback = new AuthenticationCallback() {
+        @Override
+        public void onAuthentication(Credentials credentials) {
+            Log.d(LOG, "Login - Success");
+            CredentialsManager.saveCredentials(LoginActivity.this, credentials);
 
+            CredentialsManager.downloadUserId(LoginActivity.this);
+
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
+
+        @Override
+        public void onCanceled() {
+            Log.d(LOG, "Login - Cancelled");
+        }
+
+        @Override
+        public void onError(LockException error) {
+            Log.d(LOG, "Login - Error:" + error.toString());
+        }
+    };
     private Auth0 auth0;
     private String idToken;
-
     private Lock mLock;
 
     @Override
@@ -99,29 +118,6 @@ public class LoginActivity extends AppCompatActivity {
         mLock = null;
     }
 
-    private final LockCallback mCallback = new AuthenticationCallback() {
-        @Override
-        public void onAuthentication(Credentials credentials) {
-            Log.d(LOG, "Login - Success");
-            CredentialsManager.saveCredentials(LoginActivity.this, credentials);
-
-            CredentialsManager.downloadUserId(LoginActivity.this);
-
-            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            finish();
-        }
-
-        @Override
-        public void onCanceled() {
-            Log.d(LOG, "Login - Cancelled");
-        }
-
-        @Override
-        public void onError(LockException error) {
-            Log.d(LOG, "Login - Error:" + error.toString());
-        }
-    };
-
     private void startLockWidget() {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -134,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Saves the userId with {@link CredentialsManager}, finishes this activity and goes to {@link HomeActivity}.
+     * Saves the userId with {@link CredentialsManager}, finishes this activity and goes to {@link MainActivity}.
      */
     private void autoLoginRedirect() {
         Log.d(LOG, "Login - Automatic login success");

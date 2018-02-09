@@ -14,8 +14,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.legacy.view.activities.menu.ExploreActivity;
 import com.ccaroni.kreasport.race.events.GeofenceTriggered;
+import com.ccaroni.kreasport.race.view.activity.MainActivity;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -72,7 +72,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     private void notifySubscribers(List<Geofence> triggeringGeofences) {
         for (Geofence geofence : triggeringGeofences) {
-            Log.d(TAG, "sending geofence to " + ExploreActivity.class.getSimpleName() + " : " + geofence.getRequestId());
+            Log.d(TAG, "notifySubscribers: for geofence: " + geofence.getRequestId());
 
             EventBus.getDefault().post(new GeofenceTriggered(geofence.getRequestId()));
         }
@@ -105,15 +105,16 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * Posts a notification in the notification bar when a transition is detected.
      * If the user clicks the notification, control goes to the MainActivity.
      */
+    @Deprecated
     private void sendNotification(String notificationDetails) {
         // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = new Intent(getApplicationContext(), ExploreActivity.class);
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
 
         // Construct a task stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 
         // Add the main Activity to the task stack as the parent.
-        stackBuilder.addParentStack(ExploreActivity.class);
+        stackBuilder.addParentStack(MainActivity.class);
 
         // Push the content Intent onto the stack.
         stackBuilder.addNextIntent(notificationIntent);

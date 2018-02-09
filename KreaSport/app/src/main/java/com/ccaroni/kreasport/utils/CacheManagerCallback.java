@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.util.Log;
 
-import com.ccaroni.kreasport.legacy.data.realm.DownloadedArea;
+
+import com.ccaroni.kreasport.race.dao.DummyDownloadedArea;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
@@ -32,9 +33,9 @@ public abstract class CacheManagerCallback implements CacheManager.CacheManagerC
     protected NotificationManager mNotifyMgr;
 
     protected int possibleTiles;
-    protected DownloadedArea downloadingArea;
+    protected DummyDownloadedArea downloadingArea;
 
-    public CacheManagerCallback(Activity activity, SqliteArchiveTileWriter writer, DownloadedArea downloadingArea) {
+    public CacheManagerCallback(Activity activity, SqliteArchiveTileWriter writer, DummyDownloadedArea downloadingArea) {
         if (activity instanceof CacheCommunicationInterface) {
             this.cacheCommunicationInterface = (CacheCommunicationInterface) activity;
         } else {
@@ -82,14 +83,13 @@ public abstract class CacheManagerCallback implements CacheManager.CacheManagerC
      */
     public interface CacheCommunicationInterface {
 
-        void onTaskComplete(DownloadedArea downloadedArea);
+        void onTaskComplete(DummyDownloadedArea downloadedArea);
 
         /**
-         *
-         * @param downloadedArea
+         *  @param downloadedArea
          * @param progressPercentage as a percentage of total
          */
-        void updateProgress(DownloadedArea downloadedArea, double progressPercentage);
+        void updateProgress(DummyDownloadedArea downloadedArea, double progressPercentage);
 
     }
 }

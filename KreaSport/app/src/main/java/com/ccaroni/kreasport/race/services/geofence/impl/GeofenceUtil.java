@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.ccaroni.kreasport.race.dao.DummyCheckpoint;
 import com.ccaroni.kreasport.race.services.geofence.GeofenceErrorMessages;
 import com.ccaroni.kreasport.race.services.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.race.services.geofence.IGeofenceUtil;
-import com.ccaroni.kreasport.legacy.data.realm.RealmCheckpoint;
 import com.ccaroni.kreasport.utils.Constants;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -61,7 +61,7 @@ public class GeofenceUtil implements OnCompleteListener<Void>, IGeofenceUtil {
      * Builds and returns a GeofencingRequest. Specifies the list of geofences to be monitored.
      * Also specifies how the geofence notifications are initially triggered.
      */
-    private GeofencingRequest getGeofenceRequest(RealmCheckpoint checkpoint) {
+    private GeofencingRequest getGeofenceRequest(DummyCheckpoint checkpoint) {
         Log.d(TAG, "building geofence request for checkpoint: " + checkpoint.getId() + " " + checkpoint.getTitle());
 
         if (!checkpoint.getId().equals("")) {
@@ -100,18 +100,18 @@ public class GeofenceUtil implements OnCompleteListener<Void>, IGeofenceUtil {
     /**
      * Entry point to add a geofence
      *
-     * @param checkpoint
+     * @param dummyCheckpoint
      */
     @Override
     @SuppressWarnings({"MissingPermission"})
-    public void addGeofence(RealmCheckpoint checkpoint) {
-        mGeofenceClient.addGeofences(getGeofenceRequest(checkpoint), getGeofencePendingIntent())
+    public void addGeofence(DummyCheckpoint dummyCheckpoint) {
+        mGeofenceClient.addGeofences(getGeofenceRequest(dummyCheckpoint), getGeofencePendingIntent())
                 .addOnCompleteListener(this);
     }
 
 
     /**
-     * Runs when the result of calling {@link #addGeofence(RealmCheckpoint)} and/or {@link #removePreviousGeofences()}
+     * Runs when the result of calling {@link IGeofenceUtil#addGeofence(DummyCheckpoint)} and/or {@link #removePreviousGeofences()}
      * is available.
      *
      * @param task the resulting Task, containing either a result or error.

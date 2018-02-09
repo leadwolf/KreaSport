@@ -8,9 +8,9 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.legacy.data.realm.DownloadedArea;
+import com.ccaroni.kreasport.race.dao.DummyDownloadedArea;
+import com.ccaroni.kreasport.race.view.activity.MainActivity;
 import com.ccaroni.kreasport.utils.CacheManagerCallback;
-import com.ccaroni.kreasport.legacy.view.activities.menu.OfflineAreasActivity;
 
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
 
@@ -22,7 +22,7 @@ public class CacheManagerCallbackImpl extends CacheManagerCallback {
 
     private final String LOG = CacheManagerCallbackImpl.class.getSimpleName();
 
-    public CacheManagerCallbackImpl(Activity activity, SqliteArchiveTileWriter writer, DownloadedArea downloadingArea) {
+    public CacheManagerCallbackImpl(Activity activity, SqliteArchiveTileWriter writer, DummyDownloadedArea downloadingArea) {
         super(activity, writer, downloadingArea);
     }
 
@@ -100,16 +100,17 @@ public class CacheManagerCallbackImpl extends CacheManagerCallback {
     }
 
     /**
-     * Creates an intent for the notification to lead to {@link OfflineAreasActivity}
+     * Creates an intent for the notification to lead to offline area activity
      *
      * @param mBuilder
      * @return the builder inputted with the changes.
      */
     private NotificationCompat.Builder setPendingIntentForBuilder(NotificationCompat.Builder mBuilder) {
-        Intent resultIntent = new Intent(activity.getApplicationContext(), OfflineAreasActivity.class);
+        Intent resultIntent = new Intent(activity.getApplicationContext(), MainActivity.class);
+        // TODO change to offlineAreaActivity
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity.getApplicationContext()); // to preserve navigation
-        stackBuilder.addParentStack(OfflineAreasActivity.class); // adds all parents of OfflineAreas to the stack
+        stackBuilder.addParentStack(MainActivity.class); // adds all parents of OfflineAreas to the stack
         stackBuilder.addNextIntent(resultIntent); // sets the the most recent intent to the intent we just created
 
         PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT); // get a pending intent from the stack, will get the one we just created

@@ -56,108 +56,16 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".legacy.view.activities.menu.HomeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.Dark">
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.menu.ExploreActivity"
-            android:parentActivityName=".legacy.view.activities.menu.HomeActivity"
-            android:theme="@style/AppTheme.Dark">
 
-            <!-- The meta-data element is needed for versions lower than 4.1 -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.HomeActivity"/>
-        </activity>
         <activity
             android:name=".legacy.view.activities.entry.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity
-            android:name=".legacy.view.activities.menu.ProfileActivity"
-            android:label="@string/title_activity_scrolling"
-            android:parentActivityName=".legacy.view.activities.menu.HomeActivity"
-            android:theme="@style/AppTheme.Dark">
 
-            <!-- Parent Activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.HomeActivity"/>
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.downloads.DownloadedRacesActivity"
-            android:label="@string/title_activity_downloaded_races"
-            android:parentActivityName=".legacy.view.activities.menu.ProfileActivity"
-            android:theme="@style/AppTheme.Dark">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.ProfileActivity"/>
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.race.RiddleActivity"
-            android:label="@string/title_activity_riddle"
-            android:parentActivityName=".legacy.view.activities.menu.ExploreActivity"
-            android:theme="@style/AppTheme.Dark">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.ExploreActivity"/>
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.records.MyRecordsActivity"
-            android:label="@string/title_activity_my_records"
-            android:parentActivityName=".legacy.view.activities.menu.ProfileActivity"
-            android:theme="@style/AppTheme.Dark">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.ProfileActivity"/>
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.menu.OfflineAreasActivity"
-            android:label="@string/title_activity_offline_areas"
-            android:parentActivityName=".legacy.view.activities.menu.HomeActivity"
-            android:theme="@style/AppTheme.Dark">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.HomeActivity"/>
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.downloads.AreaSelectionActivity"
-            android:label="@string/title_activity_dummy"
-            android:parentActivityName=".legacy.view.activities.menu.OfflineAreasActivity"
-            android:theme="@style/AppTheme.Dark">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.OfflineAreasActivity"/>
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.downloads.DownloadedAreaActivity"
-            android:label="@string/title_activity_downloaded_area"
-            android:parentActivityName=".legacy.view.activities.menu.OfflineAreasActivity"
-            android:theme="@style/AppTheme.Dark">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.menu.OfflineAreasActivity"/>
-        </activity>
-        <activity
-            android:name=".legacy.view.activities.records.RecordActivity"
-            android:label="@string/title_activity_record"
-            android:parentActivityName=".legacy.view.activities.records.MyRecordsActivity"
-            android:theme="@style/AppTheme.Dark">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".legacy.view.activities.records.MyRecordsActivity"/>
-        </activity>
         <activity
             android:name=".race.view.activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
     </application>
 

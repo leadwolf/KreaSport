@@ -23,16 +23,6 @@ public class RetrofitService {
     public static final String REMOTE_URL = "http://kreasport.herokuapp.com/";
     public static final String LOCAL_URL = "http://10.0.2.2:8080/";
 
-    public static KreasportAPI getKreasportAPI(boolean useLocalhost, String accessToken) {
-        if (useLocalhost) {
-            Log.d(LOG, "using localhost server for requests");
-            return getClient(LOCAL_URL, accessToken).create(KreasportAPI.class);
-        } else {
-            Log.d(LOG, "using remote server for requests");
-            return getClient(REMOTE_URL, accessToken).create(KreasportAPI.class);
-        }
-    }
-
     /**
      * @param baseUrl
      * @param accessToken
