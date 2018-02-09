@@ -5,7 +5,7 @@ import android.app.NotificationManager;
 import android.util.Log;
 
 
-import com.ccaroni.kreasport.race.dao.DummyDownloadedArea;
+import com.ccaroni.kreasport.race.data.dummy.DummyDownloadedArea;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;

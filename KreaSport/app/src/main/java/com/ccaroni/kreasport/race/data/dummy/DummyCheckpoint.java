@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.race.dao;
+package com.ccaroni.kreasport.race.data.dummy;
 
 /**
  * Created by Master on 09/02/2018.
