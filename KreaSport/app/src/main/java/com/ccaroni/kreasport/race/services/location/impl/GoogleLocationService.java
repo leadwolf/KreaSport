@@ -92,7 +92,7 @@ public class GoogleLocationService extends BaseLocationService {
                 for (Location location : locationResult.getLocations()) {
                     Log.d(TAG, "got location result: " + location.toString());
 
-                    broadcastLocation(location);
+                    notifySubscribers(location);
                 }
             }
         };

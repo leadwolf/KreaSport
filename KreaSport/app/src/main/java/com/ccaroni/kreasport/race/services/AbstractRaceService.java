@@ -14,10 +14,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.race.services.impl.RaceService;
 import com.ccaroni.kreasport.legacy.race.impl.RaceHolder;
-import com.ccaroni.kreasport.utils.NotificationUtil;
 import com.ccaroni.kreasport.legacy.view.activities.menu.ExploreActivity;
+import com.ccaroni.kreasport.race.events.GeofenceTriggered;
+import com.ccaroni.kreasport.race.events.LocationChanged;
+import com.ccaroni.kreasport.race.services.impl.RaceService;
+import com.ccaroni.kreasport.utils.NotificationUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Master on 03/02/2018.
@@ -55,6 +59,30 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
         long hour = (millis / (1000 * 60 * 60)) % 24;
 
         return String.format("%02d:%02d:%02d", hour, minute, second);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return Service.START_STICKY;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        initAsForegroundService();
+
+        subscribeToBus();
+        // init location service
+        initLocationUpdates();
+        // init geofence service
+        initGeofenceServices();
     }
 
     /**
@@ -162,27 +190,11 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
         };
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return Service.START_STICKY;
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        initAsForegroundService();
-
-        // init location service
-        initLocationUpdates();
-        // init geofence service
-        initGeofenceServices();
+    /**
+     * Subscribes to {@link EventBus}
+     */
+    private void subscribeToBus() {
+        EventBus.getDefault().register(this);
     }
 
     /**
@@ -203,5 +215,20 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
         super.onDestroy();
 
         this.mHandler.removeMessages(HANDLER_MESSAGE);
+        EventBus.getDefault().unregister(this);
     }
+
+    /**
+     * <b>WARNING:</b> make sure to add the @Subscribe annotation
+     *
+     * @param locationChanged the new location
+     */
+    protected abstract void onLocationChanged(LocationChanged locationChanged);
+
+    /**
+     * <b>WARNING:</b> make sure to add the @Subscribe annotation
+     *
+     * @param geofenceTriggered the id for the triggered geofence
+     */
+    protected abstract void onGeofenceTriggered(GeofenceTriggered geofenceTriggered);
 }
