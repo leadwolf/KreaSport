@@ -6,7 +6,7 @@ package com.ccaroni.kreasport.data;
 
 public interface IMapItem {
 
-    String getId();
+    long getId();
 
     String getTitle();
 

@@ -16,7 +16,7 @@ public class Race extends MapItem implements IRace {
     public Race() {
     }
 
-    public List<Checkpoint> getCheckpoints() {
+    public List<Checkpoint> getDTOCheckpoints() {
         return checkpoints;
     }
 

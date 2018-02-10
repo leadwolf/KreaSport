@@ -1,0 +1,172 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8629247653363441936",
+      "lastPropertyId": "6:3105329569379749744",
+      "name": "Checkpoint",
+      "properties": [
+        {
+          "id": "1:4313782482872663670",
+          "name": "id"
+        },
+        {
+          "id": "2:7490152014602179059",
+          "name": "title"
+        },
+        {
+          "id": "3:5477674170799315650",
+          "name": "description"
+        },
+        {
+          "id": "4:3248742626891700520",
+          "name": "latitude"
+        },
+        {
+          "id": "5:3198829421770914897",
+          "name": "longitude"
+        },
+        {
+          "id": "6:3105329569379749744",
+          "indexId": "1:2090011575167016766",
+          "name": "raceId"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:8067290323590399263",
+      "lastPropertyId": "7:8046405438447192701",
+      "name": "DownloadedArea",
+      "properties": [
+        {
+          "id": "1:3078158581606587808",
+          "name": "id"
+        },
+        {
+          "id": "2:5955573720881056861",
+          "name": "name"
+        },
+        {
+          "id": "3:2636452846912883874",
+          "name": "path"
+        },
+        {
+          "id": "4:5328158185878206572",
+          "name": "size"
+        },
+        {
+          "id": "5:8121818332705194365",
+          "name": "dateDownloaded"
+        },
+        {
+          "id": "6:8079413348805210947",
+          "name": "minZoom"
+        },
+        {
+          "id": "7:8046405438447192701",
+          "indexId": "2:3874705905296693603",
+          "name": "boundingBoxId"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:126056697640767634",
+      "lastPropertyId": "5:7914637209683311795",
+      "name": "Race",
+      "properties": [
+        {
+          "id": "1:35723473900569712",
+          "name": "id"
+        },
+        {
+          "id": "2:7679831284446420151",
+          "name": "title"
+        },
+        {
+          "id": "3:7682468432228077507",
+          "name": "description"
+        },
+        {
+          "id": "4:4295006199342960656",
+          "name": "latitude"
+        },
+        {
+          "id": "5:7914637209683311795",
+          "name": "longitude"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:8186049976248634891",
+      "lastPropertyId": "5:4914832887571167768",
+      "name": "Record",
+      "properties": [
+        {
+          "id": "1:5795139495469772253",
+          "name": "id"
+        },
+        {
+          "id": "2:7224354530466222953",
+          "name": "raceId"
+        },
+        {
+          "id": "3:6017089603723144244",
+          "name": "userId"
+        },
+        {
+          "id": "4:8478072629007250710",
+          "name": "timeExpired"
+        },
+        {
+          "id": "5:4914832887571167768",
+          "name": "dateTime"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:6915914344771121376",
+      "lastPropertyId": "5:871444767927632414",
+      "name": "Rectangle",
+      "properties": [
+        {
+          "id": "1:9032726955383255183",
+          "name": "id"
+        },
+        {
+          "id": "2:4354308828953049919",
+          "name": "x"
+        },
+        {
+          "id": "3:7810228631957214557",
+          "name": "y"
+        },
+        {
+          "id": "4:4708113355638156259",
+          "name": "width"
+        },
+        {
+          "id": "5:871444767927632414",
+          "name": "height"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "5:6915914344771121376",
+  "lastIndexId": "2:3874705905296693603",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

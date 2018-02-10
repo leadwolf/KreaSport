@@ -3,21 +3,21 @@ package com.ccaroni.kreasport.data;
 import android.support.constraint.solver.widgets.Rectangle;
 
 /**
- * Created by Master on 09/02/2018.
+ * Created by Master on 10/02/2018.
  */
 
 public interface IDownloadedArea {
-    void setId(String id);
+    long getId();
 
-    void setBoundingBox(Rectangle boundingBox);
+    Rectangle getDTOBoundingBox();
 
-    void setName(String name);
+    String getName();
 
-    void setPath(String path);
+    String getPath();
 
-    void setSize(double size);
+    double getSize();
 
-    void setDateDownloaded(String dateDownloaded);
+    String getDateDownloaded();
 
-    void setMinZoom(int minZoom);
+    int getMinZoom();
 }

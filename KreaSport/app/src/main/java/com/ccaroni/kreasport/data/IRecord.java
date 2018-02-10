@@ -5,7 +5,7 @@ package com.ccaroni.kreasport.data;
  */
 
 public interface IRecord {
-    String getId();
+    long getId();
 
     String getRaceId();
 
