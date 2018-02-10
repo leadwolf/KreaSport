@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.data.domain;
 
 
+import com.ccaroni.kreasport.data.Converter;
 import com.ccaroni.kreasport.data.IDownloadedArea;
 
 import io.objectbox.annotation.Entity;
@@ -39,19 +40,19 @@ public class DownloadedArea implements IDownloadedArea {
 
     @Override
     public android.support.constraint.solver.widgets.Rectangle getDTOBoundingBox() {
-        return boundingBox.getTarget().toDTO();
+        return Converter.daoRectangleToDTO(boundingBox.getTarget());
     }
 
     public void setBoundingBoxFromDTO(Rectangle boundingBox) {
         this.boundingBox.setTarget(boundingBox);
     }
 
-    public void setBoundingBox(ToOne<Rectangle> boundingBox) {
-        this.boundingBox = boundingBox;
-    }
-
     public ToOne<Rectangle> getBoundingBox() {
         return boundingBox;
+    }
+
+    public void setBoundingBox(ToOne<Rectangle> boundingBox) {
+        this.boundingBox = boundingBox;
     }
 
     @Override

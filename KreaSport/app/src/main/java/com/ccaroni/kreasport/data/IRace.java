@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface IRace {
 
-    List<?> getDTOCheckpoints();
+    List<?> getCheckpoints();
 
 }

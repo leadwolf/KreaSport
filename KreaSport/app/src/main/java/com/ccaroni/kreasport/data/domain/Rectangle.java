@@ -60,9 +60,4 @@ public class Rectangle {
         this.height = height;
     }
 
-    public android.support.constraint.solver.widgets.Rectangle toDTO() {
-        android.support.constraint.solver.widgets.Rectangle rect = new android.support.constraint.solver.widgets.Rectangle();
-        rect.setBounds(this.x, this.y, this.width, this.height);
-        return rect;
-    }
 }

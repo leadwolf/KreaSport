@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.data.domain;
 
+import com.ccaroni.kreasport.data.Converter;
 import com.ccaroni.kreasport.data.IRace;
 
 import java.util.List;
@@ -28,9 +29,4 @@ public class Race extends MapItem implements IRace {
         this.checkpoints = checkpoints;
     }
 
-    @Override
-    public List<?> getDTOCheckpoints() {
-        // TODO
-        return null;
-    }
 }
