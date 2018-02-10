@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.race.data.dto;
+package com.ccaroni.kreasport.data.dto;
 
-import com.ccaroni.kreasport.race.data.ICheckpoint;
+import com.ccaroni.kreasport.data.ICheckpoint;
 
 /**
  * Created by Master on 09/02/2018.

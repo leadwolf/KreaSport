@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.race.data.dto;
+package com.ccaroni.kreasport.data.dto;
 
-import com.ccaroni.kreasport.race.data.IMapItem;
+import com.ccaroni.kreasport.data.IMapItem;
 
 /**
  * Created by Master on 09/02/2018.

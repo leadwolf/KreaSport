@@ -1,7 +1,7 @@
 package com.ccaroni.kreasport.race.services.geofence;
 
 
-import com.ccaroni.kreasport.race.data.dummy.DummyCheckpoint;
+import com.ccaroni.kreasport.data.dummy.DummyCheckpoint;
 
 /**
  * Created by Master on 03/02/2018.

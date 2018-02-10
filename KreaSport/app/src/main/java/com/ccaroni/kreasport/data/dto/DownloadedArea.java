@@ -1,8 +1,8 @@
-package com.ccaroni.kreasport.race.data.dto;
+package com.ccaroni.kreasport.data.dto;
 
 import android.support.constraint.solver.widgets.Rectangle;
 
-import com.ccaroni.kreasport.race.data.IDownloadedArea;
+import com.ccaroni.kreasport.data.IDownloadedArea;
 
 /**
  * Created by Master on 09/02/2018.

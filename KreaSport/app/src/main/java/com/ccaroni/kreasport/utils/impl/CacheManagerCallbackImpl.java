@@ -8,7 +8,7 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.race.data.dummy.DummyDownloadedArea;
+import com.ccaroni.kreasport.data.dummy.DummyDownloadedArea;
 import com.ccaroni.kreasport.race.view.activity.MainActivity;
 import com.ccaroni.kreasport.utils.CacheManagerCallback;
 

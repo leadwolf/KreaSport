@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.race.data.dto;
+package com.ccaroni.kreasport.data.dto;
 
-import com.ccaroni.kreasport.race.data.IRace;
+import com.ccaroni.kreasport.data.IRace;
 
 import java.util.List;
 
