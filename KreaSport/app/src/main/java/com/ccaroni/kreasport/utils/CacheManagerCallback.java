@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.util.Log;
 
-
-import com.ccaroni.kreasport.data.dummy.DummyDownloadedArea;
+import com.ccaroni.kreasport.data.dto.DownloadedArea;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;
@@ -33,9 +32,9 @@ public abstract class CacheManagerCallback implements CacheManager.CacheManagerC
     protected NotificationManager mNotifyMgr;
 
     protected int possibleTiles;
-    protected DummyDownloadedArea downloadingArea;
+    protected DownloadedArea downloadingArea;
 
-    public CacheManagerCallback(Activity activity, SqliteArchiveTileWriter writer, DummyDownloadedArea downloadingArea) {
+    public CacheManagerCallback(Activity activity, SqliteArchiveTileWriter writer, DownloadedArea downloadingArea) {
         if (activity instanceof CacheCommunicationInterface) {
             this.cacheCommunicationInterface = (CacheCommunicationInterface) activity;
         } else {
@@ -51,15 +50,14 @@ public abstract class CacheManagerCallback implements CacheManager.CacheManagerC
 
 
     /**
-     *
-     * @param progress the number of tiles currently downloaded out of the {@link #setPossibleTilesInArea(int)}
+     * @param progress         the number of tiles currently downloaded out of the {@link #setPossibleTilesInArea(int)}
      * @param currentZoomLevel
      * @param zoomMin
      * @param zoomMax
      */
     @Override
     public void updateProgress(int progress, int currentZoomLevel, int zoomMin, int zoomMax) {
-        double percentage = ( (double) progress / (double) possibleTiles) * 100;
+        double percentage = ((double) progress / (double) possibleTiles) * 100;
         cacheCommunicationInterface.updateProgress(downloadingArea, percentage);
     }
 
@@ -83,13 +81,13 @@ public abstract class CacheManagerCallback implements CacheManager.CacheManagerC
      */
     public interface CacheCommunicationInterface {
 
-        void onTaskComplete(DummyDownloadedArea downloadedArea);
+        void onTaskComplete(DownloadedArea downloadedArea);
 
         /**
-         *  @param downloadedArea
+         * @param downloadedArea
          * @param progressPercentage as a percentage of total
          */
-        void updateProgress(DummyDownloadedArea downloadedArea, double progressPercentage);
+        void updateProgress(DownloadedArea downloadedArea, double progressPercentage);
 
     }
 }

@@ -2,7 +2,7 @@ package com.ccaroni.kreasport.race.services;
 
 import android.app.Notification;
 
-import com.ccaroni.kreasport.data.dummy.DummyCheckpoint;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
 
 /**
  * Created by Master on 02/02/2018.
@@ -14,7 +14,7 @@ public interface IRaceService {
 
     void stopLocationUpdates();
 
-    void addGeofence(DummyCheckpoint dummyCheckpoint);
+    void addGeofence(Checkpoint checkpoint);
 
     void removeAllGeofences();
 

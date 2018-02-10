@@ -3,7 +3,7 @@ package com.ccaroni.kreasport.race.services.impl;
 import android.content.Intent;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dummy.DummyCheckpoint;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.race.events.GeofenceTriggered;
 import com.ccaroni.kreasport.race.events.LocationChanged;
 import com.ccaroni.kreasport.race.services.AbstractRaceService;
@@ -48,8 +48,8 @@ public class RaceService extends AbstractRaceService {
     }
 
     @Override
-    public void addGeofence(DummyCheckpoint dummyCheckpoint) {
-        this.mGeofenceUtil.addGeofence(dummyCheckpoint);
+    public void addGeofence(Checkpoint checkpoint) {
+        this.mGeofenceUtil.addGeofence(checkpoint);
     }
 
     @Override

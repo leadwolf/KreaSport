@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dummy.DummyCheckpoint;
+import com.ccaroni.kreasport.data.dto.Checkpoint;
 import com.ccaroni.kreasport.race.services.geofence.GeofenceErrorMessages;
 import com.ccaroni.kreasport.race.services.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.race.services.geofence.IGeofenceUtil;
@@ -60,11 +60,13 @@ public class GeofenceUtil implements OnCompleteListener<Void>, IGeofenceUtil {
     /**
      * Builds and returns a GeofencingRequest. Specifies the list of geofences to be monitored.
      * Also specifies how the geofence notifications are initially triggered.
+     *
+     * @param checkpoint
      */
-    private GeofencingRequest getGeofenceRequest(DummyCheckpoint checkpoint) {
+    private GeofencingRequest getGeofenceRequest(Checkpoint checkpoint) {
         Log.d(TAG, "building geofence request for checkpoint: " + checkpoint.getId() + " " + checkpoint.getTitle());
 
-        if (!checkpoint.getId().equals("")) {
+        if (checkpoint.getId() == 0) {
 
             GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
 
@@ -76,7 +78,7 @@ public class GeofenceUtil implements OnCompleteListener<Void>, IGeofenceUtil {
             // Add the geofences to be monitored by geofencing service.
             builder.addGeofence(
                     new Geofence.Builder()
-                            .setRequestId(checkpoint.getId())
+                            .setRequestId(Long.toString(checkpoint.getId()))
 
                             .setCircularRegion(
                                     checkpoint.getLatitude(),
@@ -100,18 +102,18 @@ public class GeofenceUtil implements OnCompleteListener<Void>, IGeofenceUtil {
     /**
      * Entry point to add a geofence
      *
-     * @param dummyCheckpoint
+     * @param checkpoint
      */
     @Override
     @SuppressWarnings({"MissingPermission"})
-    public void addGeofence(DummyCheckpoint dummyCheckpoint) {
-        mGeofenceClient.addGeofences(getGeofenceRequest(dummyCheckpoint), getGeofencePendingIntent())
+    public void addGeofence(Checkpoint checkpoint) {
+        mGeofenceClient.addGeofences(getGeofenceRequest(checkpoint), getGeofencePendingIntent())
                 .addOnCompleteListener(this);
     }
 
 
     /**
-     * Runs when the result of calling {@link IGeofenceUtil#addGeofence(DummyCheckpoint)} and/or {@link #removePreviousGeofences()}
+     * Runs when the result of calling {@link IGeofenceUtil#addGeofence(Checkpoint)} and/or {@link #removePreviousGeofences()}
      * is available.
      *
      * @param task the resulting Task, containing either a result or error.
