@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="raceVM"
+            type="com.ccaroni.kreasport.race.vm.IRaceVM"/>
+    </data>
+
+    <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ll_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="340dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="visible"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="80dp"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        tools:context="fr.univ_lille1.iut_info.caronic.kreasport.fragments.BottomSheetFragment">
+
+        <include
+            android:id="@+id/bottom_sheet_passive_info"
+            layout="@layout/layout_bottom_sheet_passive"
+            android:visibility="@{raceVM.passiveInfoVisibility}"
+            bind:raceVM="@{raceVM}"/>
+
+        <include
+            android:id="@+id/bottom_sheet_active_info"
+            layout="@layout/layout_bottom_sheet_active"
+            android:visibility="@{raceVM.activeInfoVisibility}"
+            bind:raceVM="@{raceVM}"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/bottom_sheet_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@{raceVM.description}"
+            android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+</layout>

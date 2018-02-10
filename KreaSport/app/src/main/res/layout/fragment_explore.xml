@@ -1,13 +1,24 @@
-<android.support.constraint.ConstraintLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".race.view.fragments.ExploreFragment">
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:bind="http://schemas.android.com/apk/res-auto">
 
-<TextView
-    android:text="Explore Fragment"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"/>
+    <data>
+        <variable
+            name="raceVM"
+            type="com.ccaroni.kreasport.race.vm.IRaceVM"/>
+    </data>
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".race.view.fragments.ExploreFragment">
+
+        <include
+            android:id="@+id/bottom_sheet"
+            layout="@layout/layout_bottom_sheet"
+            android:visibility="@{raceVM.bottomSheetVisibility}"
+            bind:raceVM="@{raceVM}"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
