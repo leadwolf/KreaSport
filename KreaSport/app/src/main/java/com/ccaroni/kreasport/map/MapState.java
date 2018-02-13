@@ -10,17 +10,17 @@ import com.ccaroni.kreasport.map.views.CustomMapView;
  * Created by Master on 05/04/2017.
  */
 
-public class MapDefaults implements Serializable {
+public class MapState implements Serializable {
 
     GeoPoint center;
     int zoom;
 
-    public MapDefaults(CustomMapView mMapView) {
+    public MapState(CustomMapView mMapView) {
         center = (GeoPoint) mMapView.getMapCenter();
         zoom = mMapView.getZoomLevel();
     }
 
-    public MapDefaults(GeoPoint center, int zoom) {
+    public MapState(GeoPoint center, int zoom) {
         this.center = center;
         this.zoom = zoom;
     }

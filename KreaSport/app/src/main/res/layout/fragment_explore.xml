@@ -14,6 +14,12 @@
         android:layout_height="match_parent"
         tools:context=".race.view.fragments.ExploreFragment">
 
+        <FrameLayout
+            android:id="@+id/fl_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+
         <include
             android:id="@+id/bottom_sheet"
             layout="@layout/layout_bottom_sheet"

@@ -1,11 +1,13 @@
 package com.ccaroni.kreasport.map.views;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.BuildConfig;
 import android.util.Log;
 
-import com.ccaroni.kreasport.map.MapDefaults;
 import com.ccaroni.kreasport.map.MapOptions;
+import com.ccaroni.kreasport.map.MapState;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapEventsReceiver;
@@ -30,20 +32,20 @@ public class CustomMapView extends MapView {
     private static final String LOG = CustomMapView.class.getSimpleName();
 
 
-    private Context context;
-    private IMapActivity mapActivity;
+    private MapTouchReceiver mapActivity;
     private DirectedLocationOverlay mLocationOverlay;
 
     /**
-     * @param context      the context of the activity or whatever displaying the map
-     * @param mapActivity  the activity or whatever displaying the map that will receive callbacks, pass <b>null</b> if don't need the callbacks
-     * @param mMapOptions  options for the map
-     * @param mMapDefaults defaults for the map
+     * @param context     the context where the map is displayed
+     * @param mapActivity instance that will receive callbakcs
+     * @param mMapOptions options for the map
+     * @param mMapState   defaults for the map
      */
-    public CustomMapView(Context context, IMapActivity mapActivity, MapOptions mMapOptions, MapDefaults mMapDefaults) {
+    public CustomMapView(@NonNull Context context, @Nullable MapTouchReceiver mapActivity, @NonNull MapOptions mMapOptions, @NonNull MapState mMapState) {
         super(context);
-
-        this.context = context;
+        if (mMapOptions == null || mMapState == null) {
+            throw new IllegalArgumentException("Cannot receive null options or defaults");
+        }
         if (mapActivity == null) {
             Log.d(LOG, "creating " + this.getClass().getSimpleName() + " without callbacks");
         }
@@ -51,9 +53,12 @@ public class CustomMapView extends MapView {
 
         applyBasics();
         applyOptions(mMapOptions);
-        applyState(mMapDefaults);
+        applyState(mMapState);
     }
 
+    /**
+     * Applies our default options such as the copyright overlay, tile scaling, min zoom level...
+     */
     private void applyBasics() {
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         setTileSource(TileSourceFactory.MAPNIK);
@@ -69,6 +74,9 @@ public class CustomMapView extends MapView {
         addBackgroundTouchListener();
     }
 
+    /**
+     * Adds a listener that will call onMapBackgroundTouch when the background of the map is touched.
+     */
     private void addBackgroundTouchListener() {
         MapEventsOverlay mMapEventOverlay = new MapEventsOverlay(new MapEventsReceiver() {
             @Override
@@ -86,44 +94,45 @@ public class CustomMapView extends MapView {
         getOverlays().add(0, mMapEventOverlay);
     }
 
-    private void applyState(MapDefaults mMapDefaults) {
-        if (mMapDefaults != null) {
-            getController().setZoom(mMapDefaults.getZoom());
-            getController().setCenter(mMapDefaults.getCenter());
-        }
+    /**
+     * @param mMapState the state options
+     */
+    private void applyState(MapState mMapState) {
+        getController().setZoom(mMapState.getZoom());
+        getController().setCenter(mMapState.getCenter());
     }
 
+    /**
+     * @param mMapOptions the options
+     */
     @SuppressWarnings({"MissingPermission"})
     private void applyOptions(MapOptions mMapOptions) {
-        if (mMapOptions != null) {
-            if (mMapOptions.isEnableLocationOverlay()) {
+        if (mMapOptions.isEnableLocationOverlay()) {
+            mLocationOverlay = new DirectedLocationOverlay(getContext());
+            mLocationOverlay.setShowAccuracy(true);
+            mLocationOverlay.setEnabled(true);
+            getOverlays().add(mLocationOverlay);
+        }
 
-                mLocationOverlay = new DirectedLocationOverlay(context);
-                mLocationOverlay.setShowAccuracy(true);
-                mLocationOverlay.setEnabled(true);
-                getOverlays().add(mLocationOverlay);
-            }
-
-            if (mMapOptions.isEnableCompass()) {
-                CompassOverlay mCompassOverlay = new CompassOverlay(context, new InternalCompassOrientationProvider(context), this);
-                mCompassOverlay.enableCompass();
-                getOverlays().add(mCompassOverlay);
-            }
-            if (mMapOptions.isEnableMultiTouchControls()) {
-                setMultiTouchControls(true);
-            }
-            if (mMapOptions.isEnableRotationGesture()) {
-                RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(this);
-                mRotationGestureOverlay.setEnabled(true);
-                getOverlays().add(mRotationGestureOverlay);
-            }
-            if (mMapOptions.isEnableScaleOverlay()) {
-                ScaleBarOverlay mScaleBarOverlay = new ScaleBarOverlay(this);
-                mScaleBarOverlay.setCentred(true);
-                //play around with these values to get the location on screen in the right place for your application
-                mScaleBarOverlay.setScaleBarOffset(100, 10);
-                getOverlays().add(mScaleBarOverlay);
-            }
+        if (mMapOptions.isEnableCompass()) {
+            CompassOverlay mCompassOverlay = new CompassOverlay(getContext(), new InternalCompassOrientationProvider(getContext()), this);
+            mCompassOverlay.enableCompass();
+            getOverlays().add(mCompassOverlay);
+        }
+        if (mMapOptions.isEnableMultiTouchControls()) {
+            setMultiTouchControls(true);
+        }
+        if (mMapOptions.isEnableRotationGesture()) {
+            RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(this);
+            mRotationGestureOverlay.setEnabled(true);
+            getOverlays().add(mRotationGestureOverlay);
+        }
+        if (mMapOptions.isEnableScaleOverlay()) {
+            ScaleBarOverlay mScaleBarOverlay = new ScaleBarOverlay(this);
+            mScaleBarOverlay.setCentred(true);
+            //play around with these values to get the location on screen in the right place for your application
+            mScaleBarOverlay.setScaleBarOffset(100, 10);
+            getOverlays().add(mScaleBarOverlay);
         }
     }
 
@@ -134,7 +143,7 @@ public class CustomMapView extends MapView {
     /**
      * All classes using {@link CustomMapView} must implement that interface for callbacks
      */
-    public interface IMapActivity {
+    public interface MapTouchReceiver {
         void onMapBackgroundTouch();
     }
 }
