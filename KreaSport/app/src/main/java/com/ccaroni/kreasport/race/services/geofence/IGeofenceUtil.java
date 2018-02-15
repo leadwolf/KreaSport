@@ -1,7 +1,7 @@
 package com.ccaroni.kreasport.race.services.geofence;
 
 
-import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.remote.Checkpoint;
 
 /**
  * Created by Master on 03/02/2018.

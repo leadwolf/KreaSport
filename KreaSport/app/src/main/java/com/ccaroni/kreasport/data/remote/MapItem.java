@@ -1,22 +1,18 @@
-package com.ccaroni.kreasport.data.domain;
+package com.ccaroni.kreasport.data.remote;
 
-import com.ccaroni.kreasport.data.IMapItem;
-
-import io.objectbox.annotation.BaseEntity;
-import io.objectbox.annotation.Id;
+import com.ccaroni.kreasport.data.model.IMapItem;
 
 /**
- * Created by Master on 10/02/2018.
+ * Created by Master on 09/02/2018.
  */
-@BaseEntity
+
 public class MapItem implements IMapItem {
 
-    @Id
-    private long id;
-    private String title;
-    private String description;
-    private double latitude;
-    private double longitude;
+    long id;
+    String title;
+    String description;
+    double latitude;
+    double longitude;
 
     public MapItem() {
     }

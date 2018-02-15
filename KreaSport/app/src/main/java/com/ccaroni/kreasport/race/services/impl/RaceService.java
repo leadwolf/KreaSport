@@ -3,7 +3,7 @@ package com.ccaroni.kreasport.race.services.impl;
 import android.content.Intent;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.remote.Checkpoint;
 import com.ccaroni.kreasport.race.events.GeofenceTriggered;
 import com.ccaroni.kreasport.race.events.LocationChanged;
 import com.ccaroni.kreasport.race.services.AbstractRaceService;

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.remote.Checkpoint;
 import com.ccaroni.kreasport.race.services.geofence.GeofenceErrorMessages;
 import com.ccaroni.kreasport.race.services.geofence.GeofenceTransitionsIntentService;
 import com.ccaroni.kreasport.race.services.geofence.IGeofenceUtil;

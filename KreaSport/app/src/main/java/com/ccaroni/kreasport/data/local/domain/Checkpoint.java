@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.data.domain;
+package com.ccaroni.kreasport.data.local.domain;
 
-import com.ccaroni.kreasport.data.ICheckpoint;
+import com.ccaroni.kreasport.data.model.ICheckpoint;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.relation.ToOne;

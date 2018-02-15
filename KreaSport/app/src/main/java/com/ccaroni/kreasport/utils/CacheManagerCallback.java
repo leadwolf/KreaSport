@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.util.Log;
 
-import com.ccaroni.kreasport.data.dto.DownloadedArea;
+import com.ccaroni.kreasport.data.remote.DownloadedArea;
 
 import org.osmdroid.tileprovider.cachemanager.CacheManager;
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;

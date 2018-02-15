@@ -2,7 +2,7 @@ package com.ccaroni.kreasport.race.view.activity;
 
 import android.app.Application;
 
-import com.ccaroni.kreasport.data.domain.MyObjectBox;
+import com.ccaroni.kreasport.data.local.domain.MyObjectBox;
 
 import io.objectbox.BoxStore;
 

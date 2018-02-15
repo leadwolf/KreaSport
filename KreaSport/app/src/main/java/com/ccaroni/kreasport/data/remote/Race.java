@@ -1,6 +1,6 @@
-package com.ccaroni.kreasport.data.dto;
+package com.ccaroni.kreasport.data.remote;
 
-import com.ccaroni.kreasport.data.IRace;
+import com.ccaroni.kreasport.data.model.IRace;
 
 import java.util.List;
 

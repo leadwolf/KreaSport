@@ -1,9 +1,6 @@
-package com.ccaroni.kreasport.data.domain;
+package com.ccaroni.kreasport.data.local.domain;
 
-import com.ccaroni.kreasport.data.Converter;
-import com.ccaroni.kreasport.data.IRace;
-
-import java.util.List;
+import com.ccaroni.kreasport.data.model.IRace;
 
 import io.objectbox.annotation.Backlink;
 import io.objectbox.annotation.Entity;

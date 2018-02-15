@@ -2,7 +2,7 @@ package com.ccaroni.kreasport.race.services;
 
 import android.app.Notification;
 
-import com.ccaroni.kreasport.data.dto.Checkpoint;
+import com.ccaroni.kreasport.data.remote.Checkpoint;
 
 /**
  * Created by Master on 02/02/2018.

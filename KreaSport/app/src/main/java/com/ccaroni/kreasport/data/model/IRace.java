@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data;
+package com.ccaroni.kreasport.data.model;
 
 
 import java.util.List;

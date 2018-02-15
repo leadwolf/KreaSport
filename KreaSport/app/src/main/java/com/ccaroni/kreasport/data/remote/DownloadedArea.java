@@ -1,24 +1,18 @@
-package com.ccaroni.kreasport.data.domain;
+package com.ccaroni.kreasport.data.remote;
 
+import android.support.constraint.solver.widgets.Rectangle;
 
-import com.ccaroni.kreasport.data.Converter;
-import com.ccaroni.kreasport.data.IDownloadedArea;
-
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
-import io.objectbox.relation.ToOne;
+import com.ccaroni.kreasport.data.model.IDownloadedArea;
 
 /**
- * Created by Master on 10/02/2018.
+ * Created by Master on 09/02/2018.
  */
-@Entity
+
 public class DownloadedArea implements IDownloadedArea {
 
-    @Id
     private long id;
 
-
-    private ToOne<Rectangle> boundingBox;
+    private Rectangle boundingBox;
 
     private String name;
     private String path;
@@ -28,6 +22,9 @@ public class DownloadedArea implements IDownloadedArea {
     //    private OffsetDateTime dateTime;
 
     private int minZoom;
+
+    public DownloadedArea() {
+    }
 
     @Override
     public long getId() {
@@ -39,19 +36,11 @@ public class DownloadedArea implements IDownloadedArea {
     }
 
     @Override
-    public android.support.constraint.solver.widgets.Rectangle getDTOBoundingBox() {
-        return Converter.daoRectangleToDTO(boundingBox.getTarget());
-    }
-
-    public void setBoundingBoxFromDTO(Rectangle boundingBox) {
-        this.boundingBox.setTarget(boundingBox);
-    }
-
-    public ToOne<Rectangle> getBoundingBox() {
+    public Rectangle getDTOBoundingBox() {
         return boundingBox;
     }
 
-    public void setBoundingBox(ToOne<Rectangle> boundingBox) {
+    public void setBoundingBox(Rectangle boundingBox) {
         this.boundingBox = boundingBox;
     }
 

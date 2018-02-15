@@ -1,9 +1,9 @@
-package com.ccaroni.kreasport.data.dao;
+package com.ccaroni.kreasport.data.local.dao;
 
-import com.ccaroni.kreasport.data.domain.Checkpoint;
-import com.ccaroni.kreasport.data.domain.DownloadedArea;
-import com.ccaroni.kreasport.data.domain.Race;
-import com.ccaroni.kreasport.data.domain.Record;
+import com.ccaroni.kreasport.data.local.domain.Checkpoint;
+import com.ccaroni.kreasport.data.local.domain.DownloadedArea;
+import com.ccaroni.kreasport.data.local.domain.Race;
+import com.ccaroni.kreasport.data.local.domain.Record;
 import com.ccaroni.kreasport.race.view.activity.App;
 
 import io.objectbox.Box;

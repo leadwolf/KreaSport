@@ -1,17 +1,13 @@
-package com.ccaroni.kreasport.data.domain;
+package com.ccaroni.kreasport.data.remote;
 
-import com.ccaroni.kreasport.data.IRecord;
-
-import io.objectbox.annotation.Entity;
-import io.objectbox.annotation.Id;
+import com.ccaroni.kreasport.data.model.IRecord;
 
 /**
- * Created by Master on 10/02/2018.
+ * Created by Master on 09/02/2018.
  */
-@Entity
+
 public class Record implements IRecord {
 
-    @Id
     private long id;
     private String raceId;
     private String userId;

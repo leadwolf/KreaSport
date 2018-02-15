@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.domain;
+package com.ccaroni.kreasport.data.local.domain;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
