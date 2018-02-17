@@ -8,14 +8,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.data.local.domain.Race;
 import com.ccaroni.kreasport.databinding.FragmentExploreBinding;
 import com.ccaroni.kreasport.map.MapState;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
+import com.ccaroni.kreasport.race.dagger.AppModule;
+import com.ccaroni.kreasport.race.dagger.BoxStoreModule;
+import com.ccaroni.kreasport.race.dagger.DaggerBoxComponent;
 import com.ccaroni.kreasport.race.vm.impl.RaceVM;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
+
+import javax.inject.Inject;
+
+import io.objectbox.Box;
 
 public class ExploreFragment extends Fragment implements CustomMapView.MapTouchReceiver {
 
@@ -26,6 +34,9 @@ public class ExploreFragment extends Fragment implements CustomMapView.MapTouchR
     private RaceVM raceVM;
     private CustomMapView mMapView;
 
+    @Inject
+    public Box<Race> raceBox;
+
     public ExploreFragment() {
         // Required empty public constructor
     }
@@ -35,6 +46,11 @@ public class ExploreFragment extends Fragment implements CustomMapView.MapTouchR
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_explore, container, false);
         View view = binding.getRoot();
+
+        DaggerBoxComponent.builder()
+                .boxStoreModule(new BoxStoreModule(getActivity().getApplication()))
+                .build()
+                .inject(this);
 
         raceVM = new RaceVM();
         binding.setRaceVM(raceVM);
