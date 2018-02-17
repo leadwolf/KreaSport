@@ -8,12 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.data.local.domain.Race;
+import com.ccaroni.kreasport.data.local.Race;
 import com.ccaroni.kreasport.databinding.FragmentExploreBinding;
 import com.ccaroni.kreasport.map.MapState;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.views.CustomMapView;
-import com.ccaroni.kreasport.race.dagger.AppModule;
 import com.ccaroni.kreasport.race.dagger.BoxStoreModule;
 import com.ccaroni.kreasport.race.dagger.DaggerBoxComponent;
 import com.ccaroni.kreasport.race.vm.impl.RaceVM;

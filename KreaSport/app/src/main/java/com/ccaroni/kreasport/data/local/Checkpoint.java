@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.data.local.domain;
+package com.ccaroni.kreasport.data.local;
 
 import com.ccaroni.kreasport.data.model.ICheckpoint;
 

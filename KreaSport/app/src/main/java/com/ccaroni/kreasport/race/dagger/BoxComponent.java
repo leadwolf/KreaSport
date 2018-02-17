@@ -1,9 +1,9 @@
 package com.ccaroni.kreasport.race.dagger;
 
-import com.ccaroni.kreasport.data.local.domain.Checkpoint;
-import com.ccaroni.kreasport.data.local.domain.DownloadedArea;
-import com.ccaroni.kreasport.data.local.domain.Race;
-import com.ccaroni.kreasport.data.local.domain.Record;
+import com.ccaroni.kreasport.data.local.Checkpoint;
+import com.ccaroni.kreasport.data.local.DownloadedArea;
+import com.ccaroni.kreasport.data.local.Race;
+import com.ccaroni.kreasport.data.local.Record;
 import com.ccaroni.kreasport.race.view.fragments.ExploreFragment;
 
 import javax.inject.Singleton;
