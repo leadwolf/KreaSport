@@ -3,7 +3,9 @@ package com.ccaroni.kreasport.race.vm;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
+import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.Race;
+import com.ccaroni.kreasport.data.local.Record;
 import com.ccaroni.kreasport.race.view.activity.App;
 
 import javax.inject.Inject;
@@ -22,6 +24,8 @@ public abstract class IRaceVM extends BaseObservable {
 
     @Inject
     public Box<Race> raceBox;
+    public Box<Checkpoint> checkpointBox;
+    public Box<Record> recordBox;
 
     public IRaceVM() {
         App.getBoxComponent().inject(this);
