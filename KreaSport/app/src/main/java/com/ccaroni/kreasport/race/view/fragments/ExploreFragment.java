@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.FragmentExploreBinding;
-import com.ccaroni.kreasport.map.MapState;
 import com.ccaroni.kreasport.map.MapOptions;
+import com.ccaroni.kreasport.map.MapState;
 import com.ccaroni.kreasport.map.views.CustomMapView;
 import com.ccaroni.kreasport.race.vm.impl.RaceVM;
 
@@ -25,6 +25,7 @@ public class ExploreFragment extends Fragment implements CustomMapView.MapTouchR
 
     private RaceVM raceVM;
     private CustomMapView mMapView;
+
 
     public ExploreFragment() {
         // Required empty public constructor

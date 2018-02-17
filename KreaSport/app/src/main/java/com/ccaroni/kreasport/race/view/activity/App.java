@@ -2,31 +2,28 @@ package com.ccaroni.kreasport.race.view.activity;
 
 import android.app.Application;
 
-import com.ccaroni.kreasport.data.local.domain.MyObjectBox;
-
-import io.objectbox.BoxStore;
+import com.ccaroni.kreasport.race.dagger.BoxComponent;
+import com.ccaroni.kreasport.race.dagger.BoxStoreModule;
+import com.ccaroni.kreasport.race.dagger.DaggerBoxComponent;
 
 /**
- * Created by Master on 13/02/2018.
+ * Created by Master on 17/02/2018.
  */
 
 public class App extends Application {
 
-    private static App instance;
-
-    private BoxStore boxStore;
-
-    public static App get() {
-        return instance;
-    }
+    private static BoxComponent boxComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        boxStore = MyObjectBox.builder().androidContext(App.this).build();
+
+        boxComponent = DaggerBoxComponent.builder()
+                .boxStoreModule(new BoxStoreModule(this))
+                .build();
     }
 
-    public BoxStore getBoxStore() {
-        return boxStore;
+    public static BoxComponent getBoxComponent() {
+        return boxComponent;
     }
 }
