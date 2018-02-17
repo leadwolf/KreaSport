@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.DownloadedArea;
-import com.ccaroni.kreasport.data.local.domain.MyObjectBox;
+import com.ccaroni.kreasport.data.local.MyObjectBox;
 import com.ccaroni.kreasport.data.local.Race;
 import com.ccaroni.kreasport.data.local.Record;
 

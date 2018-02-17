@@ -5,6 +5,8 @@ import com.ccaroni.kreasport.data.local.DownloadedArea;
 import com.ccaroni.kreasport.data.local.Race;
 import com.ccaroni.kreasport.data.local.Record;
 import com.ccaroni.kreasport.race.view.fragments.ExploreFragment;
+import com.ccaroni.kreasport.race.vm.IRaceVM;
+import com.ccaroni.kreasport.race.vm.impl.RaceVM;
 
 import javax.inject.Singleton;
 
@@ -20,6 +22,10 @@ import io.objectbox.Box;
 public interface BoxComponent {
 
     void inject(ExploreFragment exploreFragment);
+
+    void inject(IRaceVM iRaceVM);
+
+    void inject(RaceVM raceVM);
 
     Box<Race> getRaceBox();
 

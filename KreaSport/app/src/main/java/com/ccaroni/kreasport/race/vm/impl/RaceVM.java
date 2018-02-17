@@ -7,4 +7,8 @@ import com.ccaroni.kreasport.race.vm.IRaceVM;
  */
 
 public class RaceVM extends IRaceVM {
+
+    public RaceVM() {
+        super();
+    }
 }
