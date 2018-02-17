@@ -6,7 +6,7 @@ import android.support.constraint.solver.widgets.Rectangle;
  * Created by Master on 10/02/2018.
  */
 
-public interface IDownloadedArea {
+public interface IDownloadedArea extends Data {
     long getId();
 
     Rectangle getDTOBoundingBox();
