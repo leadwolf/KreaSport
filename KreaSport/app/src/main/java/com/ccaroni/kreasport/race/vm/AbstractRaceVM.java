@@ -18,14 +18,17 @@ import io.objectbox.Box;
 
 public abstract class AbstractRaceVM extends BaseObservable implements IRaceVM {
 
+    @Inject
+    public Box<Race> raceBox;
+    @Inject
+    public Box<Checkpoint> checkpointBox;
+    @Inject
+    public Box<Record> recordBox;
+
+
     protected int bottomSheetVisibility;
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
-
-    @Inject
-    public Box<Race> raceBox;
-    public Box<Checkpoint> checkpointBox;
-    public Box<Record> recordBox;
 
     public AbstractRaceVM() {
         App.getBoxComponent().inject(this);
