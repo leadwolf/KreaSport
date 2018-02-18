@@ -21,4 +21,6 @@ public interface IRecord extends Data {
     String getDateTime();
 
     List<Location> getPathToDTO();
+
+    void addLocation(Location location);
 }

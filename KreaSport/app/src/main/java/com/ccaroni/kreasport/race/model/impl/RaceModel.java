@@ -40,39 +40,18 @@ public class RaceModel implements IRaceModel {
 
     @Override
     public void requestStartRace(long raceId) throws IllegalRaceStateException {
-        checkCanStartRecording();
+        verifyNotRecording();
         loadRace(raceId);
 
         startRecording(raceId, getUserId(), SystemClock.elapsedRealtime());
     }
 
     /**
-     * Created a new record and sets the base time to {@link SystemClock#elapsedRealtime()}
-     *
-     * @param raceId   the id of the race to record
-     * @param userId   the id of the user currently logged in
-     * @param baseTime the time to set as the start of the recording
-     */
-    private void startRecording(long raceId, String userId, long baseTime) {
-        record = new Record(raceId, userId);
-        record.setBaseTime(baseTime);
-    }
-
-    /**
      * @throws IllegalRaceStateException if a race is being recorded
      */
-    private void checkCanStartRecording() throws IllegalRaceStateException {
+    private void verifyNotRecording() throws IllegalRaceStateException {
         if (record != null && record.isInProgress()) {
             throw new IllegalRaceStateException("Record already in progress");
-        }
-    }
-
-    /**
-     * @throws IllegalRaceStateException if a race is being recorded
-     */
-    private void checkCanStopRecording() throws IllegalRaceStateException {
-        if (record == null || !record.isInProgress()) {
-            throw new IllegalRaceStateException("No record in progress");
         }
     }
 
@@ -87,6 +66,18 @@ public class RaceModel implements IRaceModel {
         }
     }
 
+    /**
+     * Created a new record and sets the base time to {@link SystemClock#elapsedRealtime()}
+     *
+     * @param raceId   the id of the race to record
+     * @param userId   the id of the user currently logged in
+     * @param baseTime the time to set as the start of the recording
+     */
+    private void startRecording(long raceId, String userId, long baseTime) {
+        record = new Record(raceId, userId);
+        record.setBaseTime(baseTime);
+    }
+
     private String getUserId() {
         // TODO with CredentialsManager
         return null;
@@ -94,10 +85,19 @@ public class RaceModel implements IRaceModel {
 
     @Override
     public void requestStopRace() throws IllegalRaceStateException {
-        checkCanStopRecording();
+        verifyIsRecording();
 
         stopRecording();
         saveRecord();
+    }
+
+    /**
+     * @throws IllegalRaceStateException if a race is being recorded
+     */
+    private void verifyIsRecording() throws IllegalRaceStateException {
+        if (record == null || !record.isInProgress()) {
+            throw new IllegalRaceStateException("No record in progress");
+        }
     }
 
     /**
@@ -113,9 +113,9 @@ public class RaceModel implements IRaceModel {
     }
 
     @Override
-    public void updateLocation(Location location) {
-        // TODO
-
+    public void updateLocation(Location location) throws IllegalRaceStateException {
+        verifyIsRecording();
+        record.addLocation(location);
     }
 
     @Override

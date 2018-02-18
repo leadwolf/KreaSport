@@ -22,7 +22,7 @@ public interface IRaceModel {
      */
     void requestStopRace() throws IllegalRaceStateException;
 
-    void updateLocation(Location location);
+    void updateLocation(Location location) throws IllegalRaceStateException;
 
     void triggerGeofence(long id);
 

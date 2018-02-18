@@ -101,6 +101,11 @@ public class Record implements IRecord {
         return Converter.daoLocationListToDTO(this.path);
     }
 
+    @Override
+    public void addLocation(android.location.Location location) {
+        path.add(Converter.dtoLocationToDAO(location));
+    }
+
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }

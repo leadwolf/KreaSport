@@ -69,6 +69,11 @@ public class Record implements IRecord {
         return getPath();
     }
 
+    @Override
+    public void addLocation(Location location) {
+        path.add(location);
+    }
+
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
