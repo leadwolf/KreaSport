@@ -37,6 +37,10 @@ public class DownloadedArea implements IDownloadedArea {
 
     @Override
     public Rectangle getDTOBoundingBox() {
+        return getBoundingBox();
+    }
+
+    public Rectangle getBoundingBox() {
         return boundingBox;
     }
 

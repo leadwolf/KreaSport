@@ -2,10 +2,13 @@ package com.ccaroni.kreasport.data;
 
 import android.support.constraint.solver.widgets.Rectangle;
 
+import com.ccaroni.kreasport.data.local.Location;
 import com.ccaroni.kreasport.data.remote.Checkpoint;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.objectbox.relation.ToMany;
 
 /**
  * Created by Master on 10/02/2018.
@@ -55,4 +58,35 @@ public class Converter {
         return rect;
     }
 
+    public static android.location.Location daoLocationToDTO(Location location) {
+        android.location.Location dtoLocation = new android.location.Location("realm_location");
+        location.setLongitude(location.getLongitude());
+        location.setLatitude(location.getLatitude());
+        location.setAltitude(location.getAltitude());
+        return dtoLocation;
+    }
+
+    public static Location dtoLocationToDAO(android.location.Location dtoLocation) {
+        Location location = new Location();
+        location.setLongitude(dtoLocation.getLongitude());
+        location.setLatitude(dtoLocation.getLatitude());
+        location.setAltitude(dtoLocation.getAltitude());
+        return location;
+    }
+
+    public static List<android.location.Location> daoLocationListToDTO(List<Location> path) {
+        List<android.location.Location> dtoLocationList = new ArrayList<>();
+        for (Location location : path) {
+            dtoLocationList.add(daoLocationToDTO(location));
+        }
+        return dtoLocationList;
+    }
+
+    public static List<Location> dtoLocationListToDAO(List<android.location.Location> dtoPath) {
+        List<Location> locationList = new ArrayList<>();
+        for (android.location.Location dtoLocation : dtoPath) {
+            locationList.add(dtoLocationToDAO(dtoLocation));
+        }
+        return locationList;
+    }
 }

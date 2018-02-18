@@ -1,6 +1,10 @@
 package com.ccaroni.kreasport.data.remote;
 
+import android.location.Location;
+
 import com.ccaroni.kreasport.data.model.IRecord;
+
+import java.util.List;
 
 /**
  * Created by Master on 09/02/2018.
@@ -13,6 +17,8 @@ public class Record implements IRecord {
     private String userId;
     private long timeExpired;
     private String dateTime;
+
+    private List<Location> path;
 
     public Record() {
     }
@@ -58,7 +64,20 @@ public class Record implements IRecord {
         return dateTime;
     }
 
+    @Override
+    public List<Location> getPathToDTO() {
+        return getPath();
+    }
+
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public List<Location> getPath() {
+        return path;
+    }
+
+    public void setPath(List<Location> path) {
+        this.path = path;
     }
 }

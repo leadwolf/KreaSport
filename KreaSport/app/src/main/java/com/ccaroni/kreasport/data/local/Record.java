@@ -2,16 +2,20 @@ package com.ccaroni.kreasport.data.local;
 
 import android.os.SystemClock;
 
+import com.ccaroni.kreasport.data.Converter;
 import com.ccaroni.kreasport.data.model.IRecord;
 
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.OffsetDateTime;
 
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import io.objectbox.annotation.Backlink;
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
+import io.objectbox.relation.ToMany;
 
 /**
  * Created by Master on 10/02/2018.
@@ -27,6 +31,9 @@ public class Record implements IRecord {
     private long timeExpired;
     private String dateTime;
     private boolean inProgress;
+
+    @Backlink
+    private ToMany<Location> path;
 
     public Record() {
         this.id = new Random().nextLong();
@@ -89,6 +96,11 @@ public class Record implements IRecord {
         return dateTime;
     }
 
+    @Override
+    public List<android.location.Location> getPathToDTO() {
+        return Converter.daoLocationListToDTO(this.path);
+    }
+
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
@@ -99,5 +111,13 @@ public class Record implements IRecord {
 
     public void setInProgress(boolean inProgress) {
         this.inProgress = inProgress;
+    }
+
+    public ToMany<Location> getPath() {
+        return path;
+    }
+
+    public void setPath(ToMany<Location> path) {
+        this.path = path;
     }
 }
