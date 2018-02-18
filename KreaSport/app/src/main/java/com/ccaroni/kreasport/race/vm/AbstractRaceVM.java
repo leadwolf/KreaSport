@@ -2,15 +2,10 @@ package com.ccaroni.kreasport.race.vm;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.support.annotation.NonNull;
 
-import com.ccaroni.kreasport.data.local.Checkpoint;
-import com.ccaroni.kreasport.data.local.Race;
-import com.ccaroni.kreasport.data.local.Record;
-import com.ccaroni.kreasport.race.view.activity.App;
-
-import javax.inject.Inject;
-
-import io.objectbox.Box;
+import com.ccaroni.kreasport.race.model.IRaceModel;
+import com.ccaroni.kreasport.race.model.impl.RaceModel;
 
 /**
  * Created by Master on 10/02/2018.
@@ -23,8 +18,10 @@ public abstract class AbstractRaceVM extends BaseObservable implements IRaceVM {
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
 
-    public AbstractRaceVM() {
+    // TODO instanciate
+    private IRaceModel raceModel;
 
+    public AbstractRaceVM() {
     }
 
     @Bindable
@@ -43,21 +40,24 @@ public abstract class AbstractRaceVM extends BaseObservable implements IRaceVM {
     }
 
     @Override
+    @NonNull
     public String getProgression() {
         // TODO from RaceModel
-        return null;
+        return "";
     }
 
+    @Bindable
     @Override
-    public String getTitle() {
-        // TODO from RaceModel
-        return null;
+    public @NonNull
+    String getTitle() {
+        return raceModel.getTitle();
     }
 
+    @Bindable
     @Override
-    public String getDescription() {
-        // TODO from RaceModel
-        return null;
+    public @NonNull
+    String getDescription() {
+        return raceModel.getDescription();
     }
 
     @Override

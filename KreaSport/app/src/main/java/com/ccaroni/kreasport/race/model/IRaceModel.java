@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.race.model;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import com.ccaroni.kreasport.race.exception.IllegalRaceStateException;
 
@@ -10,6 +11,18 @@ import com.ccaroni.kreasport.race.exception.IllegalRaceStateException;
 
 public interface IRaceModel {
 
+
+    /**
+     * @return the title of the current race or null if no recording is ongoing
+     */
+    @NonNull
+    String getTitle();
+
+    /**
+     * @return the description of the current race or null if no recording is ongoing
+     */
+    @NonNull
+    String getDescription();
 
     /**
      * @param raceId the id of the race
