@@ -42,6 +42,7 @@ public class RaceModel implements IRaceModel {
     public void requestStartRace(long raceId) throws IllegalRaceStateException {
         verifyNotRecording();
         loadRace(raceId);
+        verifyProximityToStart();
 
         startRecording(raceId, getUserId(), SystemClock.elapsedRealtime());
     }
@@ -64,6 +65,10 @@ public class RaceModel implements IRaceModel {
         if (race == null) {
             throw new IllegalRaceStateException("Race not found");
         }
+    }
+
+    private void verifyProximityToStart() {
+        // TODO
     }
 
     /**
