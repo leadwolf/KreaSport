@@ -22,8 +22,19 @@ public interface IRaceModel {
      */
     void requestStopRace() throws IllegalRaceStateException;
 
+    /**
+     * Call this when the user's location has been updated
+     *
+     * @param location the new location
+     * @throws IllegalRaceStateException if there is no ongoing recording
+     */
     void updateLocation(Location location) throws IllegalRaceStateException;
 
-    void triggerGeofence(long id);
+    /**
+     * Call this when a geofence has been triggered
+     *
+     * @param id the id of the checkpoint
+     */
+    void onGeofenceTriggered(long id);
 
 }

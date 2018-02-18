@@ -85,6 +85,12 @@ public class RaceService extends AbstractRaceService {
     @Override
     protected void onLocationChanged(LocationChanged locationChanged) {
         // TODO
+        // recording ?
+        // YES
+        //      save in RaceModel
+        // NO
+        //      do nothing
+
         Log.d(TAG, "onLocationChanged: received new location");
 
     }
@@ -92,7 +98,7 @@ public class RaceService extends AbstractRaceService {
     @Subscribe
     @Override
     protected void onGeofenceTriggered(GeofenceTriggered geofenceTriggered) {
-        // TODO
+        // TODO save in RaceModel
         Log.d(TAG, "onGeofenceTriggered: received geofence trigger");
     }
 

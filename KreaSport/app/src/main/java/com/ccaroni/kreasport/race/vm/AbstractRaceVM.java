@@ -18,20 +18,13 @@ import io.objectbox.Box;
 
 public abstract class AbstractRaceVM extends BaseObservable implements IRaceVM {
 
-    @Inject
-    public Box<Race> raceBox;
-    @Inject
-    public Box<Checkpoint> checkpointBox;
-    @Inject
-    public Box<Record> recordBox;
-
 
     protected int bottomSheetVisibility;
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
 
     public AbstractRaceVM() {
-        App.getBoxComponent().inject(this);
+
     }
 
     @Bindable
@@ -51,37 +44,37 @@ public abstract class AbstractRaceVM extends BaseObservable implements IRaceVM {
 
     @Override
     public String getProgression() {
-        // TODO
+        // TODO from RaceModel
         return null;
     }
 
     @Override
     public String getTitle() {
-        // TODO
+        // TODO from RaceModel
         return null;
     }
 
     @Override
     public String getDescription() {
-        // TODO
+        // TODO from RaceModel
         return null;
     }
 
     @Override
     public void onStartClicked() {
-        // TODO
+        // TODO verify with RaceModel
 
     }
 
     @Override
     public void onStopClicked() {
-        // TODO
+        // TODO verify with RaceModel
 
     }
 
     @Override
     public void onMyLocationClicked() {
-        // TODO
+        // TODO call fragment
 
     }
 }

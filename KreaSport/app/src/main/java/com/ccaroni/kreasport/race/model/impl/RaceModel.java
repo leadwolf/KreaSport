@@ -73,6 +73,7 @@ public class RaceModel implements IRaceModel {
 
     private void verifyProximityToStart() {
         // TODO
+        // verify location according to RaceService
     }
 
     /**
@@ -100,7 +101,7 @@ public class RaceModel implements IRaceModel {
     }
 
     /**
-     * @throws IllegalRaceStateException if a race is being recorded
+     * @throws IllegalRaceStateException if a race is not being recorded
      */
     private void verifyIsRecording() throws IllegalRaceStateException {
         if (record == null || !record.isInProgress()) {
@@ -127,8 +128,9 @@ public class RaceModel implements IRaceModel {
     }
 
     @Override
-    public void triggerGeofence(long id) {
+    public void onGeofenceTriggered(long id) {
         // TODO
-
+        // verify progression
+        // notify new progress
     }
 }
