@@ -4,6 +4,8 @@ import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.DownloadedArea;
 import com.ccaroni.kreasport.data.local.Race;
 import com.ccaroni.kreasport.data.local.Record;
+import com.ccaroni.kreasport.race.model.IRaceModel;
+import com.ccaroni.kreasport.race.model.impl.RaceModel;
 import com.ccaroni.kreasport.race.view.fragments.ExploreFragment;
 import com.ccaroni.kreasport.race.vm.AbstractRaceVM;
 import com.ccaroni.kreasport.race.vm.impl.RaceVM;
@@ -26,6 +28,10 @@ public interface BoxComponent {
     void inject(AbstractRaceVM abstractRaceVM);
 
     void inject(RaceVM raceVM);
+
+    void inject(IRaceModel iRaceModel);
+
+    void inject(RaceModel raceModel);
 
     Box<Race> getRaceBox();
 

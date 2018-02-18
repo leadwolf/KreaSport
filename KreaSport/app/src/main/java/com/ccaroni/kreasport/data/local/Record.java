@@ -1,6 +1,14 @@
 package com.ccaroni.kreasport.data.local;
 
+import android.os.SystemClock;
+
 import com.ccaroni.kreasport.data.model.IRecord;
+
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.OffsetDateTime;
+
+import java.util.Random;
+import java.util.UUID;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
@@ -13,12 +21,23 @@ public class Record implements IRecord {
 
     @Id
     private long id;
-    private String raceId;
+    private long raceId;
     private String userId;
+    private long baseTime;
     private long timeExpired;
     private String dateTime;
+    private boolean inProgress;
 
     public Record() {
+        this.id = new Random().nextLong();
+        this.dateTime = OffsetDateTime.now().toString();
+        this.baseTime = SystemClock.elapsedRealtime();
+    }
+
+    public Record(long raceId, String userId) {
+        this();
+        this.raceId = raceId;
+        this.userId = userId;
     }
 
     @Override
@@ -31,11 +50,11 @@ public class Record implements IRecord {
     }
 
     @Override
-    public String getRaceId() {
+    public long getRaceId() {
         return raceId;
     }
 
-    public void setRaceId(String raceId) {
+    public void setRaceId(long raceId) {
         this.raceId = raceId;
     }
 
@@ -46,6 +65,14 @@ public class Record implements IRecord {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public long getBaseTime() {
+        return baseTime;
+    }
+
+    public void setBaseTime(long baseTime) {
+        this.baseTime = baseTime;
     }
 
     @Override
@@ -64,5 +91,13 @@ public class Record implements IRecord {
 
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public boolean isInProgress() {
+        return inProgress;
+    }
+
+    public void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
     }
 }

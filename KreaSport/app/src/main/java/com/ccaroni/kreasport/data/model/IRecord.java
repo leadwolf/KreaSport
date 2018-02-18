@@ -5,9 +5,10 @@ package com.ccaroni.kreasport.data.model;
  */
 
 public interface IRecord extends Data {
+
     long getId();
 
-    String getRaceId();
+    long getRaceId();
 
     String getUserId();
 

@@ -49,7 +49,6 @@ dependencies {
 
     // Java 8 time backport
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
-    testCompile 'junit:junit:4.12'
 
     // eventbus for inter component comms
     compile 'org.greenrobot:eventbus:3.1.1'
@@ -80,4 +79,7 @@ dependencies {
     implementation 'com.google.dagger:dagger-android-support:2.11' // if you use the support libraries
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+
+
+    testCompile 'junit:junit:4.12'
 }

@@ -9,7 +9,7 @@ import com.ccaroni.kreasport.data.model.IRecord;
 public class Record implements IRecord {
 
     private long id;
-    private String raceId;
+    private long raceId;
     private String userId;
     private long timeExpired;
     private String dateTime;
@@ -27,11 +27,11 @@ public class Record implements IRecord {
     }
 
     @Override
-    public String getRaceId() {
+    public long getRaceId() {
         return raceId;
     }
 
-    public void setRaceId(String raceId) {
+    public void setRaceId(long raceId) {
         this.raceId = raceId;
     }
 

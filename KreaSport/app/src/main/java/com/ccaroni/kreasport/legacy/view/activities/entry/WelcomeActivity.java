@@ -44,8 +44,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AndroidThreeTen.init(this);
-
         // Checking for first time launch - before calling setContentView()
         prefManager = new PreferenceManager(this, PREF_NAME);
         permissionsManager = new PermissionsManager(this);
