@@ -8,6 +8,7 @@ import com.ccaroni.kreasport.data.local.Race;
 import com.ccaroni.kreasport.data.local.Record;
 import com.ccaroni.kreasport.race.exception.IllegalRaceStateException;
 import com.ccaroni.kreasport.race.model.IRaceModel;
+import com.ccaroni.kreasport.race.model.RaceModelListener;
 import com.ccaroni.kreasport.race.view.activity.App;
 
 import javax.inject.Inject;
@@ -34,7 +35,10 @@ public class RaceModel implements IRaceModel {
     private Checkpoint checkpoint;
     private Record record;
 
-    public RaceModel() {
+    private RaceModelListener raceModelListener;
+
+    public RaceModel(RaceModelListener raceModelListener) {
+        this.raceModelListener = raceModelListener;
         App.getBoxComponent().inject(this);
     }
 
@@ -44,7 +48,7 @@ public class RaceModel implements IRaceModel {
         loadRace(raceId);
         verifyProximityToStart();
 
-        startRecording(raceId, getUserId(), SystemClock.elapsedRealtime());
+        startRecording(raceId, this.getUserId(), SystemClock.elapsedRealtime());
     }
 
     /**
@@ -84,8 +88,7 @@ public class RaceModel implements IRaceModel {
     }
 
     private String getUserId() {
-        // TODO with CredentialsManager
-        return null;
+        return this.raceModelListener.getUserId();
     }
 
     @Override
