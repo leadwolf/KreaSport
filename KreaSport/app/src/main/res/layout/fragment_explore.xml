@@ -5,14 +5,14 @@
     <data>
         <variable
             name="raceVM"
-            type="com.ccaroni.kreasport.race.vm.IRaceVM"/>
+            type="com.ccaroni.kreasport.explore.vm.IExploreVM"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".race.view.fragments.ExploreFragment">
+        tools:context=".explore.view.fragments.ExploreFragment">
 
         <FrameLayout
             android:id="@+id/fl_map"

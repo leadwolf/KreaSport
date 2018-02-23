@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.data.remote.DownloadedArea;
-import com.ccaroni.kreasport.race.view.activity.MainActivity;
+import com.ccaroni.kreasport.explore.view.activity.MainActivity;
 import com.ccaroni.kreasport.utils.CacheManagerCallback;
 
 import org.osmdroid.tileprovider.modules.SqliteArchiveTileWriter;

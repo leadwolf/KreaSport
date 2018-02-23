@@ -10,19 +10,19 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
-        android:name=".race.view.activity.App"
+        android:name=".explore.view.activity.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".race.services.geofence.GeofenceTransitionsIntentService"/>
+        <service android:name=".explore.services.geofence.GeofenceTransitionsIntentService"/>
         <service
-            android:name=".race.services.location.impl.GoogleLocationService"
+            android:name=".explore.services.location.impl.GoogleLocationService"
             android:icon="@drawable/ic_kreasport_logo_no_bg"
             android:label="@string/location_service_name"/>
-        <service android:name=".race.services.impl.RaceService"/>
+        <service android:name=".explore.services.impl.RaceService"/>
 
         <!-- Auth0 Lock -->
         <activity
@@ -64,7 +64,7 @@
         </activity>
 
         <activity
-            android:name=".race.view.activity.MainActivity"
+            android:name=".explore.view.activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

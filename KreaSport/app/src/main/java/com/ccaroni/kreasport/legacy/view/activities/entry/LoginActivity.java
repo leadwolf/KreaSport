@@ -17,7 +17,7 @@ import com.auth0.android.lock.utils.LockException;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
-import com.ccaroni.kreasport.race.view.activity.MainActivity;
+import com.ccaroni.kreasport.explore.view.activity.MainActivity;
 import com.ccaroni.kreasport.utils.CredentialsManager;
 
 public class LoginActivity extends AppCompatActivity {
