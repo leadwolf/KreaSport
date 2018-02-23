@@ -1,4 +1,4 @@
-package com.ccaroni.kreasport.explore.dagger;
+package com.ccaroni.kreasport.explore.di;
 
 import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.DownloadedArea;

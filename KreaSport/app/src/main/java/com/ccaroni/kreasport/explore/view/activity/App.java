@@ -2,9 +2,9 @@ package com.ccaroni.kreasport.explore.view.activity;
 
 import android.app.Application;
 
-import com.ccaroni.kreasport.explore.dagger.BoxComponent;
-import com.ccaroni.kreasport.explore.dagger.BoxStoreModule;
-import com.ccaroni.kreasport.explore.dagger.DaggerBoxComponent;
+import com.ccaroni.kreasport.explore.di.BoxComponent;
+import com.ccaroni.kreasport.explore.di.BoxStoreModule;
+import com.ccaroni.kreasport.explore.di.DaggerBoxComponent;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 /**
