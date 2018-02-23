@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.data.local;
 
 import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 import io.objectbox.relation.ToOne;
 
 /**
@@ -9,6 +10,9 @@ import io.objectbox.relation.ToOne;
 @Entity
 public class Location {
 
+    @Id
+    private long id;
+
     private ToOne<Record> record;
 
     private double latitude;
@@ -16,6 +20,14 @@ public class Location {
     private double altitude;
 
     public Location() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public double getLatitude() {

@@ -23,7 +23,7 @@ public class ExploreFragment extends Fragment implements CustomMapView.MapTouchR
 
     private FragmentExploreBinding binding;
 
-    private ExploreVM raceVM;
+    private ExploreVM exploreVM;
     private CustomMapView mMapView;
 
 
@@ -37,8 +37,8 @@ public class ExploreFragment extends Fragment implements CustomMapView.MapTouchR
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_explore, container, false);
         View view = binding.getRoot();
 
-        raceVM = new ExploreVM();
-        binding.setRaceVM(raceVM);
+        exploreVM = new ExploreVM();
+        binding.setExploreVM(exploreVM);
 
         setupMap();
 

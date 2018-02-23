@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="raceVM"
+            name="exploreVM"
             type="com.ccaroni.kreasport.explore.vm.IExploreVM"/>
     </data>
 
@@ -30,14 +30,14 @@
         <include
             android:id="@+id/bottom_sheet_passive_info"
             layout="@layout/layout_bottom_sheet_passive"
-            android:visibility="@{raceVM.passiveInfoVisibility}"
-            bind:raceVM="@{raceVM}"/>
+            android:visibility="@{exploreVM.passiveInfoVisibility}"
+            bind:exploreVM="@{exploreVM}"/>
 
         <include
             android:id="@+id/bottom_sheet_active_info"
             layout="@layout/layout_bottom_sheet_active"
-            android:visibility="@{raceVM.activeInfoVisibility}"
-            bind:raceVM="@{raceVM}"/>
+            android:visibility="@{exploreVM.activeInfoVisibility}"
+            bind:exploreVM="@{exploreVM}"/>
 
 
         <View
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@{raceVM.description}"
+            android:text="@{exploreVM.description}"
             android:textColor="@android:color/black"/>
 
     </LinearLayout>

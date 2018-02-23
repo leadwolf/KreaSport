@@ -4,7 +4,7 @@
 
     <data>
         <variable
-            name="raceVM"
+            name="exploreVM"
             type="com.ccaroni.kreasport.explore.vm.IExploreVM"/>
     </data>
 
@@ -23,8 +23,8 @@
         <include
             android:id="@+id/bottom_sheet"
             layout="@layout/layout_bottom_sheet"
-            android:visibility="@{raceVM.bottomSheetVisibility}"
-            bind:raceVM="@{raceVM}"/>
+            android:visibility="@{exploreVM.bottomSheetVisibility}"
+            bind:exploreVM="@{exploreVM}"/>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

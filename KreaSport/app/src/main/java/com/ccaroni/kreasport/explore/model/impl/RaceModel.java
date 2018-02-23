@@ -2,6 +2,7 @@ package com.ccaroni.kreasport.explore.model.impl;
 
 import android.location.Location;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.Race;
@@ -40,6 +41,20 @@ public class RaceModel implements IRaceModel {
     public RaceModel(RaceModelListener raceModelListener) {
         this.raceModelListener = raceModelListener;
         App.getBoxComponent().inject(this);
+    }
+
+    @NonNull
+    @Override
+    public String getTitle() {
+        // TODO
+        return "";
+    }
+
+    @NonNull
+    @Override
+    public String getDescription() {
+        // TODO
+        return "";
     }
 
     @Override

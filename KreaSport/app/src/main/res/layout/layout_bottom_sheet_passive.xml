@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="raceVM"
+            name="exploreVM"
             type="com.ccaroni.kreasport.explore.vm.IExploreVM"/>
     </data>
 
@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:text="@{raceVM.title}"
+                android:text="@{exploreVM.title}"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"/>
 

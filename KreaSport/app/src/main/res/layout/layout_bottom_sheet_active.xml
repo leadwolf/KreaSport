@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="raceVM"
+            name="exploreVM"
             type="com.ccaroni.kreasport.explore.vm.IExploreVM"/>
     </data>
 
@@ -29,7 +29,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:background="?android:attr/selectableItemBackground"
-                android:onClick="@{() -> raceVM.onStopClicked()}"
+                android:onClick="@{() -> exploreVM.onStopClicked()}"
                 android:text="╳"
                 android:textColor="@color/black"
                 android:textSize="25sp"/>
@@ -68,7 +68,7 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:gravity="center"
                 android:hint="1/n"
-                android:text="@{raceVM.progression}"
+                android:text="@{exploreVM.progression}"
                 android:textColor="@color/black"
                 android:textSize="15sp"/>
 
