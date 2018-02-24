@@ -25,10 +25,9 @@ public interface IExploreModel {
     String getDescription();
 
     /**
-     * @param raceId the id of the race
      * @throws IllegalRaceStateException if an error occurred while trying to start recording
      */
-    void requestStartRace(long raceId) throws IllegalRaceStateException;
+    void requestStartRace() throws IllegalRaceStateException;
 
     /**
      * @throws IllegalRaceStateException if an error occurred while trying to stop the recording
@@ -50,4 +49,5 @@ public interface IExploreModel {
      */
     void onGeofenceTriggered(long id);
 
+    String getProgression();
 }

@@ -3,7 +3,9 @@ package com.ccaroni.kreasport.explore.vm;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.ccaroni.kreasport.explore.exception.IllegalRaceStateException;
 import com.ccaroni.kreasport.explore.model.IExploreModel;
 import com.ccaroni.kreasport.explore.view.activity.App;
 
@@ -15,6 +17,7 @@ import javax.inject.Inject;
 
 public abstract class AbstractExploreVM extends BaseObservable implements IExploreVM {
 
+    private static final String TAG = AbstractExploreVM.class.getSimpleName();
 
     protected int bottomSheetVisibility;
     protected int passiveInfoVisibility;
@@ -48,39 +51,45 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     @Override
     @NonNull
     public String getProgression() {
-        // TODO from ExploreModel
-        return "";
+        return raceModel.getProgression();
     }
 
     @Bindable
     @Override
     public @NonNull
     String getTitle() {
-        return null;
+        return raceModel.getTitle();
     }
 
     @Bindable
     @Override
     public @NonNull
     String getDescription() {
-        return null;
+        return raceModel.getTitle();
     }
 
     @Override
     public void onStartClicked() {
-        // TODO verify with ExploreModel
-
+        try {
+            raceModel.requestStartRace();
+        } catch (IllegalRaceStateException e) {
+            Log.d(TAG, "onStartClicked: " + e);
+            // TODO display error
+        }
     }
 
     @Override
     public void onStopClicked() {
-        // TODO verify with ExploreModel
-
+        try {
+            raceModel.requestStopRace();
+        } catch (IllegalRaceStateException e) {
+            Log.d(TAG, "onStartClicked: " + e);
+            // TODO display error
+        }
     }
 
     @Override
     public void onMyLocationClicked() {
         // TODO call fragment
-
     }
 }

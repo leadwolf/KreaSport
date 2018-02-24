@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import com.ccaroni.kreasport.data.local.Checkpoint;
+import com.ccaroni.kreasport.data.local.MapItem;
 import com.ccaroni.kreasport.data.local.Race;
 import com.ccaroni.kreasport.data.local.Record;
 import com.ccaroni.kreasport.explore.exception.IllegalRaceStateException;
@@ -30,6 +31,8 @@ public class ExploreModel implements IExploreModel {
     private Checkpoint checkpoint;
     private Record record;
 
+    private MapItem selectedItem;
+
     private RaceModelListener raceModelListener;
 
     public ExploreModel(Box<Race> raceBox, Box<Checkpoint> checkpointBox, Box<Record> recordBox) {
@@ -53,12 +56,12 @@ public class ExploreModel implements IExploreModel {
     }
 
     @Override
-    public void requestStartRace(long raceId) throws IllegalRaceStateException {
+    public void requestStartRace() throws IllegalRaceStateException {
         verifyNotRecording();
-        loadRace(raceId);
+        loadRace(selectedItem.getId());
         verifyProximityToStart();
 
-        startRecording(raceId, this.getUserId(), SystemClock.elapsedRealtime());
+        startRecording(this.race.getId(), this.getUserId(), SystemClock.elapsedRealtime());
     }
 
     /**
@@ -142,5 +145,11 @@ public class ExploreModel implements IExploreModel {
         // TODO
         // verify progression
         // notify new progress
+    }
+
+    @Override
+    public String getProgression() {
+        // TODO
+        return "";
     }
 }
