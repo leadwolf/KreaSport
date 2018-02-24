@@ -66,23 +66,23 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
         return this.activeInfoVisibility;
     }
 
-    @Override
     @NonNull
+    @Override
     public String getProgression() {
         return this.raceModel.getProgression();
     }
 
     @Bindable
+    @NonNull
     @Override
-    public @NonNull
-    String getTitle() {
+    public String getTitle() {
         return this.raceModel.getTitle();
     }
 
     @Bindable
+    @NonNull
     @Override
-    public @NonNull
-    String getDescription() {
+    public String getDescription() {
         return raceModel.getTitle();
     }
 

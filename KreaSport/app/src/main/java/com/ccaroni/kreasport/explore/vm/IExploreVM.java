@@ -1,5 +1,7 @@
 package com.ccaroni.kreasport.explore.vm;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by Master on 17/02/2018.
  * Contract that the VM implements, therefore exposing the data to the view as well as exposing listeners for UI events.
@@ -24,16 +26,19 @@ public interface IExploreVM {
     /**
      * @return the checkpoint progression
      */
+    @NonNull
     String getProgression();
 
     /**
      * @return the title cf the selected item
      */
+    @NonNull
     String getTitle();
 
     /**
      * @return the description of the selected item
      */
+    @NonNull
     String getDescription();
 
     /**
