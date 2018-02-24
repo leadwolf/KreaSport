@@ -31,6 +31,9 @@ public class ExploreModel implements IExploreModel {
     private Checkpoint checkpoint;
     private Record record;
 
+    /**
+     * The race or checkpoint that is currently selected and whose information is displayed in the bottom bar
+     */
     private MapItem selectedItem;
 
     private RaceModelListener raceModelListener;
@@ -44,15 +47,14 @@ public class ExploreModel implements IExploreModel {
     @NonNull
     @Override
     public String getTitle() {
-        // TODO
-        return "";
+        return selectedItem.getTitle();
+        // TODO when the user is recording, should this be the targeting checkpoint info?
     }
 
     @NonNull
     @Override
     public String getDescription() {
-        // TODO
-        return "";
+        return selectedItem.getDescription();
     }
 
     @Override
@@ -149,8 +151,14 @@ public class ExploreModel implements IExploreModel {
 
     @Override
     public String getProgression() {
-        // TODO
-        return "";
+        try {
+            verifyIsRecording();
+        } catch (IllegalRaceStateException e) {
+            return "";
+        }
+        
+        int target = record.getTargetCheckpointIndex();
+        return (target - 1) + "/" + race.getNbCheckpoints();
     }
 
     @Override

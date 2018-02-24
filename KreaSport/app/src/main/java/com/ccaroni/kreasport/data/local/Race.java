@@ -35,4 +35,8 @@ public class Race extends MapItem implements IRace {
                 "checkpoints=" + Checkpoint.checkpointListToString(checkpoints) +
                 '}';
     }
+
+    public int getNbCheckpoints() {
+        return checkpoints.size();
+    }
 }

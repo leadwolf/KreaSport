@@ -32,6 +32,8 @@ public class Record implements IRecord {
     private String dateTime;
     private boolean inProgress;
 
+    private int targetCheckpointIndex;
+
     @Backlink
     private ToMany<Location> path;
 
@@ -124,5 +126,13 @@ public class Record implements IRecord {
 
     public void setPath(ToMany<Location> path) {
         this.path = path;
+    }
+
+    public int getTargetCheckpointIndex() {
+        return targetCheckpointIndex;
+    }
+
+    public void setTargetCheckpointIndex(int targetCheckpointIndex) {
+        this.targetCheckpointIndex = targetCheckpointIndex;
     }
 }
