@@ -5,6 +5,9 @@ import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 
 import com.ccaroni.kreasport.explore.model.IRaceModel;
+import com.ccaroni.kreasport.explore.view.activity.App;
+
+import javax.inject.Inject;
 
 /**
  * Created by Master on 10/02/2018.
@@ -17,11 +20,15 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
 
-    // TODO instanciate
-    private IRaceModel raceModel;
+    @Inject
+    public IRaceModel raceModel;
 
     public AbstractExploreVM() {
+        App.getInstance()
+                .plusExploreComponent()
+                .inject(this);
     }
+
 
     @Bindable
     public int getBottomSheetVisibility() {
@@ -49,14 +56,14 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     @Override
     public @NonNull
     String getTitle() {
-        return raceModel.getTitle();
+        return null;
     }
 
     @Bindable
     @Override
     public @NonNull
     String getDescription() {
-        return raceModel.getDescription();
+        return null;
     }
 
     @Override

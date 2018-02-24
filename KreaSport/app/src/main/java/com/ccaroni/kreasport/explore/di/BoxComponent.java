@@ -23,15 +23,7 @@ import io.objectbox.Box;
 @Component(modules = {AppModule.class, BoxStoreModule.class})
 public interface BoxComponent {
 
-    void inject(ExploreFragment exploreFragment);
-
-    void inject(AbstractExploreVM abstractRaceVM);
-
-    void inject(ExploreVM raceVM);
-
-    void inject(IRaceModel iRaceModel);
-
-    void inject(RaceModel raceModel);
+    ExploreComponent plusExploreComponent(ExploreModule exploreModule);
 
     Box<Race> getRaceBox();
 

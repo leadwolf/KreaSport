@@ -5,6 +5,8 @@ import android.app.Application;
 import com.ccaroni.kreasport.explore.di.BoxComponent;
 import com.ccaroni.kreasport.explore.di.BoxStoreModule;
 import com.ccaroni.kreasport.explore.di.DaggerBoxComponent;
+import com.ccaroni.kreasport.explore.di.ExploreComponent;
+import com.ccaroni.kreasport.explore.di.ExploreModule;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 /**
@@ -13,20 +15,37 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 public class App extends Application {
 
-    private static BoxComponent boxComponent;
+    private static App instance;
+    private BoxComponent boxComponent;
+    private ExploreComponent exploreComponent;
+
+    public static App getInstance() {
+        return instance;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         AndroidThreeTen.init(this);
-
-        boxComponent = DaggerBoxComponent.builder()
+        instance = this;
+        this.boxComponent = DaggerBoxComponent.builder()
                 .boxStoreModule(new BoxStoreModule(this))
                 .build();
     }
 
-    public static BoxComponent getBoxComponent() {
+    public BoxComponent getBoxComponent() {
         return boxComponent;
+    }
+
+    public ExploreComponent plusExploreComponent() {
+        if (this.exploreComponent == null) {
+            this.exploreComponent = this.boxComponent.plusExploreComponent(new ExploreModule());
+        }
+        return this.exploreComponent;
+    }
+
+    public void clearExploreComponent() {
+        this.exploreComponent = null;
     }
 }

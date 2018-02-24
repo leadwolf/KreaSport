@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.explore.model.impl;
 import android.location.Location;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.Race;
@@ -10,9 +11,6 @@ import com.ccaroni.kreasport.data.local.Record;
 import com.ccaroni.kreasport.explore.exception.IllegalRaceStateException;
 import com.ccaroni.kreasport.explore.model.IRaceModel;
 import com.ccaroni.kreasport.explore.model.RaceModelListener;
-import com.ccaroni.kreasport.explore.view.activity.App;
-
-import javax.inject.Inject;
 
 import io.objectbox.Box;
 
@@ -25,12 +23,9 @@ public class RaceModel implements IRaceModel {
     private static final String TAG = RaceModel.class.getSimpleName();
 
 
-    @Inject
-    public Box<Race> raceBox;
-    @Inject
-    public Box<Checkpoint> checkpointBox;
-    @Inject
-    public Box<Record> recordBox;
+    private Box<Race> raceBox;
+    private Box<Checkpoint> checkpointBox;
+    private Box<Record> recordBox;
 
     private Race race;
     private Checkpoint checkpoint;
@@ -38,9 +33,10 @@ public class RaceModel implements IRaceModel {
 
     private RaceModelListener raceModelListener;
 
-    public RaceModel(RaceModelListener raceModelListener) {
-        this.raceModelListener = raceModelListener;
-        App.getBoxComponent().inject(this);
+    public RaceModel(Box<Race> raceBox, Box<Checkpoint> checkpointBox, Box<Record> recordBox) {
+        this.raceBox = raceBox;
+        this.checkpointBox = checkpointBox;
+        this.recordBox = recordBox;
     }
 
     @NonNull
