@@ -44,7 +44,8 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
      */
     private void updateVisibilities(boolean itemSelected, boolean raceActive) {
         this.bottomSheetVisibility = itemSelected ? View.VISIBLE : View.GONE;
-        this.activeInfoVisibility = itemSelected ? View.VISIBLE : View.GONE;
+
+        this.activeInfoVisibility = raceActive ? View.VISIBLE : View.GONE;
         this.passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
 
         notifyChange();
@@ -124,5 +125,6 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     @Override
     public void onBackgroundPressed() {
         this.raceModel.onBackgroundPressed();
+        updateVisibilities(this.raceModel.isItemSelected(), this.raceModel.isRaceActive());
     }
 }

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.databinding.FragmentExploreBinding;
+import com.ccaroni.kreasport.explore.view.IExploreView;
 import com.ccaroni.kreasport.explore.vm.impl.ExploreVM;
 import com.ccaroni.kreasport.map.MapOptions;
 import com.ccaroni.kreasport.map.MapState;
@@ -17,7 +18,7 @@ import com.ccaroni.kreasport.map.views.CustomMapView;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 
-public class ExploreFragment extends Fragment implements CustomMapView.MapTouchReceiver {
+public class ExploreFragment extends Fragment implements CustomMapView.MapTouchReceiver, IExploreView {
 
     private static final String TAG = ExploreFragment.class.getSimpleName();
 
@@ -37,7 +38,7 @@ public class ExploreFragment extends Fragment implements CustomMapView.MapTouchR
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_explore, container, false);
         View view = binding.getRoot();
 
-        exploreVM = new ExploreVM();
+        exploreVM = new ExploreVM(this);
         binding.setExploreVM(exploreVM);
 
         setupMap();
@@ -71,6 +72,24 @@ public class ExploreFragment extends Fragment implements CustomMapView.MapTouchR
 
     @Override
     public void onMapBackgroundTouch() {
+        this.exploreVM.onBackgroundPressed();
+    }
+
+    @Override
+    public void displayStartError(String message) {
         // TODO
+
+    }
+
+    @Override
+    public void displayStopError(String message) {
+        // TODO
+
+    }
+
+    @Override
+    public void recenterOnUserPosition() {
+        // TODO
+
     }
 }

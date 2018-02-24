@@ -1,5 +1,6 @@
 package com.ccaroni.kreasport.explore.vm.impl;
 
+import com.ccaroni.kreasport.explore.view.IExploreView;
 import com.ccaroni.kreasport.explore.vm.AbstractExploreVM;
 
 /**
@@ -10,9 +11,7 @@ public class ExploreVM extends AbstractExploreVM {
 
     private static final String TAG = ExploreVM.class.getSimpleName();
 
-
-    public ExploreVM() {
-        super();
+    public ExploreVM(IExploreView iExploreView) {
+        super(iExploreView);
     }
-
 }

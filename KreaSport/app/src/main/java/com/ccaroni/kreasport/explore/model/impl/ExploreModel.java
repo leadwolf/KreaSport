@@ -182,12 +182,12 @@ public class ExploreModel implements IExploreModel {
 
     @Override
     public boolean isRaceActive() {
-        return this.record.isInProgress();
+        return this.record != null && this.record.isInProgress();
     }
 
     @Override
     public boolean isItemSelected() {
-        return this.selectedItem == null;
+        return this.selectedItem != null;
     }
 
     @Override

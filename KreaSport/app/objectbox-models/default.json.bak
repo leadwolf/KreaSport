@@ -132,7 +132,7 @@
     },
     {
       "id": "5:6728290300112669809",
-      "lastPropertyId": "8:7677338712853743506",
+      "lastPropertyId": "7:6877066100422557264",
       "name": "Record",
       "properties": [
         {
@@ -162,10 +162,6 @@
         {
           "id": "7:6877066100422557264",
           "name": "inProgress"
-        },
-        {
-          "id": "8:7677338712853743506",
-          "name": "targetCheckpointIndex"
         }
       ],
       "relations": []
