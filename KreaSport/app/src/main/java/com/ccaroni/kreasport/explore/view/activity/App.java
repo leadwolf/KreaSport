@@ -2,9 +2,11 @@ package com.ccaroni.kreasport.explore.view.activity;
 
 import android.app.Application;
 
-import com.ccaroni.kreasport.explore.di.BoxComponent;
+import com.ccaroni.kreasport.explore.di.AppComponent;
+import com.ccaroni.kreasport.explore.di.AppModule;
 import com.ccaroni.kreasport.explore.di.BoxStoreModule;
-import com.ccaroni.kreasport.explore.di.DaggerBoxComponent;
+import com.ccaroni.kreasport.explore.di.CredentialsModule;
+import com.ccaroni.kreasport.explore.di.DaggerAppComponent;
 import com.ccaroni.kreasport.explore.di.ExploreComponent;
 import com.ccaroni.kreasport.explore.di.ExploreModule;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -16,7 +18,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 public class App extends Application {
 
     private static App instance;
-    private BoxComponent boxComponent;
+    private AppComponent appComponent;
     private ExploreComponent exploreComponent;
 
     public static App getInstance() {
@@ -29,18 +31,20 @@ public class App extends Application {
 
         AndroidThreeTen.init(this);
         instance = this;
-        this.boxComponent = DaggerBoxComponent.builder()
+        this.appComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
                 .boxStoreModule(new BoxStoreModule(this))
+                .credentialsModule(new CredentialsModule())
                 .build();
     }
 
-    public BoxComponent getBoxComponent() {
-        return boxComponent;
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
 
     public ExploreComponent plusExploreComponent() {
         if (this.exploreComponent == null) {
-            this.exploreComponent = this.boxComponent.plusExploreComponent(new ExploreModule());
+            this.exploreComponent = this.appComponent.plusExploreComponent(new ExploreModule());
         }
         return this.exploreComponent;
     }

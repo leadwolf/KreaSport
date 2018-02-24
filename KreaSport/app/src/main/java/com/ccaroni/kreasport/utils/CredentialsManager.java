@@ -25,26 +25,32 @@ import java.util.concurrent.TimeUnit;
  */
 public class CredentialsManager {
 
-    private static final String LOG = CredentialsManager.class.getSimpleName();
+    private final String LOG = CredentialsManager.class.getSimpleName();
 
-    private static final String AUTH_PREFERENCES_NAME = "auth0";
+    private final String AUTH_PREFERENCES_NAME = "auth0";
 
-    private final static String KEY_REFRESH_TOKEN = "refresh_token";
-    private final static String KEY_ACCESS_TOKEN = "access_token";
-    private final static String KEY_ID_TOKEN = "id_token";
-    private final static String KEY_TOKEN_TYPE = "token_type";
-    private final static String KEY_EXPIRES_IN = "expires_in";
-    private static final String KEY_USER_ID = "user_id";
+    private final String KEY_REFRESH_TOKEN = "refresh_token";
+    private final String KEY_ACCESS_TOKEN = "access_token";
+    private final String KEY_ID_TOKEN = "id_token";
+    private final String KEY_TOKEN_TYPE = "token_type";
+    private final String KEY_EXPIRES_IN = "expires_in";
+    private final String KEY_USER_ID = "user_id";
 
-    private static long lastCheckTime;
-    private static String KEY_USER_PROFILE = "user_profile";
+    private long lastCheckTime;
+    private String KEY_USER_PROFILE = "user_profile";
 
-    public static void saveCredentials(Context context, Credentials credentials) {
+    private Context context;
+
+    public CredentialsManager(Context context) {
+        this.context = context;
+    }
+
+    public void saveCredentials(Credentials credentials) {
         Log.d(LOG, "saving access token " + credentials.getAccessToken());
         Log.d(LOG, "saving id token " + credentials.getIdToken());
 
 
-        SharedPreferences sp = context.getSharedPreferences(
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         sp.edit()
@@ -56,8 +62,8 @@ public class CredentialsManager {
                 .apply();
     }
 
-    public static Credentials getCredentials(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(
+    public Credentials getCredentials() {
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         return new Credentials(
@@ -68,10 +74,10 @@ public class CredentialsManager {
                 sp.getLong(KEY_EXPIRES_IN, 0));
     }
 
-    public static void deleteCredentials(Context context) {
+    public void deleteCredentials() {
         Log.d(LOG, "deleted credentials");
 
-        SharedPreferences sp = context.getSharedPreferences(
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         sp.edit()
@@ -82,14 +88,14 @@ public class CredentialsManager {
                 .putLong(KEY_EXPIRES_IN, 0)
                 .apply();
 
-        deleteUserId(context);
-        deleteUserProfile(context);
+        deleteUserId();
+        deleteUserProfile();
     }
 
-    public static void saveUserId(Context context, String id) {
+    public void saveUserId(String id) {
 //        Log.d(LOG, "saving userId: " + id);
 
-        SharedPreferences sp = context.getSharedPreferences(
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         sp.edit()
@@ -98,16 +104,15 @@ public class CredentialsManager {
 
     }
 
-    public static String getUserId(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(
+    public String getUserId() {
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         return sp.getString(KEY_USER_ID, null);
     }
 
-    public static void deleteUserId(Context context) {
-
-        SharedPreferences sp = context.getSharedPreferences(
+    public void deleteUserId() {
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         sp.edit()
@@ -118,29 +123,24 @@ public class CredentialsManager {
 
     /**
      * Deletes the credentials stored with callingActivity and then uses it to start {@link LoginActivity}.
-     *
-     * @param callingAcitivity
      */
-    public static void signOut(Activity callingAcitivity) {
-        CredentialsManager.deleteCredentials(callingAcitivity);
+    public void signOut() {
+        deleteCredentials();
 
-        Intent intent = new Intent(callingAcitivity, LoginActivity.class);
+        Intent intent = new Intent(this.context, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         Log.d(LOG, "signed out, cleared activity stack, launching login");
-        callingAcitivity.startActivity(intent);
-        callingAcitivity.finish();
+        this.context.startActivity(intent);
     }
 
     /**
      * Uses callingActivity to get the access token from Prefs, then creates an {@link AuthenticationAPIClient} and attemps to call
      * {@link AuthenticationAPIClient#userInfo(String)}.
      * <br><br>On success, nothing happens.
-     * <br>On failure, calls {@link #signOut(Activity)}
-     *
-     * @param callingActivity
+     * <br>On failure, calls {@link #signOut()}
      */
-    public static void verifyAccessToken(final Activity callingActivity) {
-        Log.d(LOG, "request from " + callingActivity.getClass().getSimpleName() + " to verify access token");
+    public void verifyAccessToken() {
+        Log.d(LOG, "request to verify access token");
 
         final long timeDifference = SystemClock.elapsedRealtime() - lastCheckTime;
         final int acceptableTime = 5; // in minutes
@@ -149,12 +149,12 @@ public class CredentialsManager {
             return;
         }
 
-        Auth0 auth0 = new Auth0(callingActivity.getString(R.string.auth0_client_id), callingActivity.getString(R.string.auth0_domain));
+        Auth0 auth0 = new Auth0(this.context.getString(R.string.auth0_client_id), this.context.getString(R.string.auth0_domain));
         auth0.setOIDCConformant(true);
 
-        String accessToken = CredentialsManager.getCredentials(callingActivity).getAccessToken();
+        String accessToken = getCredentials().getAccessToken();
         if (accessToken == null) {
-            signOut(callingActivity);
+            signOut();
         } else {
             final AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
             aClient.userInfo(accessToken)
@@ -170,30 +170,25 @@ public class CredentialsManager {
                             Log.d(LOG, "access token validation: FAIL");
                             Log.d(LOG, "Error: " + error);
                             Log.d(LOG, "Error description: " + error.getDescription());
-                            callingActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    signOut(callingActivity);
-                                }
-                            });
+                            signOut();
                         }
                     });
         }
     }
 
 
-    public static void downloadUserId(final Activity activity) {
-        Auth0 auth0 = new Auth0(activity.getString(R.string.auth0_client_id), activity.getString(R.string.auth0_domain));
+    public void downloadUserId() {
+        Auth0 auth0 = new Auth0(this.context.getString(R.string.auth0_client_id), this.context.getString(R.string.auth0_domain));
         auth0.setOIDCConformant(true);
 
-        String idToken = CredentialsManager.getCredentials(activity).getIdToken();
-        String accessToken = CredentialsManager.getCredentials(activity).getAccessToken();
+        String idToken = getCredentials().getIdToken();
+        String accessToken = getCredentials().getAccessToken();
 
         AuthenticationAPIClient authClient = new AuthenticationAPIClient(auth0); // gets simple auth profile
         final UsersAPIClient usersClient = new UsersAPIClient(auth0, idToken); // gets complete profile
 
         if (accessToken == null) {
-            CredentialsManager.signOut(activity);
+            signOut();
         } else {
             // gets simple user profile open_id
             Log.d(LOG, "getting simple user id");
@@ -204,7 +199,7 @@ public class CredentialsManager {
                         public void onSuccess(UserProfile payload) {
                             Log.d(LOG, "got userId: " + payload.getId());
 
-                            saveUserId(activity, payload.getId());
+                            saveUserId(payload.getId());
                         }
 
                         @Override
@@ -217,7 +212,7 @@ public class CredentialsManager {
 
     }
 
-    public static void saveUserProfile(Context context, UserProfile profile) {
+    public void saveUserProfile(Context context, UserProfile profile) {
         String profileJson = new Gson().toJson(profile, UserProfile.class);
         SharedPreferences sp = context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -228,8 +223,8 @@ public class CredentialsManager {
 
     }
 
-    public static UserProfile getUserProfile(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(
+    public UserProfile getUserProfile() {
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         String profileJson = sp.getString(KEY_USER_PROFILE, null);
@@ -240,8 +235,8 @@ public class CredentialsManager {
         return null;
     }
 
-    public static void deleteUserProfile(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(
+    public void deleteUserProfile() {
+        SharedPreferences sp = this.context.getSharedPreferences(
                 AUTH_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         sp.edit()

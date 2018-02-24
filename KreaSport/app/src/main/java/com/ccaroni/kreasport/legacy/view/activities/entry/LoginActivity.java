@@ -17,19 +17,23 @@ import com.auth0.android.lock.utils.LockException;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
 import com.ccaroni.kreasport.R;
+import com.ccaroni.kreasport.explore.view.activity.App;
 import com.ccaroni.kreasport.explore.view.activity.MainActivity;
 import com.ccaroni.kreasport.utils.CredentialsManager;
+
+import javax.inject.Inject;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final String LOG = LoginActivity.class.getSimpleName();
+
     private final LockCallback mCallback = new AuthenticationCallback() {
         @Override
         public void onAuthentication(Credentials credentials) {
             Log.d(LOG, "Login - Success");
-            CredentialsManager.saveCredentials(LoginActivity.this, credentials);
+            credentialsManager.saveCredentials(credentials);
 
-            CredentialsManager.downloadUserId(LoginActivity.this);
+            credentialsManager.downloadUserId();
 
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
@@ -45,13 +49,23 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(LOG, "Login - Error:" + error.toString());
         }
     };
+
+
     private Auth0 auth0;
     private String idToken;
     private Lock mLock;
 
+    @Inject
+    public CredentialsManager credentialsManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        App.getInstance()
+                .getAppComponent()
+                .inject(this);
+
         auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         auth0.setOIDCConformant(true);
 
@@ -60,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 .withAudience("kreasport-jwt-api")
                 .build(this);
 
-        Credentials credentials = CredentialsManager.getCredentials(this);
+        Credentials credentials = credentialsManager.getCredentials();
         String accessToken = credentials.getAccessToken();
         idToken = credentials.getIdToken();
         if (accessToken == null) {
@@ -86,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptRefresh(AuthenticationAPIClient aClient) {
-        String refreshToken = CredentialsManager.getCredentials(this).getRefreshToken();
+        String refreshToken = credentialsManager.getCredentials().getRefreshToken();
         if (refreshToken == null) {
             startLockWidget();
         } else {
@@ -97,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Credentials credentials) {
                             Log.d(LOG, "refresh token validation: SUCCESS");
-                            CredentialsManager.saveCredentials(LoginActivity.this, credentials);
+                            credentialsManager.saveCredentials(credentials);
                             autoLoginRedirect();
                         }
 
@@ -125,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        CredentialsManager.deleteCredentials(this);
+        credentialsManager.deleteCredentials();
         startActivity(mLock.newIntent(this));
     }
 
@@ -135,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
     private void autoLoginRedirect() {
         Log.d(LOG, "Login - Automatic login success");
 
-        CredentialsManager.downloadUserId(this);
+        credentialsManager.downloadUserId();
 
         startActivity(new Intent(this, MainActivity.class));
         finish();

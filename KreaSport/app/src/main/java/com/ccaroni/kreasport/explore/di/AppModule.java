@@ -1,6 +1,7 @@
 package com.ccaroni.kreasport.explore.di;
 
 import android.app.Application;
+import android.content.Context;
 
 import javax.inject.Singleton;
 
@@ -23,5 +24,11 @@ public class AppModule {
     @Singleton
     Application providesApplication() {
         return mApplication;
+    }
+
+    @Provides
+    @Singleton
+    Context providesContext() {
+        return mApplication.getApplicationContext();
     }
 }
