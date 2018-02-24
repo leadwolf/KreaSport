@@ -156,7 +156,7 @@ public class ExploreModel implements IExploreModel {
         } catch (IllegalRaceStateException e) {
             return "";
         }
-        
+
         int target = record.getTargetCheckpointIndex();
         return (target - 1) + "/" + race.getNbCheckpoints();
     }

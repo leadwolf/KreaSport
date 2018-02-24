@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.ccaroni.kreasport.explore.exception.IllegalRaceStateException;
 import com.ccaroni.kreasport.explore.model.IExploreModel;
+import com.ccaroni.kreasport.explore.view.IExploreView;
 import com.ccaroni.kreasport.explore.view.activity.App;
 
 import javax.inject.Inject;
@@ -26,7 +27,10 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     @Inject
     public IExploreModel raceModel;
 
-    public AbstractExploreVM() {
+    private IExploreView exploreView;
+
+    public AbstractExploreVM(IExploreView iExploreView) {
+        this.exploreView = iExploreView;
         App.getInstance()
                 .plusExploreComponent()
                 .inject(this);
@@ -35,30 +39,30 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
 
     @Bindable
     public int getBottomSheetVisibility() {
-        return bottomSheetVisibility;
+        return this.bottomSheetVisibility;
     }
 
     @Bindable
     public int getPassiveInfoVisibility() {
-        return passiveInfoVisibility;
+        return this.passiveInfoVisibility;
     }
 
     @Bindable
     public int getActiveInfoVisibility() {
-        return activeInfoVisibility;
+        return this.activeInfoVisibility;
     }
 
     @Override
     @NonNull
     public String getProgression() {
-        return raceModel.getProgression();
+        return this.raceModel.getProgression();
     }
 
     @Bindable
     @Override
     public @NonNull
     String getTitle() {
-        return raceModel.getTitle();
+        return this.raceModel.getTitle();
     }
 
     @Bindable
@@ -71,36 +75,36 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     @Override
     public void onStartClicked() {
         try {
-            raceModel.requestStartRace();
+            this.raceModel.requestStartRace();
         } catch (IllegalRaceStateException e) {
             Log.d(TAG, "onStartClicked: " + e);
-            // TODO display error
+            this.exploreView.displayStartError(e.getMessage());
         }
     }
 
     @Override
     public void onStopClicked() {
         try {
-            raceModel.requestStopRace();
+            this.raceModel.requestStopRace();
         } catch (IllegalRaceStateException e) {
             Log.d(TAG, "onStartClicked: " + e);
-            // TODO display error
+            this.exploreView.displayStopError(e.getMessage());
         }
     }
 
     @Override
     public void onMyLocationClicked() {
-        // TODO call fragment
+        this.exploreView.recenterOnUserPosition();
     }
 
     @Override
     public void onRaceSelected(long id) {
-        raceModel.onRaceSelected(id);
+        this.raceModel.onRaceSelected(id);
     }
 
     @Override
     public void onCheckpointSelected(long id) {
-        raceModel.onCheckpointSelected(id);
+        this.raceModel.onCheckpointSelected(id);
 
     }
 }
