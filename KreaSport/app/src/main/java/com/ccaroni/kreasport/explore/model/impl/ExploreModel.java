@@ -152,4 +152,14 @@ public class ExploreModel implements IExploreModel {
         // TODO
         return "";
     }
+
+    @Override
+    public void onRaceSelected(long id) {
+        this.selectedItem = raceBox.get(id);
+    }
+
+    @Override
+    public void onCheckpointSelected(long id) {
+        this.selectedItem = checkpointBox.get(id);
+    }
 }

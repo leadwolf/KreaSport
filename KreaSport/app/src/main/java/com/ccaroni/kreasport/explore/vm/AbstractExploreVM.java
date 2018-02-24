@@ -92,4 +92,15 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     public void onMyLocationClicked() {
         // TODO call fragment
     }
+
+    @Override
+    public void onRaceSelected(long id) {
+        raceModel.onRaceSelected(id);
+    }
+
+    @Override
+    public void onCheckpointSelected(long id) {
+        raceModel.onCheckpointSelected(id);
+
+    }
 }

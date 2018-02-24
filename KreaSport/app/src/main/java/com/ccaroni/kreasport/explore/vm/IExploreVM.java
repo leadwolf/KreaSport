@@ -24,4 +24,8 @@ public interface IExploreVM {
 
     void onMyLocationClicked();
 
+    void onRaceSelected(long id);
+
+    void onCheckpointSelected(long id);
+
 }

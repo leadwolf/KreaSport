@@ -50,4 +50,8 @@ public interface IExploreModel {
     void onGeofenceTriggered(long id);
 
     String getProgression();
+
+    void onRaceSelected(long id);
+
+    void onCheckpointSelected(long id);
 }
