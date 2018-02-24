@@ -16,7 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import com.ccaroni.kreasport.R;
 import com.ccaroni.kreasport.explore.events.GeofenceTriggered;
 import com.ccaroni.kreasport.explore.events.LocationChanged;
-import com.ccaroni.kreasport.explore.services.impl.RaceService;
+import com.ccaroni.kreasport.explore.services.impl.ExploreService;
 import com.ccaroni.kreasport.explore.view.activity.MainActivity;
 import com.ccaroni.kreasport.utils.NotificationUtil;
 
@@ -24,11 +24,11 @@ import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by Master on 03/02/2018.
- * Implements {@link IRaceService} and implements the notification handling.
+ * Implements {@link IExploreService} and implements the notification handling.
  * <p>
  * Location and geofence services should be handled by subclasses.
  */
-public abstract class AbstractRaceService extends Service implements IRaceService {
+public abstract class AbstractExploreService extends Service implements IExploreService {
 
     public static final String NOTIFICATION_CHANNEL_ID_RACE = "com.ccaroni.kreasport.NOTIF_CHANNEL";
     private static final int ONGOING_NOTIFICATION_ID = 42;
@@ -113,7 +113,7 @@ public abstract class AbstractRaceService extends Service implements IRaceServic
         piOnClick = PendingIntent.getActivity(this, 0, onClickIntent, 0);
 
         // setup stop race button
-        Intent stopRaceIntent = new Intent(this, RaceService.class);
+        Intent stopRaceIntent = new Intent(this, ExploreService.class);
         stopRaceIntent.setAction("STOP");
         piStopRace = PendingIntent.getService(this, 0, stopRaceIntent, 0);
     }

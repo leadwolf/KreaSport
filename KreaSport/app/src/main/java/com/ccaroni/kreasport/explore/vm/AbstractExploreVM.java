@@ -4,7 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 
-import com.ccaroni.kreasport.explore.model.IRaceModel;
+import com.ccaroni.kreasport.explore.model.IExploreModel;
 import com.ccaroni.kreasport.explore.view.activity.App;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     protected int activeInfoVisibility;
 
     @Inject
-    public IRaceModel raceModel;
+    public IExploreModel raceModel;
 
     public AbstractExploreVM() {
         App.getInstance()
@@ -48,7 +48,7 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     @Override
     @NonNull
     public String getProgression() {
-        // TODO from RaceModel
+        // TODO from ExploreModel
         return "";
     }
 
@@ -68,13 +68,13 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
 
     @Override
     public void onStartClicked() {
-        // TODO verify with RaceModel
+        // TODO verify with ExploreModel
 
     }
 
     @Override
     public void onStopClicked() {
-        // TODO verify with RaceModel
+        // TODO verify with ExploreModel
 
     }
 

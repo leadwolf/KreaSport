@@ -6,7 +6,7 @@ import android.util.Log;
 import com.ccaroni.kreasport.data.remote.Checkpoint;
 import com.ccaroni.kreasport.explore.events.GeofenceTriggered;
 import com.ccaroni.kreasport.explore.events.LocationChanged;
-import com.ccaroni.kreasport.explore.services.AbstractRaceService;
+import com.ccaroni.kreasport.explore.services.AbstractExploreService;
 import com.ccaroni.kreasport.explore.services.geofence.impl.GeofenceUtil;
 import com.ccaroni.kreasport.explore.services.location.impl.GoogleLocationService;
 
@@ -17,9 +17,9 @@ import org.greenrobot.eventbus.Subscribe;
  * Created by Master on 02/02/2018.
  */
 
-public class RaceService extends AbstractRaceService {
+public class ExploreService extends AbstractExploreService {
 
-    private static final String TAG = RaceService.class.getSimpleName();
+    private static final String TAG = ExploreService.class.getSimpleName();
 
 
     private GeofenceUtil mGeofenceUtil;
@@ -87,7 +87,7 @@ public class RaceService extends AbstractRaceService {
         // TODO
         // recording ?
         // YES
-        //      save in RaceModel
+        //      save in ExploreModel
         // NO
         //      do nothing
 
@@ -98,7 +98,7 @@ public class RaceService extends AbstractRaceService {
     @Subscribe
     @Override
     protected void onGeofenceTriggered(GeofenceTriggered geofenceTriggered) {
-        // TODO save in RaceModel
+        // TODO save in ExploreModel
         Log.d(TAG, "onGeofenceTriggered: received geofence trigger");
     }
 

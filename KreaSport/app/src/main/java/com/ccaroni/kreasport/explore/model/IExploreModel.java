@@ -9,7 +9,7 @@ import com.ccaroni.kreasport.explore.exception.IllegalRaceStateException;
  * Created by Master on 18/02/2018.
  */
 
-public interface IRaceModel {
+public interface IExploreModel {
 
 
     /**

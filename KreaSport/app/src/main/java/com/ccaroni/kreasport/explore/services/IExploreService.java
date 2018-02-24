@@ -8,7 +8,7 @@ import com.ccaroni.kreasport.data.remote.Checkpoint;
  * Created by Master on 02/02/2018.
  */
 
-public interface IRaceService {
+public interface IExploreService {
 
     void startLocationUpdates();
 

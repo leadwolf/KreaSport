@@ -22,7 +22,7 @@
             android:name=".explore.services.location.impl.GoogleLocationService"
             android:icon="@drawable/ic_kreasport_logo_no_bg"
             android:label="@string/location_service_name"/>
-        <service android:name=".explore.services.impl.RaceService"/>
+        <service android:name=".explore.services.impl.ExploreService"/>
 
         <!-- Auth0 Lock -->
         <activity

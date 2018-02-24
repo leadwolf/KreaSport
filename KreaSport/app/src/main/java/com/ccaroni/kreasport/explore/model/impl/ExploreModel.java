@@ -3,13 +3,12 @@ package com.ccaroni.kreasport.explore.model.impl;
 import android.location.Location;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.Race;
 import com.ccaroni.kreasport.data.local.Record;
 import com.ccaroni.kreasport.explore.exception.IllegalRaceStateException;
-import com.ccaroni.kreasport.explore.model.IRaceModel;
+import com.ccaroni.kreasport.explore.model.IExploreModel;
 import com.ccaroni.kreasport.explore.model.RaceModelListener;
 
 import io.objectbox.Box;
@@ -18,9 +17,9 @@ import io.objectbox.Box;
  * Created by Master on 18/02/2018.
  */
 
-public class RaceModel implements IRaceModel {
+public class ExploreModel implements IExploreModel {
 
-    private static final String TAG = RaceModel.class.getSimpleName();
+    private static final String TAG = ExploreModel.class.getSimpleName();
 
 
     private Box<Race> raceBox;
@@ -33,7 +32,7 @@ public class RaceModel implements IRaceModel {
 
     private RaceModelListener raceModelListener;
 
-    public RaceModel(Box<Race> raceBox, Box<Checkpoint> checkpointBox, Box<Record> recordBox) {
+    public ExploreModel(Box<Race> raceBox, Box<Checkpoint> checkpointBox, Box<Record> recordBox) {
         this.raceBox = raceBox;
         this.checkpointBox = checkpointBox;
         this.recordBox = recordBox;
@@ -84,7 +83,7 @@ public class RaceModel implements IRaceModel {
 
     private void verifyProximityToStart() {
         // TODO
-        // verify location according to RaceService
+        // verify location according to ExploreService
     }
 
     /**
