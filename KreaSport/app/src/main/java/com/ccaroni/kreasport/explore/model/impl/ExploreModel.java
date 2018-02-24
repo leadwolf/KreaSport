@@ -118,36 +118,31 @@ public class ExploreModel implements IExploreModel {
 
     @Override
     public void requestStopRace() throws IllegalRaceStateException {
-        verifyIsRecording();
+        verifyIsRecording(this.record);
 
-        stopRecording();
-        saveRecord();
+        long elapsedTime = SystemClock.elapsedRealtime() - this.record.getBaseTime();
+        this.record.setTimeExpired(elapsedTime);
+
+        saveRecord(this.record);
     }
 
     /**
+     * @param record the record to check
      * @throws IllegalRaceStateException if a race is not being recorded
      */
-    private void verifyIsRecording() throws IllegalRaceStateException {
-        if (this.record == null || !this.record.isInProgress()) {
+    private void verifyIsRecording(Record record) throws IllegalRaceStateException {
+        if (record == null || !record.isInProgress()) {
             throw new IllegalRaceStateException("No record in progress");
         }
     }
 
-    /**
-     * Sets the end time to the record
-     */
-    private void stopRecording() {
-        long elapsedTime = SystemClock.elapsedRealtime() - this.record.getBaseTime();
-        this.record.setTimeExpired(elapsedTime);
-    }
-
-    private void saveRecord() {
-        this.recordBox.put(this.record);
+    private void saveRecord(@NonNull Record record) {
+        this.recordBox.put(record);
     }
 
     @Override
     public void updateLocation(Location location) throws IllegalRaceStateException {
-        verifyIsRecording();
+        verifyIsRecording(this.record);
         this.record.addLocation(location);
     }
 
@@ -161,7 +156,8 @@ public class ExploreModel implements IExploreModel {
     @Override
     public String getProgression() {
         try {
-            verifyIsRecording();
+            verifyIsRecording(this.record);
+            verifyRace(this.race);
         } catch (IllegalRaceStateException e) {
             return "";
         }
@@ -193,5 +189,11 @@ public class ExploreModel implements IExploreModel {
     @Override
     public void onBackgroundPressed() {
         this.selectedItem = null;
+    }
+
+    private void verifyRace(Race r) throws IllegalRaceStateException {
+        if (r == null) {
+            throw new IllegalRaceStateException("Null reference");
+        }
     }
 }
