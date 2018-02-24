@@ -7,7 +7,8 @@ import com.google.gson.Gson;
 
 import com.ccaroni.kreasport.map.MapState;
 
-
+@Deprecated
+// TODO inject context
 public class PreferenceManager {
 
     private static final String FILE_PASS_RACES = "kreasport.preference_manager.file.pass_races";

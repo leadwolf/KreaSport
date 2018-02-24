@@ -9,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 /**
  * Created by Master on 29/03/2017.
  */
-
 public class PermissionsManager {
 
     public static final int WRITE_EXTERNAL_STORAGE = 0;
