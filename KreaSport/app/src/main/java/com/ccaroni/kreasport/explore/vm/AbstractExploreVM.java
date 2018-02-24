@@ -4,6 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 
 import com.ccaroni.kreasport.explore.exception.IllegalRaceStateException;
 import com.ccaroni.kreasport.explore.model.IExploreModel;
@@ -20,12 +21,12 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
 
     private static final String TAG = AbstractExploreVM.class.getSimpleName();
 
+    @Inject
+    public IExploreModel raceModel;
+
     protected int bottomSheetVisibility;
     protected int passiveInfoVisibility;
     protected int activeInfoVisibility;
-
-    @Inject
-    public IExploreModel raceModel;
 
     private IExploreView exploreView;
 
@@ -34,6 +35,19 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
         App.getInstance()
                 .plusExploreComponent()
                 .inject(this);
+
+        updateVisibilities(this.raceModel.isItemSelected(), this.raceModel.isRaceActive());
+    }
+
+    /**
+     * Updates visibilities for the bottom sheet and notifies bindings.
+     */
+    private void updateVisibilities(boolean itemSelected, boolean raceActive) {
+        this.bottomSheetVisibility = itemSelected ? View.VISIBLE : View.GONE;
+        this.activeInfoVisibility = itemSelected ? View.VISIBLE : View.GONE;
+        this.passiveInfoVisibility = raceActive ? View.GONE : View.VISIBLE;
+
+        notifyChange();
     }
 
 
@@ -105,6 +119,10 @@ public abstract class AbstractExploreVM extends BaseObservable implements IExplo
     @Override
     public void onCheckpointSelected(long id) {
         this.raceModel.onCheckpointSelected(id);
+    }
 
+    @Override
+    public void onBackgroundPressed() {
+        this.raceModel.onBackgroundPressed();
     }
 }

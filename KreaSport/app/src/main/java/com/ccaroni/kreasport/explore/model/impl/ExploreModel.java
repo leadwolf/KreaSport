@@ -3,6 +3,7 @@ package com.ccaroni.kreasport.explore.model.impl;
 import android.location.Location;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.ccaroni.kreasport.data.local.Checkpoint;
 import com.ccaroni.kreasport.data.local.MapItem;
@@ -27,18 +28,22 @@ public class ExploreModel implements IExploreModel {
     private Box<Checkpoint> checkpointBox;
     private Box<Record> recordBox;
 
+    @Nullable
     private Race race;
+    @Nullable
     private Checkpoint checkpoint;
+    @Nullable
     private Record record;
 
     /**
      * The race or checkpoint that is currently selected and whose information is displayed in the bottom bar
      */
+    @Nullable
     private MapItem selectedItem;
 
     private RaceModelListener raceModelListener;
 
-    public ExploreModel(Box<Race> raceBox, Box<Checkpoint> checkpointBox, Box<Record> recordBox) {
+    public ExploreModel(@NonNull Box<Race> raceBox, @NonNull Box<Checkpoint> checkpointBox, @NonNull Box<Record> recordBox) {
         this.raceBox = raceBox;
         this.checkpointBox = checkpointBox;
         this.recordBox = recordBox;
@@ -47,19 +52,23 @@ public class ExploreModel implements IExploreModel {
     @NonNull
     @Override
     public String getTitle() {
-        return selectedItem.getTitle();
+        return selectedItem == null ? "" : selectedItem.getTitle();
         // TODO when the user is recording, should this be the targeting checkpoint info?
     }
 
     @NonNull
     @Override
     public String getDescription() {
-        return selectedItem.getDescription();
+        return selectedItem == null ? "" : selectedItem.getDescription();
     }
 
     @Override
     public void requestStartRace() throws IllegalRaceStateException {
         verifyNotRecording();
+        if (selectedItem == null) {
+            throw new IllegalRaceStateException("No item is selected");
+        }
+
         loadRace(selectedItem.getId());
         verifyProximityToStart();
 
@@ -80,8 +89,8 @@ public class ExploreModel implements IExploreModel {
      * @throws IllegalRaceStateException if the race was not found
      */
     private void loadRace(long id) throws IllegalRaceStateException {
-        race = raceBox.get(id);
-        if (race == null) {
+        this.race = this.raceBox.get(id);
+        if (this.race == null) {
             throw new IllegalRaceStateException("Race not found");
         }
     }
@@ -99,8 +108,8 @@ public class ExploreModel implements IExploreModel {
      * @param baseTime the time to set as the start of the recording
      */
     private void startRecording(long raceId, String userId, long baseTime) {
-        record = new Record(raceId, userId);
-        record.setBaseTime(baseTime);
+        this.record = new Record(raceId, userId);
+        this.record.setBaseTime(baseTime);
     }
 
     private String getUserId() {
@@ -119,7 +128,7 @@ public class ExploreModel implements IExploreModel {
      * @throws IllegalRaceStateException if a race is not being recorded
      */
     private void verifyIsRecording() throws IllegalRaceStateException {
-        if (record == null || !record.isInProgress()) {
+        if (this.record == null || !this.record.isInProgress()) {
             throw new IllegalRaceStateException("No record in progress");
         }
     }
@@ -128,18 +137,18 @@ public class ExploreModel implements IExploreModel {
      * Sets the end time to the record
      */
     private void stopRecording() {
-        long elapsedTime = SystemClock.elapsedRealtime() - record.getBaseTime();
-        record.setTimeExpired(elapsedTime);
+        long elapsedTime = SystemClock.elapsedRealtime() - this.record.getBaseTime();
+        this.record.setTimeExpired(elapsedTime);
     }
 
     private void saveRecord() {
-        recordBox.put(record);
+        this.recordBox.put(this.record);
     }
 
     @Override
     public void updateLocation(Location location) throws IllegalRaceStateException {
         verifyIsRecording();
-        record.addLocation(location);
+        this.record.addLocation(location);
     }
 
     @Override
@@ -157,8 +166,8 @@ public class ExploreModel implements IExploreModel {
             return "";
         }
 
-        int target = record.getTargetCheckpointIndex();
-        return (target - 1) + "/" + race.getNbCheckpoints();
+        int target = this.record.getTargetCheckpointIndex();
+        return (target - 1) + "/" + this.race.getNbCheckpoints();
     }
 
     @Override
@@ -169,5 +178,20 @@ public class ExploreModel implements IExploreModel {
     @Override
     public void onCheckpointSelected(long id) {
         this.selectedItem = checkpointBox.get(id);
+    }
+
+    @Override
+    public boolean isRaceActive() {
+        return this.record.isInProgress();
+    }
+
+    @Override
+    public boolean isItemSelected() {
+        return this.selectedItem == null;
+    }
+
+    @Override
+    public void onBackgroundPressed() {
+        this.selectedItem = null;
     }
 }

@@ -2,8 +2,8 @@ package com.ccaroni.kreasport.explore.vm;
 
 /**
  * Created by Master on 17/02/2018.
+ * Contract that the VM implements, therefore exposing the data to the view as well as exposing listeners for UI events.
  */
-
 public interface IExploreVM {
 
     /**
@@ -60,5 +60,7 @@ public interface IExploreVM {
      * @param id the id of the checkpoint clicked on
      */
     void onCheckpointSelected(long id);
+
+    void onBackgroundPressed();
 
 }

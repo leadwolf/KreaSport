@@ -2,7 +2,7 @@ package com.ccaroni.kreasport.explore.view;
 
 /**
  * Created by Master on 24/02/2018.
- * Contract for the view exposing the map that the VM can call upon.
+ * Contract that the view exposing the map implements, exposing methods to trigger UI changes.
  */
 public interface IExploreView {
 

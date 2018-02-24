@@ -54,4 +54,21 @@ public interface IExploreModel {
     void onRaceSelected(long id);
 
     void onCheckpointSelected(long id);
+
+    /**
+     *
+     * @return if a recording is in progress
+     */
+    boolean isRaceActive();
+
+    /**
+     *
+     * @return if an item is currently selected.
+     */
+    boolean isItemSelected();
+
+    /**
+     * Invoked when the background is pressed.
+     */
+    void onBackgroundPressed();
 }
