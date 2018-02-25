@@ -11,8 +11,8 @@ import android.support.v4.content.ContextCompat;
  */
 public class PermissionsManager {
 
-    public static final int WRITE_EXTERNAL_STORAGE = 0;
-    public static final int ACCESS_FINE_LOCATION = WRITE_EXTERNAL_STORAGE + 1;
+    public static final int CODE_WRITE_EXTERNAL_STORAGE = 0;
+    public static final int CODE_ACCESS_FINE_LOCATION = CODE_WRITE_EXTERNAL_STORAGE + 1;
 
 
     private Activity activity;
@@ -21,39 +21,20 @@ public class PermissionsManager {
         this.activity = activity;
     }
 
-    public boolean isPermissionGranted(int requestCode) {
-        switch (requestCode) {
-            case WRITE_EXTERNAL_STORAGE:
-                int writeGranted = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                if (writeGranted != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                } else {
-                    return true;
-                }
-            case ACCESS_FINE_LOCATION:
-                int fineGranted = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
-                if (fineGranted != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                } else {
-                    return true;
-                }
-            default:
-                return false;
-        }
+    public boolean isPermissionGranted(String permission) {
+        return ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     public void requestPermission(int requestCode) {
         switch (requestCode) {
-            case WRITE_EXTERNAL_STORAGE:
-                int writeGranted = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                if (writeGranted != PackageManager.PERMISSION_GRANTED)
+            case CODE_WRITE_EXTERNAL_STORAGE:
+                if (!isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE))
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            WRITE_EXTERNAL_STORAGE);
-            case ACCESS_FINE_LOCATION:
-                int fineGranted = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
-                if (fineGranted != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            ACCESS_FINE_LOCATION);
+                            CODE_WRITE_EXTERNAL_STORAGE);
+            case CODE_ACCESS_FINE_LOCATION:
+                if (!isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
+                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            CODE_ACCESS_FINE_LOCATION);
             default:
                 break;
         }
